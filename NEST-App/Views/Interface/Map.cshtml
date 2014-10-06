@@ -1,0 +1,18 @@
+﻿@model dynamic
+@using Jmelosegui.Mvc.Googlemap
+@{
+    ViewBag.Title = "MapView";
+}
+
+<h2>Map View</h2>
+
+<div class="row">
+    <div class="col-md-12">
+        @(Html.GoogleMap().Name("map"))
+    </div>
+</div>
+
+@section scripts
+{
+    @(Html.GoogleMap().ScriptRegistrar())
+}
