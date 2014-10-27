@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl" Namespace="VehicleModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005">
+        <EntityContainer Name="VehicleModelTargetContainer" >
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="VehicleModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="VehicleModelContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="OwnshipVehicles" EntityType="VehicleModel.OwnshipVehicle" />
+          <EntitySet Name="FlightStates" EntityType="VehicleModel.FlightState" />
+          <AssociationSet Name="VehicleState" Association="VehicleModel.VehicleState">
+            <End Role="Vehicle" EntitySet="OwnshipVehicles" />
+            <End Role="State" EntitySet="FlightStates" />
+          </AssociationSet>
+          <EntitySet Name="Configurations" EntityType="VehicleModel.Configuration" />
+          <AssociationSet Name="VehicleConfiguration" Association="VehicleModel.VehicleConfiguration">
+            <End Role="Vehicle" EntitySet="OwnshipVehicles" />
+            <End Role="Configuration" EntitySet="Configurations" />
+          </AssociationSet>
+          <EntitySet Name="EquipmentLists" EntityType="VehicleModel.EquipmentList" />
+          <AssociationSet Name="ConfigurationEquipmentList" Association="VehicleModel.ConfigurationEquipmentList">
+            <End Role="Configuration" EntitySet="Configurations" />
+            <End Role="EquipmentList" EntitySet="EquipmentLists" />
+          </AssociationSet>
+          <EntitySet Name="EuipmentHealths" EntityType="VehicleModel.EuipmentHealth" />
+          <AssociationSet Name="EuipmentHealthEquipmentList" Association="VehicleModel.EuipmentHealthEquipmentList">
+            <End Role="EuipmentHealth" EntitySet="EuipmentHealths" />
+            <End Role="EquipmentList" EntitySet="EquipmentLists" />
+          </AssociationSet>
+          <AssociationSet Name="VehicleEuipmentHealth" Association="VehicleModel.VehicleEuipmentHealth">
+            <End Role="Vehicle" EntitySet="OwnshipVehicles" />
+            <End Role="EuipmentHealth" EntitySet="EuipmentHealths" />
+          </AssociationSet>
+          <EntitySet Name="NonownshipVehicles" EntityType="VehicleModel.NonownshipVehicle" />
+        </EntityContainer>
+        <EntityType Name="OwnshipVehicle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="States" Relationship="VehicleModel.VehicleState" FromRole="Vehicle" ToRole="State" />
+          <Property Name="Callsign" Type="String" Nullable="false" />
+          <NavigationProperty Name="Configurations" Relationship="VehicleModel.VehicleConfiguration" FromRole="Vehicle" ToRole="Configuration" />
+          <NavigationProperty Name="EuipmentHealths" Relationship="VehicleModel.VehicleEuipmentHealth" FromRole="Vehicle" ToRole="EuipmentHealth" />
+          </EntityType>
+        <EntityType Name="FlightState">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Timestamp" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Vehicle" Relationship="VehicleModel.VehicleState" FromRole="State" ToRole="Vehicle" />
+          <Property Name="Timestamp" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="Position" Type="GeographyPoint" Nullable="false" />
+          <Property Name="VelocityX" Type="Double" Nullable="false" />
+          <Property Name="VelocityY" Type="Double" Nullable="false" />
+          <Property Name="VelocityZ" Type="Double" Nullable="false" />
+          <Property Name="Yaw" Type="Double" Nullable="false" />
+          <Property Name="Roll" Type="Double" Nullable="false" />
+          <Property Name="Pitch" Type="Double" Nullable="false" />
+          <Property Name="YawRate" Type="Double" Nullable="false" />
+          <Property Name="RollRate" Type="Double" Nullable="false" />
+          <Property Name="PitchRate" Type="Double" Nullable="false" />
+        </EntityType>
+        <Association Name="VehicleState">
+          <End Type="VehicleModel.OwnshipVehicle" Role="Vehicle" Multiplicity="1" />
+          <End Type="VehicleModel.FlightState" Role="State" Multiplicity="*" />
+        </Association>
+        <EntityType Name="Configuration">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Vehicle" Relationship="VehicleModel.VehicleConfiguration" FromRole="Configuration" ToRole="Vehicle" />
+          <Property Name="Name" Type="String" Nullable="false" />
+          <Property Name="Classification" Type="String" Nullable="false" />
+          <Property Name="NumberOfMotors" Type="Byte" Nullable="false" />
+          <NavigationProperty Name="EquipmentLists" Relationship="VehicleModel.ConfigurationEquipmentList" FromRole="Configuration" ToRole="EquipmentList" />
+        </EntityType>
+        <Association Name="VehicleConfiguration">
+          <End Type="VehicleModel.OwnshipVehicle" Role="Vehicle" Multiplicity="*" />
+          <End Type="VehicleModel.Configuration" Role="Configuration" Multiplicity="1" />
+        </Association>
+        <EntityType Name="EquipmentList">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" />
+          <Property Name="Vendor" Type="String" Nullable="false" />
+          <Property Name="Manufacturer" Type="String" Nullable="false" />
+          <Property Name="Price" Type="Decimal" Nullable="false" />
+          <Property Name="Weight" Type="Double" Nullable="false" />
+          <NavigationProperty Name="Configuration" Relationship="VehicleModel.ConfigurationEquipmentList" FromRole="EquipmentList" ToRole="Configuration" />
+          <NavigationProperty Name="EuipmentHealth" Relationship="VehicleModel.EuipmentHealthEquipmentList" FromRole="EquipmentList" ToRole="EuipmentHealth" />
+        </EntityType>
+        <Association Name="ConfigurationEquipmentList">
+          <End Type="VehicleModel.Configuration" Role="Configuration" Multiplicity="1" />
+          <End Type="VehicleModel.EquipmentList" Role="EquipmentList" Multiplicity="*" />
+        </Association>
+        <EntityType Name="EuipmentHealth">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="EquipmentList" Relationship="VehicleModel.EuipmentHealthEquipmentList" FromRole="EuipmentHealth" ToRole="EquipmentList" />
+          <NavigationProperty Name="Vehicle" Relationship="VehicleModel.VehicleEuipmentHealth" FromRole="EuipmentHealth" ToRole="Vehicle" />
+          <Property Name="Health" Type="Double" Nullable="false" />
+          <Property Name="LastMaintenance" Type="String" Nullable="false" />
+          <Property Name="DateReceived" Type="DateTime" Nullable="false" />
+        </EntityType>
+        <Association Name="EuipmentHealthEquipmentList">
+          <End Type="VehicleModel.EuipmentHealth" Role="EuipmentHealth" Multiplicity="*" />
+          <End Type="VehicleModel.EquipmentList" Role="EquipmentList" Multiplicity="1" />
+        </Association>
+        <Association Name="VehicleEuipmentHealth">
+          <End Type="VehicleModel.OwnshipVehicle" Role="Vehicle" Multiplicity="1" />
+          <End Type="VehicleModel.EuipmentHealth" Role="EuipmentHealth" Multiplicity="*" />
+        </Association>
+        <EntityType Name="NonownshipVehicle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Position" Type="GeometryPoint" Nullable="false" />
+          <Property Name="Velocity" Type="Double" Nullable="false" />
+          <Property Name="VelocityX" Type="String" Nullable="false" />
+          <Property Name="VelocityY" Type="String" Nullable="false" />
+          <Property Name="VelocityZ" Type="String" Nullable="false" />
+          <Property Name="Yaw" Type="Double" Nullable="false" />
+          <Property Name="FlightPlan" Type="String" Nullable="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs" Space="C-S">
+        <Alias Key="Model" Value="VehicleModel" />
+        <Alias Key="Target" Value="VehicleModel.Store" />
+        <EntityContainerMapping CdmEntityContainer="VehicleModelContainer" StorageEntityContainer="VehicleModelTargetContainer">
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
