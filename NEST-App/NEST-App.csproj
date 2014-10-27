@@ -209,11 +209,41 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InterfaceController.cs" />
+    <Compile Include="DAL\NestDbContext.cs" />
+    <Compile Include="DAL\NestDbInitializer.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Configuration.cs">
+      <DependentUpon>VehicleModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Equipment.cs">
+      <DependentUpon>VehicleModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EquipmentHealth.cs">
+      <DependentUpon>VehicleModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\FlightState.cs">
+      <DependentUpon>VehicleModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\NonownshipVehicle.cs">
+      <DependentUpon>VehicleModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\OwnshipVehicle.cs">
+      <DependentUpon>VehicleModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\VehicleModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>VehicleModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\VehicleModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>VehicleModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\VehicleModel.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -284,6 +314,16 @@
     <Content Include="Models\VehicleModel.edmx.diagram">
       <DependentUpon>VehicleModel.edmx</DependentUpon>
     </Content>
+    <Content Include="Models\VehicleModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>VehicleModel.Context.cs</LastGenOutput>
+      <DependentUpon>VehicleModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="Models\VehicleModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>VehicleModel.cs</LastGenOutput>
+      <DependentUpon>VehicleModel.edmx</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-2.1.0.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -337,6 +377,9 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

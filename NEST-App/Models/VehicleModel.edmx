@@ -24,19 +24,19 @@
             <End Role="Vehicle" EntitySet="OwnshipVehicles" />
             <End Role="Configuration" EntitySet="Configurations" />
           </AssociationSet>
-          <EntitySet Name="EquipmentLists" EntityType="VehicleModel.EquipmentList" />
+          <EntitySet Name="Equipments" EntityType="VehicleModel.Equipment" />
           <AssociationSet Name="ConfigurationEquipmentList" Association="VehicleModel.ConfigurationEquipmentList">
             <End Role="Configuration" EntitySet="Configurations" />
-            <End Role="EquipmentList" EntitySet="EquipmentLists" />
+            <End Role="EquipmentList" EntitySet="Equipments" />
           </AssociationSet>
-          <EntitySet Name="EuipmentHealths" EntityType="VehicleModel.EuipmentHealth" />
+          <EntitySet Name="EquipmentHealths" EntityType="VehicleModel.EquipmentHealth" />
           <AssociationSet Name="EuipmentHealthEquipmentList" Association="VehicleModel.EuipmentHealthEquipmentList">
-            <End Role="EuipmentHealth" EntitySet="EuipmentHealths" />
-            <End Role="EquipmentList" EntitySet="EquipmentLists" />
+            <End Role="EuipmentHealth" EntitySet="EquipmentHealths" />
+            <End Role="EquipmentList" EntitySet="Equipments" />
           </AssociationSet>
           <AssociationSet Name="VehicleEuipmentHealth" Association="VehicleModel.VehicleEuipmentHealth">
             <End Role="Vehicle" EntitySet="OwnshipVehicles" />
-            <End Role="EuipmentHealth" EntitySet="EuipmentHealths" />
+            <End Role="EuipmentHealth" EntitySet="EquipmentHealths" />
           </AssociationSet>
           <EntitySet Name="NonownshipVehicles" EntityType="VehicleModel.NonownshipVehicle" />
         </EntityContainer>
@@ -49,6 +49,8 @@
           <Property Name="Callsign" Type="String" Nullable="false" />
           <NavigationProperty Name="Configurations" Relationship="VehicleModel.VehicleConfiguration" FromRole="Vehicle" ToRole="Configuration" />
           <NavigationProperty Name="EuipmentHealths" Relationship="VehicleModel.VehicleEuipmentHealth" FromRole="Vehicle" ToRole="EuipmentHealth" />
+          <Property Name="NumDeliveries" Type="Int32" Nullable="false" />
+          <Property Name="Mileage" Type="Int32" Nullable="false" />
           </EntityType>
         <EntityType Name="FlightState">
           <Key>
@@ -68,6 +70,7 @@
           <Property Name="YawRate" Type="Double" Nullable="false" />
           <Property Name="RollRate" Type="Double" Nullable="false" />
           <Property Name="PitchRate" Type="Double" Nullable="false" />
+          <Property Name="BatteryLevel" Type="Double" Nullable="false" />
         </EntityType>
         <Association Name="VehicleState">
           <End Type="VehicleModel.OwnshipVehicle" Role="Vehicle" Multiplicity="1" />
@@ -88,7 +91,7 @@
           <End Type="VehicleModel.OwnshipVehicle" Role="Vehicle" Multiplicity="*" />
           <End Type="VehicleModel.Configuration" Role="Configuration" Multiplicity="1" />
         </Association>
-        <EntityType Name="EquipmentList">
+        <EntityType Name="Equipment">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -101,12 +104,13 @@
           <Property Name="Weight" Type="Double" Nullable="false" />
           <NavigationProperty Name="Configuration" Relationship="VehicleModel.ConfigurationEquipmentList" FromRole="EquipmentList" ToRole="Configuration" />
           <NavigationProperty Name="EuipmentHealth" Relationship="VehicleModel.EuipmentHealthEquipmentList" FromRole="EquipmentList" ToRole="EuipmentHealth" />
+          <Property Name="Description" Type="String" Nullable="false" />
         </EntityType>
         <Association Name="ConfigurationEquipmentList">
           <End Type="VehicleModel.Configuration" Role="Configuration" Multiplicity="1" />
-          <End Type="VehicleModel.EquipmentList" Role="EquipmentList" Multiplicity="*" />
+          <End Type="VehicleModel.Equipment" Role="EquipmentList" Multiplicity="*" />
         </Association>
-        <EntityType Name="EuipmentHealth">
+        <EntityType Name="EquipmentHealth">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -118,12 +122,12 @@
           <Property Name="DateReceived" Type="DateTime" Nullable="false" />
         </EntityType>
         <Association Name="EuipmentHealthEquipmentList">
-          <End Type="VehicleModel.EuipmentHealth" Role="EuipmentHealth" Multiplicity="*" />
-          <End Type="VehicleModel.EquipmentList" Role="EquipmentList" Multiplicity="1" />
+          <End Type="VehicleModel.EquipmentHealth" Role="EuipmentHealth" Multiplicity="*" />
+          <End Type="VehicleModel.Equipment" Role="EquipmentList" Multiplicity="1" />
         </Association>
         <Association Name="VehicleEuipmentHealth">
           <End Type="VehicleModel.OwnshipVehicle" Role="Vehicle" Multiplicity="1" />
-          <End Type="VehicleModel.EuipmentHealth" Role="EuipmentHealth" Multiplicity="*" />
+          <End Type="VehicleModel.EquipmentHealth" Role="EuipmentHealth" Multiplicity="*" />
         </Association>
         <EntityType Name="NonownshipVehicle">
           <Key>

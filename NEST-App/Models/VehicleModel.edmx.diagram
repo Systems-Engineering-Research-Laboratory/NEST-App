@@ -10,9 +10,9 @@
         <AssociationConnector Association="VehicleModel.VehicleState" />
         <EntityTypeShape EntityType="VehicleModel.Configuration" Width="1.5" PointX="4.5" PointY="4.375" />
         <AssociationConnector Association="VehicleModel.VehicleConfiguration" />
-        <EntityTypeShape EntityType="VehicleModel.EquipmentList" Width="1.5" PointX="1.5" PointY="4.25" />
+        <EntityTypeShape EntityType="VehicleModel.Equipment" Width="1.5" PointX="1.5" PointY="4.25" />
         <AssociationConnector Association="VehicleModel.ConfigurationEquipmentList" />
-        <EntityTypeShape EntityType="VehicleModel.EuipmentHealth" Width="1.5" PointX="1.5" PointY="1.625" />
+        <EntityTypeShape EntityType="VehicleModel.EquipmentHealth" Width="1.5" PointX="1.5" PointY="1.625" />
         <AssociationConnector Association="VehicleModel.EuipmentHealthEquipmentList" />
         <AssociationConnector Association="VehicleModel.VehicleEuipmentHealth" />
         <EntityTypeShape EntityType="VehicleModel.NonownshipVehicle" Width="1.5" PointX="8.25" PointY="4.625" />
