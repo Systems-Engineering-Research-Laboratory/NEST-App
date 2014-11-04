@@ -5,7 +5,7 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="6dda4366b636406bba8d239b12c2e082" Name="Diagram1" >
-        <EntityTypeShape EntityType="VehicleModel.OwnshipVehicle" Width="1.5" PointX="4.5" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="VehicleModel.UAV" Width="1.5" PointX="4.5" PointY="1.625" IsExpanded="true" />
         <EntityTypeShape EntityType="VehicleModel.FlightState" Width="1.5" PointX="8.25" PointY="0.5" />
         <AssociationConnector Association="VehicleModel.VehicleState" />
         <EntityTypeShape EntityType="VehicleModel.Configuration" Width="1.5" PointX="4.5" PointY="4.375" />

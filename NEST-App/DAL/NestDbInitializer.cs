@@ -11,11 +11,11 @@ namespace NEST_App.DAL
     {
         protected override void Seed(NestDbContext context)
         {
-            var ownshipVehicles = new List<OwnshipVehicle>
+            var UAVs = new List<UAV>
             {
-                new OwnshipVehicle{Callsign = "HAWK21", NumDeliveries = 2134, Mileage = 234}
+                new UAV{Callsign = "HAWK21", NumDeliveries = 2134, Mileage = 234}
             };
-            ownshipVehicles.ForEach(s => context.OwnshipVehicles.Add(s));
+            UAVs.ForEach(s => context.OwnshipVehicles.Add(s));
         }
     }
 }

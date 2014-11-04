@@ -16,7 +16,7 @@ namespace NEST_App.Models
     {
         public Configuration()
         {
-            this.Vehicle = new HashSet<OwnshipVehicle>();
+            this.Vehicle = new HashSet<UAV>();
             this.EquipmentLists = new HashSet<Equipment>();
         }
     
@@ -25,7 +25,7 @@ namespace NEST_App.Models
         public string Classification { get; set; }
         public byte NumberOfMotors { get; set; }
     
-        public virtual ICollection<OwnshipVehicle> Vehicle { get; set; }
+        public virtual ICollection<UAV> Vehicle { get; set; }
         public virtual ICollection<Equipment> EquipmentLists { get; set; }
     }
 }

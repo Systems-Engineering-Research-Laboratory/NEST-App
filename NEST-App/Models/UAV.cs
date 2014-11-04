@@ -12,9 +12,9 @@ namespace NEST_App.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class OwnshipVehicle
+    public partial class UAV
     {
-        public OwnshipVehicle()
+        public UAV()
         {
             this.States = new HashSet<FlightState>();
             this.EuipmentHealths = new HashSet<EquipmentHealth>();

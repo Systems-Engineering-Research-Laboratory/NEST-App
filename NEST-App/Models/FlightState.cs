@@ -28,6 +28,6 @@ namespace NEST_App.Models
         public double PitchRate { get; set; }
         public double BatteryLevel { get; set; }
     
-        public virtual OwnshipVehicle Vehicle { get; set; }
+        public virtual UAV Vehicle { get; set; }
     }
 }

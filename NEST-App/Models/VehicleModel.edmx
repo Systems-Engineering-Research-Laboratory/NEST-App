@@ -13,15 +13,15 @@
     <edmx:ConceptualModels>
       <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="VehicleModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
         <EntityContainer Name="VehicleModelContainer" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="OwnshipVehicles" EntityType="VehicleModel.OwnshipVehicle" />
+          <EntitySet Name="UAVs1" EntityType="VehicleModel.UAV" />
           <EntitySet Name="FlightStates" EntityType="VehicleModel.FlightState" />
           <AssociationSet Name="VehicleState" Association="VehicleModel.VehicleState">
-            <End Role="Vehicle" EntitySet="OwnshipVehicles" />
+            <End Role="Vehicle" EntitySet="UAVs1" />
             <End Role="State" EntitySet="FlightStates" />
           </AssociationSet>
           <EntitySet Name="Configurations" EntityType="VehicleModel.Configuration" />
           <AssociationSet Name="VehicleConfiguration" Association="VehicleModel.VehicleConfiguration">
-            <End Role="Vehicle" EntitySet="OwnshipVehicles" />
+            <End Role="Vehicle" EntitySet="UAVs1" />
             <End Role="Configuration" EntitySet="Configurations" />
           </AssociationSet>
           <EntitySet Name="Equipments" EntityType="VehicleModel.Equipment" />
@@ -35,12 +35,12 @@
             <End Role="EquipmentList" EntitySet="Equipments" />
           </AssociationSet>
           <AssociationSet Name="VehicleEuipmentHealth" Association="VehicleModel.VehicleEuipmentHealth">
-            <End Role="Vehicle" EntitySet="OwnshipVehicles" />
+            <End Role="Vehicle" EntitySet="UAVs1" />
             <End Role="EuipmentHealth" EntitySet="EquipmentHealths" />
           </AssociationSet>
           <EntitySet Name="NonownshipVehicles" EntityType="VehicleModel.NonownshipVehicle" />
         </EntityContainer>
-        <EntityType Name="OwnshipVehicle">
+        <EntityType Name="UAV">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -73,7 +73,7 @@
           <Property Name="BatteryLevel" Type="Double" Nullable="false" />
         </EntityType>
         <Association Name="VehicleState">
-          <End Type="VehicleModel.OwnshipVehicle" Role="Vehicle" Multiplicity="1" />
+          <End Type="VehicleModel.UAV" Role="Vehicle" Multiplicity="1" />
           <End Type="VehicleModel.FlightState" Role="State" Multiplicity="*" />
         </Association>
         <EntityType Name="Configuration">
@@ -88,7 +88,7 @@
           <NavigationProperty Name="EquipmentLists" Relationship="VehicleModel.ConfigurationEquipmentList" FromRole="Configuration" ToRole="EquipmentList" />
         </EntityType>
         <Association Name="VehicleConfiguration">
-          <End Type="VehicleModel.OwnshipVehicle" Role="Vehicle" Multiplicity="*" />
+          <End Type="VehicleModel.UAV" Role="Vehicle" Multiplicity="*" />
           <End Type="VehicleModel.Configuration" Role="Configuration" Multiplicity="1" />
         </Association>
         <EntityType Name="Equipment">
@@ -126,7 +126,7 @@
           <End Type="VehicleModel.Equipment" Role="EquipmentList" Multiplicity="1" />
         </Association>
         <Association Name="VehicleEuipmentHealth">
-          <End Type="VehicleModel.OwnshipVehicle" Role="Vehicle" Multiplicity="1" />
+          <End Type="VehicleModel.UAV" Role="Vehicle" Multiplicity="1" />
           <End Type="VehicleModel.EquipmentHealth" Role="EuipmentHealth" Multiplicity="*" />
         </Association>
         <EntityType Name="NonownshipVehicle">

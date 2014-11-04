@@ -20,6 +20,6 @@ namespace NEST_App.Models
         public System.DateTime DateReceived { get; set; }
     
         public virtual Equipment EquipmentList { get; set; }
-        public virtual OwnshipVehicle Vehicle { get; set; }
+        public virtual UAV Vehicle { get; set; }
     }
 }

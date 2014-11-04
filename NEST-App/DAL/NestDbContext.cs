@@ -15,7 +15,7 @@ namespace NEST_App.DAL
 
         }
 
-        public DbSet<OwnshipVehicle> OwnshipVehicles { get; set; }
+        public DbSet<UAV> OwnshipVehicles { get; set; }
         public DbSet<NonownshipVehicle> NonownshipVehicles { get; set; }
         public DbSet<Configuration> Configurations { get; set; }
         public DbSet<Equipment> EquipmentList { get; set; }
