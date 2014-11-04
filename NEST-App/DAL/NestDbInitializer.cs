@@ -16,6 +16,7 @@ namespace NEST_App.DAL
                 new UAV{Callsign = "HAWK21", NumDeliveries = 2134, Mileage = 234}
             };
             UAVs.ForEach(s => context.OwnshipVehicles.Add(s));
+            context.SaveChanges();
         }
     }
 }

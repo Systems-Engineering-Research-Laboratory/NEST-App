@@ -216,6 +216,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InterfaceController.cs" />
+    <Compile Include="Controllers\UAVsController.cs" />
     <Compile Include="DAL\NestDbContext.cs" />
     <Compile Include="DAL\NestDbInitializer.cs" />
     <Compile Include="Global.asax.cs">
@@ -380,6 +381,11 @@
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Interface\Map.cshtml" />
+    <Content Include="Views\UAVs\Create.cshtml" />
+    <Content Include="Views\UAVs\Delete.cshtml" />
+    <Content Include="Views\UAVs\Details.cshtml" />
+    <Content Include="Views\UAVs\Edit.cshtml" />
+    <Content Include="Views\UAVs\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
