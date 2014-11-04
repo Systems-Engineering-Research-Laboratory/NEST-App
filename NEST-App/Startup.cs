@@ -9,6 +9,7 @@ namespace NEST_App
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+            app.MapSignalR();
         }
     }
 }
