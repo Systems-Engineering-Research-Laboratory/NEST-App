@@ -216,6 +216,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InterfaceController.cs" />
+    <Compile Include="Controllers\SimController.cs" />
     <Compile Include="Controllers\UAVsController.cs" />
     <Compile Include="DAL\NestDbContext.cs" />
     <Compile Include="DAL\NestDbInitializer.cs" />
@@ -353,6 +354,7 @@
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\simulation.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -386,6 +388,7 @@
     <Content Include="Views\UAVs\Details.cshtml" />
     <Content Include="Views\UAVs\Edit.cshtml" />
     <Content Include="Views\UAVs\Index.cshtml" />
+    <Content Include="Views\Sim\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

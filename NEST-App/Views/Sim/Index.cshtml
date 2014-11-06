@@ -1,0 +1,19 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ViewBag.Title = "Simulation";
+}
+
+<h2>Simulation</h2>
+
+<div>
+    <button type="button" class="btn btn-default" id="start">Start sim</button>
+</div>
+
+
+@{
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/Scripts/simulation.js");
+}
