@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl" Namespace="Mapinfo.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005">
+        <EntityContainer Name="MapinfoTargetContainer" >
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="Mapinfo" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="MapinfoContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="UAVInformationSet" EntityType="Mapinfo.UAVInformation" />
+          <EntitySet Name="PopulationDensitySet" EntityType="Mapinfo.PopulationDensity" />
+          <EntitySet Name="MapInfoSet" EntityType="Mapinfo.MapInfo" />
+          <EntitySet Name="WeatherSet" EntityType="Mapinfo.Weather" />
+          <AssociationSet Name="MapInfoWeather" Association="Mapinfo.MapInfoWeather">
+            <End Role="MapInfo" EntitySet="MapInfoSet" />
+            <End Role="Weather" EntitySet="WeatherSet" />
+          </AssociationSet>
+          <AssociationSet Name="UAV_UtilitiesWeather" Association="Mapinfo.UAV_UtilitiesWeather">
+            <End Role="UAV_Utilities" EntitySet="MapInfoSet" />
+            <End Role="Weather" EntitySet="WeatherSet" />
+          </AssociationSet>
+          <AssociationSet Name="RestrictedAreaWeather" Association="Mapinfo.RestrictedAreaWeather">
+            <End Role="RestrictedArea" EntitySet="MapInfoSet" />
+            <End Role="Weather" EntitySet="WeatherSet" />
+          </AssociationSet>
+          <AssociationSet Name="UAVInformationMapInfo" Association="Mapinfo.UAVInformationMapInfo">
+            <End Role="UAVInformation" EntitySet="UAVInformationSet" />
+            <End Role="MapInfo" EntitySet="MapInfoSet" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Weather">
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Location" Nullable="false" />
+          <Property Type="String" Name="Name_Station" Nullable="false" />
+          <Property Type="String" Name="AvgWindSpdMPH" Nullable="false" />
+          <Property Type="String" Name="AvgWindDir" Nullable="false" />
+          <Property Type="String" Name="MaxWindSpdMPH" Nullable="false" />
+          <Property Type="String" Name="WindDiratMax" Nullable="false" />
+          <Property Type="String" Name="AvgTempDeg_F" Nullable="false" />
+          <Property Type="String" Name="MaxTempDeg_F" Nullable="false" />
+          <Property Type="String" Name="MinTempDeg_F" Nullable="false" />
+          <Property Type="String" Name="AvgRH_Perc" Nullable="false" />
+          <Property Type="String" Name="AvgBarPress_mb" Nullable="false" />
+          <Property Type="String" Name="TotalRainInches" Nullable="false" />
+          <Property Type="String" Name="AvgSolar_WPerm2" Nullable="false" />
+          <Property Type="String" Name="BattVoltMin" Nullable="false" />
+          <Property Type="String" Name="Warning" Nullable="false" />
+          <NavigationProperty Name="MapInfo" Relationship="Mapinfo.MapInfoWeather" FromRole="Weather" ToRole="MapInfo" />
+          <NavigationProperty Name="UAV_Utilities" Relationship="Mapinfo.UAV_UtilitiesWeather" FromRole="Weather" ToRole="UAV_Utilities" />
+          <NavigationProperty Name="RestrictedArea" Relationship="Mapinfo.RestrictedAreaWeather" FromRole="Weather" ToRole="RestrictedArea" />
+        </EntityType>
+        <EntityType Name="RestrictedArea" BaseType="Mapinfo.MapInfo">
+          <Property Type="String" Name="Restiricted_Latitude" Nullable="false" />
+          <Property Type="String" Name="Restiricted_Longitude" Nullable="false" />
+          <Property Type="String" Name="Restricited_Altitude" Nullable="false" />
+          <Property Type="String" Name="Creator_Created" Nullable="false" />
+          <Property Type="String" Name="Time_Created" Nullable="false" />
+          <Property Type="String" Name="Reason_Created" Nullable="false" />
+          <NavigationProperty Name="Weather1" Relationship="Mapinfo.RestrictedAreaWeather" FromRole="RestrictedArea" ToRole="Weather" />
+        </EntityType>
+        <EntityType Name="UAVInformation">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Position" Nullable="false" />
+          <Property Type="String" Name="Timestamp" Nullable="false" />
+          <Property Type="String" Name="VelocityX" Nullable="false" />
+          <Property Type="String" Name="VelocityY" Nullable="false" />
+          <Property Type="String" Name="VelocityZ" Nullable="false" />
+          <Property Type="String" Name="Waypoint" Nullable="false" />
+          <Property Type="String" Name="Path" Nullable="false" />
+          <Property Type="String" Name="Origin" Nullable="false" />
+          <Property Type="String" Name="Destination" Nullable="false" />
+          <NavigationProperty Name="MapInfo" Relationship="Mapinfo.UAVInformationMapInfo" FromRole="UAVInformation" ToRole="MapInfo" />
+        </EntityType>
+        <EntityType Name="UAV_Utilities" BaseType="Mapinfo.MapInfo">
+          <Property Type="String" Name="UACLocation" Nullable="false" />
+          <Property Type="String" Name="ChargingStation" Nullable="false" />
+          <Property Type="String" Name="MaintenanceCenter" Nullable="false" />
+          <Property Type="String" Name="Warehouse" Nullable="false" />
+          <Property Type="String" Name="CustomerControlRelevant_Facility" Nullable="false" />
+          <NavigationProperty Name="Weather1" Relationship="Mapinfo.UAV_UtilitiesWeather" FromRole="UAV_Utilities" ToRole="Weather" />
+        </EntityType>
+        <EntityType Name="PopulationDensity">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="MapInfo">
+          <Property Type="String" Name="ZoningInformation" Nullable="false" />
+          <Property Type="String" Name="PopulationDensity" Nullable="false" />
+          <Property Type="String" Name="Map_Latitude" Nullable="false" />
+          <Property Type="String" Name="Map_Longitude" Nullable="false" />
+          <Property Type="String" Name="ZoneName" Nullable="false" />
+          <Property Type="String" Name="Map_Altitude" Nullable="false" />
+          <Property Type="String" Name="SeaLevel" Nullable="false" />
+          <Property Type="String" Name="SafeLandingLocation" Nullable="false" />
+          <Property Type="String" Name="NonOwnShipAircraftPath" Nullable="false" />
+          <NavigationProperty Name="NavigationProperty1" />
+          <NavigationProperty Name="Weather" Relationship="Mapinfo.MapInfoWeather" FromRole="MapInfo" ToRole="Weather" />
+          <NavigationProperty Name="UAVInformation" Relationship="Mapinfo.UAVInformationMapInfo" FromRole="MapInfo" ToRole="UAVInformation" />
+        </EntityType>
+        <Association Name="MapInfoWeather">
+          <End Type="Mapinfo.MapInfo" Role="MapInfo" Multiplicity="1" />
+          <End Type="Mapinfo.Weather" Role="Weather" Multiplicity="*" />
+        </Association>
+        <Association Name="UAV_UtilitiesWeather">
+          <End Type="Mapinfo.UAV_Utilities" Role="UAV_Utilities" Multiplicity="1" />
+          <End Type="Mapinfo.Weather" Role="Weather" Multiplicity="*" />
+        </Association>
+        <Association Name="RestrictedAreaWeather">
+          <End Type="Mapinfo.RestrictedArea" Role="RestrictedArea" Multiplicity="1" />
+          <End Type="Mapinfo.Weather" Role="Weather" Multiplicity="*" />
+        </Association>
+        <Association Name="UAVInformationMapInfo">
+          <End Type="Mapinfo.UAVInformation" Role="UAVInformation" Multiplicity="1" />
+          <End Type="Mapinfo.MapInfo" Role="MapInfo" Multiplicity="*" />
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs" Space="C-S">
+        <Alias Key="Model" Value="Mapinfo" />
+        <Alias Key="Target" Value="Mapinfo.Store" />
+        <EntityContainerMapping CdmEntityContainer="MapinfoContainer" StorageEntityContainer="MapinfoTargetContainer">
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
