@@ -264,16 +264,6 @@
     <Compile Include="Models\UAV.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\VehicleModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>VehicleModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\VehicleModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>VehicleModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\VehicleModel.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
