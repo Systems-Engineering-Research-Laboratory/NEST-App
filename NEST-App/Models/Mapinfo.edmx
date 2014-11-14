@@ -35,7 +35,10 @@
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Weather">
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Key>
+            <PropertyRef Name="WeatherID" />
+          </Key>
+          <Property Type="Int32" Name="WeatherID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="String" Name="Location" Nullable="false" />
           <Property Type="String" Name="Name_Station" Nullable="false" />
           <Property Type="String" Name="AvgWindSpdMPH" Nullable="false" />
@@ -63,6 +66,7 @@
           <Property Type="String" Name="Time_Created" Nullable="false" />
           <Property Type="String" Name="Reason_Created" Nullable="false" />
           <NavigationProperty Name="Weather1" Relationship="Mapinfo.RestrictedAreaWeather" FromRole="RestrictedArea" ToRole="Weather" />
+          <Property Name="RestrictedAreaID" Type="String" Nullable="false" />
         </EntityType>
         <EntityType Name="UAVInformation">
           <Key>
@@ -87,6 +91,7 @@
           <Property Type="String" Name="Warehouse" Nullable="false" />
           <Property Type="String" Name="CustomerControlRelevant_Facility" Nullable="false" />
           <NavigationProperty Name="Weather1" Relationship="Mapinfo.UAV_UtilitiesWeather" FromRole="UAV_Utilities" ToRole="Weather" />
+          <Property Name="UAV_WarehouseID" Type="String" Nullable="false" />
         </EntityType>
         <EntityType Name="PopulationDensity">
           <Key>
@@ -95,6 +100,9 @@
           <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
         </EntityType>
         <EntityType Name="MapInfo">
+          <Key>
+            <PropertyRef Name="MapInfoID" />
+          </Key>
           <Property Type="String" Name="ZoningInformation" Nullable="false" />
           <Property Type="String" Name="PopulationDensity" Nullable="false" />
           <Property Type="String" Name="Map_Latitude" Nullable="false" />
@@ -106,6 +114,7 @@
           <Property Type="String" Name="NonOwnShipAircraftPath" Nullable="false" />
           <NavigationProperty Name="Weather" Relationship="Mapinfo.MapInfoWeather" FromRole="MapInfo" ToRole="Weather" />
           <NavigationProperty Name="UAVInformation" Relationship="Mapinfo.UAVInformationMapInfo" FromRole="MapInfo" ToRole="UAVInformation" />
+          <Property Name="MapInfoID" Type="String" Nullable="false" />
         </EntityType>
         <Association Name="MapInfoWeather">
           <End Type="Mapinfo.MapInfo" Role="MapInfo" Multiplicity="1" />
