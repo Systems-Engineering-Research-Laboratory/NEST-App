@@ -80,7 +80,7 @@
           <Property Type="String" Name="Destination" Nullable="false" />
           <NavigationProperty Name="MapInfo" Relationship="Mapinfo.UAVInformationMapInfo" FromRole="UAVInformation" ToRole="MapInfo" />
         </EntityType>
-        <EntityType Name="UAV_Utilities" BaseType="Mapinfo.MapInfo">
+        <EntityType Name="UAV_Warehouse" BaseType="Mapinfo.MapInfo">
           <Property Type="String" Name="UACLocation" Nullable="false" />
           <Property Type="String" Name="ChargingStation" Nullable="false" />
           <Property Type="String" Name="MaintenanceCenter" Nullable="false" />
@@ -104,7 +104,6 @@
           <Property Type="String" Name="SeaLevel" Nullable="false" />
           <Property Type="String" Name="SafeLandingLocation" Nullable="false" />
           <Property Type="String" Name="NonOwnShipAircraftPath" Nullable="false" />
-          <NavigationProperty Name="NavigationProperty1" />
           <NavigationProperty Name="Weather" Relationship="Mapinfo.MapInfoWeather" FromRole="MapInfo" ToRole="Weather" />
           <NavigationProperty Name="UAVInformation" Relationship="Mapinfo.UAVInformationMapInfo" FromRole="MapInfo" ToRole="UAVInformation" />
         </EntityType>
@@ -113,7 +112,7 @@
           <End Type="Mapinfo.Weather" Role="Weather" Multiplicity="*" />
         </Association>
         <Association Name="UAV_UtilitiesWeather">
-          <End Type="Mapinfo.UAV_Utilities" Role="UAV_Utilities" Multiplicity="1" />
+          <End Type="Mapinfo.UAV_Warehouse" Role="UAV_Utilities" Multiplicity="1" />
           <End Type="Mapinfo.Weather" Role="Weather" Multiplicity="*" />
         </Association>
         <Association Name="RestrictedAreaWeather">
