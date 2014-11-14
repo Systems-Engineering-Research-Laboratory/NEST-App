@@ -51,7 +51,7 @@ namespace NEST_App.Controllers
                 return BadRequest();
             }
 
-            db.Entry(flightState).State = EntityState.Modified;
+            db.Entry(flightState).State = System.Data.Entity.EntityState.Modified;
 
             try
             {
