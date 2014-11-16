@@ -233,6 +233,7 @@
     <Compile Include="Models\Configuration.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\FlightStateDTO.cs" />
     <Compile Include="Models\Equipment.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>

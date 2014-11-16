@@ -19,13 +19,32 @@ namespace NEST_App.Controllers
         private NestDbContext db = new NestDbContext();
 
         // GET: api/FlightState
-        public IQueryable<FlightState> GetFlightStates()
+        public IQueryable<FlightStateDTO> GetFlightStates()
         {
-            return db.FlightStates;
+            var flightStates = from fs in db.FlightStates
+                               select new FlightStateDTO()
+                               {
+                                   Id = fs.Id,
+                                   Timestamp = fs.Timestamp,
+                                   Latitude = fs.Position.Latitude,
+                                   Longitude = fs.Position.Longitude,
+                                   Altitude = fs.Position.Elevation,
+                                   VelocityX = fs.VelocityX,
+                                   VelocityY = fs.VelocityY,
+                                   VelocityZ = fs.VelocityZ,
+                                   Yaw = fs.Yaw,
+                                   Roll = fs.Roll,
+                                   Pitch = fs.Pitch,
+                                   YawRate = fs.YawRate,
+                                   RollRate = fs.RollRate,
+                                   PitchRate = fs.PitchRate,
+                                   BatteryLevel = fs.BatteryLevel
+                               };
+            return flightStates;
         }
 
         // GET: api/FlightState/5
-        [ResponseType(typeof(FlightState))]
+        [ResponseType(typeof(FlightStateDTO))]
         public async Task<IHttpActionResult> GetFlightState(int id)
         {
             FlightState flightState = await db.FlightStates.FindAsync(id);
@@ -34,7 +53,10 @@ namespace NEST_App.Controllers
                 return NotFound();
             }
 
-            return Ok(flightState);
+            FlightStateDTO dto = new FlightStateDTO();
+            dto.buildDTO(flightState);
+
+            return Ok(dto);
         }
 
         // PUT: api/FlightState/5

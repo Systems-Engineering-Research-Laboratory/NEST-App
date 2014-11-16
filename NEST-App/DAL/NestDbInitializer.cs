@@ -12,6 +12,7 @@ namespace NEST_App.DAL
     {
         protected override void Seed(NestDbContext context)
         {
+
             var UAVs = new List<UAV>
             {
                 new UAV{Callsign = "HAWK21", NumDeliveries = 2134, Mileage = 234}
@@ -21,7 +22,7 @@ namespace NEST_App.DAL
             var FlightStates = new List<FlightState>
             {
                 new FlightState{
-                    //Position = DbGeography.FromText("POINT(34.2365205,-118.5002736)"),
+                    Position = DbGeography.FromText("POINT(-118.5002736 34.2365205 400)"),
                     VelocityX = 0,
                     VelocityY = 0,
                     VelocityZ = 0,
@@ -31,7 +32,8 @@ namespace NEST_App.DAL
                     YawRate = 0,
                     RollRate = 0,
                     PitchRate = 0,
-                    BatteryLevel = .94
+                    BatteryLevel = .94,
+                    Vehicle = UAVs[0]
                 }
             };
             FlightStates.ForEach(s =>
