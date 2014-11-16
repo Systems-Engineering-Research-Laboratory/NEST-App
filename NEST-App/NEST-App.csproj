@@ -51,11 +51,11 @@
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="JavaScriptEngineSwitcher.Core">
       <HintPath>..\packages\JavaScriptEngineSwitcher.Core.1.1.0\lib\net40\JavaScriptEngineSwitcher.Core.dll</HintPath>
@@ -118,6 +118,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http.Formatting, Version=5.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -244,20 +245,25 @@
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\Mapinfo.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Mapinfo.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Mapinfo.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Mapinfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Mapinfo.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Mapinfo.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Models\NonownshipVehicle.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\UAV.cs">
-      <DependentUpon>VehicleModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\VehicleModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>VehicleModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\VehicleModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\VehicleModel.Designer.cs">
@@ -340,6 +346,23 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>VehicleModel.cs</LastGenOutput>
       <DependentUpon>VehicleModel.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="Models\Mapinfo.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Mapinfo.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\Mapinfo.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Mapinfo.edmx</DependentUpon>
+      <LastGenOutput>Mapinfo.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\Mapinfo.edmx.diagram">
+      <DependentUpon>Mapinfo.edmx</DependentUpon>
+    </Content>
+    <Content Include="Models\Mapinfo.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Mapinfo.edmx</DependentUpon>
+      <LastGenOutput>Mapinfo.cs</LastGenOutput>
     </Content>
     <None Include="Scripts\jquery-2.1.0.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="88fc7fca9c574ed68f87a797b214579c" Name="Diagram1" >
+        <EntityTypeShape EntityType="Mapinfo.Weather" Width="2" PointX="2.375" PointY="1.25" />
+        <EntityTypeShape EntityType="Mapinfo.RestrictedArea" Width="2" PointX="8.75" PointY="1.25" />
+        <EntityTypeShape EntityType="Mapinfo.UAV_Warehouse" Width="2.375" PointX="9.875" PointY="4.125" />
+        <EntityTypeShape EntityType="Mapinfo.MapInfo" Width="2.25" PointX="5.5" PointY="1.625" />
+        <AssociationConnector Association="Mapinfo.MapInfoWeather" />
+        <InheritanceConnector EntityType="Mapinfo.UAV_Warehouse" />
+        <InheritanceConnector EntityType="Mapinfo.RestrictedArea" />
+        <AssociationConnector Association="Mapinfo.UAV_UtilitiesWeather" />
+        <AssociationConnector Association="Mapinfo.RestrictedAreaWeather" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

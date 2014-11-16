@@ -83,7 +83,7 @@ namespace NEST_App.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(uAV).State = EntityState.Modified;
+                db.Entry(uAV).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
