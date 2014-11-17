@@ -16,7 +16,7 @@ namespace NEST_App.Models
     {
         public UAVInformation()
         {
-            this.MapInfo = new HashSet<MapInfo>();
+            this.MapInfo = new HashSet<MapInformation>();
         }
     
         public int Id { get; set; }
@@ -30,6 +30,6 @@ namespace NEST_App.Models
         public string Origin { get; set; }
         public string Destination { get; set; }
     
-        public virtual ICollection<MapInfo> MapInfo { get; set; }
+        public virtual ICollection<MapInformation> MapInfo { get; set; }
     }
 }

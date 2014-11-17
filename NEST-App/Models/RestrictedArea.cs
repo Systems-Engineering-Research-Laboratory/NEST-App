@@ -12,7 +12,7 @@ namespace NEST_App.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class RestrictedArea : MapInfo
+    public partial class RestrictedArea : MapInformation
     {
         public RestrictedArea()
         {

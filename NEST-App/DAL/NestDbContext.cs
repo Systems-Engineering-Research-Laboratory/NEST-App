@@ -12,7 +12,7 @@ namespace NEST_App.DAL
 
         public NestDbContext() : base("NestDbContext")
         {
-
+            base.Configuration.ProxyCreationEnabled = false;
         }
 
         public DbSet<UAV> OwnshipVehicles { get; set; }
