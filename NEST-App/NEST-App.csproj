@@ -260,16 +260,34 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Mapinfo.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\MapInformation.cs">
+      <DependentUpon>Mapinfo.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\NonownshipVehicle.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\PopulationDensity.cs">
+      <DependentUpon>Mapinfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RestrictedArea.cs">
+      <DependentUpon>Mapinfo.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\UAV.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\UAVInformation.cs">
+      <DependentUpon>Mapinfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\UAV_Warehouse.cs">
+      <DependentUpon>Mapinfo.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\VehicleModel.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>VehicleModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Weather.cs">
+      <DependentUpon>Mapinfo.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -444,7 +462,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>53130</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

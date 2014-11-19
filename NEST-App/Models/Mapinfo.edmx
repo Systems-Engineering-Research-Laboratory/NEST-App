@@ -15,23 +15,23 @@
         <EntityContainer Name="MapinfoContainer" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="UAVInformationSet" EntityType="Mapinfo.UAVInformation" />
           <EntitySet Name="PopulationDensitySet" EntityType="Mapinfo.PopulationDensity" />
-          <EntitySet Name="MapInfoSet" EntityType="Mapinfo.MapInfo" />
+          <EntitySet Name="MapInformationSet" EntityType="Mapinfo.MapInformation" />
           <EntitySet Name="WeatherSet" EntityType="Mapinfo.Weather" />
           <AssociationSet Name="MapInfoWeather" Association="Mapinfo.MapInfoWeather">
-            <End Role="MapInfo" EntitySet="MapInfoSet" />
+            <End Role="MapInfo" EntitySet="MapInformationSet" />
             <End Role="Weather" EntitySet="WeatherSet" />
           </AssociationSet>
           <AssociationSet Name="UAV_UtilitiesWeather" Association="Mapinfo.UAV_UtilitiesWeather">
-            <End Role="UAV_Utilities" EntitySet="MapInfoSet" />
+            <End Role="UAV_Utilities" EntitySet="MapInformationSet" />
             <End Role="Weather" EntitySet="WeatherSet" />
           </AssociationSet>
           <AssociationSet Name="RestrictedAreaWeather" Association="Mapinfo.RestrictedAreaWeather">
-            <End Role="RestrictedArea" EntitySet="MapInfoSet" />
+            <End Role="RestrictedArea" EntitySet="MapInformationSet" />
             <End Role="Weather" EntitySet="WeatherSet" />
           </AssociationSet>
           <AssociationSet Name="UAVInformationMapInfo" Association="Mapinfo.UAVInformationMapInfo">
             <End Role="UAVInformation" EntitySet="UAVInformationSet" />
-            <End Role="MapInfo" EntitySet="MapInfoSet" />
+            <End Role="MapInfo" EntitySet="MapInformationSet" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Weather">
@@ -58,7 +58,7 @@
           <NavigationProperty Name="UAV_Utilities" Relationship="Mapinfo.UAV_UtilitiesWeather" FromRole="Weather" ToRole="UAV_Utilities" />
           <NavigationProperty Name="RestrictedArea" Relationship="Mapinfo.RestrictedAreaWeather" FromRole="Weather" ToRole="RestrictedArea" />
         </EntityType>
-        <EntityType Name="RestrictedArea" BaseType="Mapinfo.MapInfo">
+        <EntityType Name="RestrictedArea" BaseType="Mapinfo.MapInformation">
           <Property Type="String" Name="Restiricted_Latitude" Nullable="false" />
           <Property Type="String" Name="Restiricted_Longitude" Nullable="false" />
           <Property Type="String" Name="Restricited_Altitude" Nullable="false" />
@@ -84,7 +84,7 @@
           <Property Type="String" Name="Destination" Nullable="false" />
           <NavigationProperty Name="MapInfo" Relationship="Mapinfo.UAVInformationMapInfo" FromRole="UAVInformation" ToRole="MapInfo" />
         </EntityType>
-        <EntityType Name="UAV_Warehouse" BaseType="Mapinfo.MapInfo">
+        <EntityType Name="UAV_Warehouse" BaseType="Mapinfo.MapInformation">
           <Property Type="String" Name="UACLocation" Nullable="false" />
           <Property Type="String" Name="ChargingStation" Nullable="false" />
           <Property Type="String" Name="MaintenanceCenter" Nullable="false" />
@@ -99,7 +99,7 @@
           </Key>
           <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
         </EntityType>
-        <EntityType Name="MapInfo">
+        <EntityType Name="MapInformation">
           <Key>
             <PropertyRef Name="MapInfoID" />
           </Key>
@@ -117,7 +117,7 @@
           <Property Name="MapInfoID" Type="String" Nullable="false" />
         </EntityType>
         <Association Name="MapInfoWeather">
-          <End Type="Mapinfo.MapInfo" Role="MapInfo" Multiplicity="1" />
+          <End Type="Mapinfo.MapInformation" Role="MapInfo" Multiplicity="1" />
           <End Type="Mapinfo.Weather" Role="Weather" Multiplicity="*" />
         </Association>
         <Association Name="UAV_UtilitiesWeather">
@@ -130,7 +130,7 @@
         </Association>
         <Association Name="UAVInformationMapInfo">
           <End Type="Mapinfo.UAVInformation" Role="UAVInformation" Multiplicity="1" />
-          <End Type="Mapinfo.MapInfo" Role="MapInfo" Multiplicity="*" />
+          <End Type="Mapinfo.MapInformation" Role="MapInfo" Multiplicity="*" />
         </Association>
       </Schema>
     </edmx:ConceptualModels>

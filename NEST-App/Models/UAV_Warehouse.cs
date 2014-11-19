@@ -12,7 +12,7 @@ namespace NEST_App.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class UAV_Warehouse : MapInfo
+    public partial class UAV_Warehouse : MapInformation
     {
         public UAV_Warehouse()
         {

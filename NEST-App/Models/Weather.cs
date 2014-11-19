@@ -31,7 +31,7 @@ namespace NEST_App.Models
         public string BattVoltMin { get; set; }
         public string Warning { get; set; }
     
-        public virtual MapInfo MapInfo { get; set; }
+        public virtual MapInformation MapInfo { get; set; }
         public virtual UAV_Warehouse UAV_Utilities { get; set; }
         public virtual RestrictedArea RestrictedArea { get; set; }
     }

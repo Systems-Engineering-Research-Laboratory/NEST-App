@@ -27,7 +27,7 @@ namespace NEST_App.Models
     
         public DbSet<UAVInformation> UAVInformationSet { get; set; }
         public DbSet<PopulationDensity> PopulationDensitySet { get; set; }
-        public DbSet<MapInfo> MapInfoSet { get; set; }
+        public DbSet<MapInformation> MapInformationSet { get; set; }
         public DbSet<Weather> WeatherSet { get; set; }
     }
 }
