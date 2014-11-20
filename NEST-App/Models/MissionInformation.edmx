@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="NestDbContextModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityContainer Name="NestDbContextModelStoreContainer" />
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="NestDbContextModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="NestDbContextEntities" annotation:LazyLoadingEnabled="true" >
+          <EntitySet Name="Missions" EntityType="NestDbContextModel.Mission" />
+          <EntitySet Name="Orders" EntityType="NestDbContextModel.Orders" />
+          <AssociationSet Name="MissionOrders" Association="NestDbContextModel.MissionOrders">
+            <End Role="Mission" EntitySet="Missions" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Mission">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Phase" Type="String" Nullable="false" />
+          <Property Name="FlightPattern" Type="String" Nullable="false" />
+          <Property Name="OffNominal" Type="String" Nullable="false" />
+          <Property Name="Payload" Type="String" Nullable="false" />
+          <Property Name="Priority" Type="String" Nullable="false" />
+          <Property Name="Financials" Type="String" Nullable="false" />
+          <Property Name="UAVAssigned" Type="String" Nullable="false" />
+          <Property Name="TimeAssigned" Type="String" Nullable="false" />
+          <Property Name="TimeCompleted" Type="String" Nullable="false" />
+          <Property Name="Destination" Type="String" Nullable="false" />
+          <Property Name="ScheduledCompletionTime" Type="String" Nullable="false" />
+          <NavigationProperty Name="Order" Relationship="NestDbContextModel.MissionOrders" FromRole="Mission" ToRole="Orders" />
+          <Property Name="EstimatedCompletionTime" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Orders">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TimeReceived" Type="String" Nullable="false" />
+          <Property Name="TimeCompleted" Type="String" Nullable="false" />
+          <Property Name="PackageContents" Type="String" Nullable="false" />
+          <Property Name="Notes" Type="String" Nullable="false" />
+          <NavigationProperty Name="Missions" Relationship="NestDbContextModel.MissionOrders" FromRole="Orders" ToRole="Mission" />
+          <Property Name="Destination" Type="String" Nullable="false" />
+        </EntityType>
+        <Association Name="MissionOrders">
+          <End Type="NestDbContextModel.Mission" Role="Mission" Multiplicity="*" />
+          <End Type="NestDbContextModel.Orders" Role="Orders" Multiplicity="1" />
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="NestDbContextModelStoreContainer" CdmEntityContainer="NestDbContextEntities" />
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
