@@ -134,7 +134,13 @@ function processVehicle(vehicle, dt) {
 }
 
 function pushFlightUpdates(vehicles) {
-
+    for (i = 0; i < vehicles.length; i++) {
+        vehicles[i].Timestamp = new Date(Date.now()).toISOString();
+        $.post('/api/flightstate/',
+            vehicles[i],
+            function (data, textStatus, jqXHR) {
+            });
+    }
 }
 
 function updateButtons() {

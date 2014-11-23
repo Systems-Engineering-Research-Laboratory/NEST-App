@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+//Import spatial for dbGeography
+using System.Data.Entity.Spatial;
+using AutoMapper;
 
 namespace NEST_App.Models
 {
@@ -9,9 +12,9 @@ namespace NEST_App.Models
     {
         public int Id { get; set; }
         public System.DateTime Timestamp { get; set; }
-        public double? Latitude { get; set; }
-        public double? Longitude { get; set; }
-        public double? Altitude { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public double Altitude { get; set; }
         public double VelocityX { get; set; }
         public double VelocityY { get; set; }
         public double VelocityZ { get; set; }
@@ -47,6 +50,41 @@ namespace NEST_App.Models
                 this.PitchRate = fs.PitchRate;
                 this.BatteryLevel = fs.BatteryLevel;
             }
+        }
+    }
+
+    public class FlightStateLatResolver : ValueResolver<FlightState, double>
+    {
+        protected override double ResolveCore(FlightState fs)
+        {
+            return fs.Position.Latitude.GetValueOrDefault();
+        }
+    }
+
+    public class FlightStateLonResolver : ValueResolver<FlightState, double>
+    {
+        protected override double ResolveCore(FlightState fs)
+        {
+            return fs.Position.Longitude.GetValueOrDefault();
+        }
+    }
+
+    public class FlightStateAltResolver : ValueResolver<FlightState, double>
+    {
+        protected override double ResolveCore(FlightState fs)
+        {
+            return fs.Position.Elevation.GetValueOrDefault();
+        }
+    }
+    
+
+    public class FlightStatePosResolver : ValueResolver<FlightStateDTO, DbGeography>
+    {
+        protected override DbGeography ResolveCore(FlightStateDTO source)
+        {
+            var point = string.Format("POINT({1} {0} {2})", source.Latitude, source.Longitude, source.Altitude);
+
+            return DbGeography.FromText(point);
         }
     }
 }

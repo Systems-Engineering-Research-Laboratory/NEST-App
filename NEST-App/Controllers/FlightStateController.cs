@@ -11,6 +11,8 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using NEST_App.DAL;
 using NEST_App.Models;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
 namespace NEST_App.Controllers
 {
@@ -22,25 +24,12 @@ namespace NEST_App.Controllers
         public IQueryable<FlightStateDTO> GetFlightStates()
         {
             var flightStates = from fs in db.FlightStates
-                               select new FlightStateDTO()
-                               {
-                                   Id = fs.Id,
-                                   Timestamp = fs.Timestamp,
-                                   Latitude = fs.Position.Latitude,
-                                   Longitude = fs.Position.Longitude,
-                                   Altitude = fs.Position.Elevation,
-                                   VelocityX = fs.VelocityX,
-                                   VelocityY = fs.VelocityY,
-                                   VelocityZ = fs.VelocityZ,
-                                   Yaw = fs.Yaw,
-                                   Roll = fs.Roll,
-                                   Pitch = fs.Pitch,
-                                   YawRate = fs.YawRate,
-                                   RollRate = fs.RollRate,
-                                   PitchRate = fs.PitchRate,
-                                   BatteryLevel = fs.BatteryLevel
-                               };
-            return flightStates;
+                               select fs;
+            List<FlightStateDTO> dtos = new List<FlightStateDTO>();
+            foreach(var fs in flightStates){
+                dtos.Add(Mapper.Map<FlightStateDTO>(fs));
+            }
+            return dtos.AsQueryable();
         }
 
         // GET: api/FlightState/5
@@ -61,18 +50,18 @@ namespace NEST_App.Controllers
 
         // PUT: api/FlightState/5
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutFlightState(int id, FlightState flightState)
+        public async Task<IHttpActionResult> PutFlightState(int id, FlightStateDTO flightStateDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != flightState.Id)
+            if (id != flightStateDto.Id)
             {
                 return BadRequest();
             }
-
+            FlightState flightState = Mapper.Map<FlightState>(flightStateDto);
             db.Entry(flightState).State = System.Data.Entity.EntityState.Modified;
 
             try
@@ -96,12 +85,14 @@ namespace NEST_App.Controllers
 
         // POST: api/FlightState
         [ResponseType(typeof(FlightState))]
-        public async Task<IHttpActionResult> PostFlightState(FlightState flightState)
+        public async Task<IHttpActionResult> PostFlightState(FlightStateDTO flightStateDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            FlightState flightState = Mapper.Map<FlightState>(flightStateDto);
 
             db.FlightStates.Add(flightState);
             await db.SaveChangesAsync();
