@@ -18,7 +18,10 @@ namespace NEST_App.Controllers
         // GET: UAVs
         public ActionResult Index()
         {
-            return View(db.OwnshipVehicles.ToList());
+            dynamic uavDetailList = new System.Dynamic.ExpandoObject();
+            uavDetailList.UAVs = db.OwnshipVehicles.ToList();
+            uavDetailList.FlightStates = db.FlightStates.ToList();
+            return View(uavDetailList);
         }
 
         // GET: UAVs/Details/5

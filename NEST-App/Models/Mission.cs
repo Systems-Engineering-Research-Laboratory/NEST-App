@@ -17,17 +17,16 @@ namespace NEST_App.Models
         public int Id { get; set; }
         public string Phase { get; set; }
         public string FlightPattern { get; set; }
-        public string OffNominal { get; set; }
         public string Payload { get; set; }
-        public string Priority { get; set; }
-        public string Financials { get; set; }
-        public string UAVAssigned { get; set; }
-        public string TimeAssigned { get; set; }
-        public string TimeCompleted { get; set; }
-        public string Destination { get; set; }
-        public string ScheduledCompletionTime { get; set; }
-        public string EstimatedCompletionTime { get; set; }
+        public int Priority { get; set; }
+        public Nullable<decimal> FinancialCost { get; set; }
+        public int UAVAssigned { get; set; }
+        public System.DateTime TimeAssigned { get; set; }
+        public System.DateTime TimeCompleted { get; set; }
+        public System.Data.Entity.Spatial.DbGeography DestinationCoordinates { get; set; }
+        public System.DateTime ScheduledCompletionTime { get; set; }
+        public System.DateTime EstimatedCompletionTime { get; set; }
     
-        public virtual Orders Order { get; set; }
+        public virtual Order Order { get; set; }
     }
 }

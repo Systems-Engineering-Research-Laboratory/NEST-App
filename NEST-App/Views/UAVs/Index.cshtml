@@ -1,7 +1,8 @@
-﻿@model IEnumerable<NEST_App.Models.UAV>
+﻿@using NEST_App.Models
+@model dynamic
 
 @{
-    Layout = null;
+    ViewBag.Title = "UAVs: ";
 }
 
 <!DOCTYPE html>
@@ -12,38 +13,36 @@
     <title>Index</title>
 </head>
 <body>
+    <br />
     <p>
         @Html.ActionLink("Create New", "Create")
     </p>
     <table class="table">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Callsign)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumDeliveries)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Mileage)
-            </th>
-            <th></th>
+            <th>Callsign</th>
+            <th>NumDeliveries</th>
+            <th>Mileage</th>
+            <th>Battery Level</th>
         </tr>
     
-    @foreach (var item in Model) {
+    @foreach (UAV uav in Model.UAVs) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Callsign)
+                @Html.DisplayFor(modelItem => uav.Callsign)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.NumDeliveries)
+                @Html.DisplayFor(modelItem => uav.NumDeliveries)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Mileage)
+                @Html.DisplayFor(modelItem => uav.Mileage)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+                @Html.DisplayFor(modelItem => uav.States.FirstOrDefault().BatteryLevel)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id=uav.Id }) |
+                @Html.ActionLink("Details", "Details", new { id=uav.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id=uav.Id })
             </td>
         </tr>
     }

@@ -21,6 +21,8 @@ namespace NEST_App.DAL
         public DbSet<Equipment> EquipmentList { get; set; }
         public DbSet<EquipmentHealth> EquipmentHealthList { get; set; }
         public DbSet<FlightState> FlightStates { get; set; }
+        public DbSet<Mission> Missions { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

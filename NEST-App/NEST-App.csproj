@@ -269,8 +269,29 @@
     <Compile Include="Models\MapInformation.cs">
       <DependentUpon>Mapinfo.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Mission.cs">
+      <DependentUpon>MissionModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MissionModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MissionModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MissionModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MissionModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MissionModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MissionModel.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Models\NonownshipVehicle.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Order.cs">
+      <DependentUpon>MissionModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\PopulationDensity.cs">
       <DependentUpon>Mapinfo.tt</DependentUpon>
@@ -387,6 +408,23 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>Mapinfo.edmx</DependentUpon>
       <LastGenOutput>Mapinfo.cs</LastGenOutput>
+    </Content>
+    <EntityDeploy Include="Models\MissionModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>MissionModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\MissionModel.edmx.diagram">
+      <DependentUpon>MissionModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="Models\MissionModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MissionModel.Context.cs</LastGenOutput>
+      <DependentUpon>MissionModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="Models\MissionModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MissionModel.cs</LastGenOutput>
+      <DependentUpon>MissionModel.edmx</DependentUpon>
     </Content>
     <None Include="Scripts\jquery-2.1.0.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />

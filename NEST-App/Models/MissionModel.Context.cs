@@ -13,10 +13,10 @@ namespace NEST_App.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class MissionInformationContainer : DbContext
+    public partial class MissionModelContainer : DbContext
     {
-        public MissionInformationContainer()
-            : base("name=MissionInformationContainer")
+        public MissionModelContainer()
+            : base("name=MissionModelContainer")
         {
         }
     
@@ -26,6 +26,6 @@ namespace NEST_App.Models
         }
     
         public virtual DbSet<Mission> Missions { get; set; }
-        public virtual DbSet<Orders> Orders { get; set; }
+        public virtual DbSet<Order> Orders { get; set; }
     }
 }
