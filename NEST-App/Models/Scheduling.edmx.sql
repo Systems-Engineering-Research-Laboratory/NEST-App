@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 11/24/2014 09:56:04
+-- Date Created: 11/24/2014 11:23:25
 -- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\Scheduling.edmx
 -- --------------------------------------------------
 
@@ -17,11 +17,26 @@ GO
 -- Dropping existing FOREIGN KEY constraints
 -- --------------------------------------------------
 
+IF OBJECT_ID(N'[dbo].[FK_MaintenanceSchedule]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Maintenances] DROP CONSTRAINT [FK_MaintenanceSchedule];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ScheduleDeliveryStatus]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Schedules] DROP CONSTRAINT [FK_ScheduleDeliveryStatus];
+GO
 
 -- --------------------------------------------------
 -- Dropping existing tables
 -- --------------------------------------------------
 
+IF OBJECT_ID(N'[dbo].[Maintenances]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Maintenances];
+GO
+IF OBJECT_ID(N'[dbo].[DeliveryStatus]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[DeliveryStatus];
+GO
+IF OBJECT_ID(N'[dbo].[Schedules]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Schedules];
+GO
 
 -- --------------------------------------------------
 -- Creating all tables
@@ -32,8 +47,8 @@ CREATE TABLE [dbo].[Maintenances] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [UAV_Type] nvarchar(max)  NOT NULL,
     [UAV_Name] nvarchar(max)  NOT NULL,
-    [last_maintenance] nvarchar(max)  NOT NULL,
-    [next_maintenance] nvarchar(max)  NOT NULL,
+    [last_maintenance] datetime  NOT NULL,
+    [next_maintenance] datetime  NOT NULL,
     [time_remaining] nvarchar(max)  NOT NULL,
     [ScheduleId] int  NOT NULL
 );
@@ -42,14 +57,14 @@ GO
 -- Creating table 'DeliveryStatus'
 CREATE TABLE [dbo].[DeliveryStatus] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [time_departure] nvarchar(max)  NOT NULL,
+    [time_departure] datetime  NOT NULL,
     [location_departure] nvarchar(max)  NOT NULL,
-    [sta] nvarchar(max)  NOT NULL,
-    [eta] nvarchar(max)  NOT NULL,
+    [sta] datetime  NOT NULL,
+    [eta] datetime  NOT NULL,
     [cargo_number] nvarchar(max)  NOT NULL,
     [status_comment] nvarchar(max)  NOT NULL,
-    [time_return] nvarchar(max)  NOT NULL,
-    [time_delivery] nvarchar(max)  NOT NULL
+    [time_return] datetime  NOT NULL,
+    [time_delivery] datetime  NOT NULL
 );
 GO
 

@@ -15,14 +15,14 @@ namespace NEST_App.Models
     public partial class DeliveryStatus
     {
         public int Id { get; set; }
-        public string time_departure { get; set; }
+        public System.DateTime time_departure { get; set; }
         public string location_departure { get; set; }
-        public string sta { get; set; }
-        public string eta { get; set; }
+        public System.DateTime sta { get; set; }
+        public System.DateTime eta { get; set; }
         public string cargo_number { get; set; }
         public string status_comment { get; set; }
-        public string time_return { get; set; }
-        public string time_delivery { get; set; }
+        public System.DateTime time_return { get; set; }
+        public System.DateTime time_delivery { get; set; }
     
         public virtual Schedule Schedule { get; set; }
     }

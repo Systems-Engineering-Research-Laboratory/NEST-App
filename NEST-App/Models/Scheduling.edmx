@@ -25,8 +25,8 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="UAV_Type" Type="nvarchar(max)" Nullable="false" />
     <Property Name="UAV_Name" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="last_maintenance" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="next_maintenance" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="last_maintenance" Type="datetime" Nullable="false" />
+    <Property Name="next_maintenance" Type="datetime" Nullable="false" />
     <Property Name="time_remaining" Type="nvarchar(max)" Nullable="false" />
     <Property Name="ScheduleId" Type="int" Nullable="false" />
   </EntityType>
@@ -35,14 +35,14 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="time_departure" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="time_departure" Type="datetime" Nullable="false" />
     <Property Name="location_departure" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="sta" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="eta" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="sta" Type="datetime" Nullable="false" />
+    <Property Name="eta" Type="datetime" Nullable="false" />
     <Property Name="cargo_number" Type="nvarchar(max)" Nullable="false" />
     <Property Name="status_comment" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="time_return" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="time_delivery" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="time_return" Type="datetime" Nullable="false" />
+    <Property Name="time_delivery" Type="datetime" Nullable="false" />
   </EntityType>
   <EntityType Name="Schedules">
     <Key>
@@ -99,8 +99,8 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="UAV_Type" Type="String" Nullable="false" />
           <Property Name="UAV_Name" Type="String" Nullable="false" />
-          <Property Name="last_maintenance" Type="String" Nullable="false" />
-          <Property Name="next_maintenance" Type="String" Nullable="false" />
+          <Property Name="last_maintenance" Type="DateTime" Nullable="false" />
+          <Property Name="next_maintenance" Type="DateTime" Nullable="false" />
           <Property Name="time_remaining" Type="String" Nullable="false" />
           <NavigationProperty Name="Schedule" Relationship="Scheduling.MaintenanceSchedule" FromRole="Maintenance" ToRole="Schedule" />
           <Property Name="ScheduleId" Type="Int32" Nullable="false" />
@@ -110,14 +110,14 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="time_departure" Type="String" Nullable="false" />
+          <Property Name="time_departure" Type="DateTime" Nullable="false" />
           <Property Name="location_departure" Type="String" Nullable="false" />
-          <Property Name="sta" Type="String" Nullable="false" />
-          <Property Name="eta" Type="String" Nullable="false" />
+          <Property Name="sta" Type="DateTime" Nullable="false" />
+          <Property Name="eta" Type="DateTime" Nullable="false" />
           <Property Name="cargo_number" Type="String" Nullable="false" />
           <Property Name="status_comment" Type="String" Nullable="false" />
-          <Property Name="time_return" Type="String" Nullable="false" />
-          <Property Name="time_delivery" Type="String" Nullable="false" />
+          <Property Name="time_return" Type="DateTime" Nullable="false" />
+          <Property Name="time_delivery" Type="DateTime" Nullable="false" />
           <NavigationProperty Name="Schedule" Relationship="Scheduling.ScheduleDeliveryStatus" FromRole="DeliveryStatus" ToRole="Schedule" />
         </EntityType>
         <EntityType Name="Schedule">

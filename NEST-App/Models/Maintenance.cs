@@ -17,8 +17,8 @@ namespace NEST_App.Models
         public int Id { get; set; }
         public string UAV_Type { get; set; }
         public string UAV_Name { get; set; }
-        public string last_maintenance { get; set; }
-        public string next_maintenance { get; set; }
+        public System.DateTime last_maintenance { get; set; }
+        public System.DateTime next_maintenance { get; set; }
         public string time_remaining { get; set; }
         public int ScheduleId { get; set; }
     
