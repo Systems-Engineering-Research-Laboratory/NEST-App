@@ -1,0 +1,218 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="Scheduling.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="SchedulingStoreContainer">
+    <EntitySet Name="Maintenances" EntityType="Scheduling.Store.Maintenances" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="DeliveryStatus" EntityType="Scheduling.Store.DeliveryStatus" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Schedules" EntityType="Scheduling.Store.Schedules" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="MaintenanceSchedule" Association="Scheduling.Store.MaintenanceSchedule">
+      <End Role="Maintenance" EntitySet="Maintenances" />
+      <End Role="Schedule" EntitySet="Schedules" />
+    </AssociationSet>
+    <AssociationSet Name="ScheduleDeliveryStatus" Association="Scheduling.Store.ScheduleDeliveryStatus">
+      <End Role="Schedule" EntitySet="Schedules" />
+      <End Role="DeliveryStatus" EntitySet="DeliveryStatus" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Maintenances">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UAV_Type" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="UAV_Name" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="last_maintenance" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="next_maintenance" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="time_remaining" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="ScheduleId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="DeliveryStatus">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="time_departure" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="location_departure" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="sta" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="eta" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="cargo_number" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="status_comment" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="time_return" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="time_delivery" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Schedules">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="DeliveryStatus_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="MaintenanceSchedule">
+    <End Role="Maintenance" Type="Scheduling.Store.Maintenances" Multiplicity="*" />
+    <End Role="Schedule" Type="Scheduling.Store.Schedules" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="Schedule">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Maintenance">
+        <PropertyRef Name="ScheduleId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="ScheduleDeliveryStatus">
+    <End Role="Schedule" Type="Scheduling.Store.Schedules" Multiplicity="*" />
+    <End Role="DeliveryStatus" Type="Scheduling.Store.DeliveryStatus" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="DeliveryStatus">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Schedule">
+        <PropertyRef Name="DeliveryStatus_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="Scheduling" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="SchedulingContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Maintenances" EntityType="Scheduling.Maintenance" />
+          <EntitySet Name="DeliveryStatus" EntityType="Scheduling.DeliveryStatus" />
+          <EntitySet Name="Schedules" EntityType="Scheduling.Schedule" />
+          <AssociationSet Name="MaintenanceSchedule" Association="Scheduling.MaintenanceSchedule">
+            <End Role="Maintenance" EntitySet="Maintenances" />
+            <End Role="Schedule" EntitySet="Schedules" />
+          </AssociationSet>
+          <AssociationSet Name="ScheduleDeliveryStatus" Association="Scheduling.ScheduleDeliveryStatus">
+            <End Role="Schedule" EntitySet="Schedules" />
+            <End Role="DeliveryStatus" EntitySet="DeliveryStatus" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Maintenance">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UAV_Type" Type="String" Nullable="false" />
+          <Property Name="UAV_Name" Type="String" Nullable="false" />
+          <Property Name="last_maintenance" Type="String" Nullable="false" />
+          <Property Name="next_maintenance" Type="String" Nullable="false" />
+          <Property Name="time_remaining" Type="String" Nullable="false" />
+          <NavigationProperty Name="Schedule" Relationship="Scheduling.MaintenanceSchedule" FromRole="Maintenance" ToRole="Schedule" />
+          <Property Name="ScheduleId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DeliveryStatus">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="time_departure" Type="String" Nullable="false" />
+          <Property Name="location_departure" Type="String" Nullable="false" />
+          <Property Name="sta" Type="String" Nullable="false" />
+          <Property Name="eta" Type="String" Nullable="false" />
+          <Property Name="cargo_number" Type="String" Nullable="false" />
+          <Property Name="status_comment" Type="String" Nullable="false" />
+          <Property Name="time_return" Type="String" Nullable="false" />
+          <Property Name="time_delivery" Type="String" Nullable="false" />
+          <NavigationProperty Name="Schedule" Relationship="Scheduling.ScheduleDeliveryStatus" FromRole="DeliveryStatus" ToRole="Schedule" />
+        </EntityType>
+        <EntityType Name="Schedule">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Maintenances" Relationship="Scheduling.MaintenanceSchedule" FromRole="Schedule" ToRole="Maintenance" />
+          <NavigationProperty Name="DeliveryStatus" Relationship="Scheduling.ScheduleDeliveryStatus" FromRole="Schedule" ToRole="DeliveryStatus" />
+        </EntityType>
+        <Association Name="MaintenanceSchedule">
+          <End Type="Scheduling.Maintenance" Role="Maintenance" Multiplicity="*" />
+          <End Type="Scheduling.Schedule" Role="Schedule" Multiplicity="1" />
+          <ReferentialConstraint>
+            <Principal Role="Schedule">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Maintenance">
+              <PropertyRef Name="ScheduleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ScheduleDeliveryStatus">
+          <End Type="Scheduling.Schedule" Role="Schedule" Multiplicity="1" />
+          <End Type="Scheduling.DeliveryStatus" Role="DeliveryStatus" Multiplicity="1" />
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="SchedulingStoreContainer" CdmEntityContainer="SchedulingContainer">
+    <EntitySetMapping Name="Maintenances">
+      <EntityTypeMapping TypeName="IsTypeOf(Scheduling.Maintenance)">
+        <MappingFragment StoreEntitySet="Maintenances">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="UAV_Type" ColumnName="UAV_Type" />
+          <ScalarProperty Name="UAV_Name" ColumnName="UAV_Name" />
+          <ScalarProperty Name="last_maintenance" ColumnName="last_maintenance" />
+          <ScalarProperty Name="next_maintenance" ColumnName="next_maintenance" />
+          <ScalarProperty Name="time_remaining" ColumnName="time_remaining" />
+          <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="DeliveryStatus">
+      <EntityTypeMapping TypeName="IsTypeOf(Scheduling.DeliveryStatus)">
+        <MappingFragment StoreEntitySet="DeliveryStatus">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="time_departure" ColumnName="time_departure" />
+          <ScalarProperty Name="location_departure" ColumnName="location_departure" />
+          <ScalarProperty Name="sta" ColumnName="sta" />
+          <ScalarProperty Name="eta" ColumnName="eta" />
+          <ScalarProperty Name="cargo_number" ColumnName="cargo_number" />
+          <ScalarProperty Name="status_comment" ColumnName="status_comment" />
+          <ScalarProperty Name="time_return" ColumnName="time_return" />
+          <ScalarProperty Name="time_delivery" ColumnName="time_delivery" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Schedules">
+      <EntityTypeMapping TypeName="IsTypeOf(Scheduling.Schedule)">
+        <MappingFragment StoreEntitySet="Schedules">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="ScheduleDeliveryStatus" TypeName="Scheduling.ScheduleDeliveryStatus" StoreEntitySet="Schedules">
+      <EndProperty Name="DeliveryStatus">
+        <ScalarProperty Name="Id" ColumnName="DeliveryStatus_Id" />
+      </EndProperty>
+      <EndProperty Name="Schedule">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
