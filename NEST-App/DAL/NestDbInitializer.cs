@@ -35,7 +35,7 @@ namespace NEST_App.DAL
                 context.FlightStates.Add(s);
             });
             DateTime dateValue = new DateTime();
-
+            dateValue = DateTime.Now;
             var missions = new List<Mission>
             {
                 new Mission{Phase = "abstract", FlightPattern = "abstract", Payload = "cheetos", Priority = 1, FinancialCost = 40, UAVAssigned = 1, TimeAssigned = DateTime.Now, TimeCompleted = dateValue.AddHours(0.0833), DestinationCoordinates = DbGeography.FromText("POINT(-118.5002736 34.2365205 400)"),  ScheduledCompletionTime = dateValue.AddHours(0.0899), EstimatedCompletionTime = dateValue.AddHours(0.09)  }
