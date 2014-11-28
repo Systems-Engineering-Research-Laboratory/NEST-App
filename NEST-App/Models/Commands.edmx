@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl" Namespace="Commands.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005">
+        <EntityContainer Name="CommandsTargetContainer" >
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="Commands" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="CommandsContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="CMD_NAV_Waypoint" EntityType="Commands.CMD_NAV_Waypoint" />
+          <EntitySet Name="CMD_NAV_Takeoff" EntityType="Commands.CMD_NAV_Takeoff" />
+          <EntitySet Name="CMD_CONDITION_Rates" EntityType="Commands.CMD_CONDITION_Rates" />
+          <EntitySet Name="CMD_NAV_Target" EntityType="Commands.CMD_NAV_Target" />
+          <EntitySet Name="CMD_NAV_Set_Base" EntityType="Commands.CMD_NAV_Set_Base" />
+          <EntitySet Name="CMD_NAV_Land" EntityType="Commands.CMD_NAV_Land" />
+        </EntityContainer>
+        <EntityType Name="CMD_NAV_Waypoint">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Altitude" Type="String" Nullable="false" />
+          <Property Name="Latitude" Type="String" Nullable="false" />
+          <Property Name="Longitude" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_NAV_Hover" BaseType="Commands.CMD_NAV_Waypoint">
+          <Property Name="Time" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_NAV_Takeoff">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TakeoffPitch" Type="String" Nullable="false" />
+          <Property Name="Altitude" Type="String" Nullable="false" />
+          <Property Name="XAcceleration" Type="String" Nullable="false" />
+          <Property Name="YAcceleration" Type="String" Nullable="false" />
+          <Property Name="ZAcceleration" Type="String" Nullable="false" />
+          <Property Name="Throttle" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_DO_Return_To_Base" BaseType="Commands.CMD_NAV_Set_Base">
+          <Property Name="UseCurrent" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_CONDITION_Rates">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AltitudeUpdateRate" Type="String" Nullable="false" />
+          <Property Name="ThrottleUpdateRate" Type="String" Nullable="false" />
+          <Property Name="LatitudeUpdateRate" Type="String" Nullable="false" />
+          <Property Name="RollUpdateRate" Type="String" Nullable="false" />
+          <Property Name="PitchUpdateRate" Type="String" Nullable="false" />
+          <Property Name="YawUpdateRate" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_DO_Change_Speed" BaseType="Commands.CMD_NAV_Takeoff">
+          <Property Name="Speed" Type="String" Nullable="false" />
+          <Property Name="XVelocity" Type="String" Nullable="false" />
+          <Property Name="YVelocity" Type="String" Nullable="false" />
+          <Property Name="ZVelocity" Type="String" Nullable="false" />
+          <Property Name="Heading" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_DO_Change_Dynamics" BaseType="Commands.CMD_NAV_Takeoff">
+          <Property Name="Roll" Type="String" Nullable="false" />
+          <Property Name="Pitch" Type="String" Nullable="false" />
+          <Property Name="Yaw" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_NAV_Target">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Altitude" Type="String" Nullable="false" />
+          <Property Name="Latitude" Type="String" Nullable="false" />
+          <Property Name="Longitude" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_NAV_Set_Base">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Altitude" Type="String" Nullable="false" />
+          <Property Name="Latitude" Type="String" Nullable="false" />
+          <Property Name="Longitude" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_NAV_Land">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Altitude" Type="String" Nullable="false" />
+          <Property Name="Latitude" Type="String" Nullable="false" />
+          <Property Name="Longitude" Type="String" Nullable="false" />
+          <Property Name="Throttle" Type="String" Nullable="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs" Space="C-S">
+        <Alias Key="Model" Value="Commands" />
+        <Alias Key="Target" Value="Commands.Store" />
+        <EntityContainerMapping CdmEntityContainer="CommandsContainer" StorageEntityContainer="CommandsTargetContainer">
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
