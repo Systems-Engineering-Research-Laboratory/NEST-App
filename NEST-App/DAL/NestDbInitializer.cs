@@ -34,7 +34,7 @@ namespace NEST_App.DAL
                 s.Timestamp = DateTime.Now;
                 context.FlightStates.Add(s);
             });
-            DateTime dateValue = new DateTime();
+            DateTime dateValue = DateTime.Now.AddHours(.5); ;
 
             var missions = new List<Mission>
             {

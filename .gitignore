@@ -75,4 +75,4 @@ _[Ss]cripts
 *.dot[Cc]over
 # These are the microsoft local db files. No need to commit these, they will be recreated for everyone - Jeff
 *.ldf
-*.mfd
+*.mdf

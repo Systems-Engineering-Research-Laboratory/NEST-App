@@ -283,11 +283,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MissionModel.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\MissionModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MissionModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\MissionModel.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

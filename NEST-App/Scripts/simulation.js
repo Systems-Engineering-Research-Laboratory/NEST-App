@@ -1,6 +1,5 @@
 ﻿
-//Stores the vehicles received from the AJAX call.
-var vehicles;
+
 //The URL where we will perform the AJAX call to get the vehicle info from the DB.
 var uri = '/api/flightstate';
 var runSim = false;
@@ -37,20 +36,6 @@ function xToLong(x) {
 //Radius of operations in meters.
 var radius = 16093.4;
 
-function createVehicles() {
-    $.ajax({
-        url: uri,
-        success: function (data, textStatus, jqXHR) {
-            console.log(data);
-            vehicles = data;
-            prepareVehicles(vehicles);
-            for (var i = 0; i < vehicles.length; i++) {
-                assignMission(vehicles[i]);
-            }
-            updateButtons();
-        }
-    });
-}
 
 function prepareVehicles(vehs) {
     for(i = 0; i < vehs.length; i++) {
@@ -133,13 +118,10 @@ function processVehicle(vehicle, dt) {
     
 }
 
-function pushFlightUpdates(vehicles) {
+function pushFlightUpdates(vehicles, hub) {
     for (i = 0; i < vehicles.length; i++) {
         vehicles[i].Timestamp = new Date(Date.now()).toISOString();
-        $.post('/api/flightstate/',
-            vehicles[i],
-            function (data, textStatus, jqXHR) {
-            });
+        hub.server.pushFlightStateUpdate(vehicles[i]);
     }
 }
 
@@ -159,28 +141,46 @@ function updateButtons() {
 function start(eventObject) {
     runSim = true;
     updateButtons();
-    mainLoop();
 }
 
-function mainLoop() {
-    for (i = 0; i < vehicles.length; i++) {
-        processVehicle(vehicles[i], dt/1000);
-    }
-    pushFlightUpdates(vehicles);
-    if (runSim) {
-        setTimeout(mainLoop, dt);
-    }
+function stopSim(eventObject) {
+    runSim = false;
+    updatebuttons();
 }
 
-function setCallbacks() {
-    $("#start").click(start);
-    $("#stop").click(function (eventObject) {
-        runSim = false;
-        updateButtons();
-    });
-}
+
 
 $(document).ready(function () {
-    setCallbacks();
-    buildSim();
+    //Stores the vehicles received from the AJAX call.
+    var vehicles;
+
+    $.ajax({
+        url: uri,
+        success: function (data, textStatus, jqXHR) {
+            console.log(data);
+            vehicles = data;
+            prepareVehicles(vehicles);
+            for (var i = 0; i < vehicles.length; i++) {
+                assignMission(vehicles[i]);
+            }
+            updateButtons();
+        }
+    });
+
+    $("#start").click(start);
+    $("#stop").click(stopSim);
+
+    var vehicleHub = $.connection.vehicleHub;
+    vehicleHub.client.flightStateUpdate = function (vehicle) {
+        console.log(vehicle);
+    }
+    $.connection.hub.start().done(function mainLoop() {
+        if (runSim) {
+            for (i = 0; i < vehicles.length; i++) {
+                processVehicle(vehicles[i], dt / 1000);
+            }
+            pushFlightUpdates(vehicles, vehicleHub);
+        }
+        setTimeout(mainLoop, dt);
+    });
 });
