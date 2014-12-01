@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="88fc7fca9c574ed68f87a797b214579c" Name="Diagram1" >
+      <Diagram DiagramId="88fc7fca9c574ed68f87a797b214579c" Name="Diagram1" ZoomLevel="95" >
         <EntityTypeShape EntityType="Mapinfo.Weather" Width="2" PointX="2.375" PointY="1.25" />
         <EntityTypeShape EntityType="Mapinfo.RestrictedArea" Width="2" PointX="8.75" PointY="1.25" />
         <EntityTypeShape EntityType="Mapinfo.UAV_Warehouse" Width="2.375" PointX="9.875" PointY="4.125" />
