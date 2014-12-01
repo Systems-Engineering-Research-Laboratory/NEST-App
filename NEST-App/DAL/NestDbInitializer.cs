@@ -15,19 +15,19 @@ namespace NEST_App.DAL
 
             var UAVs = new List<UAV>
             {
-                new UAV{Callsign = "HAWK21", NumDeliveries = 2134, Mileage = 234},
-                new UAV{Callsign = "CROW10", NumDeliveries = 1234, Mileage = 111},
-                new UAV{Callsign = "PINR44", NumDeliveries = 3301, Mileage = 044},
-                new UAV{Callsign = "BIRD00", NumDeliveries = 2215, Mileage = 591}
+                new UAV{Callsign = "HAWK21", NumDeliveries = 2134, Mileage = 234, Id = 0},
+                new UAV{Callsign = "CROW10", NumDeliveries = 1234, Mileage = 111, Id = 1},
+                new UAV{Callsign = "PINR44", NumDeliveries = 3301, Mileage = 044, Id = 2},
+                new UAV{Callsign = "BIRD00", NumDeliveries = 2215, Mileage = 591, Id = 3}
             };
-            UAVs.ForEach(s => context.OwnshipVehicles.Add(s));
+            UAVs.ForEach(s => context.UAVs.Add(s));
 
             var FlightStates = new List<FlightState>
             {
-                new FlightState{ Position = DbGeography.FromText("POINT(-118.5002736 34.2365205 400)"), VelocityX = 0, VelocityY = 0, VelocityZ = 0, Yaw = 0, Roll = 0, Pitch = 0, YawRate = 0, RollRate = 0, PitchRate = 0, BatteryLevel = .94, Vehicle = UAVs[0] },
-                new FlightState{ Position = DbGeography.FromText("POINT(-118.5002736 34.2365205 400)"), VelocityX = 0, VelocityY = 0, VelocityZ = 0, Yaw = 0, Roll = 0, Pitch = 0, YawRate = 0, RollRate = 0, PitchRate = 0, BatteryLevel = .84, Vehicle = UAVs[1] },
-                new FlightState{ Position = DbGeography.FromText("POINT(-118.5002736 34.2365205 400)"), VelocityX = 0, VelocityY = 0, VelocityZ = 0, Yaw = 0, Roll = 0, Pitch = 0, YawRate = 0, RollRate = 0, PitchRate = 0, BatteryLevel = .82, Vehicle = UAVs[2] },
-                new FlightState{ Position = DbGeography.FromText("POINT(-118.5002736 34.2365205 400)"), VelocityX = 0, VelocityY = 0, VelocityZ = 0, Yaw = 0, Roll = 0, Pitch = 0, YawRate = 0, RollRate = 0, PitchRate = 0, BatteryLevel = .74, Vehicle = UAVs[3] }
+                new FlightState{ Position = DbGeography.FromText("POINT(-118.5002736 34.2365205 400)"), VelocityX = 0, VelocityY = 0, VelocityZ = 0, Yaw = 0, Roll = 0, Pitch = 0, YawRate = 0, RollRate = 0, PitchRate = 0, BatteryLevel = .94, UAVId = 0 },
+                new FlightState{ Position = DbGeography.FromText("POINT(-118.5002736 34.2365205 400)"), VelocityX = 0, VelocityY = 0, VelocityZ = 0, Yaw = 0, Roll = 0, Pitch = 0, YawRate = 0, RollRate = 0, PitchRate = 0, BatteryLevel = .84, UAVId = 1 },
+                new FlightState{ Position = DbGeography.FromText("POINT(-118.5002736 34.2365205 400)"), VelocityX = 0, VelocityY = 0, VelocityZ = 0, Yaw = 0, Roll = 0, Pitch = 0, YawRate = 0, RollRate = 0, PitchRate = 0, BatteryLevel = .82, UAVId = 2 },
+                new FlightState{ Position = DbGeography.FromText("POINT(-118.5002736 34.2365205 400)"), VelocityX = 0, VelocityY = 0, VelocityZ = 0, Yaw = 0, Roll = 0, Pitch = 0, YawRate = 0, RollRate = 0, PitchRate = 0, BatteryLevel = .74, UAVId = 3 }
             };
             FlightStates.ForEach(s =>
             {

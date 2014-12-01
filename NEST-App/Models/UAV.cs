@@ -16,8 +16,8 @@ namespace NEST_App.Models
     {
         public UAV()
         {
-            this.States = new HashSet<FlightState>();
             this.EuipmentHealths = new HashSet<EquipmentHealth>();
+            this.FlightStates = new HashSet<FlightState>();
         }
     
         public int Id { get; set; }
@@ -25,8 +25,8 @@ namespace NEST_App.Models
         public int NumDeliveries { get; set; }
         public int Mileage { get; set; }
     
-        public virtual ICollection<FlightState> States { get; set; }
         public virtual Configuration Configurations { get; set; }
         public virtual ICollection<EquipmentHealth> EuipmentHealths { get; set; }
+        public virtual ICollection<FlightState> FlightStates { get; set; }
     }
 }

@@ -243,7 +243,6 @@
     <Compile Include="Models\DeliveryStatus.cs">
       <DependentUpon>Scheduling.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\FlightStateDTO.cs" />
     <Compile Include="Models\Equipment.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
@@ -253,6 +252,7 @@
     <Compile Include="Models\FlightState.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\FlightStateDTO.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Maintenance.cs">
       <DependentUpon>Scheduling.tt</DependentUpon>
@@ -326,6 +326,16 @@
     </Compile>
     <Compile Include="Models\UAV_Warehouse.cs">
       <DependentUpon>Mapinfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\VehicleModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>VehicleModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\VehicleModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\VehicleModel.Designer.cs">
       <AutoGen>True</AutoGen>

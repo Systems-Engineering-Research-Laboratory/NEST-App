@@ -27,7 +27,8 @@ namespace NEST_App.Models
         public double RollRate { get; set; }
         public double PitchRate { get; set; }
         public double BatteryLevel { get; set; }
+        public int UAVId { get; set; }
     
-        public virtual UAV Vehicle { get; set; }
+        public virtual UAV UAV { get; set; }
     }
 }

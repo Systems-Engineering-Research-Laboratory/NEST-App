@@ -24,12 +24,25 @@ namespace NEST_App.Controllers
         public IQueryable<FlightStateDTO> GetFlightStates()
         {
             var flightStates = from fs in db.FlightStates
-                               select fs;
-            List<FlightStateDTO> dtos = new List<FlightStateDTO>();
-            foreach(var fs in flightStates){
-                dtos.Add(Mapper.Map<FlightStateDTO>(fs));
-            }
-            return dtos.AsQueryable();
+                               select new FlightStateDTO
+                               {
+                                   Id = fs.Id,
+                                   Latitude = fs.Position.Latitude ?? 0,
+                                   Longitude = fs.Position.Longitude ?? 0,
+                                   Altitude = fs.Position.Elevation ?? 0,
+                                   VelocityX = fs.VelocityX,
+                                   VelocityY = fs.VelocityY,
+                                   VelocityZ = fs.VelocityZ,
+                                   Yaw = fs.Yaw,
+                                   YawRate = fs.YawRate,
+                                   Timestamp = fs.Timestamp,
+                                   Roll = fs.Roll,
+                                   RollRate = fs.RollRate,
+                                   Pitch = fs.Pitch,
+                                   PitchRate = fs.PitchRate,
+                                   UAVId = fs.UAVId
+                               };
+            return flightStates;
         }
 
         // GET: api/FlightState/5

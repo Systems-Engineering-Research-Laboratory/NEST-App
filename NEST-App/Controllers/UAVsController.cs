@@ -19,7 +19,7 @@ namespace NEST_App.Controllers
         public ActionResult Index()
         {
             dynamic uavDetailList = new System.Dynamic.ExpandoObject();
-            uavDetailList.UAVs = db.OwnshipVehicles.ToList();
+            uavDetailList.UAVs = db.UAVs.ToList();
             uavDetailList.FlightStates = db.FlightStates.ToList();
             return View(uavDetailList);
         }
@@ -31,7 +31,7 @@ namespace NEST_App.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            UAV uAV = db.OwnshipVehicles.Find(id);
+            UAV uAV = db.UAVs.Find(id);
             if (uAV == null)
             {
                 return HttpNotFound();
@@ -54,7 +54,7 @@ namespace NEST_App.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.OwnshipVehicles.Add(uAV);
+                db.UAVs.Add(uAV);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -69,7 +69,7 @@ namespace NEST_App.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            UAV uAV = db.OwnshipVehicles.Find(id);
+            UAV uAV = db.UAVs.Find(id);
             if (uAV == null)
             {
                 return HttpNotFound();
@@ -100,7 +100,7 @@ namespace NEST_App.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            UAV uAV = db.OwnshipVehicles.Find(id);
+            UAV uAV = db.UAVs.Find(id);
             if (uAV == null)
             {
                 return HttpNotFound();
@@ -113,8 +113,8 @@ namespace NEST_App.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            UAV uAV = db.OwnshipVehicles.Find(id);
-            db.OwnshipVehicles.Remove(uAV);
+            UAV uAV = db.UAVs.Find(id);
+            db.UAVs.Remove(uAV);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

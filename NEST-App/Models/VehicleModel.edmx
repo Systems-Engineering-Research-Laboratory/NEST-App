@@ -61,7 +61,7 @@
     <Property Name="RollRate" Type="float" Nullable="false" />
     <Property Name="PitchRate" Type="float" Nullable="false" />
     <Property Name="BatteryLevel" Type="float" Nullable="false" />
-    <Property Name="Vehicle_Id" Type="int" Nullable="false" />
+    <Property Name="Vehicle_Id" Type="int" Nullable="false" StoreGeneratedPattern="None" />
   </EntityType>
   <EntityType Name="Configurations">
     <Key>
@@ -177,10 +177,6 @@
         <EntityContainer Name="VehicleModelContainer" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="UAVs1" EntityType="VehicleModel.UAV" />
           <EntitySet Name="FlightStates" EntityType="VehicleModel.FlightState" />
-          <AssociationSet Name="VehicleState" Association="VehicleModel.VehicleState">
-            <End Role="Vehicle" EntitySet="UAVs1" />
-            <End Role="State" EntitySet="FlightStates" />
-          </AssociationSet>
           <EntitySet Name="Configurations" EntityType="VehicleModel.Configuration" />
           <AssociationSet Name="VehicleConfiguration" Association="VehicleModel.VehicleConfiguration">
             <End Role="Vehicle" EntitySet="UAVs1" />
@@ -201,18 +197,22 @@
             <End Role="EuipmentHealth" EntitySet="EquipmentHealths" />
           </AssociationSet>
           <EntitySet Name="NonownshipVehicles" EntityType="VehicleModel.NonownshipVehicle" />
+          <AssociationSet Name="UAVFlightState" Association="VehicleModel.UAVFlightState">
+            <End Role="UAV" EntitySet="UAVs1" />
+            <End Role="FlightState" EntitySet="FlightStates" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="UAV">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <NavigationProperty Name="States" Relationship="VehicleModel.VehicleState" FromRole="Vehicle" ToRole="State" />
           <Property Name="Callsign" Type="String" Nullable="false" />
           <NavigationProperty Name="Configurations" Relationship="VehicleModel.VehicleConfiguration" FromRole="Vehicle" ToRole="Configuration" />
           <NavigationProperty Name="EuipmentHealths" Relationship="VehicleModel.VehicleEuipmentHealth" FromRole="Vehicle" ToRole="EuipmentHealth" />
           <Property Name="NumDeliveries" Type="Int32" Nullable="false" />
           <Property Name="Mileage" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="FlightStates" Relationship="VehicleModel.UAVFlightState" FromRole="UAV" ToRole="FlightState" />
           </EntityType>
         <EntityType Name="FlightState">
           <Key>
@@ -220,7 +220,6 @@
             <PropertyRef Name="Timestamp" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <NavigationProperty Name="Vehicle" Relationship="VehicleModel.VehicleState" FromRole="State" ToRole="Vehicle" />
           <Property Name="Timestamp" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
           <Property Name="Position" Type="GeographyPoint" Nullable="false" />
           <Property Name="VelocityX" Type="Double" Nullable="false" />
@@ -233,11 +232,9 @@
           <Property Name="RollRate" Type="Double" Nullable="false" />
           <Property Name="PitchRate" Type="Double" Nullable="false" />
           <Property Name="BatteryLevel" Type="Double" Nullable="false" />
+          <Property Name="UAVId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="UAV" Relationship="VehicleModel.UAVFlightState" FromRole="FlightState" ToRole="UAV" />
         </EntityType>
-        <Association Name="VehicleState">
-          <End Type="VehicleModel.UAV" Role="Vehicle" Multiplicity="1" />
-          <End Type="VehicleModel.FlightState" Role="State" Multiplicity="*" />
-        </Association>
         <EntityType Name="Configuration">
           <Key>
             <PropertyRef Name="Id" />
@@ -304,6 +301,18 @@
           <Property Name="Yaw" Type="Double" Nullable="false" />
           <Property Name="FlightPlan" Type="String" Nullable="false" />
         </EntityType>
+        <Association Name="UAVFlightState">
+          <End Type="VehicleModel.UAV" Role="UAV" Multiplicity="1" />
+          <End Type="VehicleModel.FlightState" Role="FlightState" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UAV">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FlightState">
+              <PropertyRef Name="UAVId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -323,7 +332,8 @@
     <EntitySetMapping Name="FlightStates">
       <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.FlightState)">
         <MappingFragment StoreEntitySet="FlightStates">
-          <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UAVId" ColumnName="Vehicle_Id" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Timestamp" ColumnName="Timestamp" />
           <ScalarProperty Name="Position" ColumnName="Position" />
           <ScalarProperty Name="VelocityX" ColumnName="VelocityX" />
@@ -387,15 +397,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <AssociationSetMapping Name="VehicleState" TypeName="VehicleModel.VehicleState" StoreEntitySet="FlightStates">
-      <EndProperty Name="Vehicle">
-        <ScalarProperty Name="Id" ColumnName="Vehicle_Id" />
-      </EndProperty>
-      <EndProperty Name="State">
-        <ScalarProperty Name="Id" ColumnName="Id" />
-        <ScalarProperty Name="Timestamp" ColumnName="Timestamp" />
-      </EndProperty>
-    </AssociationSetMapping>
     <AssociationSetMapping Name="VehicleConfiguration" TypeName="VehicleModel.VehicleConfiguration" StoreEntitySet="UAVs1">
       <EndProperty Name="Configuration">
         <ScalarProperty Name="Id" ColumnName="Configurations_Id" />

@@ -15,7 +15,7 @@ namespace NEST_App.DAL
             base.Configuration.ProxyCreationEnabled = false;
         }
 
-        public DbSet<UAV> OwnshipVehicles { get; set; }
+        public DbSet<UAV> UAVs { get; set; }
         public DbSet<NonownshipVehicle> NonownshipVehicles { get; set; }
         public DbSet<Configuration> Configurations { get; set; }
         public DbSet<Equipment> EquipmentList { get; set; }

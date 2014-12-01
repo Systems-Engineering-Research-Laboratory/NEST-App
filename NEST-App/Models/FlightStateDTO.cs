@@ -25,6 +25,7 @@ namespace NEST_App.Models
         public double RollRate { get; set; }
         public double PitchRate { get; set; }
         public double BatteryLevel { get; set; }
+        public int UAVId { get; set; }
 
         public FlightStateDTO()
         {
@@ -76,6 +77,7 @@ namespace NEST_App.Models
             return fs.Position.Elevation.GetValueOrDefault();
         }
     }
+
     
 
     public class FlightStatePosResolver : ValueResolver<FlightStateDTO, DbGeography>
