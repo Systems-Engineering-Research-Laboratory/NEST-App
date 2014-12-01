@@ -145,7 +145,7 @@ function start(eventObject) {
 
 function stopSim(eventObject) {
     runSim = false;
-    updatebuttons();
+    updateButtons();
 }
 
 
