@@ -237,6 +237,11 @@
     </Compile>
     <Compile Include="Hubs\VehicleHub.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Commands.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Commands.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Models\Configuration.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
@@ -473,6 +478,13 @@
       <LastGenOutput>Scheduling.cs</LastGenOutput>
       <DependentUpon>Scheduling.edmx</DependentUpon>
     </Content>
+    <EntityDeploy Include="Models\Commands.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Commands.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\Commands.edmx.diagram">
+      <DependentUpon>Commands.edmx</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-2.1.0.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -494,6 +506,7 @@
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\simulation.js" />
+    <Content Include="Scripts\Vehicle.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

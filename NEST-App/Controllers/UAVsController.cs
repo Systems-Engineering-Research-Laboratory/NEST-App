@@ -2,121 +2,105 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
-using System.Web;
-using System.Web.Mvc;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web.Http;
+using System.Web.Http.Description;
 using NEST_App.DAL;
 using NEST_App.Models;
 
 namespace NEST_App.Controllers
 {
-    public class UAVsController : Controller
+    public class UAVsController : ApiController
     {
         private NestDbContext db = new NestDbContext();
 
-        // GET: UAVs
-        public ActionResult Index()
+        // GET: api/UAVs
+        public IQueryable<UAV> GetUAVs()
         {
-            dynamic uavDetailList = new System.Dynamic.ExpandoObject();
-            uavDetailList.UAVs = db.UAVs.ToList();
-            uavDetailList.FlightStates = db.FlightStates.ToList();
-            return View(uavDetailList);
+            return db.UAVs;
         }
 
-        // GET: UAVs/Details/5
-        public ActionResult Details(int? id)
+        // GET: api/UAVs/5
+        [ResponseType(typeof(UAV))]
+        public async Task<IHttpActionResult> GetUAV(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            UAV uAV = db.UAVs.Find(id);
+            UAV uAV = await db.UAVs.FindAsync(id);
             if (uAV == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            return View(uAV);
+
+            return Ok(uAV);
         }
 
-        // GET: UAVs/Create
-        public ActionResult Create()
+        // PUT: api/UAVs/5
+        [ResponseType(typeof(void))]
+        public async Task<IHttpActionResult> PutUAV(int id, UAV uAV)
         {
-            return View();
-        }
-
-        // POST: UAVs/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Callsign,NumDeliveries,Mileage")] UAV uAV)
-        {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                db.UAVs.Add(uAV);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                return BadRequest(ModelState);
             }
 
-            return View(uAV);
+            if (id != uAV.Id)
+            {
+                return BadRequest();
+            }
+
+            db.Entry(uAV).State = System.Data.Entity.EntityState.Modified;
+
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UAVExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // GET: UAVs/Edit/5
-        public ActionResult Edit(int? id)
+        // POST: api/UAVs
+        [ResponseType(typeof(UAV))]
+        public async Task<IHttpActionResult> PostUAV(UAV uAV)
         {
-            if (id == null)
+            if (!ModelState.IsValid)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest(ModelState);
             }
-            UAV uAV = db.UAVs.Find(id);
+
+            db.UAVs.Add(uAV);
+            await db.SaveChangesAsync();
+
+            return CreatedAtRoute("DefaultApi", new { id = uAV.Id }, uAV);
+        }
+
+        // DELETE: api/UAVs/5
+        [ResponseType(typeof(UAV))]
+        public async Task<IHttpActionResult> DeleteUAV(int id)
+        {
+            UAV uAV = await db.UAVs.FindAsync(id);
             if (uAV == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            return View(uAV);
-        }
 
-        // POST: UAVs/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Callsign,NumDeliveries,Mileage")] UAV uAV)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(uAV).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(uAV);
-        }
-
-        // GET: UAVs/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            UAV uAV = db.UAVs.Find(id);
-            if (uAV == null)
-            {
-                return HttpNotFound();
-            }
-            return View(uAV);
-        }
-
-        // POST: UAVs/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            UAV uAV = db.UAVs.Find(id);
             db.UAVs.Remove(uAV);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            await db.SaveChangesAsync();
+
+            return Ok(uAV);
         }
 
         protected override void Dispose(bool disposing)
@@ -126,6 +110,11 @@ namespace NEST_App.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private bool UAVExists(int id)
+        {
+            return db.UAVs.Count(e => e.Id == id) > 0;
         }
     }
 }
