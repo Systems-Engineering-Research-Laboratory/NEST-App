@@ -16,6 +16,9 @@ function Vehicle(vehicleInfo) {
 //Methods
 
 function process(dt) {
+    if (this.Mission == null) {
+        return;
+    }
     switch (this.Mission.Phase) {
         case "enroute":
             this.deadReckon(dt);

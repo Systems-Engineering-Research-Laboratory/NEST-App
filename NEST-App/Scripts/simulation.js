@@ -88,16 +88,18 @@ function getFlightStates(map) {
 function getMissions(map) {
     var ids = map.ids;
     var vehicles = map.vehicles;
-    updateButtons();
     $.ajax({
-        url: '/api/flightstate',
+        url: '/api/missions',
         success: function (data, textStatus, jqXHR) {
             for (var i = 0; i < data.length; i++) {
-                curVeh = map.vehicles[data[i].UAVId];
-                curVeh.FlightState = data[i];
-                LatLongToXY(curVeh.FlightState);
+                var idx = ids.indexOf(data[i].UAVAssigned);
+                if (idx == -1) {
+                    continue;
+                }
+                var id = ids[idx];
+                vehicles[id].Mission = data[i];
             }
-            getMissions(map);
+            updateButtons();
         }
     })
 }
