@@ -19,9 +19,9 @@ namespace NEST_App.Models
             this.Weather1 = new HashSet<Weather>();
         }
     
-        public string Restiricted_Latitude { get; set; }
-        public string Restiricted_Longitude { get; set; }
-        public string Restricited_Altitude { get; set; }
+        public string Restricted_Latitude { get; set; }
+        public string Restricted_Longitude { get; set; }
+        public string Restricted_Altitude { get; set; }
         public string Creator_Created { get; set; }
         public string Time_Created { get; set; }
         public string Reason_Created { get; set; }

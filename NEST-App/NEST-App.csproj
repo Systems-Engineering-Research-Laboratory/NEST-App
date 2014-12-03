@@ -596,7 +596,7 @@
     <Content Include="Views\UAVs\Index.cshtml" />
     <Content Include="Views\Sim\Index.cshtml" />
     <Content Include="Views\Maps.cshtml" />
-    <Content Include="Views\Map\Index.cshtml" />
+    <Content Include="Views\Map\Overview.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

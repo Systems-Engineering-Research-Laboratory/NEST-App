@@ -1,0 +1,378 @@
+﻿@{
+    Layout = null;/*"~/Views/Shared/_Layout.cshtml";*/
+}
+
+@{
+    ViewBag.Title = "Overview";
+}
+
+
+<style>
+    .map {
+        height: 100%;
+        width: 100%;
+        border: none;
+        margin: 0px;
+        padding: 0px;
+    }
+
+    #info {
+        position: absolute;
+        font-size: 0.7em;
+        top: 10px;
+        right: 10px;
+        background-color: lightgrey;
+        padding: 0px;
+        height: 120px;
+        width: 145px;
+    }
+
+        #info p {
+            margin-top: -1px;
+            margin-bottom: 2px;
+        }
+
+    #MapViews {
+        width: 125px;
+        height: 150px;
+        padding-right: 0px;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        border: medium solid #000000;
+        background-color: #FFFFFF;
+    }
+
+    .WindowTitle {
+        font-weight: bold;
+        border-bottom: thin solid #000000;
+        font-size: large;
+    }
+
+    .WindowContent {
+        padding-top: 5px;
+    }
+
+    #ViewsRadio {
+    }
+
+    #LayerFilter {
+        position: fixed;
+        top: 163px;
+        border-style: solid;
+        border-color: #000000;
+        width: 125px;
+        left: 10px;
+        background-color: #FFFFFF;
+    }
+
+    .Tools {
+    }
+
+    #Tools {
+        bottom: 10pt;
+        left: 15px;
+        height: 46px;
+        float: left;
+        margin-right: 10px;
+        padding-right: 5px;
+        top: auto;
+        position: fixed;
+    }
+
+    .ToolIcon {
+        margin-right: 5px;
+    }
+</style>
+<script src="http://openlayers.org/en/v3.0.0/build/ol.js" type="text/javascript"></script>
+<script src="~/Scripts/jquery-2.1.0.js"></script>
+
+
+<!--This is the OSM map-->
+<div id="map" class="map"></div>
+<div id="info">
+    <p>Position: <span id="Position"></span></p>
+    <p>Accuracy: <span id="Accuracy"></span></p>
+    <p>Heading: <span id="Heading"></span></p>
+    <p>Speed: <span id="Speed"></span></p>
+    <p>Delta: <span id="Delta"></span></p>
+</div>
+<div id="MapViews">
+    <div class="WindowTitle">Map Views</div>
+    <div class="WindowContent">
+        <form id="ViewsRadio">
+            <input type="radio" name="view" id="View1" checked="checked" onclick="switchLayers(0)">
+            <span>Map View 1</span><br>
+            <input type="radio" name="view" id="View2" onclick="switchLayers(1)">
+            <span>Map View 2</span><br>
+            <input type="radio" name="view" id="View3" onclick="switchLayers(2)">
+            <span>Map View 3</span><br>
+        </form>
+    </div>
+</div>
+<div id="LayerFilter">
+    <div class="WindowTitle">Filters</div>
+    <div class="WindowContent">
+        <div id="FilterBoxes">
+            <input type="checkbox" name="Filter1">
+            <span id="Filter1">Filter 1</span><br>
+            <input type="checkbox" name="Filter2">
+            <span id="Filter2">Filter 2</span><br>
+            <input type="checkbox" name="Filter3">
+            <span id="Filter3">Filter 3</span><br>
+            <input type="checkbox" name="Filter4">
+            <span id="Filter4">Filter 4</span><br>
+        </div>
+    </div>
+</div>
+<div id="Tools">
+    <div id="ToolsMenu">
+        <img src="../Content/origin.jpg" alt="" width="46" height="44" class="ToolIcon" id="Expand" onclick="triggerToolMenu()" />
+        <input type="image" src="../Content/green.jpg" id="start" width="46" height="44" class="ToolIcon">
+        <input type="image" src="../Content/red.jpg" id="stop" width="46" height="44" class="ToolIcon">
+        <input type="image" src="../Content/yellow.jpg" id="loadDrones" width="46" height="44" class="ToolIcon">
+        <img src="../Content/blue.jpg" width="46" height="44" alt="" class="ToolIcon" />
+        <img src="../Content/purple.jpg" width="46" height="44" alt="" class="ToolIcon" />
+    </div>
+</div>
+
+<script src="~/Scripts/simulation.js" type="text/javascript"></script>
+<script src="~/Scripts/Vehicle.js" type="text/javascript"></script>
+@Scripts.Render("~/Scripts/jquery.signalR-2.0.2.js")
+@Scripts.Render("~/signalr/hubs")
+
+<script type="text/javascript">
+
+
+    var toolMenu;
+    var toolsExpanded = false;
+
+
+    var uri = '/api/flightstate';
+    var runSim = false;
+    var dt = 1000; //Timestep in milliseconds
+    var phases = ["preparing", "enroute", "delivering", "returning", "landing"];
+    var dList;
+    var droneFeatures = [];
+
+    function triggerToolMenu(e) {
+        if (toolsExpanded) {
+            //collapse
+        }
+        else {
+            //expand
+        }
+    }
+
+    ///THIS IS THE SINGLE MARKER/////////
+    // Create the icon feature (geom + properties)
+    var iconFeature = new ol.Feature({
+        geometry: new ol.geom.Point(ol.proj.transform([-118.529, 34.2417], 'EPSG:4326', 'EPSG:3857')),
+        name: 'Test'
+    });
+
+    // Set up marker style
+    var markerStyle = new ol.style.Style({
+        image: new ol.style.Icon(({
+            anchor: [0.5, 1],
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'fraction',
+            src: '../Content/marker.png'
+        }))
+    });
+
+
+    iconFeature.setStyle(markerStyle);
+
+    var markers = new ol.layer.Vector({
+        source: new ol.source.Vector({ features: [iconFeature] })
+    });
+    var droneLayer = new ol.layer.Vector({
+        source: new ol.source.Vector({ features: droneFeatures })
+    });
+    //////////////////////////////////////////////
+
+    // Set up Drone style
+    var droneStyle = new ol.style.Style({
+        image: new ol.style.Icon(({
+            anchor: [0.5, 1],
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'fraction',
+            src: '../Content/drone.gif'
+        }))
+    });
+
+
+    function initDroneLayer(d) {
+        //droneLayer.getSource().clear();
+        var vehicles = d.vehicles;
+        var ids = d.ids;
+        /*if (drone list is empty) { }
+        else {*/
+        for (i = 1; i < ids.length; i++) {
+            console.log("Iterate for loop " + i);
+            console.log("Current vehicle is: " + vehicles[ids[i]]);
+            //Create an array of map features (drones, in this case) and initialize each feature from a drone
+            droneFeatures[i] = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.transform([vehicles[ids[i]].FlightState.Latitude, vehicles[ids[i]].FlightState.Longitude], 'EPSG:4326', 'EPSG:3857')),
+                name: ids[i]
+            });
+
+            console.log("Vehicle's Latitude is: " + vehicles[ids[i]].FlightState.Latitude);
+            console.log("Vehicle's Longitude is: " + vehicles[ids[i]].FlightState.Longitude);
+            console.log("Id name is " + ids[i]);
+
+            //Apply drne marker styles and set feature id (in case a lookup is required)
+            droneFeatures[i].setStyle(droneStyle);
+            droneFeatures[i].setId(ids[i]);
+            console.log("Passed setStyle OK");
+            console.log("This feature's geometry is: " + droneFeatures[i].getId())
+        }
+        console.log("Exited for loop OK");
+        //Rebuild the drone layer with the new set of drone features.
+        droneLayer.setSource(new ol.source.Vector({ features: droneFeatures }));
+        // }
+
+        // map.addLayer(droneLayer);
+    };
+
+
+
+
+
+    /*
+    //KML Style
+    var markerStyle = new ol.style.Style({
+        image: new ol.style.Icon({
+            anchor: ol.proj.transform([-118.529,34.2417], 'EPSG:4326', 'EPSG:3857'),
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'pixels',
+            src: 'marker.png'}))
+        })
+    })
+    */
+
+
+
+
+    ///////MAP LAYERS//////////
+    //Load OpenStreetMaps tiles
+    var rasterOSM = new ol.layer.Tile({
+        source: new ol.source.OSM({ layer: 'sat' })
+    });
+
+    var rasterMQ = new ol.layer.Tile({
+        source: new ol.source.MapQuest({ layer: 'sat' })
+    });
+    rasterMQ.setVisible(false);
+
+    var rasterBing = new ol.layer.Tile({
+        source: new ol.source.BingMaps({
+            key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+            imagerySet: 'Aerial'
+        })
+    });
+    rasterBing.setVisible(false);
+
+    /*var kmlLayer = new ol.layer.Vector({
+      source: new ol.source.KML({
+        //extractStyles: false,
+        projection: 'EPSG:3857',
+        url: '../KML_Data/myplaces.kml'
+        }),
+        style: function(feature, resolution) {
+            return style[feature.getGeometry().getType()];
+        }
+    });
+    */
+    /*var flightPathLayer = new ol.layer.Vector({
+    //extent = mapExtent
+
+    })
+    */
+
+
+    ///////////////OPENWEATHERMAPS/////////////
+    /*var cloudLayer = new ol.layer.Tile({
+        source: new ol.source.XYZ({
+            projection: 'EPSG:3857',
+            url: 'http://${s}.tile.openweathermap.org/map/clouds/${z}/${x}/${y}.png'
+        })
+    })
+
+    var pressureLayer = new ol.layer.Tile({
+        source: new ol.source.XYZ({
+            projection: 'EPSG:3857',
+            url: 'http://${s}.tile.openweathermap.org/map/pressure_cntr/${z}/${x}/${y}.png'
+        })
+    })*/
+    ////////////////////////////////////////////
+
+
+
+
+
+    //Create the Map
+    var map = new ol.Map({
+        layers: [rasterOSM, rasterMQ, markers, droneLayer/*, cloudLayer, pressureLayer, kmlLayer*/],
+        target: 'map',
+        view: new ol.View({
+            center: ol.proj.transform([-118.529, 34.2417], 'EPSG:4326', 'EPSG:3857'),
+            zoom: 16
+        })
+    });
+
+
+    function switchLayers(i) {
+        switch (i) {
+            case 0:
+                rasterOSM.setVisible(true);
+                rasterMQ.setVisible(false);
+                rasterBing.setVisible(false);
+                break;
+            case 1:
+                rasterOSM.setVisible(false);
+                rasterMQ.setVisible(true);
+                rasterBing.setVisible(false);
+                break;
+            default:
+                rasterOSM.setVisible(false);
+                rasterMQ.setVisible(false);
+                rasterBing.setVisible(true);
+                break;
+        }
+    }
+
+    function init() {
+        toolMenu = document.getElementById("Expand");
+    }
+    window.addEventListener("load", init, false);
+
+
+    $(document).ready(function () {
+        //Stores the vehicles received from the AJAX call.
+        dList = {
+            vehicles: [],
+            ids: []
+        };
+
+        $.ajax({
+            url: '/api/uavs',
+            success: function (data, textStatus, jqXHR) {
+                for (var i = 0; i < data.length; i++) {
+                    dList.vehicles[data[i].Id] = new Vehicle(data[i]);
+                    dList.ids.push(data[i].Id);
+                }
+                getFlightStates(dList);
+            }
+        });
+
+
+        $("#loadDrones").click(function (dlist) {
+            console.log("Init Started");
+            initDroneLayer(dList)
+        });
+    });
+
+
+</script>

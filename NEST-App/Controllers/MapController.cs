@@ -10,7 +10,7 @@ namespace NEST_App.Controllers
     {
         //
         // GET: /Map/
-        public ActionResult Index()
+        public ActionResult Overview()
         {
             return View();
         }

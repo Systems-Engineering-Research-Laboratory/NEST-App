@@ -59,9 +59,9 @@
           <NavigationProperty Name="RestrictedArea" Relationship="Mapinfo.RestrictedAreaWeather" FromRole="Weather" ToRole="RestrictedArea" />
         </EntityType>
         <EntityType Name="RestrictedArea" BaseType="Mapinfo.MapInformation">
-          <Property Type="String" Name="Restiricted_Latitude" Nullable="false" />
-          <Property Type="String" Name="Restiricted_Longitude" Nullable="false" />
-          <Property Type="String" Name="Restricited_Altitude" Nullable="false" />
+          <Property Type="String" Name="Restricted_Latitude" Nullable="false" />
+          <Property Type="String" Name="Restricted_Longitude" Nullable="false" />
+          <Property Type="String" Name="Restricted_Altitude" Nullable="false" />
           <Property Type="String" Name="Creator_Created" Nullable="false" />
           <Property Type="String" Name="Time_Created" Nullable="false" />
           <Property Type="String" Name="Reason_Created" Nullable="false" />
