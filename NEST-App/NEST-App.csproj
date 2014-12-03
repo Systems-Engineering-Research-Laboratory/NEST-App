@@ -239,6 +239,46 @@
     </Compile>
     <Compile Include="Hubs\VehicleHub.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\CMD_CONDITION_Rates.cs">
+      <DependentUpon>Commands.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMD_DO_Change_Dynamics.cs">
+      <DependentUpon>Commands.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMD_DO_Change_Speed.cs">
+      <DependentUpon>Commands.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMD_DO_Return_To_Base.cs">
+      <DependentUpon>Commands.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMD_NAV_Hover.cs">
+      <DependentUpon>Commands.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMD_NAV_Land.cs">
+      <DependentUpon>Commands.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMD_NAV_Set_Base.cs">
+      <DependentUpon>Commands.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMD_NAV_Takeoff.cs">
+      <DependentUpon>Commands.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMD_NAV_Target.cs">
+      <DependentUpon>Commands.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CMD_NAV_Waypoint.cs">
+      <DependentUpon>Commands.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Commands.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Commands.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Commands.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Commands.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Commands.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -415,6 +455,7 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>VehicleModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
+    <Content Include="Models\Commands.edmx.sql" />
     <Content Include="Models\Scheduling.edmx.sql" />
     <Content Include="Models\VehicleModel.edmx.diagram">
       <DependentUpon>VehicleModel.edmx</DependentUpon>
@@ -486,6 +527,16 @@
       <LastGenOutput>Commands.Designer.cs</LastGenOutput>
     </EntityDeploy>
     <Content Include="Models\Commands.edmx.diagram">
+      <DependentUpon>Commands.edmx</DependentUpon>
+    </Content>
+    <Content Include="Models\Commands.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Commands.Context.cs</LastGenOutput>
+      <DependentUpon>Commands.edmx</DependentUpon>
+    </Content>
+    <Content Include="Models\Commands.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Commands.cs</LastGenOutput>
       <DependentUpon>Commands.edmx</DependentUpon>
     </Content>
     <None Include="Scripts\jquery-2.1.0.intellisense.js" />

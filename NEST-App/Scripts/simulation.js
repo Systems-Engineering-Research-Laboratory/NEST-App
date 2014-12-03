@@ -98,6 +98,7 @@ function getMissions(map) {
                 }
                 var id = ids[idx];
                 vehicles[id].Mission = data[i];
+                LatLongToXY(vehicles[id].Mission);
             }
             updateButtons();
         }
@@ -113,12 +114,15 @@ $(document).ready(function () {
         ids: []
     };
 
+    $('.dropdown-toggle').dropdown();
+
     $.ajax({
         url: '/api/uavs',
         success: function (data, textStatus, jqXHR) {
             for (var i = 0; i < data.length; i++) {
                 map.vehicles[data[i].Id] = new Vehicle(data[i]);
                 map.ids.push(data[i].Id);
+                $("#dropdown-UAVIds").append('<li role="presentation"><a role="menuitem" href="#">"' + data[i].Id + '"</a></li>');
             }
             getFlightStates(map);
         }
@@ -131,7 +135,17 @@ $(document).ready(function () {
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         console.log(vehicle);
     }
+    vehicleHub.client.sendTargetCommand = function (target) {
+        var idx = map.ids.indexOf(target.UAVId);
+        if (idx == -1) {
+            return;
+        }
+        target.Type = "target";
+        LatLongToXY(target.Type);
+        map.vehicles[map.ids[idx]].targetCommand(target);
+    }
     $.connection.hub.start().done(function mainLoop() {
+        vehicleHub.server.joinGroup("vehicles");
         if (runSim) {
             var vehicles = map.vehicles;
             var ids = map.ids;

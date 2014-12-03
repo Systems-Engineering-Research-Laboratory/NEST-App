@@ -6,50 +6,66 @@ function Vehicle(vehicleInfo) {
     this.NumDeliveries = vehicleInfo.NumDeliveries;
     this.FlightState = null;
     this.Mission = null;
+    this.Objective = null;
+    this.Command = null;
     
 
     //Functions. Careful not to add helper functions here.
-    this.process = process;
-    this.deadReckon = deadReckon;
-}
+    this.process = function (dt) {
+        if (this.Command != null) {
+            this.performCommand(dt);
+        }
+        else {
+            if (this.Mission == null) {
+                return;
+            }
+            switch (this.Mission.Phase) {
+                case "enroute":
+                    if (this.deadReckon(dt, this.Mission.X, this.Mission.Y)) {
+                        this.Mission.Phase = "delivering";
+                    }
+                    console.log(this);
+                    break;
+            }
+        }
+    };
+    this.deadReckon = function (dt, X, Y) {
+        var reachedDest = false;
+        var velocity = 20; //m/s
+        heading = calculateHeading(this.FlightState.X, this.FlightState.Y, X, Y);
+        this.FlightState.VelocityX = Math.sin(heading) * velocity;
+        this.FlightState.VelocityY = Math.cos(heading) * velocity;
+        var distanceX = X - this.FlightState.X;
+        var distanceY = Y - this.FlightState.Y;
+        var dX = this.FlightState.VelocityX * dt;
+        var dY = this.FlightState.VelocityY * dt;
+        if (dX > distanceX && dY > distanceY) {
+            //We are at the target, stop and set dX to the distance to put us over the target
+            dX = distanceX;
+            dY = distanceY;
+            this.FlightState.VelocityX = 0;
+            this.FlightState.VelocityY = 0;
+            //Increment the phase for the next loop.
+            reachedDest = true;
+        }
+        this.FlightState.X += dX;
+        this.FlightState.Y += dY;
+        XYToLatLong(this.FlightState);
+        return reachedDest;
+    };
 
-//Methods
+    this.processCommand = function(dt) {
+        switch(this.Command.Type) {
+            case "target":
+                if (this.deadReckon(dt, this.Command.X, this.Command.Y)) {
+                    this.Command = null;
+                }
+        }
+    }
 
-function process(dt) {
-    if (this.Mission == null) {
-        return;
+    this.targetCommand = function (target) {
+        this.Command = target;
     }
-    switch (this.Mission.Phase) {
-        case "enroute":
-            this.deadReckon(dt);
-            console.log(this);
-            break;
-    }
-}
-
-function deadReckon(dt) {
-    var mis = this.Mission;
-    var velocity = 20; //m/s
-    heading = calculateHeading(this.FlightState.X, this.FlightState.Y, mis.X, mis.Y);
-    this.FlightState.VelocityX = Math.sin(heading) * velocity;
-    this.FlightState.VelocityY = Math.cos(heading) * velocity;
-    var distanceX = this.Mission.X - this.FlightState.X;
-    var distanceY = this.Mission.X - this.FlightState.Y;
-    var dX = this.FlightState.VelocityX * dt;
-    var dY = this.FlightState.VelocityY * dt;
-    console.log(dX + " " + dY);
-    if (dX > distanceX && dY > distanceY) {
-        //We are at the target, stop and set dX to the distance to put us over the target
-        dX = distanceX;
-        dY = distanceY;
-        this.FlightState.VelocityX = 0;
-        this.FlightState.VelocityY = 0;
-        //Increment the phase for the next loop.
-        this.Mission.Phase = "delivering";
-    }
-    this.FlightState.X += dX;
-    this.FlightState.Y += dY;
-    XYToLatLong(this.FlightState);
 }
 
 //Helper functions and globals.
