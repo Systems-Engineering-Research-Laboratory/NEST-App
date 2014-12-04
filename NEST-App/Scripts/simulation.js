@@ -44,6 +44,7 @@ function pushFlightUpdates(map, hub) {
     for (i = 0; i < ids.length; i++) {
         var id = ids[i];
         vehicles[id].FlightState.Timestamp = new Date(Date.now()).toISOString();
+        console.log(vehicles[id]);
         hub.server.pushFlightStateUpdate(vehicles[id].FlightState);
     }
 }
@@ -114,6 +115,8 @@ $(document).ready(function () {
         ids: []
     };
 
+    var vehicleHub = $.connection.vehicleHub;
+
     $('.dropdown-toggle').dropdown();
 
     $.ajax({
@@ -122,8 +125,20 @@ $(document).ready(function () {
             for (var i = 0; i < data.length; i++) {
                 map.vehicles[data[i].Id] = new Vehicle(data[i]);
                 map.ids.push(data[i].Id);
-                $("#dropdown-UAVIds").append('<li role="presentation"><a role="menuitem" href="#">"' + data[i].Id + '"</a></li>');
+                console.log(data[i].Id);
+                $("#dropdown-UAVIds").append('<li role="presentation"><a class="UAVId" role="menuitem" tabindex="-1" href="#">' + data[i].Id + '</a></li>');
             }
+            $('.UAVId').click(function (eventObject) {
+                var id = parseInt(eventObject.target.text);
+                vehicleHub.server.sendCommand({
+                    Id: 123,
+                    Latitude: 34.242034,
+                    Longitude: -118.528763,
+                    Altitude: 400,
+                    UAVId: id
+                });
+            });
+
             getFlightStates(map);
         }
     });
@@ -131,7 +146,7 @@ $(document).ready(function () {
     $("#start").click(start);
     $("#stop").click(stopSim);
 
-    var vehicleHub = $.connection.vehicleHub;
+    
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         console.log(vehicle);
     }
@@ -141,8 +156,8 @@ $(document).ready(function () {
             return;
         }
         target.Type = "target";
-        LatLongToXY(target.Type);
-        map.vehicles[map.ids[idx]].targetCommand(target);
+        LatLongToXY(target);
+        map.vehicles[map.ids[idx]].setCommand(target);
     }
     $.connection.hub.start().done(function mainLoop() {
         vehicleHub.server.joinGroup("vehicles");

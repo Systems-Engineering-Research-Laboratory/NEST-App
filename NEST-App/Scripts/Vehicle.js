@@ -54,7 +54,7 @@ function Vehicle(vehicleInfo) {
         return reachedDest;
     };
 
-    this.processCommand = function(dt) {
+    this.performCommand = function(dt) {
         switch(this.Command.Type) {
             case "target":
                 if (this.deadReckon(dt, this.Command.X, this.Command.Y)) {
@@ -63,7 +63,7 @@ function Vehicle(vehicleInfo) {
         }
     }
 
-    this.targetCommand = function (target) {
+    this.setCommand = function (target) {
         this.Command = target;
     }
 }
