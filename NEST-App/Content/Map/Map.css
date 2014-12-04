@@ -1,0 +1,75 @@
+﻿     .map {
+        height: 100%;
+        width: 100%;
+        border: none;
+        margin: 0;
+        padding: 0px;
+    }
+
+    #info {
+        position: absolute;
+        font-size: 0.7em;
+        top: 10px;
+        right: 10px;
+        background-color: lightgrey;
+        padding: 0px;
+        height: 120px;
+        width: 145px;
+    }
+
+        #info p {
+            margin-top: -1px;
+            margin-bottom: 2px;
+        }
+
+    #MapViews {
+        width: 125px;
+        height: 150px;
+        padding-right: 0px;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        border: medium solid #000000;
+        background-color: #FFFFFF;
+    }
+
+    .WindowTitle {
+        font-weight: bold;
+        border-bottom: thin solid #000000;
+        font-size: large;
+    }
+
+    .WindowContent {
+        padding-top: 5px;
+    }
+
+    #ViewsRadio {
+    }
+
+    #LayerFilter {
+        position: fixed;
+        top: 163px;
+        border-style: solid;
+        border-color: #000000;
+        width: 125px;
+        left: 10px;
+        background-color: #FFFFFF;
+    }
+
+    .Tools {
+    }
+
+    #Tools {
+        bottom: 10pt;
+        left: 15px;
+        height: 46px;
+        float: left;
+        margin-right: 10px;
+        padding-right: 5px;
+        top: auto;
+        position: fixed;
+    }
+
+    .ToolIcon {
+        margin-right: 5px;
+    }

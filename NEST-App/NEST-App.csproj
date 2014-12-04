@@ -398,6 +398,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\Map\Map.css" />
+    <Content Include="Content\Map\Map.js" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -577,7 +579,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
-    <Content Include="Views\Home\Indexbak.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\_ChangePasswordPartial.cshtml" />
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Account\_RemoveAccountPartial.cshtml" />
@@ -595,8 +597,8 @@
     <Content Include="Views\UAVs\Edit.cshtml" />
     <Content Include="Views\UAVs\Index.cshtml" />
     <Content Include="Views\Sim\Index.cshtml" />
-    <Content Include="Views\Maps.cshtml" />
     <Content Include="Views\Map\Overview.cshtml" />
+    <Content Include="Views\Interface\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

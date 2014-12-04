@@ -8,7 +8,7 @@ namespace NEST_App.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Indexbak()
+        public ActionResult Index()
         {
             return View();
         }

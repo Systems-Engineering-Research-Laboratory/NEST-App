@@ -53,7 +53,18 @@ namespace NEST_App
             bootstrapBundle.Orderer = nullOrderer;
             bundles.Add(bootstrapBundle);
 
-
+            //Map CSS bundle
+            var mapCSS = new CustomStyleBundle("~/bundles/mapCSS");
+            mapCSS.Include("~/Content/Map/*.css");
+            mapCSS.Transforms.Add(cssTransformer);
+            mapCSS.Orderer = nullOrderer;
+            bundles.Add(mapCSS);
+            //Map JS bundle
+            var mapJS = new CustomScriptBundle("~/bundles/mapJS");
+            mapJS.Include("~/Content/Map/*.js");
+            mapJS.Transforms.Add(jsTransformer);
+            mapJS.Orderer = nullOrderer;
+            bundles.Add(mapJS);
         }
     }
 }
