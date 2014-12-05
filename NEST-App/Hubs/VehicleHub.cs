@@ -27,7 +27,12 @@ namespace NEST_App.Hubs
 
         public void sendCommand(CMD_NAV_Target target)
         {
-            Clients.Group("vehicles").sendTargetCommand(target);
+            Clients.Group("vehicles").sendTargetCommand(target, Context.ConnectionId);
+        }
+
+        public void AckCommand(CMD_ACK ack, string connectionId)
+        {
+            Clients.Client(connectionId).Acknowledgement(ack);
         }
     }
 }

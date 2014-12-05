@@ -150,7 +150,7 @@ $(document).ready(function () {
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         console.log(vehicle);
     }
-    vehicleHub.client.sendTargetCommand = function (target) {
+    vehicleHub.client.sendTargetCommand = function (target, connId) {
         var idx = map.ids.indexOf(target.UAVId);
         if (idx == -1) {
             return;
@@ -158,6 +158,20 @@ $(document).ready(function () {
         target.Type = "target";
         LatLongToXY(target);
         map.vehicles[map.ids[idx]].setCommand(target);
+        var ack = {
+            Id: 1234,
+            CommandId: target.Id,
+            Reason: "OK"
+        };
+        console.log(ack);
+        vehicleHub.server.ackCommand({
+            Id: 1234,
+            CommandId: target.Id,
+            Reason: "OK"
+        }, connId);
+    }
+    vehicleHub.client.Acknowledgement = function (ack) {
+        console.log(ack);
     }
     $.connection.hub.start().done(function mainLoop() {
         vehicleHub.server.joinGroup("vehicles");

@@ -239,6 +239,9 @@
     </Compile>
     <Compile Include="Hubs\VehicleHub.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\CMD_ACK.cs">
+      <DependentUpon>Commands.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\CMD_CONDITION_Rates.cs">
       <DependentUpon>Commands.tt</DependentUpon>
     </Compile>
