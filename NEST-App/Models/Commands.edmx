@@ -195,6 +195,7 @@
           <EntitySet Name="CMD_NAV_Target" EntityType="Commands.CMD_NAV_Target" />
           <EntitySet Name="CMD_NAV_Set_Base" EntityType="Commands.CMD_NAV_Set_Base" />
           <EntitySet Name="CMD_NAV_Land" EntityType="Commands.CMD_NAV_Land" />
+          <EntitySet Name="CMD_ACK" EntityType="Commands.CMD_ACK" />
         </EntityContainer>
         <EntityType Name="CMD_NAV_Waypoint">
           <Key>
@@ -275,6 +276,14 @@
           <Property Name="Latitude" Type="String" Nullable="false" />
           <Property Name="Longitude" Type="String" Nullable="false" />
           <Property Name="Throttle" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_ACK">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CommandId" Type="Int32" Nullable="false" />
+          <Property Name="Reason" Type="String" Nullable="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
