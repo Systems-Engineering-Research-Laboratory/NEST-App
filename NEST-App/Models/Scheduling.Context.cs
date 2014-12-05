@@ -12,6 +12,7 @@ namespace NEST_App.Models
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+
     
     public partial class SchedulingContainer : DbContext
     {

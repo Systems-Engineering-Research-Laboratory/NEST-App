@@ -230,6 +230,7 @@
     <Compile Include="Controllers\InterfaceController.cs" />
     <Compile Include="Controllers\MapController.cs" />
     <Compile Include="Controllers\MissionsController.cs" />
+    <Compile Include="Controllers\ScheduleController.cs" />
     <Compile Include="Controllers\SimController.cs" />
     <Compile Include="Controllers\UAVsController.cs" />
     <Compile Include="DAL\NestDbContext.cs" />
@@ -599,6 +600,7 @@
     <Content Include="Views\Sim\Index.cshtml" />
     <Content Include="Views\Map\Overview.cshtml" />
     <Content Include="Views\Interface\Index.cshtml" />
+    <Content Include="Views\Schedule\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

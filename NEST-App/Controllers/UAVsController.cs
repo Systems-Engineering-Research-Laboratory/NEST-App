@@ -9,10 +9,29 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Web.Mvc;
+using System.Web;
 using NEST_App.DAL;
 using NEST_App.Models;
 
 namespace NEST_App.Controllers
+{
+    public class UAVsController : Controller
+    {
+        private NestDbContext db = new NestDbContext();
+
+        // GET: UAVs/Index
+        public ActionResult Index()
+        {
+            dynamic uavDetailList = new System.Dynamic.ExpandoObject();
+            uavDetailList.UAVs = db.UAVs.ToList();
+            uavDetailList.FlightStates = db.FlightStates.ToList();
+            return View(uavDetailList);
+        }
+    }
+}
+
+namespace NEST_App.Controllers.Api
 {
     public class UAVsController : ApiController
     {

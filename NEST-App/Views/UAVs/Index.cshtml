@@ -37,7 +37,7 @@
                 @Html.DisplayFor(modelItem => uav.Mileage)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => uav.States.FirstOrDefault().BatteryLevel)
+                @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().BatteryLevel)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id=uav.Id }) |

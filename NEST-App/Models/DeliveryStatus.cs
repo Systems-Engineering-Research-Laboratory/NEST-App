@@ -11,9 +11,11 @@ namespace NEST_App.Models
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
     
     public partial class DeliveryStatus
     {
+        [ForeignKey("Schedule")]
         public int Id { get; set; }
         public System.DateTime time_departure { get; set; }
         public string location_departure { get; set; }

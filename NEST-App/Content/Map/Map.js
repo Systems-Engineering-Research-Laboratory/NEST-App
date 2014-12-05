@@ -30,7 +30,7 @@ var markerStyle = new ol.style.Style({
         anchorXUnits: 'fraction',
         anchorYUnits: 'fraction',
         scale: 0.1,
-        src: '../Content/marker.png'
+        src: '../Content/drone.png'
     }))
 });
 
@@ -204,6 +204,7 @@ window.addEventListener("load", init, false);
 
 $(document).ready(function () {
     //Stores the vehicles received from the AJAX call.
+    /*
     dList = {
         vehicles: [],
         ids: []
@@ -219,10 +220,25 @@ $(document).ready(function () {
             getFlightStates(dList);
         }
     });
+   */
+
+    var vehicleHub = $.connection.vehicleHub;
+    vehicleHub.client.flightStateUpdate = function (vehicle) {
+        console.log(vehicle); + " " + console.log(vehicle.Latitude); + " " + console.log(vehicle.Longitude);
+        
+        var iconFeature = new ol.Feature({
+            geometry: new ol.geom.Point(ol.proj.transform([vehicle.Latitude, vehicle.Longitude], 'EPSG:4326', 'EPSG:3857')),
+            name: 'Test'
+        });
 
 
-    $("#loadDrones").click(function (dlist) {
-        console.log("Init Started");
-        initDroneLayer(dList)
-    });
+        iconFeature.setStyle(markerStyle);
+
+        var markers = new ol.layer.Vector({
+            source: new ol.source.Vector({ features: [iconFeature] })
+        });
+
+        map.addLayer(markers);
+    }
+
 });

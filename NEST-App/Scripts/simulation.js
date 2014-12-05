@@ -125,7 +125,7 @@ $(document).ready(function () {
             for (var i = 0; i < data.length; i++) {
                 map.vehicles[data[i].Id] = new Vehicle(data[i]);
                 map.ids.push(data[i].Id);
-                console.log(data[i].Id);
+                console.log(data[i].Id + " " + data[i].Callsign);
                 $("#dropdown-UAVIds").append('<li role="presentation"><a class="UAVId" role="menuitem" tabindex="-1" href="#">' + data[i].Id + '</a></li>');
             }
             $('.UAVId').click(function (eventObject) {

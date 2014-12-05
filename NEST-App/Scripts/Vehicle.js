@@ -31,7 +31,7 @@ function Vehicle(vehicleInfo) {
     };
     this.deadReckon = function (dt, X, Y) {
         var reachedDest = false;
-        var velocity = 20; //m/s
+        var velocity = 10000000; //m/s
         heading = calculateHeading(this.FlightState.X, this.FlightState.Y, X, Y);
         this.FlightState.VelocityX = Math.sin(heading) * velocity;
         this.FlightState.VelocityY = Math.cos(heading) * velocity;
