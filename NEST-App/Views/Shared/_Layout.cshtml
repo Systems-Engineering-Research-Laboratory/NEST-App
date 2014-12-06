@@ -7,6 +7,12 @@
     @Styles.Render("~/bundles/css")
     @Scripts.Render("~/bundles/modernizr")
 
+
+    <style>
+        .navbar-inverse {
+            background-color: #213157;
+        }
+    </style>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -41,6 +47,7 @@
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/Scripts/jquery.signalR-2.0.2.js");
     @Scripts.Render("~/signalr/hubs")
+    @Styles.Render("~/Content/nest_style.css");
     @RenderSection("scripts", required: false)
 </body>
 </html>

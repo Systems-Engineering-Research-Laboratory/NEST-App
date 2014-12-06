@@ -402,8 +402,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\img\david_wu.png" />
+    <Content Include="Content\img\dragos_guta.png" />
+    <Content Include="Content\img\jeffrey_limbacher.jpeg" />
+    <Content Include="Content\img\pinar_sayim.png" />
+    <Content Include="Content\img\sean_buckley.png" />
+    <Content Include="Content\img\varatep_buranintu.png" />
+    <Content Include="Content\img\yun_kim.png" />
     <Content Include="Content\Map\Map.css" />
     <Content Include="Content\Map\Map.js" />
+    <Content Include="Content\nest_style.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

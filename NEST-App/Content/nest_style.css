@@ -1,0 +1,20 @@
+﻿/* Styles developed by Varatep Buranintu. Do what you want with this file. */
+.profile_picture {
+    width: 300px;
+    height: 300px;
+    border-radius: 150px;
+    background-image: url('~/Content/img/sean_buckley.png');
+    -webkit-border-radius: 150px;
+    -moz-border-radius: 150px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+    -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+    -moz-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+}
+.avatar-frame{border: 2px solid #c7b89e;align-content:center;}
+.avatar-frame,.avatar-frame img{
+	width: 50px;
+	height: 50px;
+	-webkit-border-radius: 30px; /* Saf3+, Chrome */
+	border-radius: 30px; /* Opera 10.5, IE 9 */
+	/*-moz-border-radius: 30px;  Disabled for FF1+ */
+	}
