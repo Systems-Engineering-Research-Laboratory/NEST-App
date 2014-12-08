@@ -16,7 +16,6 @@ function triggerToolMenu(e) {
         //expand
     }
 }
-
 ////////THIS IS THE SINGLE MARKER/////////
 /*This is an example of how to create a single marker on the map.
 Marker elements on the map are called "features", and an array of 
@@ -200,8 +199,8 @@ function switchLayers(i) {
     }
 }
 
-function render() {
-    map.render;
+function forceRefresh() {
+    map.render();
 }
 
 function init() {
@@ -232,38 +231,30 @@ $(document).ready(function () {
 
 
 
-
-  
+    var droneSource = droneLayer.getSource();
+    var featureList = droneLayer.getSource().getFeatures();
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         console.log(vehicle); + " " + console.log(vehicle.Latitude); + " " + console.log(vehicle.Longitude);
         
-        var newFeature = new ol.Feature({
-            geometry: new ol.geom.Point(ol.proj.transform([vehicle.Latitude, vehicle.Longitude], 'EPSG:4326', 'EPSG:3857')),
-            name: 'Test'
-        });
-        console.log("New drone created")
+        //Check to see if the drone already exists on the map via its ID
+        var tempFeature = droneSource.getFeatureById(vehicle.Id); //Replace vehicle.Id with vehicle.CallSign or something else more unique
+        //If it already exists, update the feature's geometry with the new location
+        if (tempFeature != null) {
+            tempFeature.setGeometry(new ol.geom.Point(ol.proj.transform([vehicle.Longitude, vehicle.Latitude], 'EPSG:4326', 'EPSG:3857')));
+        } else {
+            //Otherwise, create a new feature with a CallSign and droneStyle and add it to the source
+            var newFeature = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.transform([vehicle.Longitude, vehicle.Latitude], 'EPSG:4326', 'EPSG:3857')),
+                name: 'Test'
+            });
+            newFeature.setId(vehicle.Id);
+            newFeature.setStyle(droneStyle);
+            droneLayer.getSource().addFeature(newFeature);
+            console.log("New drone created")
+        }
 
-
-        newFeature.setStyle(droneStyle);
-        droneLayer.getSource().addFeature(newFeature);
-
-        console.log("The number of features is now: " + droneLayer.getSource().getFeatures().length);
-
-        /*
-        This theoretically grabs the list of features on the source, adds the new drone to the list,
-        clears all features from the source, then reinstates the list of features back to the source.
-
-        Interestingly, this only works once, then breaks on droneLayer.getSource().clear().
-        ///////////////////
-        var featureList = droneLayer.getSource().getFeatures();
-        featureList.push(newFeature);
-        droneLayer.getSource().clear();
-        droneLayer.getSource().addFeatures(featureList);
-        console.log("The number of features is now: " + droneLayer.getSource().getFeatures().length);
-        ////////////////
-        */
-        map.render();
+        //console.log("The number of features is now: " + droneLayer.getSource().getFeatures().length);
     }
 
 });
