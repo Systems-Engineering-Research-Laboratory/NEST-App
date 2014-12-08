@@ -12,6 +12,7 @@
     <EntitySet Name="CMD_NAV_Target" EntityType="Commands.Store.CMD_NAV_Target" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Set_Base" EntityType="Commands.Store.CMD_NAV_Set_Base" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Land" EntityType="Commands.Store.CMD_NAV_Land" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CMD_ACK" EntityType="Commands.Store.CMD_ACK" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Waypoint_CMD_NAV_Hover" EntityType="Commands.Store.CMD_NAV_Waypoint_CMD_NAV_Hover" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Set_Base_CMD_DO_Return_To_Base" EntityType="Commands.Store.CMD_NAV_Set_Base_CMD_DO_Return_To_Base" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Takeoff_CMD_DO_Change_Speed" EntityType="Commands.Store.CMD_NAV_Takeoff_CMD_DO_Change_Speed" store:Type="Tables" Schema="dbo" />
@@ -74,6 +75,7 @@
     <Property Name="Altitude" Type="float" Nullable="false" />
     <Property Name="Latitude" Type="float" Nullable="false" />
     <Property Name="Longitude" Type="float" Nullable="false" />
+    <Property Name="UAVId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="CMD_NAV_Set_Base">
     <Key>
@@ -93,6 +95,14 @@
     <Property Name="Latitude" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Longitude" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Throttle" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CMD_ACK">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CommandId" Type="int" Nullable="false" />
+    <Property Name="Reason" Type="nvarchar(max)" Nullable="false" />
   </EntityType>
   <EntityType Name="CMD_NAV_Waypoint_CMD_NAV_Hover">
     <Key>
@@ -358,6 +368,7 @@
           <ScalarProperty Name="Altitude" ColumnName="Altitude" />
           <ScalarProperty Name="Latitude" ColumnName="Latitude" />
           <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="UAVId" ColumnName="UAVId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -385,6 +396,15 @@
           <ScalarProperty Name="Latitude" ColumnName="Latitude" />
           <ScalarProperty Name="Longitude" ColumnName="Longitude" />
           <ScalarProperty Name="Throttle" ColumnName="Throttle" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CMD_ACK">
+      <EntityTypeMapping TypeName="IsTypeOf(Commands.CMD_ACK)">
+        <MappingFragment StoreEntitySet="CMD_ACK">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="CommandId" ColumnName="CommandId" />
+          <ScalarProperty Name="Reason" ColumnName="Reason" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

@@ -21,7 +21,7 @@
         <InheritanceConnector EntityType="Commands.CMD_DO_Change_Dynamics" />
         <EntityTypeShape EntityType="Commands.CMD_NAV_Land" Width="2.25" PointX="4" PointY="7.5" />
         <InheritanceConnector EntityType="Commands.CMD_DO_Return_To_Base" />
-        <EntityTypeShape EntityType="Commands.CMD_ACK" Width="1.5" PointX="11.625" PointY="2.875" />
+        <EntityTypeShape EntityType="Commands.CMD_ACK" Width="1.5" PointX="8.5" PointY="4.875" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
