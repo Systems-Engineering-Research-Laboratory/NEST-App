@@ -7,7 +7,8 @@
 }
 <script src="http://openlayers.org/en/v3.0.0/build/ol.js" type="text/javascript"></script>
 <script src="~/Scripts/jquery-2.1.0.js"></script>
-<!--This is the OSM map-->
+
+<!--This is the map element OL refers to-->
 <div id="map" class="map"></div>
 
 <div id="info">
@@ -22,11 +23,11 @@
     <div class="WindowContent">
         <form id="ViewsRadio">
             <input type="radio" name="view" id="View1" checked="checked" onclick="switchLayers(0)">
-            <span>Map View 1</span><br>
+            <span>OpenStreetMaps</span><br>
             <input type="radio" name="view" id="View2" onclick="switchLayers(1)">
-            <span>Map View 2</span><br>
+            <span>MapQuest</span><br>
             <input type="radio" name="view" id="View3" onclick="switchLayers(2)">
-            <span>Map View 3</span><br>
+            <span>Bing Maps</span><br>
         </form>
     </div>
 </div>

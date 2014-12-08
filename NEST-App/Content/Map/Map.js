@@ -5,8 +5,9 @@ var runSim = false;
 var dt = 1000; //Timestep in milliseconds
 var phases = ["preparing", "enroute", "delivering", "returning", "landing"];
 var dList;
-var droneFeatures = [];
 
+
+//Placeholder to control the animation of the tool menu on the overview, likely with jQuery
 function triggerToolMenu(e) {
     if (toolsExpanded) {
         //collapse
@@ -16,15 +17,60 @@ function triggerToolMenu(e) {
     }
 }
 
-///THIS IS THE SINGLE MARKER/////////
-// Create the icon feature (geom + properties)
+////////THIS IS THE SINGLE MARKER/////////
+/*This is an example of how to create a single marker on the map.
+Marker elements on the map are called "features", and an array of 
+features can be loaded into a map layer.Vector as the source of data,
+pushing all the features onto the map as a set of markers*/
+
+// Create the icon feature and define its geometry (location) and properties
 var iconFeature = new ol.Feature({
+    //Geometry defines the type of feature (line, multiline, circle, point, etc.) as well as the coordinates of the feature.
+    //Remember to transform coordinates into the projection that is being used by the current map
     geometry: new ol.geom.Point(ol.proj.transform([-118.529, 34.2417], 'EPSG:4326', 'EPSG:3857')),
     name: 'Test'
 });
 
 // Set up marker style
 var markerStyle = new ol.style.Style({
+    image: new ol.style.Icon(({
+        //"anchor" defines which part of the image is centered onto the coordinates of the feature.
+        //In this case, the bottom center of the image is where the feature's coordinates are.
+        anchor: [0.5, 1],
+        anchorXUnits: 'fraction',
+        anchorYUnits: 'fraction',
+        scale: 0.1,
+        src: '../Content/drone.png'
+    }))
+});
+
+//Apply the style of the feature to the location of the feature
+iconFeature.setStyle(markerStyle);
+
+
+//A vector layer is created here, with a feature array (of one element, in this case) as the vector source
+var markers = new ol.layer.Vector({
+    source: new ol.source.Vector({ features: [iconFeature] })
+});
+//////////////END SINGLE MARKER//////////////////
+
+
+
+
+
+///////////PLACEHOLDER FOR DRONE LAYER//////////
+/*This is designed in the style of the single-marker example described above,
+however, the source will be an array of drones instead of a single element*/
+
+
+var droneFeatures = [];
+var droneLayer = new ol.layer.Vector({
+    source: new ol.source.Vector({ features: droneFeatures }),
+    visibile: true
+});
+
+// Set up Drone style
+var droneStyle = new ol.style.Style({
     image: new ol.style.Icon(({
         anchor: [0.5, 1],
         anchorXUnits: 'fraction',
@@ -34,34 +80,16 @@ var markerStyle = new ol.style.Style({
     }))
 });
 
+//////////END DRONE LAYER PLACEHOLDER///////////////
 
-iconFeature.setStyle(markerStyle);
-
-var markers = new ol.layer.Vector({
-    source: new ol.source.Vector({ features: [iconFeature] })
-});
-var droneLayer = new ol.layer.Vector({
-    source: new ol.source.Vector({ features: droneFeatures })
-});
-//////////////////////////////////////////////
-
-// Set up Drone style
-var droneStyle = new ol.style.Style({
-    image: new ol.style.Icon(({
-        anchor: [0.5, 1],
-        anchorXUnits: 'fraction',
-        anchorYUnits: 'fraction',
-        src: '../Content/drone.gif'
-    }))
-});
-
-
+//THIS ENTIRE FUNCTION CAN LIKELY BE DELETED
+/*
 function initDroneLayer(d) {
     //droneLayer.getSource().clear();
     var vehicles = d.vehicles;
     var ids = d.ids;
-    /*if (drone list is empty) { }
-    else {*/
+    if (dList.empty()) { }
+    else {
     for (i = 1; i < ids.length; i++) {
         console.log("Iterate for loop " + i);
         console.log("Current vehicle is: " + vehicles[ids[i]]);
@@ -84,68 +112,40 @@ function initDroneLayer(d) {
     console.log("Exited for loop OK");
     //Rebuild the drone layer with the new set of drone features.
     droneLayer.setSource(new ol.source.Vector({ features: droneFeatures }));
-    // }
+    }
 
     // map.addLayer(droneLayer);
 };
-
-
-
-
-
-/*
-//KML Style
-var markerStyle = new ol.style.Style({
-    image: new ol.style.Icon({
-        anchor: ol.proj.transform([-118.529,34.2417], 'EPSG:4326', 'EPSG:3857'),
-        anchorXUnits: 'fraction',
-        anchorYUnits: 'pixels',
-        src: 'marker.png'}))
-    })
-})
 */
 
 
-
-
 ///////MAP LAYERS//////////
-//Load OpenStreetMaps tiles
+//Load OpenStreetMaps tiles to a layer
 var rasterOSM = new ol.layer.Tile({
     source: new ol.source.OSM({ layer: 'sat' })
 });
 
+//Load MapQuest tiles to a layer
 var rasterMQ = new ol.layer.Tile({
-    source: new ol.source.MapQuest({ layer: 'sat' })
+    source: new ol.source.MapQuest({ layer: 'sat' }),
+    visible: false
 });
-rasterMQ.setVisible(false);
 
+//Load Bing tiles to a layer (currently using placeholder key)
 var rasterBing = new ol.layer.Tile({
     source: new ol.source.BingMaps({
         key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
         imagerySet: 'Aerial'
-    })
-});
-rasterBing.setVisible(false);
-
-/*var kmlLayer = new ol.layer.Vector({
-  source: new ol.source.KML({
-    //extractStyles: false,
-    projection: 'EPSG:3857',
-    url: '../KML_Data/myplaces.kml'
     }),
-    style: function(feature, resolution) {
-        return style[feature.getGeometry().getType()];
-    }
+    visible: false
 });
-*/
-/*var flightPathLayer = new ol.layer.Vector({
-//extent = mapExtent
-
-})
-*/
 
 
 ///////////////OPENWEATHERMAPS/////////////
+/*This is a placeholder set of layers that will be pulling from the OpenWeatherMaps API
+once it becomes a priority
+*/
+
 /*var cloudLayer = new ol.layer.Tile({
     source: new ol.source.XYZ({
         projection: 'EPSG:3857',
@@ -159,13 +159,15 @@ var pressureLayer = new ol.layer.Tile({
         url: 'http://${s}.tile.openweathermap.org/map/pressure_cntr/${z}/${x}/${y}.png'
     })
 })*/
-////////////////////////////////////////////
+///////////////END OPENWEATHERMAPS////////
 
 
 
 
 
 //Create the Map
+/*"For a map to render, a view, one or more layers, and a target container are needed"
+See https://openlayers.orgv3.0.0/apidoc/ol.Map.html for another basic map definition*/
 var map = new ol.Map({
     layers: [rasterOSM, rasterMQ, markers, droneLayer/*, cloudLayer, pressureLayer, kmlLayer*/],
     target: 'map',
@@ -176,6 +178,8 @@ var map = new ol.Map({
 });
 
 
+//This function gets called whenever a "Map View" radio button is selected.
+//It hides inactive Views and makes the selected Map View visible.
 function switchLayers(i) {
     switch (i) {
         case 0:
@@ -194,6 +198,10 @@ function switchLayers(i) {
             rasterBing.setVisible(true);
             break;
     }
+}
+
+function render() {
+    map.render;
 }
 
 function init() {
@@ -222,23 +230,40 @@ $(document).ready(function () {
     });
    */
 
+
+
+
+  
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         console.log(vehicle); + " " + console.log(vehicle.Latitude); + " " + console.log(vehicle.Longitude);
         
-        var iconFeature = new ol.Feature({
+        var newFeature = new ol.Feature({
             geometry: new ol.geom.Point(ol.proj.transform([vehicle.Latitude, vehicle.Longitude], 'EPSG:4326', 'EPSG:3857')),
             name: 'Test'
         });
+        console.log("New drone created")
 
 
-        iconFeature.setStyle(markerStyle);
+        newFeature.setStyle(droneStyle);
+        droneLayer.getSource().addFeature(newFeature);
 
-        var markers = new ol.layer.Vector({
-            source: new ol.source.Vector({ features: [iconFeature] })
-        });
+        console.log("The number of features is now: " + droneLayer.getSource().getFeatures().length);
 
-        map.addLayer(markers);
+        /*
+        This theoretically grabs the list of features on the source, adds the new drone to the list,
+        clears all features from the source, then reinstates the list of features back to the source.
+
+        Interestingly, this only works once, then breaks on droneLayer.getSource().clear().
+        ///////////////////
+        var featureList = droneLayer.getSource().getFeatures();
+        featureList.push(newFeature);
+        droneLayer.getSource().clear();
+        droneLayer.getSource().addFeatures(featureList);
+        console.log("The number of features is now: " + droneLayer.getSource().getFeatures().length);
+        ////////////////
+        */
+        map.render();
     }
 
 });
