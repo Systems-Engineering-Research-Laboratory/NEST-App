@@ -239,6 +239,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Hubs\VehicleHub.cs" />
+    <Compile Include="Hubs\VehicleRouteHub.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CMD_ACK.cs">
       <DependentUpon>Commands.tt</DependentUpon>
