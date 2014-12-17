@@ -24,7 +24,6 @@ namespace NEST_App.DAL
         public DbSet<Mission> Missions { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
-        public DbSet<DeliveryStatus> DeliveryStatus { get; set; }
         public DbSet<Maintenance> Maintenances { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

@@ -12,10 +12,10 @@
     <EntitySet Name="Equipments" EntityType="VehicleModel.Store.Equipments" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="EquipmentHealths" EntityType="VehicleModel.Store.EquipmentHealths" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="NonownshipVehicles" EntityType="VehicleModel.Store.NonownshipVehicles" store:Type="Tables" Schema="dbo" />
-    <AssociationSet Name="VehicleState" Association="VehicleModel.Store.VehicleState">
-      <End Role="Vehicle" EntitySet="UAVs1" />
-      <End Role="State" EntitySet="FlightStates" />
-    </AssociationSet>
+    <EntitySet Name="Schedules" EntityType="VehicleModel.Store.Schedules" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Orders" EntityType="VehicleModel.Store.Orders" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Schedules_Mission" EntityType="VehicleModel.Store.Schedules_Mission" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Schedules_Maintenance" EntityType="VehicleModel.Store.Schedules_Maintenance" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="VehicleConfiguration" Association="VehicleModel.Store.VehicleConfiguration">
       <End Role="Vehicle" EntitySet="UAVs1" />
       <End Role="Configuration" EntitySet="Configurations" />
@@ -31,6 +31,26 @@
     <AssociationSet Name="VehicleEuipmentHealth" Association="VehicleModel.Store.VehicleEuipmentHealth">
       <End Role="Vehicle" EntitySet="UAVs1" />
       <End Role="EuipmentHealth" EntitySet="EquipmentHealths" />
+    </AssociationSet>
+    <AssociationSet Name="UAVFlightState" Association="VehicleModel.Store.UAVFlightState">
+      <End Role="UAV" EntitySet="UAVs1" />
+      <End Role="FlightState" EntitySet="FlightStates" />
+    </AssociationSet>
+    <AssociationSet Name="UAVSchedule" Association="VehicleModel.Store.UAVSchedule">
+      <End Role="UAV" EntitySet="UAVs1" />
+      <End Role="Schedule" EntitySet="Schedules" />
+    </AssociationSet>
+    <AssociationSet Name="MissionOrder" Association="VehicleModel.Store.MissionOrder">
+      <End Role="Mission" EntitySet="Schedules_Mission" />
+      <End Role="Order" EntitySet="Orders" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Mission_inherits_Schedule" Association="VehicleModel.Store.FK_Mission_inherits_Schedule">
+      <End Role="Schedule" EntitySet="Schedules" />
+      <End Role="Mission" EntitySet="Schedules_Mission" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Maintenance_inherits_Schedule" Association="VehicleModel.Store.FK_Maintenance_inherits_Schedule">
+      <End Role="Schedule" EntitySet="Schedules" />
+      <End Role="Maintenance" EntitySet="Schedules_Maintenance" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="UAVs1">
@@ -61,7 +81,7 @@
     <Property Name="RollRate" Type="float" Nullable="false" />
     <Property Name="PitchRate" Type="float" Nullable="false" />
     <Property Name="BatteryLevel" Type="float" Nullable="false" />
-    <Property Name="Vehicle_Id" Type="int" Nullable="false" StoreGeneratedPattern="None" />
+    <Property Name="UAVId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Configurations">
     <Key>
@@ -110,18 +130,51 @@
     <Property Name="Yaw" Type="float" Nullable="false" />
     <Property Name="FlightPlan" Type="nvarchar(max)" Nullable="false" />
   </EntityType>
-  <Association Name="VehicleState">
-    <End Role="Vehicle" Type="VehicleModel.Store.UAVs1" Multiplicity="1" />
-    <End Role="State" Type="VehicleModel.Store.FlightStates" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Vehicle">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="State">
-        <PropertyRef Name="Vehicle_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
+  <EntityType Name="Schedules">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UAVId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Orders">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" />
+    <Property Name="TimeReceived" Type="datetime" Nullable="false" />
+    <Property Name="TimeCompleted" Type="datetime" Nullable="false" />
+    <Property Name="PackageContents" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Notes" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="DestinationAddress" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Schedules_Mission">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Phase" Type="varchar" Nullable="false" MaxLength="50" />
+    <Property Name="FlightPattern" Type="varchar" Nullable="true" MaxLength="50" />
+    <Property Name="Payload" Type="varchar(max)" Nullable="false" />
+    <Property Name="Priority" Type="int" Nullable="false" />
+    <Property Name="FinancialCost" Type="decimal" Nullable="true" Precision="19" Scale="4" />
+    <Property Name="TimeAssigned" Type="datetime" Nullable="false" />
+    <Property Name="TimeCompleted" Type="datetime" Nullable="false" />
+    <Property Name="DestinationCoordinates" Type="geography" Nullable="false" SRID="4326" />
+    <Property Name="ScheduledCompletionTime" Type="datetime" Nullable="false" />
+    <Property Name="EstimatedCompletionTime" Type="datetime" Nullable="false" />
+    <Property Name="Id" Type="int" Nullable="false" />
+    <Property Name="Order_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Schedules_Maintenance">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="last_maintenance" Type="datetime" Nullable="false" />
+    <Property Name="next_maintenance" Type="datetime" Nullable="false" />
+    <Property Name="time_remaining" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="ScheduleId" Type="int" Nullable="false" />
+    <Property Name="Id" Type="int" Nullable="false" />
+  </EntityType>
   <Association Name="VehicleConfiguration">
     <End Role="Vehicle" Type="VehicleModel.Store.UAVs1" Multiplicity="*" />
     <End Role="Configuration" Type="VehicleModel.Store.Configurations" Multiplicity="1" />
@@ -170,6 +223,70 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="UAVFlightState">
+    <End Role="UAV" Type="VehicleModel.Store.UAVs1" Multiplicity="1" />
+    <End Role="FlightState" Type="VehicleModel.Store.FlightStates" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="UAV">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="FlightState">
+        <PropertyRef Name="UAVId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="UAVSchedule">
+    <End Role="UAV" Type="VehicleModel.Store.UAVs1" Multiplicity="1" />
+    <End Role="Schedule" Type="VehicleModel.Store.Schedules" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="UAV">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Schedule">
+        <PropertyRef Name="UAVId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="MissionOrder">
+    <End Role="Mission" Type="VehicleModel.Store.Schedules_Mission" Multiplicity="*" />
+    <End Role="Order" Type="VehicleModel.Store.Orders" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="Order">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Mission">
+        <PropertyRef Name="Order_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Mission_inherits_Schedule">
+    <End Role="Schedule" Type="VehicleModel.Store.Schedules" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Mission" Type="VehicleModel.Store.Schedules_Mission" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="Schedule">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Mission">
+        <PropertyRef Name="Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Maintenance_inherits_Schedule">
+    <End Role="Schedule" Type="VehicleModel.Store.Schedules" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Maintenance" Type="VehicleModel.Store.Schedules_Maintenance" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="Schedule">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Maintenance">
+        <PropertyRef Name="Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
@@ -201,7 +318,17 @@
             <End Role="UAV" EntitySet="UAVs1" />
             <End Role="FlightState" EntitySet="FlightStates" />
           </AssociationSet>
-        </EntityContainer>
+          <EntitySet Name="Schedules" EntityType="VehicleModel.Schedule" />
+          <AssociationSet Name="UAVSchedule" Association="VehicleModel.UAVSchedule">
+            <End Role="UAV" EntitySet="UAVs1" />
+            <End Role="Schedule" EntitySet="Schedules" />
+          </AssociationSet>
+          <EntitySet Name="Orders" EntityType="VehicleModel.Order" />
+          <AssociationSet Name="MissionOrder" Association="VehicleModel.MissionOrder">
+            <End Role="Mission" EntitySet="Schedules" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          </EntityContainer>
         <EntityType Name="UAV">
           <Key>
             <PropertyRef Name="Id" />
@@ -213,6 +340,7 @@
           <Property Name="NumDeliveries" Type="Int32" Nullable="false" />
           <Property Name="Mileage" Type="Int32" Nullable="false" />
           <NavigationProperty Name="FlightStates" Relationship="VehicleModel.UAVFlightState" FromRole="UAV" ToRole="FlightState" />
+          <NavigationProperty Name="Schedules" Relationship="VehicleModel.UAVSchedule" FromRole="UAV" ToRole="Schedule" />
           </EntityType>
         <EntityType Name="FlightState">
           <Key>
@@ -313,6 +441,61 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Maintenance" BaseType="VehicleModel.Schedule">
+          <Property Name="last_maintenance" Type="DateTime" Nullable="false" />
+          <Property Name="next_maintenance" Type="DateTime" Nullable="false" />
+          <Property Name="time_remaining" Type="String" Nullable="false" />
+          <Property Name="ScheduleId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Schedule">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="UAV" Relationship="VehicleModel.UAVSchedule" FromRole="Schedule" ToRole="UAV" />
+          <Property Name="UAVId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="UAVSchedule">
+          <End Type="VehicleModel.UAV" Role="UAV" Multiplicity="1" />
+          <End Type="VehicleModel.Schedule" Role="Schedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UAV">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Schedule">
+              <PropertyRef Name="UAVId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Mission" BaseType="VehicleModel.Schedule">
+          <Property Name="Phase" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FlightPattern" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Payload" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Priority" Type="Int32" Nullable="false" />
+          <Property Name="FinancialCost" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="TimeAssigned" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="TimeCompleted" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DestinationCoordinates" Type="Geography" Nullable="false" />
+          <Property Name="ScheduledCompletionTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="EstimatedCompletionTime" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Order" Relationship="VehicleModel.MissionOrder" FromRole="Mission" ToRole="Order" />
+        </EntityType>
+        <EntityType Name="Order">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="TimeReceived" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="TimeCompleted" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PackageContents" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DestinationAddress" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Missions" Relationship="VehicleModel.MissionOrder" FromRole="Order" ToRole="Mission" />
+        </EntityType>
+        <Association Name="MissionOrder">
+          <End Type="VehicleModel.Mission" Role="Mission" Multiplicity="*" />
+          <End Type="VehicleModel.Order" Role="Order" Multiplicity="1" />
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -332,8 +515,7 @@
     <EntitySetMapping Name="FlightStates">
       <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.FlightState)">
         <MappingFragment StoreEntitySet="FlightStates">
-                <ScalarProperty Name="UAVId" ColumnName="Vehicle_Id" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Timestamp" ColumnName="Timestamp" />
           <ScalarProperty Name="Position" ColumnName="Position" />
           <ScalarProperty Name="VelocityX" ColumnName="VelocityX" />
@@ -346,6 +528,7 @@
           <ScalarProperty Name="RollRate" ColumnName="RollRate" />
           <ScalarProperty Name="PitchRate" ColumnName="PitchRate" />
           <ScalarProperty Name="BatteryLevel" ColumnName="BatteryLevel" />
+          <ScalarProperty Name="UAVId" ColumnName="UAVId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -397,6 +580,50 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="Schedules">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.Schedule)">
+        <MappingFragment StoreEntitySet="Schedules">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="UAVId" ColumnName="UAVId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.Mission)">
+        <MappingFragment StoreEntitySet="Schedules_Mission">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Phase" ColumnName="Phase" />
+          <ScalarProperty Name="FlightPattern" ColumnName="FlightPattern" />
+          <ScalarProperty Name="Payload" ColumnName="Payload" />
+          <ScalarProperty Name="Priority" ColumnName="Priority" />
+          <ScalarProperty Name="FinancialCost" ColumnName="FinancialCost" />
+          <ScalarProperty Name="TimeAssigned" ColumnName="TimeAssigned" />
+          <ScalarProperty Name="TimeCompleted" ColumnName="TimeCompleted" />
+          <ScalarProperty Name="DestinationCoordinates" ColumnName="DestinationCoordinates" />
+          <ScalarProperty Name="ScheduledCompletionTime" ColumnName="ScheduledCompletionTime" />
+          <ScalarProperty Name="EstimatedCompletionTime" ColumnName="EstimatedCompletionTime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.Maintenance)">
+        <MappingFragment StoreEntitySet="Schedules_Maintenance">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="last_maintenance" ColumnName="last_maintenance" />
+          <ScalarProperty Name="next_maintenance" ColumnName="next_maintenance" />
+          <ScalarProperty Name="time_remaining" ColumnName="time_remaining" />
+          <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Orders">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.Order)">
+        <MappingFragment StoreEntitySet="Orders">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="TimeReceived" ColumnName="TimeReceived" />
+          <ScalarProperty Name="TimeCompleted" ColumnName="TimeCompleted" />
+          <ScalarProperty Name="PackageContents" ColumnName="PackageContents" />
+          <ScalarProperty Name="Notes" ColumnName="Notes" />
+          <ScalarProperty Name="DestinationAddress" ColumnName="DestinationAddress" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <AssociationSetMapping Name="VehicleConfiguration" TypeName="VehicleModel.VehicleConfiguration" StoreEntitySet="UAVs1">
       <EndProperty Name="Configuration">
         <ScalarProperty Name="Id" ColumnName="Configurations_Id" />
@@ -426,6 +653,14 @@
         <ScalarProperty Name="Id" ColumnName="Vehicle_Id" />
       </EndProperty>
       <EndProperty Name="EuipmentHealth">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="MissionOrder" TypeName="VehicleModel.MissionOrder" StoreEntitySet="Schedules_Mission">
+      <EndProperty Name="Order">
+        <ScalarProperty Name="Id" ColumnName="Order_Id" />
+      </EndProperty>
+      <EndProperty Name="Mission">
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
     </AssociationSetMapping>

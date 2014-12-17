@@ -18,6 +18,7 @@ namespace NEST_App.Models
         {
             this.EuipmentHealths = new HashSet<EquipmentHealth>();
             this.FlightStates = new HashSet<FlightState>();
+            this.Schedules = new HashSet<Schedule>();
         }
     
         public int Id { get; set; }
@@ -28,5 +29,6 @@ namespace NEST_App.Models
         public virtual Configuration Configurations { get; set; }
         public virtual ICollection<EquipmentHealth> EuipmentHealths { get; set; }
         public virtual ICollection<FlightState> FlightStates { get; set; }
+        public virtual ICollection<Schedule> Schedules { get; set; }
     }
 }

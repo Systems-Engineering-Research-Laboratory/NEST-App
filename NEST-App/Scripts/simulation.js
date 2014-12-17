@@ -93,7 +93,7 @@ function getMissions(map) {
         url: '/api/missions',
         success: function (data, textStatus, jqXHR) {
             for (var i = 0; i < data.length; i++) {
-                var idx = ids.indexOf(data[i].UAVAssigned);
+                var idx = ids.indexOf(data[i].UAVId);
                 if (idx == -1) {
                     continue;
                 }

@@ -31,5 +31,7 @@ namespace NEST_App.Models
         public virtual DbSet<Equipment> Equipments { get; set; }
         public virtual DbSet<EquipmentHealth> EquipmentHealths { get; set; }
         public virtual DbSet<NonownshipVehicle> NonownshipVehicles { get; set; }
+        public virtual DbSet<Schedule> Schedules { get; set; }
+        public virtual DbSet<Order> Orders { get; set; }
     }
 }

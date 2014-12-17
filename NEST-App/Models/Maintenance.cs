@@ -12,16 +12,11 @@ namespace NEST_App.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Maintenance
+    public partial class Maintenance : Schedule
     {
-        public int Id { get; set; }
-        public string UAV_Type { get; set; }
-        public string UAV_Name { get; set; }
         public System.DateTime last_maintenance { get; set; }
         public System.DateTime next_maintenance { get; set; }
         public string time_remaining { get; set; }
         public int ScheduleId { get; set; }
-    
-        public virtual Schedule Schedule { get; set; }
     }
 }
