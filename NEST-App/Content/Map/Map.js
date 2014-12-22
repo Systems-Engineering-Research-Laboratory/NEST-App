@@ -208,6 +208,13 @@ function init() {
 }
 window.addEventListener("load", init, false);
 
+function new_dest_show() {
+    document.getElementById("CommPopPlaceHolder").style.display = "block";
+}
+
+function new_dest_hide() {
+    document.getElementById("CommPopPlaceHolder").style.display = "none";
+}
 
 $(document).ready(function () {
     //Stores the vehicles received from the AJAX call.

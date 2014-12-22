@@ -49,14 +49,37 @@
 </div>
 <div id="Tools">
     <div id="ToolsMenu">
-        <img src="../Content/origin.jpg" alt="" width="46" height="44" class="ToolIcon" id="Expand" onclick="triggerToolMenu()" />
-        <input type="image" src="../Content/green.jpg" id="start" width="46" height="44" class="ToolIcon">
-        <input type="image" src="../Content/red.jpg" id="stop" width="46" height="44" class="ToolIcon">
-        <input type="image" src="../Content/yellow.jpg" id="loadDrones" width="46" height="44" class="ToolIcon">
-        <img src="../Content/blue.jpg" width="46" height="44" alt="" class="ToolIcon" />
-        <img src="../Content/purple.jpg" width="46" height="44" alt="" class="ToolIcon" />
+        <img src="../Content/img/origin.jpg" alt="" width="46" height="44" class="ToolIcon" id="Expand" onclick="triggerToolMenu()" />
+        <input type="image" src="../Content/img/green.jpg" id="start" width="46" height="44" class="ToolIcon">
+        <input type="image" src="../Content/img/red.jpg" id="stop" width="46" height="44" class="ToolIcon">
+        <input type="image" src="../Content/img/yellow.jpg" id="loadDrones" width="46" height="44" class="ToolIcon">
+        <img src="../Content/img/blue.jpg" width="46" height="44" alt="" class="ToolIcon" />
+        <img src="../Content/img/purple.jpg" width="46" height="44" alt="" class="ToolIcon" onclick="new_dest_show()" />
     </div>
 </div>
+
+<!--command pop up place holder-->
+<div id="CommPopPlaceHolder">
+
+    <!--command pop up starts here-->
+    <div id="CommPop">
+        <form action="#" method="post" id="new_dest_popup">
+            <img src="~/Content/img/close_btn.png" id="close_button" onclick="new_dest_hide()" />
+            <h3>New Destination</h3>
+            <p>
+                (
+                <input type="text" name="new_longitude" id="new_long" placeholder="New Longitude" />
+                , 
+                <input type="text" name="new_latitude" id="new_lat" placeholder="New Latitude" />
+                )
+            </p>
+            <button type="submit" name="submit" id="submit">GO</button>
+            <button type="reset" name="reset" id="reset">CLEAR</button>
+        </form>
+    </div>
+</div>
+
+
 <script src="~/Scripts/proj4.js" type="text/javascript"></script>
 <script src="~/Scripts/simulation.js" type="text/javascript"></script>
 <script src="~/Scripts/vehicle.js" type="text/javascript"></script>

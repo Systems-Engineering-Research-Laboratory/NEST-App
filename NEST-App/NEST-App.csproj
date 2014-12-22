@@ -375,12 +375,28 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\img\blue.jpg" />
+    <Content Include="Content\img\close_btn.png" />
     <Content Include="Content\img\david_wu.png" />
     <Content Include="Content\img\dragos_guta.png" />
+    <Content Include="Content\img\drone.png" />
+    <Content Include="Content\img\drone2.png" />
+    <Content Include="Content\img\green.jpg" />
     <Content Include="Content\img\jeffrey_limbacher.jpeg" />
+    <Content Include="Content\img\markerBLUE.png" />
+    <Content Include="Content\img\markerGREEN.png" />
+    <Content Include="Content\img\markerRED.png" />
+    <Content Include="Content\img\origin.jpg" />
     <Content Include="Content\img\pinar_sayim.png" />
+    <Content Include="Content\img\purple.jpg" />
+    <Content Include="Content\img\red.jpg" />
     <Content Include="Content\img\sean_buckley.png" />
+    <Content Include="Content\img\trailBLUE.png" />
+    <Content Include="Content\img\trailGREEN.png" />
+    <Content Include="Content\img\trailPURPLE.png" />
     <Content Include="Content\img\varatep_buranintu.png" />
+    <Content Include="Content\img\white.jpg" />
+    <Content Include="Content\img\yellow.jpg" />
     <Content Include="Content\img\yun_kim.png" />
     <Content Include="Content\Map\Map.css" />
     <Content Include="Content\Map\Map.js" />

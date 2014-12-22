@@ -1,4 +1,10 @@
-﻿     .map {
+﻿@import url(http://fonts.googleapis.com/css?family=Arvo);
+
+* {
+    font-family: 'Arvo', sans-serif;
+} 
+
+    .map {
         height: 100%;
         width: 100%;
         border: none;
@@ -72,4 +78,58 @@
 
     .ToolIcon {
         margin-right: 5px;
+    }
+
+    #CommPopPlaceHolder {
+        position: fixed;
+        margin: auto;
+        width: 100%;
+        height: 100%;
+        opacity: 0.95;
+        top: 0;
+        left: 0;
+        display: none;		
+        background-color: #313131;
+        overflow:auto;
+    }
+
+    #CommPop {
+        position: absolute; 
+        left: 50%;
+        top: 17%;
+        margin-left: -248px;
+    }
+
+    #new_dest_popup {
+        max-width: 345px;
+        min-width: 250px;
+        padding: 10px 50px;
+        border: 2px solid gray;
+        border-radius: 10px;
+        background-color: white;
+        overflow: hidden;
+    }
+
+    #submit {
+        position: relative;
+        float: left;
+        margin-left: 37%;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #reset {
+        position: relative;
+        float: left;
+        margin-left: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #close_button {
+        position: absolute;
+        width: 24px;
+        right: -10px;
+        top: -10px;
+        cursor: pointer;
     }
