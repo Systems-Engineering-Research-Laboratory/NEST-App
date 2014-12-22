@@ -9,6 +9,7 @@ var phases = ["preparing", "enroute", "delivering", "returning", "landing"];
 
 
 
+//Just appends the X and Y coordiante of vehicles to the objects.
 function prepareVehicles(vehs) {
     for(i = 0; i < vehs.length; i++) {
         vehicle = vehs[i];
@@ -17,6 +18,7 @@ function prepareVehicles(vehs) {
     }
 }
 
+//Randomly assign missions to vehicles. It's dead code right now, but might be useful for debugging later on
 function assignMission(vehicle) {
     var rotation = Math.random() * 360;
     var distance = Math.random() * radius;
@@ -38,6 +40,7 @@ function buildSim() {
     createVehicles();
 }
 
+//Pushes all the flight state information to the database.
 function pushFlightUpdates(map, hub) {
     var ids = map.ids;
     var vehicles = map.vehicles;
@@ -49,6 +52,7 @@ function pushFlightUpdates(map, hub) {
     }
 }
 
+//Used to update which buttons are enabled and disabled.
 function updateButtons() {
     var startButton = $("#start");
     var stopButton = $("#stop");
@@ -72,6 +76,7 @@ function stopSim(eventObject) {
     updateButtons();
 }
 
+//Pull flight state info from the database.
 function getFlightStates(map) {
     $.ajax({
         url: '/api/flightstate',
@@ -86,6 +91,7 @@ function getFlightStates(map) {
     })
 }
 
+//Pull mission information from the database.
 function getMissions(map) {
     var ids = map.ids;
     var vehicles = map.vehicles;
@@ -119,6 +125,7 @@ $(document).ready(function () {
 
     $('.dropdown-toggle').dropdown();
 
+    //Pull the vehicles from the database
     $.ajax({
         url: '/api/uavs',
         success: function (data, textStatus, jqXHR) {
@@ -128,6 +135,7 @@ $(document).ready(function () {
                 console.log(data[i].Id + " " + data[i].Callsign);
                 $("#dropdown-UAVIds").append('<li role="presentation"><a class="UAVId" role="menuitem" tabindex="-1" href="#">' + data[i].Id + '</a></li>');
             }
+            //I think this is in the wrong spot. It probably needs to be in connection.hub.start()
             $('.UAVId').click(function (eventObject) {
                 var id = parseInt(eventObject.target.text);
                 vehicleHub.server.sendCommand({
@@ -150,20 +158,19 @@ $(document).ready(function () {
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         console.log(vehicle);
     }
+    //This is the listener for getting target commands from signalr
     vehicleHub.client.sendTargetCommand = function (target, connId) {
         var idx = map.ids.indexOf(target.UAVId);
         if (idx == -1) {
+            //If JS doesn't find the index, just return.
             return;
         }
+        //Append some additional info for the sim.
         target.Type = "target";
         LatLongToXY(target);
         map.vehicles[map.ids[idx]].setCommand(target);
-        var ack = {
-            Id: 1234,
-            CommandId: target.Id,
-            Reason: "OK"
-        };
-        console.log(ack);
+        //Send an ack to the server
+        //Just accept ack all commands for now.
         vehicleHub.server.ackCommand({
             Id: 1234,
             CommandId: target.Id,
@@ -173,15 +180,21 @@ $(document).ready(function () {
     vehicleHub.client.Acknowledgement = function (ack) {
         console.log(ack);
     }
+    //Wait until the vehicle hub is connected before we can execute the main loop.
+    //The main loop will push updates via signalr, don't want to do it prematurely.
     $.connection.hub.start().done(function mainLoop() {
         vehicleHub.server.joinGroup("vehicles");
+        //This boolean is switched by the start sim and stop sim buttons
         if (runSim) {
+            //TODO: Add scheduler here
+            //Do dead reckoning on each of the aircraft
             var vehicles = map.vehicles;
             var ids = map.ids;
             for (i = 0; i < ids.length; i++) {
                 id = ids[i];
                 vehicles[id].process(dt/1000);
             }
+            //Pushes the flight state updates
             pushFlightUpdates(map, vehicleHub);
         }
         setTimeout(mainLoop, dt);

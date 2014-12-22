@@ -1,4 +1,9 @@
 ﻿
+/**
+* A class that represent a vehicle. It contains one mission and one command so far, as well as one flight state.
+* The vehicle doesn't need to have more than that to run the simulation (for now at least). It comes with the
+* functins that allow it to behave kind of autonomously. It just goes straight to it's destination.
+*/
 function Vehicle(vehicleInfo) {
     this.Id = vehicleInfo.Id;
     this.Callsign = vehicleInfo.Callsign;
@@ -29,10 +34,14 @@ function Vehicle(vehicleInfo) {
             }
         }
     };
+    //Advances the aircraft directly towards its destination. Nothing fancy here.
     this.deadReckon = function (dt, X, Y) {
         var reachedDest = false;
         var velocity = 20; //m/s
+        //Find the direction it wants to go there
         heading = calculateHeading(this.FlightState.X, this.FlightState.Y, X, Y);
+        //Update the vehicle's yaw.
+        //TODO: Make it actually spin slower rather than spinning instantly.
         this.FlightState.Yaw = heading;
         this.FlightState.VelocityX = Math.sin(heading) * velocity;
         this.FlightState.VelocityY = Math.cos(heading) * velocity;
@@ -40,24 +49,28 @@ function Vehicle(vehicleInfo) {
         var distanceY = Y - this.FlightState.Y;
         var dX = this.FlightState.VelocityX * dt;
         var dY = this.FlightState.VelocityY * dt;
+        //The distance to the target is less than the distance we would travel, i.e. it's reached it's destination
         if (Math.sqrt(distanceX*distanceX+distanceY*distanceY) < Math.abs(velocity*dt)) {
             //We are at the target, stop and set dX to the distance to put us over the target
             dX = distanceX;
             dY = distanceY;
             this.FlightState.VelocityX = 0;
             this.FlightState.VelocityY = 0;
-            //Increment the phase for the next loop.
+            //We reached the destination.
             reachedDest = true;
         }
+        //Advance it forward
         this.FlightState.X += dX;
         this.FlightState.Y += dY;
+        //Update the lat longs
         XYToLatLong(this.FlightState);
         return reachedDest;
     };
 
+    //Perform whatever command 
     this.performCommand = function(dt) {
         switch(this.Command.Type) {
-            case "target":
+            case "target": //Target commands just need to be dead reckoned towards the objective.
                 if (this.deadReckon(dt, this.Command.X, this.Command.Y)) {
                     this.Command = null;
                 }
