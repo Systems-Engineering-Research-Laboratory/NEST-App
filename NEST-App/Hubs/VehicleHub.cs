@@ -34,5 +34,10 @@ namespace NEST_App.Hubs
         {
             Clients.Client(connectionId).Acknowledgement(ack);
         }
+
+        public void AssignMission(int UAVId, int MissionId)
+        {
+            Clients.All.AssignMission(UAVId, MissionId);
+        }
     }
 }

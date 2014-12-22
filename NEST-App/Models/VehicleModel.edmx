@@ -453,10 +453,10 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <NavigationProperty Name="UAV" Relationship="VehicleModel.UAVSchedule" FromRole="Schedule" ToRole="UAV" />
-          <Property Name="UAVId" Type="Int32" Nullable="false" />
+          <Property Name="UAVId" Type="Int32" Nullable="true" />
         </EntityType>
         <Association Name="UAVSchedule">
-          <End Type="VehicleModel.UAV" Role="UAV" Multiplicity="1" />
+          <End Type="VehicleModel.UAV" Role="UAV" Multiplicity="0..1" />
           <End Type="VehicleModel.Schedule" Role="Schedule" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="UAV">

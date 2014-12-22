@@ -31,7 +31,7 @@ namespace NEST_App.Controllers
                                    Payload = mis.Payload,
                                    Priority = mis.Priority,
                                    FinancialCost = mis.FinancialCost?? 0,
-                                   UAVId = mis.UAVId,
+                                   UAVId = mis.UAVId?? -1,
                                    TimeAssigned = mis.TimeAssigned,
                                    TimeCompleted = mis.TimeCompleted,
                                    Latitude = mis.DestinationCoordinates.Latitude ?? 0,

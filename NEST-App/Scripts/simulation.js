@@ -91,6 +91,7 @@ function getFlightStates(map) {
     })
 }
 
+var availableMissions = [];
 //Pull mission information from the database.
 function getMissions(map) {
     var ids = map.ids;
@@ -101,6 +102,7 @@ function getMissions(map) {
             for (var i = 0; i < data.length; i++) {
                 var idx = ids.indexOf(data[i].UAVId);
                 if (idx == -1) {
+                    availableMissions.push(data[i]);
                     continue;
                 }
                 var id = ids[idx];
@@ -112,6 +114,23 @@ function getMissions(map) {
     })
 }
 
+function scheduleMissions(vehicleMap, missions, hub) {
+    if(missions.length == 0){
+        return;
+    }
+    //Look for unassigned vehicles while there are missions
+    for(var i = 0; i < vehicleMap.ids.length && missions.length > 0; i++){
+        var id = vehicleMap.ids[i];
+        var vehicle = vehicleMap.vehicles[id];
+        if (vehicle.Mission == null) {
+            //treat js array as a queue.
+            vehicle.Mission = missions.shift();
+            vehicle.Mission.UAVId = vehicle.Id;
+            LatLongToXY(vehicle.Mission);
+            hub.server.assignMission(vehicle.Id, vehicle.Mission.Id);
+        }
+    }
+}
 
 
 $(document).ready(function () {
@@ -196,6 +215,7 @@ $(document).ready(function () {
             }
             //Pushes the flight state updates
             pushFlightUpdates(map, vehicleHub);
+            scheduleMissions(map, availableMissions, vehicleHub);
         }
         setTimeout(mainLoop, dt);
     });

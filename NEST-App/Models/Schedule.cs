@@ -15,7 +15,7 @@ namespace NEST_App.Models
     public partial class Schedule
     {
         public int Id { get; set; }
-        public int UAVId { get; set; }
+        public Nullable<int> UAVId { get; set; }
     
         public virtual UAV UAV { get; set; }
     }
