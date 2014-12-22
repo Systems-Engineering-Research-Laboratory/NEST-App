@@ -4,10 +4,10 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="6dda4366b636406bba8d239b12c2e082" Name="Diagram1" >
+      <Diagram DiagramId="6dda4366b636406bba8d239b12c2e082" Name="Diagram1" ZoomLevel="94" >
         <EntityTypeShape EntityType="VehicleModel.UAV" Width="1.5" PointX="4.5" PointY="1.625" IsExpanded="true" />
         <EntityTypeShape EntityType="VehicleModel.FlightState" Width="1.5" PointX="8.25" PointY="0.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="VehicleModel.Configuration" Width="1.5" PointX="4.5" PointY="4.375" />
+        <EntityTypeShape EntityType="VehicleModel.Configuration" Width="1.5" PointX="4.5" PointY="4.625" />
         <AssociationConnector Association="VehicleModel.VehicleConfiguration" />
         <EntityTypeShape EntityType="VehicleModel.Equipment" Width="1.5" PointX="1.5" PointY="4.25" />
         <AssociationConnector Association="VehicleModel.ConfigurationEquipmentList" />
@@ -16,6 +16,14 @@
         <AssociationConnector Association="VehicleModel.VehicleEuipmentHealth" />
         <EntityTypeShape EntityType="VehicleModel.NonownshipVehicle" Width="1.5" PointX="8.25" PointY="4.625" />
         <AssociationConnector Association="VehicleModel.UAVFlightState" />
+        <EntityTypeShape EntityType="VehicleModel.Maintenance" Width="1.5" PointX="2.5" PointY="7.625" />
+        <EntityTypeShape EntityType="VehicleModel.Schedule" Width="1.5" PointX="4.75" PointY="8.125" />
+        <InheritanceConnector EntityType="VehicleModel.Maintenance" />
+        <AssociationConnector Association="VehicleModel.UAVSchedule" />
+        <EntityTypeShape EntityType="VehicleModel.Mission" Width="1.5" PointX="4.75" PointY="10.625" />
+        <EntityTypeShape EntityType="VehicleModel.Order" Width="1.5" PointX="7" PointY="11.25" />
+        <AssociationConnector Association="VehicleModel.MissionOrder" />
+        <InheritanceConnector EntityType="VehicleModel.Mission" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

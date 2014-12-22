@@ -13,7 +13,7 @@ namespace NEST_App.Models.DTOs
         public string Payload { get; set; }
         public int Priority { get; set; }
         public decimal FinancialCost { get; set; }
-        public int UAVAssigned { get; set; }
+        public int UAVId { get; set; }
         public System.DateTime TimeAssigned { get; set; }
         public System.DateTime TimeCompleted { get; set; }
         public double Latitude { get; set; }

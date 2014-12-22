@@ -44,7 +44,7 @@ namespace NEST_App.DAL
             dateValue = DateTime.Now;
             var missions = new List<Mission>
             {
-                new Mission{Phase = "enroute", FlightPattern = "abstract", Payload = "cheetos", Priority = 1, FinancialCost = 40, UAVAssigned = 1, TimeAssigned = DateTime.Now, TimeCompleted = dateValue.AddHours(0.0833), DestinationCoordinates = DbGeography.FromText("POINT(-118.4902736 34.2365205 400)"),  ScheduledCompletionTime = dateValue.AddHours(0.0899), EstimatedCompletionTime = dateValue.AddHours(0.09)  },
+                new Mission{Phase = "enroute", FlightPattern = "abstract", Payload = "cheetos", Priority = 1, FinancialCost = 40, UAVId = 0, TimeAssigned = DateTime.Now, TimeCompleted = dateValue.AddHours(0.0833), DestinationCoordinates = DbGeography.FromText("POINT(-118.4902736 34.2365205 400)"),  ScheduledCompletionTime = dateValue.AddHours(0.0899), EstimatedCompletionTime = dateValue.AddHours(0.09)  },
                 //new Mission{Phase = "enroute", FlightPattern = "abstract", Payload = "cheetos", Priority = 1, FinancialCost = 40, UAVAssigned = 2, TimeAssigned = DateTime.Now, TimeCompleted = dateValue.AddHours(0.0833), DestinationCoordinates = DbGeography.FromText("POINT(-118.5002736 34.2365205 400)"),  ScheduledCompletionTime = dateValue.AddHours(0.0899), EstimatedCompletionTime = dateValue.AddHours(0.09)  }
 
             };
@@ -55,12 +55,6 @@ namespace NEST_App.DAL
                 new Schedule{},
             };
             schedules.ForEach(s => context.Schedules.Add(s));
-
-            var deliveryStatus = new List<DeliveryStatus>
-            {
-                new DeliveryStatus{time_departure = dateValue, location_departure = "base", sta = dateValue.AddHours(0.02), eta = dateValue.AddHours(0.01), cargo_number = "dd54", status_comment = "status: OK", time_return = dateValue.AddHours(0.05), time_delivery = dateValue.AddHours(0.015)},
-            };
-            deliveryStatus.ForEach(s => context.DeliveryStatus.Add(s));
 
             context.SaveChanges();
         }

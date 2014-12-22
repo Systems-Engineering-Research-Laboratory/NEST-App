@@ -292,10 +292,8 @@
     <Compile Include="Models\Configuration.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\DeliveryStatus.cs">
-      <DependentUpon>Scheduling.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\DTOs\MissionDTO.cs" />
+    <Compile Include="Models\DTOs\FlightStateDTO.cs" />
     <Compile Include="Models\Equipment.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
@@ -305,10 +303,9 @@
     <Compile Include="Models\FlightState.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\DTOs\FlightStateDTO.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Maintenance.cs">
-      <DependentUpon>Scheduling.tt</DependentUpon>
+      <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Mapinfo.Context.cs">
       <AutoGen>True</AutoGen>
@@ -329,23 +326,13 @@
       <DependentUpon>Mapinfo.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Mission.cs">
-      <DependentUpon>MissionModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MissionModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MissionModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MissionModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MissionModel.edmx</DependentUpon>
+      <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\NonownshipVehicle.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Order.cs">
-      <DependentUpon>MissionModel.tt</DependentUpon>
+      <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\PopulationDensity.cs">
       <DependentUpon>Mapinfo.tt</DependentUpon>
@@ -354,22 +341,7 @@
       <DependentUpon>Mapinfo.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Schedule.cs">
-      <DependentUpon>Scheduling.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Scheduling.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Scheduling.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Scheduling.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Scheduling.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Scheduling.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Scheduling.edmx</DependentUpon>
+      <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\UAV.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
@@ -471,7 +443,6 @@
       <LastGenOutput>VehicleModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
     <Content Include="Models\Commands.edmx.sql" />
-    <Content Include="Models\Scheduling.edmx.sql" />
     <Content Include="Models\VehicleModel.edmx.diagram">
       <DependentUpon>VehicleModel.edmx</DependentUpon>
     </Content>
@@ -502,40 +473,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>Mapinfo.edmx</DependentUpon>
       <LastGenOutput>Mapinfo.cs</LastGenOutput>
-    </Content>
-    <EntityDeploy Include="Models\MissionModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>MissionModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\MissionModel.edmx.diagram">
-      <DependentUpon>MissionModel.edmx</DependentUpon>
-    </Content>
-    <Content Include="Models\MissionModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>MissionModel.Context.cs</LastGenOutput>
-      <DependentUpon>MissionModel.edmx</DependentUpon>
-    </Content>
-    <Content Include="Models\MissionModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>MissionModel.cs</LastGenOutput>
-      <DependentUpon>MissionModel.edmx</DependentUpon>
-    </Content>
-    <EntityDeploy Include="Models\Scheduling.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>Scheduling.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\Scheduling.edmx.diagram">
-      <DependentUpon>Scheduling.edmx</DependentUpon>
-    </Content>
-    <Content Include="Models\Scheduling.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Scheduling.Context.cs</LastGenOutput>
-      <DependentUpon>Scheduling.edmx</DependentUpon>
-    </Content>
-    <Content Include="Models\Scheduling.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Scheduling.cs</LastGenOutput>
-      <DependentUpon>Scheduling.edmx</DependentUpon>
     </Content>
     <EntityDeploy Include="Models\Commands.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
