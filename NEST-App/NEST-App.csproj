@@ -231,6 +231,7 @@
     <Compile Include="Controllers\MapController.cs" />
     <Compile Include="Controllers\MissionsController.cs" />
     <Compile Include="Controllers\ScheduleController.cs" />
+    <Compile Include="Controllers\ScheduleViewController.cs" />
     <Compile Include="Controllers\SimController.cs" />
     <Compile Include="Controllers\UAVsController.cs" />
     <Compile Include="DAL\NestDbContext.cs" />
@@ -342,6 +343,11 @@
     </Compile>
     <Compile Include="Models\Schedule.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Scheduling.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Scheduling.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\UAV.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
@@ -507,6 +513,10 @@
       <LastGenOutput>Commands.cs</LastGenOutput>
       <DependentUpon>Commands.edmx</DependentUpon>
     </Content>
+    <EntityDeploy Include="Models\Scheduling.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Scheduling.Designer.cs</LastGenOutput>
+    </EntityDeploy>
     <None Include="Scripts\jquery-2.1.0.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -567,10 +577,11 @@
     <Content Include="Views\Sim\Index.cshtml" />
     <Content Include="Views\Map\Overview.cshtml" />
     <Content Include="Views\Interface\Index.cshtml" />
-    <Content Include="Views\Schedule\Index.cshtml" />
+    <Content Include="Views\ScheduleView\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Schedule\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

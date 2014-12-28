@@ -213,6 +213,13 @@
     </edmx:Options>
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
+      <Diagram DiagramId="5546292828884619b3420b6900170b79" Name="Diagram1">
+        <EntityTypeShape EntityType="Scheduling.Maintenance" Width="1.5" PointX="0.75" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Scheduling.DeliveryStatus" Width="1.5" PointX="5.25" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="Scheduling.Schedule" Width="1.5" PointX="3" PointY="1.625" IsExpanded="true" />
+        <AssociationConnector Association="Scheduling.MaintenanceSchedule" ManuallyRouted="false" />
+        <AssociationConnector Association="Scheduling.ScheduleDeliveryStatus" ManuallyRouted="false" />
+      </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>
