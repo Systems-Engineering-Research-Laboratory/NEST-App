@@ -13,6 +13,7 @@ function Vehicle(vehicleInfo) {
     this.Mission = null;
     this.Objective = null;
     this.Command = null;
+    this.descending = true;
     
 
     //Functions. Careful not to add helper functions here.
@@ -20,18 +21,11 @@ function Vehicle(vehicleInfo) {
         if (this.Command != null) {
             this.performCommand(dt);
         }
+        else if (this.Mission != null){
+            this.performMission(dt);
+        }
         else {
-            if (this.Mission == null) {
-                return;
-            }
-            switch (this.Mission.Phase) {
-                case "enroute":
-                    if (this.deadReckon(dt, this.Mission.X, this.Mission.Y)) {
-                        this.Mission.Phase = "delivering";
-                    }
-                    console.log(this);
-                    break;
-            }
+            //TODO: Back to base
         }
     };
     //Advances the aircraft directly towards its destination. Nothing fancy here.
@@ -67,6 +61,18 @@ function Vehicle(vehicleInfo) {
         return reachedDest;
     };
 
+    this.deliver = function (dt, bottom_alt, top_alt, speed) {
+        if (descending) {
+            //Speed should be >0
+            speed = -speed;
+        }
+        this.Altitude += speed * dt;
+        if (this.Altitude == alt) {
+            this.descending = false;
+        }
+        return this.Altitude == top_alt;
+    }
+
     //Perform whatever command 
     this.performCommand = function(dt) {
         switch(this.Command.Type) {
@@ -74,6 +80,27 @@ function Vehicle(vehicleInfo) {
                 if (this.deadReckon(dt, this.Command.X, this.Command.Y)) {
                     this.Command = null;
                 }
+        }
+    }
+
+    this.performMission = function (dt) {
+        switch (this.Mission.Phase) {
+            case "enroute":
+                if (this.deadReckon(dt, this.Mission.X, this.Mission.Y)) {
+                    this.Mission.Phase = "delivering";
+                }
+                break;
+            case "delivering":
+                if (this.deliver(dt, 200, 400, 5)) {
+                    this.Mission.phase = "back to base";
+                }
+                break;
+            case "back to base":
+                if (this.deadReckon(dt, base.X, base.Y)) {
+                    this.Mission.phase = "done";
+                    this.Mission = null;
+                }
+                break;
         }
     }
 
