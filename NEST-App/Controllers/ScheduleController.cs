@@ -23,7 +23,7 @@ namespace NEST_App.Controllers
          * send me a series of uav id's batched and i will return a schedule for each uavid sent.
          * uav id's must be valid or it will dberror
          * **** */
-        // POST api/GenerateScheduleForUAV
+        // POST api/Schedule/GenerateScheduleForUAV
         public Schedule GenerateScheduleForUAV(int uavID)
         {
             var sched = new Schedule
