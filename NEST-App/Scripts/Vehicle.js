@@ -24,9 +24,19 @@ function Vehicle(vehicleInfo) {
         else if (this.Mission != null){
             this.performMission(dt);
         }
-        else {
-            //TODO: Back to base
+        else if (!this.isAtBase()) {
+            this.backToBase(dt);
         }
+        else {
+            this.FlightState.BatteryLevel += 5 * dt / 18000;
+            if (this.FlightState.BatteryLevel > 1) {
+                this.FlightState.BatteryLevel = 1;
+            }
+            //Make sure we don't drop the battery level 
+            return;
+        }
+
+        this.FlightState.BatteryLevel -= dt / 1800;
     };
     //Advances the aircraft directly towards its destination. Nothing fancy here.
     this.deadReckon = function (dt, X, Y) {
@@ -62,15 +72,34 @@ function Vehicle(vehicleInfo) {
     };
 
     this.deliver = function (dt, bottom_alt, top_alt, speed) {
-        if (descending) {
-            //Speed should be >0
+        if (this.descending) {
+            //Perform the descent
+            if (this.targetAltitude(dt, bottom_alt, speed)) {
+                this.descending = false;
+                return false;
+            }
+        }
+        else {
+            //Go back up
+            return this.targetAltitude(dt, top_alt, speed);
+        }
+    }
+
+    //Flies to the designated altitude at the given speed.
+    this.targetAltitude = function (dt, alt, speed) {
+        if (this.FlightState.Altitude > alt) {
             speed = -speed;
+            if (speed * dt + this.FlightState.Altitude <= alt) {
+                this.FlightState.Altitude = alt;
+                return true;
+            }
         }
-        this.Altitude += speed * dt;
-        if (this.Altitude == alt) {
-            this.descending = false;
+        else if (speed * dt + this.FlightState.Altitude >= alt) {
+            this.FlightState.Altitude = alt;
+            return true;
         }
-        return this.Altitude == top_alt;
+        this.FlightState.Altitude += speed * dt;
+        return false;
     }
 
     //Perform whatever command 
@@ -106,6 +135,26 @@ function Vehicle(vehicleInfo) {
 
     this.setCommand = function (target) {
         this.Command = target;
+    }
+
+    //Makes the vehicle go back to base
+    this.backToBase = function (dt) {
+        var thisX = this.FlightState.X;
+        var thisY = this.FlightState.Y;
+        if (calculateDistance(thisX, thisY, base.X, base.Y) < 10) {
+            this.deadReckon(dt, base.X, base.Y);
+        }
+        else {
+            this.targetAltitude(dt, 0, 5);
+        }
+    }
+
+    //Just checks to make sure that the vehicle is back at base.
+    this.isAtBase = function () {
+        var thisX = this.FlightState.X;
+        var thisY = this.FlightState.Y;
+        return this.FlightState.Altitude == 0
+            && calculateDistance(thisX, thisY, base.X, base.Y) < 5;
     }
 }
 
@@ -169,4 +218,10 @@ function LatLongToXY(vehicle) {
     var xy = wgsToMeters.forward([vehicle.Longitude, vehicle.Latitude]);
     vehicle.X = xy[0];
     vehicle.Y = xy[1];
+}
+
+function calculateDistance(x1, y1, x2, y2) {
+    var dx = x2 - x1;
+    var dy = y2 - y1;
+    return Math.sqrt(dx * dx + dy * dy);
 }
