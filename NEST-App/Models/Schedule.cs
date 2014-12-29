@@ -14,9 +14,17 @@ namespace NEST_App.Models
     
     public partial class Schedule
     {
+        public Schedule()
+        {
+            this.Missions = new HashSet<Mission>();
+            this.Maintenances = new HashSet<Maintenance>();
+        }
+    
         public int Id { get; set; }
         public Nullable<int> UAVId { get; set; }
     
         public virtual UAV UAV { get; set; }
+        public virtual ICollection<Mission> Missions { get; set; }
+        public virtual ICollection<Maintenance> Maintenances { get; set; }
     }
 }

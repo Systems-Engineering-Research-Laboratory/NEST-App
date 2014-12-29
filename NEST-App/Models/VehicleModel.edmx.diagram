@@ -16,14 +16,14 @@
         <AssociationConnector Association="VehicleModel.VehicleEuipmentHealth" />
         <EntityTypeShape EntityType="VehicleModel.NonownshipVehicle" Width="1.5" PointX="8.25" PointY="4.625" />
         <AssociationConnector Association="VehicleModel.UAVFlightState" />
-        <EntityTypeShape EntityType="VehicleModel.Maintenance" Width="1.5" PointX="2.5" PointY="7.625" />
-        <EntityTypeShape EntityType="VehicleModel.Schedule" Width="1.5" PointX="4.75" PointY="8.125" />
-        <InheritanceConnector EntityType="VehicleModel.Maintenance" />
+        <EntityTypeShape EntityType="VehicleModel.Maintenance" Width="1.5" PointX="1.125" PointY="8" />
+        <EntityTypeShape EntityType="VehicleModel.Schedule" Width="1.5" PointX="5.375" PointY="8.375" />
         <AssociationConnector Association="VehicleModel.UAVSchedule" />
-        <EntityTypeShape EntityType="VehicleModel.Mission" Width="1.5" PointX="4.75" PointY="10.625" />
-        <EntityTypeShape EntityType="VehicleModel.Order" Width="1.5" PointX="7" PointY="11.25" />
+        <EntityTypeShape EntityType="VehicleModel.Mission" Width="1.5" PointX="5.625" PointY="11.75" />
+        <EntityTypeShape EntityType="VehicleModel.Order" Width="1.5" PointX="0.75" PointY="11" />
         <AssociationConnector Association="VehicleModel.MissionOrder" />
-        <InheritanceConnector EntityType="VehicleModel.Mission" />
+        <AssociationConnector Association="VehicleModel.ScheduleMission" />
+        <AssociationConnector Association="VehicleModel.ScheduleMaintenance" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

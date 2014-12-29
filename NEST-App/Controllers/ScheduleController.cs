@@ -18,6 +18,52 @@ namespace NEST_App.Controllers
     {
         private NestDbContext db = new NestDbContext();
 
+
+        /* ****
+         * send me a series of uav id's batched and i will return a schedule for each uavid sent.
+         * uav id's must be valid or it will dberror
+         * **** */
+        // POST api/Schedule/GenerateScheduleForUAV
+        public Schedule GenerateScheduleForUAV(int uavID)
+        {
+            var sched = new Schedule
+            {
+                UAVId = uavID,
+                Maintenances = new List<Maintenance>() {
+                    new Maintenance
+                    {   last_maintenance = DateTime.Now.AddHours(-1.0f),
+                        next_maintenance = DateTime.Now.AddHours(5.0f),
+                        time_remaining = (DateTime.Now.AddHours(5.0f) - DateTime.Now).ToString(),    }},
+                Missions = new List<Mission>()
+                {
+                    new Mission
+                    {
+                        EstimatedCompletionTime = DateTime.Now.AddHours(0.5f),
+                        FinancialCost = (decimal)5,
+                        FlightPattern = (string)@"zigzag",
+                        Payload = (string)@"500lbs",
+                        Priority = 3,
+                        ScheduledCompletionTime = DateTime.Now.AddHours(0.7f),
+                        TimeAssigned = DateTime.Now.AddHours(-0.1f),
+                        TimeCompleted = DateTime.Now,
+                        Phase = (string)@"En route",
+                        DestinationCoordinates = System.Data.Entity.Spatial.DbGeography.FromText("POINT(-117.861328 34.089061)"),   }},
+                
+            };
+            try
+            {
+                db.Schedules.Add(sched);
+                db.SaveChanges();
+            }
+            catch (DbUpdateException incandescent)
+            {
+                //return null;
+            }
+
+            return sched;
+        }
+
+
         // GET api/Schedule
         public IQueryable<Schedule> GetSchedules()
         {

@@ -12,7 +12,7 @@ namespace NEST_App.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Mission : Schedule
+    public partial class Mission
     {
         public string Phase { get; set; }
         public string FlightPattern { get; set; }
@@ -24,7 +24,10 @@ namespace NEST_App.Models
         public System.Data.Entity.Spatial.DbGeography DestinationCoordinates { get; set; }
         public System.DateTime ScheduledCompletionTime { get; set; }
         public System.DateTime EstimatedCompletionTime { get; set; }
+        public int ScheduleId { get; set; }
+        public string id { get; set; }
     
         public virtual Order Order { get; set; }
+        public virtual Schedule Schedule1 { get; set; }
     }
 }
