@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 12/16/2014 17:58:57
--- Generated from EDMX file: C:\Users\Jeffrey\Documents\Programming\NEST\NEST-App\Models\VehicleModel.edmx
+-- Date Created: 12/28/2014 19:41:07
+-- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -35,6 +35,12 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_UAVSchedule]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Schedules] DROP CONSTRAINT [FK_UAVSchedule];
 GO
+IF OBJECT_ID(N'[dbo].[FK_MissionOrder]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Schedules_Mission] DROP CONSTRAINT [FK_MissionOrder];
+GO
+IF OBJECT_ID(N'[dbo].[FK_Mission_inherits_Schedule]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Schedules_Mission] DROP CONSTRAINT [FK_Mission_inherits_Schedule];
+GO
 IF OBJECT_ID(N'[dbo].[FK_Maintenance_inherits_Schedule]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Schedules_Maintenance] DROP CONSTRAINT [FK_Maintenance_inherits_Schedule];
 GO
@@ -63,6 +69,12 @@ IF OBJECT_ID(N'[dbo].[NonownshipVehicles]', 'U') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[Schedules]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Schedules];
+GO
+IF OBJECT_ID(N'[dbo].[Orders]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Orders];
+GO
+IF OBJECT_ID(N'[dbo].[Schedules_Mission]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Schedules_Mission];
 GO
 IF OBJECT_ID(N'[dbo].[Schedules_Maintenance]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Schedules_Maintenance];
@@ -151,7 +163,7 @@ GO
 -- Creating table 'Schedules'
 CREATE TABLE [dbo].[Schedules] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [UAVId] int  NOT NULL
+    [UAVId] int  NULL
 );
 GO
 
@@ -178,6 +190,7 @@ CREATE TABLE [dbo].[Schedules_Mission] (
     [DestinationCoordinates] geography  NOT NULL,
     [ScheduledCompletionTime] datetime  NOT NULL,
     [EstimatedCompletionTime] datetime  NOT NULL,
+    [ScheduleId] int  NOT NULL,
     [Id] int  NOT NULL,
     [Order_Id] int  NOT NULL
 );
@@ -189,6 +202,7 @@ CREATE TABLE [dbo].[Schedules_Maintenance] (
     [next_maintenance] datetime  NOT NULL,
     [time_remaining] nvarchar(max)  NOT NULL,
     [ScheduleId] int  NOT NULL,
+    [ScheduleId1] int  NOT NULL,
     [Id] int  NOT NULL
 );
 GO
@@ -364,6 +378,36 @@ GO
 CREATE INDEX [IX_FK_MissionOrder]
 ON [dbo].[Schedules_Mission]
     ([Order_Id]);
+GO
+
+-- Creating foreign key on [ScheduleId] in table 'Schedules_Mission'
+ALTER TABLE [dbo].[Schedules_Mission]
+ADD CONSTRAINT [FK_ScheduleMission]
+    FOREIGN KEY ([ScheduleId])
+    REFERENCES [dbo].[Schedules]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_ScheduleMission'
+CREATE INDEX [IX_FK_ScheduleMission]
+ON [dbo].[Schedules_Mission]
+    ([ScheduleId]);
+GO
+
+-- Creating foreign key on [ScheduleId1] in table 'Schedules_Maintenance'
+ALTER TABLE [dbo].[Schedules_Maintenance]
+ADD CONSTRAINT [FK_ScheduleMaintenance]
+    FOREIGN KEY ([ScheduleId1])
+    REFERENCES [dbo].[Schedules]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_ScheduleMaintenance'
+CREATE INDEX [IX_FK_ScheduleMaintenance]
+ON [dbo].[Schedules_Maintenance]
+    ([ScheduleId1]);
 GO
 
 -- Creating foreign key on [Id] in table 'Schedules_Mission'
