@@ -23,23 +23,23 @@ namespace NEST_App.Controllers
         public IQueryable<MissionDTO> GetMissions()
         {
             var missionDtos = from mis in db.Missions
-                               select new MissionDTO
-                               {
-                                   Id = mis.Id,
-                                   Phase = mis.Phase,
-                                   FlightPattern = mis.FlightPattern,
-                                   Payload = mis.Payload,
-                                   Priority = mis.Priority,
-                                   FinancialCost = mis.FinancialCost?? 0,
-                                   UAVId = mis.UAVId?? -1,
-                                   TimeAssigned = mis.TimeAssigned,
-                                   TimeCompleted = mis.TimeCompleted,
-                                   Latitude = mis.DestinationCoordinates.Latitude ?? 0,
-                                   Longitude = mis.DestinationCoordinates.Longitude ?? 0,
-                                   Altitude = mis.DestinationCoordinates.Elevation ?? 0,
-                                   ScheduledCompletionTime = mis.ScheduledCompletionTime,
-                                   EstimatedCompletionTime = mis.EstimatedCompletionTime
-                               };
+                              select new MissionDTO
+                              {
+                                  Id = mis.id,
+                                  Phase = mis.Phase,
+                                  FlightPattern = mis.FlightPattern,
+                                  Payload = mis.Payload,
+                                  Priority = mis.Priority,
+                                  FinancialCost = mis.FinancialCost ?? 0,
+                                  UAVId = mis.Schedule.UAVId ?? -1,
+                                  TimeAssigned = mis.TimeAssigned,
+                                  TimeCompleted = mis.TimeCompleted,
+                                  Latitude = mis.DestinationCoordinates.Latitude ?? 0,
+                                  Longitude = mis.DestinationCoordinates.Longitude ?? 0,
+                                  Altitude = mis.DestinationCoordinates.Elevation ?? 0,
+                                  ScheduledCompletionTime = mis.ScheduledCompletionTime,
+                                  EstimatedCompletionTime = mis.EstimatedCompletionTime
+                              };
             return missionDtos;
         }
 
@@ -65,7 +65,7 @@ namespace NEST_App.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != mission.Id)
+            if (id != mission.id)
             {
                 return BadRequest();
             }
@@ -103,7 +103,7 @@ namespace NEST_App.Controllers
             db.Missions.Add(mission);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = mission.Id }, mission);
+            return CreatedAtRoute("DefaultApi", new { id = mission.id }, mission);
         }
 
         // DELETE: api/Missions/5
@@ -133,7 +133,7 @@ namespace NEST_App.Controllers
 
         private bool MissionExists(int id)
         {
-            return db.Missions.Count(e => e.Id == id) > 0;
+            return db.Missions.Count(e => e.id == id) > 0;
         }
     }
 }

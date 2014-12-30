@@ -14,18 +14,14 @@ namespace NEST_App.Models
     
     public partial class Order
     {
-        public Order()
-        {
-            this.Missions = new HashSet<Mission>();
-        }
-    
         public int Id { get; set; }
         public System.DateTime TimeReceived { get; set; }
         public System.DateTime TimeCompleted { get; set; }
         public string PackageContents { get; set; }
         public string Notes { get; set; }
         public string DestinationAddress { get; set; }
+        public int Mission_id { get; set; }
     
-        public virtual ICollection<Mission> Missions { get; set; }
+        public virtual Mission Mission { get; set; }
     }
 }

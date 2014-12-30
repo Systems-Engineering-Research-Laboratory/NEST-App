@@ -2,13 +2,13 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 12/28/2014 19:41:07
+-- Date Created: 12/29/2014 17:41:39
 -- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
 GO
-USE [NestDbContext];
+USE [C:\USERS\VARATEP-MAC\DOCUMENTS\VISUAL STUDIO 2013\PROJECTS\NEST-APP\NEST-APP\APP_DATA\NEST_DB.MDF];
 GO
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 GO
@@ -37,6 +37,12 @@ IF OBJECT_ID(N'[dbo].[FK_UAVSchedule]', 'F') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[FK_MissionOrder]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Schedules_Mission] DROP CONSTRAINT [FK_MissionOrder];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ScheduleMission]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Schedules_Mission] DROP CONSTRAINT [FK_ScheduleMission];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ScheduleMaintenance]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Schedules_Maintenance] DROP CONSTRAINT [FK_ScheduleMaintenance];
 GO
 IF OBJECT_ID(N'[dbo].[FK_Mission_inherits_Schedule]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Schedules_Mission] DROP CONSTRAINT [FK_Mission_inherits_Schedule];
@@ -174,12 +180,13 @@ CREATE TABLE [dbo].[Orders] (
     [TimeCompleted] datetime  NOT NULL,
     [PackageContents] nvarchar(max)  NOT NULL,
     [Notes] nvarchar(max)  NULL,
-    [DestinationAddress] nvarchar(max)  NOT NULL
+    [DestinationAddress] nvarchar(max)  NOT NULL,
+    [Mission_id] int  NOT NULL
 );
 GO
 
--- Creating table 'Schedules_Mission'
-CREATE TABLE [dbo].[Schedules_Mission] (
+-- Creating table 'Missions'
+CREATE TABLE [dbo].[Missions] (
     [Phase] varchar(50)  NOT NULL,
     [FlightPattern] varchar(50)  NULL,
     [Payload] varchar(max)  NOT NULL,
@@ -190,20 +197,18 @@ CREATE TABLE [dbo].[Schedules_Mission] (
     [DestinationCoordinates] geography  NOT NULL,
     [ScheduledCompletionTime] datetime  NOT NULL,
     [EstimatedCompletionTime] datetime  NOT NULL,
-    [ScheduleId] int  NOT NULL,
-    [Id] int  NOT NULL,
-    [Order_Id] int  NOT NULL
+    [id] int  NOT NULL,
+    [ScheduleId] int  NOT NULL
 );
 GO
 
--- Creating table 'Schedules_Maintenance'
-CREATE TABLE [dbo].[Schedules_Maintenance] (
+-- Creating table 'Maintenances'
+CREATE TABLE [dbo].[Maintenances] (
     [last_maintenance] datetime  NOT NULL,
     [next_maintenance] datetime  NOT NULL,
     [time_remaining] nvarchar(max)  NOT NULL,
-    [ScheduleId] int  NOT NULL,
-    [ScheduleId1] int  NOT NULL,
-    [Id] int  NOT NULL
+    [id] int  NOT NULL,
+    [ScheduleId] int  NOT NULL
 );
 GO
 
@@ -259,16 +264,16 @@ ADD CONSTRAINT [PK_Orders]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
--- Creating primary key on [Id] in table 'Schedules_Mission'
-ALTER TABLE [dbo].[Schedules_Mission]
-ADD CONSTRAINT [PK_Schedules_Mission]
-    PRIMARY KEY CLUSTERED ([Id] ASC);
+-- Creating primary key on [id] in table 'Missions'
+ALTER TABLE [dbo].[Missions]
+ADD CONSTRAINT [PK_Missions]
+    PRIMARY KEY CLUSTERED ([id] ASC);
 GO
 
--- Creating primary key on [Id] in table 'Schedules_Maintenance'
-ALTER TABLE [dbo].[Schedules_Maintenance]
-ADD CONSTRAINT [PK_Schedules_Maintenance]
-    PRIMARY KEY CLUSTERED ([Id] ASC);
+-- Creating primary key on [id] in table 'Maintenances'
+ALTER TABLE [dbo].[Maintenances]
+ADD CONSTRAINT [PK_Maintenances]
+    PRIMARY KEY CLUSTERED ([id] ASC);
 GO
 
 -- --------------------------------------------------
@@ -365,67 +370,49 @@ ON [dbo].[Schedules]
     ([UAVId]);
 GO
 
--- Creating foreign key on [Order_Id] in table 'Schedules_Mission'
-ALTER TABLE [dbo].[Schedules_Mission]
+-- Creating foreign key on [Mission_id] in table 'Orders'
+ALTER TABLE [dbo].[Orders]
 ADD CONSTRAINT [FK_MissionOrder]
-    FOREIGN KEY ([Order_Id])
-    REFERENCES [dbo].[Orders]
-        ([Id])
+    FOREIGN KEY ([Mission_id])
+    REFERENCES [dbo].[Missions]
+        ([id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
 GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_MissionOrder'
 CREATE INDEX [IX_FK_MissionOrder]
-ON [dbo].[Schedules_Mission]
-    ([Order_Id]);
+ON [dbo].[Orders]
+    ([Mission_id]);
 GO
 
--- Creating foreign key on [ScheduleId] in table 'Schedules_Mission'
-ALTER TABLE [dbo].[Schedules_Mission]
-ADD CONSTRAINT [FK_ScheduleMission]
+-- Creating foreign key on [ScheduleId] in table 'Missions'
+ALTER TABLE [dbo].[Missions]
+ADD CONSTRAINT [FK_MissionSchedule]
     FOREIGN KEY ([ScheduleId])
     REFERENCES [dbo].[Schedules]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
 GO
 
--- Creating non-clustered index for FOREIGN KEY 'FK_ScheduleMission'
-CREATE INDEX [IX_FK_ScheduleMission]
-ON [dbo].[Schedules_Mission]
+-- Creating non-clustered index for FOREIGN KEY 'FK_MissionSchedule'
+CREATE INDEX [IX_FK_MissionSchedule]
+ON [dbo].[Missions]
     ([ScheduleId]);
 GO
 
--- Creating foreign key on [ScheduleId1] in table 'Schedules_Maintenance'
-ALTER TABLE [dbo].[Schedules_Maintenance]
-ADD CONSTRAINT [FK_ScheduleMaintenance]
-    FOREIGN KEY ([ScheduleId1])
+-- Creating foreign key on [ScheduleId] in table 'Maintenances'
+ALTER TABLE [dbo].[Maintenances]
+ADD CONSTRAINT [FK_MaintenanceSchedule]
+    FOREIGN KEY ([ScheduleId])
     REFERENCES [dbo].[Schedules]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
 GO
 
--- Creating non-clustered index for FOREIGN KEY 'FK_ScheduleMaintenance'
-CREATE INDEX [IX_FK_ScheduleMaintenance]
-ON [dbo].[Schedules_Maintenance]
-    ([ScheduleId1]);
-GO
-
--- Creating foreign key on [Id] in table 'Schedules_Mission'
-ALTER TABLE [dbo].[Schedules_Mission]
-ADD CONSTRAINT [FK_Mission_inherits_Schedule]
-    FOREIGN KEY ([Id])
-    REFERENCES [dbo].[Schedules]
-        ([Id])
-    ON DELETE CASCADE ON UPDATE NO ACTION;
-GO
-
--- Creating foreign key on [Id] in table 'Schedules_Maintenance'
-ALTER TABLE [dbo].[Schedules_Maintenance]
-ADD CONSTRAINT [FK_Maintenance_inherits_Schedule]
-    FOREIGN KEY ([Id])
-    REFERENCES [dbo].[Schedules]
-        ([Id])
-    ON DELETE CASCADE ON UPDATE NO ACTION;
+-- Creating non-clustered index for FOREIGN KEY 'FK_MaintenanceSchedule'
+CREATE INDEX [IX_FK_MaintenanceSchedule]
+ON [dbo].[Maintenances]
+    ([ScheduleId]);
 GO
 
 -- --------------------------------------------------

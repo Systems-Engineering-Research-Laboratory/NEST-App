@@ -17,9 +17,9 @@ namespace NEST_App.Models
         public System.DateTime last_maintenance { get; set; }
         public System.DateTime next_maintenance { get; set; }
         public string time_remaining { get; set; }
-        public int ScheduleId1 { get; set; }
-        public string id { get; set; }
+        public int id { get; set; }
+        public int ScheduleId { get; set; }
     
-        public virtual Schedule Schedule1 { get; set; }
+        public virtual Schedule Schedule { get; set; }
     }
 }

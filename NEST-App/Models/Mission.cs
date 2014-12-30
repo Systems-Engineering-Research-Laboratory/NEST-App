@@ -14,6 +14,11 @@ namespace NEST_App.Models
     
     public partial class Mission
     {
+        public Mission()
+        {
+            this.Orders = new HashSet<Order>();
+        }
+    
         public string Phase { get; set; }
         public string FlightPattern { get; set; }
         public string Payload { get; set; }
@@ -24,10 +29,10 @@ namespace NEST_App.Models
         public System.Data.Entity.Spatial.DbGeography DestinationCoordinates { get; set; }
         public System.DateTime ScheduledCompletionTime { get; set; }
         public System.DateTime EstimatedCompletionTime { get; set; }
+        public int id { get; set; }
         public int ScheduleId { get; set; }
-        public string id { get; set; }
     
-        public virtual Order Order { get; set; }
-        public virtual Schedule Schedule1 { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
+        public virtual Schedule Schedule { get; set; }
     }
 }
