@@ -335,6 +335,16 @@
             <End Role="Maintenance" EntitySet="Maintenances" />
             <End Role="Schedule" EntitySet="Schedules" />
           </AssociationSet>
+          <EntitySet Name="MissionLogs" EntityType="VehicleModel.MissionLog" />
+          <EntitySet Name="MissionLogActivities" EntityType="VehicleModel.MissionLogActivity" />
+          <AssociationSet Name="MissionMissionLog" Association="VehicleModel.MissionMissionLog">
+            <End Role="Mission" EntitySet="Missions" />
+            <End Role="MissionLog" EntitySet="MissionLogs" />
+          </AssociationSet>
+          <AssociationSet Name="MissionLogMissionLogActivity" Association="VehicleModel.MissionLogMissionLogActivity">
+            <End Role="MissionLog" EntitySet="MissionLogs" />
+            <End Role="MissionLogActivity" EntitySet="MissionLogActivities" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="UAV">
           <Key>
@@ -499,6 +509,9 @@
           <NavigationProperty Name="Orders" Relationship="VehicleModel.MissionOrder" FromRole="Mission" ToRole="Order" />
           <NavigationProperty Name="Schedule" Relationship="VehicleModel.MissionSchedule" FromRole="Mission" ToRole="Schedule" />
           <Property Name="ScheduleId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="MissionLogs" Relationship="VehicleModel.MissionMissionLog" FromRole="Mission" ToRole="MissionLog" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" />
+          <Property Name="modified_date" Type="DateTime" Nullable="false" />
         </EntityType>
         <EntityType Name="Order">
           <Key>
@@ -512,6 +525,8 @@
           <Property Name="DestinationAddress" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Mission" Relationship="VehicleModel.MissionOrder" FromRole="Order" ToRole="Mission" />
           <Property Name="Mission_id" Type="Int32" Nullable="false" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" />
+          <Property Name="modified_date" Type="DateTime" Nullable="false" />
         </EntityType>
         <Association Name="MissionOrder">
           <End Type="VehicleModel.Mission" Role="Mission" Multiplicity="1" />
@@ -546,6 +561,51 @@
             </Principal>
             <Dependent Role="Maintenance">
               <PropertyRef Name="ScheduleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="MissionLog">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Mission" Relationship="VehicleModel.MissionMissionLog" FromRole="MissionLog" ToRole="Mission" />
+          <Property Name="Mission_id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="MissionLogActivities" Relationship="VehicleModel.MissionLogMissionLogActivity" FromRole="MissionLog" ToRole="MissionLogActivity" />
+        </EntityType>
+        <EntityType Name="MissionLogActivity">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="MissionLog" Relationship="VehicleModel.MissionLogMissionLogActivity" FromRole="MissionLogActivity" ToRole="MissionLog" />
+          <Property Name="MissionLog_id" Type="Int32" Nullable="false" />
+          <Property Name="action_taken" Type="String" Nullable="false" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" />
+          <Property Name="modified_date" Type="DateTime" Nullable="false" />
+          <Property Name="action_user_id" Type="String" Nullable="false" />
+        </EntityType>
+        <Association Name="MissionMissionLog">
+          <End Type="VehicleModel.Mission" Role="Mission" Multiplicity="1" />
+          <End Type="VehicleModel.MissionLog" Role="MissionLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Mission">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MissionLog">
+              <PropertyRef Name="Mission_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="MissionLogMissionLogActivity">
+          <End Type="VehicleModel.MissionLog" Role="MissionLog" Multiplicity="1" />
+          <End Type="VehicleModel.MissionLogActivity" Role="MissionLogActivity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MissionLog">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MissionLogActivity">
+              <PropertyRef Name="MissionLog_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>

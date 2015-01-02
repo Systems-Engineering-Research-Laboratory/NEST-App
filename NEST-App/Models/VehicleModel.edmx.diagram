@@ -19,11 +19,15 @@
         <EntityTypeShape EntityType="VehicleModel.Maintenance" Width="1.5" PointX="2" PointY="8.625" />
         <EntityTypeShape EntityType="VehicleModel.Schedule" Width="1.5" PointX="5" PointY="8.625" />
         <AssociationConnector Association="VehicleModel.UAVSchedule" />
-        <EntityTypeShape EntityType="VehicleModel.Mission" Width="1.5" PointX="6" PointY="11.875" />
+        <EntityTypeShape EntityType="VehicleModel.Mission" Width="1.5" PointX="5.5" PointY="12" />
         <EntityTypeShape EntityType="VehicleModel.Order" Width="1.5" PointX="1.375" PointY="11.625" />
         <AssociationConnector Association="VehicleModel.MissionOrder" />
         <AssociationConnector Association="VehicleModel.MissionSchedule" />
         <AssociationConnector Association="VehicleModel.MaintenanceSchedule" />
+        <EntityTypeShape EntityType="VehicleModel.MissionLog" Width="1.5" PointX="9" PointY="12.875" />
+        <EntityTypeShape EntityType="VehicleModel.MissionLogActivity" Width="1.5" PointX="11.875" PointY="12.375" />
+        <AssociationConnector Association="VehicleModel.MissionMissionLog" />
+        <AssociationConnector Association="VehicleModel.MissionLogMissionLogActivity" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 12/29/2014 17:41:39
+-- Date Created: 01/01/2015 21:56:22
 -- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
@@ -36,19 +36,13 @@ IF OBJECT_ID(N'[dbo].[FK_UAVSchedule]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Schedules] DROP CONSTRAINT [FK_UAVSchedule];
 GO
 IF OBJECT_ID(N'[dbo].[FK_MissionOrder]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Schedules_Mission] DROP CONSTRAINT [FK_MissionOrder];
+    ALTER TABLE [dbo].[Orders] DROP CONSTRAINT [FK_MissionOrder];
 GO
-IF OBJECT_ID(N'[dbo].[FK_ScheduleMission]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Schedules_Mission] DROP CONSTRAINT [FK_ScheduleMission];
+IF OBJECT_ID(N'[dbo].[FK_MissionSchedule]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Missions] DROP CONSTRAINT [FK_MissionSchedule];
 GO
-IF OBJECT_ID(N'[dbo].[FK_ScheduleMaintenance]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Schedules_Maintenance] DROP CONSTRAINT [FK_ScheduleMaintenance];
-GO
-IF OBJECT_ID(N'[dbo].[FK_Mission_inherits_Schedule]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Schedules_Mission] DROP CONSTRAINT [FK_Mission_inherits_Schedule];
-GO
-IF OBJECT_ID(N'[dbo].[FK_Maintenance_inherits_Schedule]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Schedules_Maintenance] DROP CONSTRAINT [FK_Maintenance_inherits_Schedule];
+IF OBJECT_ID(N'[dbo].[FK_MaintenanceSchedule]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Maintenances] DROP CONSTRAINT [FK_MaintenanceSchedule];
 GO
 
 -- --------------------------------------------------
@@ -79,11 +73,11 @@ GO
 IF OBJECT_ID(N'[dbo].[Orders]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Orders];
 GO
-IF OBJECT_ID(N'[dbo].[Schedules_Mission]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Schedules_Mission];
+IF OBJECT_ID(N'[dbo].[Missions]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Missions];
 GO
-IF OBJECT_ID(N'[dbo].[Schedules_Maintenance]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Schedules_Maintenance];
+IF OBJECT_ID(N'[dbo].[Maintenances]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Maintenances];
 GO
 
 -- --------------------------------------------------
@@ -181,7 +175,9 @@ CREATE TABLE [dbo].[Orders] (
     [PackageContents] nvarchar(max)  NOT NULL,
     [Notes] nvarchar(max)  NULL,
     [DestinationAddress] nvarchar(max)  NOT NULL,
-    [Mission_id] int  NOT NULL
+    [Mission_id] int  NOT NULL,
+    [create_date] datetime  NOT NULL,
+    [modified_date] datetime  NOT NULL
 );
 GO
 
@@ -198,7 +194,9 @@ CREATE TABLE [dbo].[Missions] (
     [ScheduledCompletionTime] datetime  NOT NULL,
     [EstimatedCompletionTime] datetime  NOT NULL,
     [id] int  NOT NULL,
-    [ScheduleId] int  NOT NULL
+    [ScheduleId] int  NOT NULL,
+    [create_date] datetime  NOT NULL,
+    [modified_date] datetime  NOT NULL
 );
 GO
 
@@ -209,6 +207,24 @@ CREATE TABLE [dbo].[Maintenances] (
     [time_remaining] nvarchar(max)  NOT NULL,
     [id] int  NOT NULL,
     [ScheduleId] int  NOT NULL
+);
+GO
+
+-- Creating table 'MissionLogs'
+CREATE TABLE [dbo].[MissionLogs] (
+    [id] int IDENTITY(1,1) NOT NULL,
+    [Mission_id] int  NOT NULL
+);
+GO
+
+-- Creating table 'MissionLogActivities'
+CREATE TABLE [dbo].[MissionLogActivities] (
+    [id] int IDENTITY(1,1) NOT NULL,
+    [MissionLog_id] int  NOT NULL,
+    [action_taken] nvarchar(max)  NOT NULL,
+    [create_date] datetime  NOT NULL,
+    [modified_date] datetime  NOT NULL,
+    [action_user_id] nvarchar(max)  NOT NULL
 );
 GO
 
@@ -273,6 +289,18 @@ GO
 -- Creating primary key on [id] in table 'Maintenances'
 ALTER TABLE [dbo].[Maintenances]
 ADD CONSTRAINT [PK_Maintenances]
+    PRIMARY KEY CLUSTERED ([id] ASC);
+GO
+
+-- Creating primary key on [id] in table 'MissionLogs'
+ALTER TABLE [dbo].[MissionLogs]
+ADD CONSTRAINT [PK_MissionLogs]
+    PRIMARY KEY CLUSTERED ([id] ASC);
+GO
+
+-- Creating primary key on [id] in table 'MissionLogActivities'
+ALTER TABLE [dbo].[MissionLogActivities]
+ADD CONSTRAINT [PK_MissionLogActivities]
     PRIMARY KEY CLUSTERED ([id] ASC);
 GO
 
@@ -413,6 +441,36 @@ GO
 CREATE INDEX [IX_FK_MaintenanceSchedule]
 ON [dbo].[Maintenances]
     ([ScheduleId]);
+GO
+
+-- Creating foreign key on [Mission_id] in table 'MissionLogs'
+ALTER TABLE [dbo].[MissionLogs]
+ADD CONSTRAINT [FK_MissionMissionLog]
+    FOREIGN KEY ([Mission_id])
+    REFERENCES [dbo].[Missions]
+        ([id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_MissionMissionLog'
+CREATE INDEX [IX_FK_MissionMissionLog]
+ON [dbo].[MissionLogs]
+    ([Mission_id]);
+GO
+
+-- Creating foreign key on [MissionLog_id] in table 'MissionLogActivities'
+ALTER TABLE [dbo].[MissionLogActivities]
+ADD CONSTRAINT [FK_MissionLogMissionLogActivity]
+    FOREIGN KEY ([MissionLog_id])
+    REFERENCES [dbo].[MissionLogs]
+        ([id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_MissionLogMissionLogActivity'
+CREATE INDEX [IX_FK_MissionLogMissionLogActivity]
+ON [dbo].[MissionLogActivities]
+    ([MissionLog_id]);
 GO
 
 -- --------------------------------------------------

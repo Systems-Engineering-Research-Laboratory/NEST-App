@@ -17,6 +17,7 @@ namespace NEST_App.Models
         public Mission()
         {
             this.Orders = new HashSet<Order>();
+            this.MissionLogs = new HashSet<MissionLog>();
         }
     
         public string Phase { get; set; }
@@ -31,8 +32,11 @@ namespace NEST_App.Models
         public System.DateTime EstimatedCompletionTime { get; set; }
         public int id { get; set; }
         public int ScheduleId { get; set; }
+        public System.DateTime create_date { get; set; }
+        public System.DateTime modified_date { get; set; }
     
         public virtual ICollection<Order> Orders { get; set; }
         public virtual Schedule Schedule { get; set; }
+        public virtual ICollection<MissionLog> MissionLogs { get; set; }
     }
 }

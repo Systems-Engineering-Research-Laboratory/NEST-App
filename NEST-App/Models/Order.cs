@@ -21,6 +21,8 @@ namespace NEST_App.Models
         public string Notes { get; set; }
         public string DestinationAddress { get; set; }
         public int Mission_id { get; set; }
+        public System.DateTime create_date { get; set; }
+        public System.DateTime modified_date { get; set; }
     
         public virtual Mission Mission { get; set; }
     }
