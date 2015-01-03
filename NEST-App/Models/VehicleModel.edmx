@@ -16,6 +16,8 @@
     <EntitySet Name="Orders" EntityType="VehicleModel.Store.Orders" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Missions" EntityType="VehicleModel.Store.Missions" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Maintenances" EntityType="VehicleModel.Store.Maintenances" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="MissionLogs" EntityType="VehicleModel.Store.MissionLogs" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="MissionLogActivities" EntityType="VehicleModel.Store.MissionLogActivities" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="VehicleConfiguration" Association="VehicleModel.Store.VehicleConfiguration">
       <End Role="Vehicle" EntitySet="UAVs1" />
       <End Role="Configuration" EntitySet="Configurations" />
@@ -51,6 +53,14 @@
     <AssociationSet Name="MaintenanceSchedule" Association="VehicleModel.Store.MaintenanceSchedule">
       <End Role="Maintenance" EntitySet="Maintenances" />
       <End Role="Schedule" EntitySet="Schedules" />
+    </AssociationSet>
+    <AssociationSet Name="MissionMissionLog" Association="VehicleModel.Store.MissionMissionLog">
+      <End Role="Mission" EntitySet="Missions" />
+      <End Role="MissionLog" EntitySet="MissionLogs" />
+    </AssociationSet>
+    <AssociationSet Name="MissionLogMissionLogActivity" Association="VehicleModel.Store.MissionLogMissionLogActivity">
+      <End Role="MissionLog" EntitySet="MissionLogs" />
+      <End Role="MissionLogActivity" EntitySet="MissionLogActivities" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="UAVs1">
@@ -148,6 +158,8 @@
     <Property Name="Notes" Type="nvarchar(max)" Nullable="true" />
     <Property Name="DestinationAddress" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Mission_id" Type="int" Nullable="false" />
+    <Property Name="create_date" Type="datetime" Nullable="false" />
+    <Property Name="modified_date" Type="datetime" Nullable="false" />
   </EntityType>
   <EntityType Name="Missions">
     <Key>
@@ -165,6 +177,8 @@
     <Property Name="EstimatedCompletionTime" Type="datetime" Nullable="false" />
     <Property Name="id" Type="int" Nullable="false" />
     <Property Name="ScheduleId" Type="int" Nullable="false" />
+    <Property Name="create_date" Type="datetime" Nullable="false" />
+    <Property Name="modified_date" Type="datetime" Nullable="false" />
   </EntityType>
   <EntityType Name="Maintenances">
     <Key>
@@ -175,6 +189,24 @@
     <Property Name="time_remaining" Type="nvarchar(max)" Nullable="false" />
     <Property Name="id" Type="int" Nullable="false" />
     <Property Name="ScheduleId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="MissionLogs">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Mission_id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="MissionLogActivities">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="MissionLog_id" Type="int" Nullable="false" />
+    <Property Name="action_taken" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="create_date" Type="datetime" Nullable="false" />
+    <Property Name="modified_date" Type="datetime" Nullable="false" />
+    <Property Name="action_user_id" Type="nvarchar(max)" Nullable="false" />
   </EntityType>
   <Association Name="VehicleConfiguration">
     <End Role="Vehicle" Type="VehicleModel.Store.UAVs1" Multiplicity="*" />
@@ -281,6 +313,30 @@
       </Principal>
       <Dependent Role="Maintenance">
         <PropertyRef Name="ScheduleId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="MissionMissionLog">
+    <End Role="Mission" Type="VehicleModel.Store.Missions" Multiplicity="1" />
+    <End Role="MissionLog" Type="VehicleModel.Store.MissionLogs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Mission">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="MissionLog">
+        <PropertyRef Name="Mission_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="MissionLogMissionLogActivity">
+    <End Role="MissionLog" Type="VehicleModel.Store.MissionLogs" Multiplicity="1" />
+    <End Role="MissionLogActivity" Type="VehicleModel.Store.MissionLogActivities" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="MissionLog">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="MissionLogActivity">
+        <PropertyRef Name="MissionLog_id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -711,6 +767,8 @@
           <ScalarProperty Name="Notes" ColumnName="Notes" />
           <ScalarProperty Name="DestinationAddress" ColumnName="DestinationAddress" />
           <ScalarProperty Name="Mission_id" ColumnName="Mission_id" />
+          <ScalarProperty Name="create_date" ColumnName="create_date" />
+          <ScalarProperty Name="modified_date" ColumnName="modified_date" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -729,6 +787,8 @@
           <ScalarProperty Name="ScheduledCompletionTime" ColumnName="ScheduledCompletionTime" />
           <ScalarProperty Name="EstimatedCompletionTime" ColumnName="EstimatedCompletionTime" />
           <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
+          <ScalarProperty Name="create_date" ColumnName="create_date" />
+          <ScalarProperty Name="modified_date" ColumnName="modified_date" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -740,6 +800,26 @@
           <ScalarProperty Name="next_maintenance" ColumnName="next_maintenance" />
           <ScalarProperty Name="time_remaining" ColumnName="time_remaining" />
           <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="MissionLogs">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.MissionLog)">
+        <MappingFragment StoreEntitySet="MissionLogs">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Mission_id" ColumnName="Mission_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="MissionLogActivities">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.MissionLogActivity)">
+        <MappingFragment StoreEntitySet="MissionLogActivities">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="MissionLog_id" ColumnName="MissionLog_id" />
+          <ScalarProperty Name="action_taken" ColumnName="action_taken" />
+          <ScalarProperty Name="create_date" ColumnName="create_date" />
+          <ScalarProperty Name="modified_date" ColumnName="modified_date" />
+          <ScalarProperty Name="action_user_id" ColumnName="action_user_id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

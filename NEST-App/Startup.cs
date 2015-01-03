@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using Microsoft.AspNet.SignalR;
+using Microsoft.Owin;
 using Owin;
 
 [assembly: OwinStartupAttribute(typeof(NEST_App.Startup))]
@@ -9,7 +10,10 @@ namespace NEST_App
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
-            app.MapSignalR();
+            var hubConfig = new HubConfiguration();
+            hubConfig.EnableDetailedErrors = true;
+            hubConfig.EnableJavaScriptProxies = false;
+            app.MapSignalR("/signalr", hubConfig);
         }
     }
 }

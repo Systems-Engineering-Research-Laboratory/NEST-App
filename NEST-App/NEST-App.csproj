@@ -329,6 +329,12 @@
     <Compile Include="Models\Mission.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\MissionLog.cs">
+      <DependentUpon>VehicleModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MissionLogActivity.cs">
+      <DependentUpon>VehicleModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\NonownshipVehicle.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>

@@ -23,6 +23,7 @@ namespace NEST_App.Hubs
 
         public void pushFlightStateUpdate(FlightStateDTO dto){
             Clients.All.flightStateUpdate(dto);
+            // flightstatedto entity is not the same as models in our db context. can not guarantee atomic. need to wipe out flightstatedto
         }
 
         public void sendCommand(CMD_NAV_Target target)
