@@ -12,7 +12,7 @@ namespace NEST_App
             ConfigureAuth(app);
             var hubConfig = new HubConfiguration();
             hubConfig.EnableDetailedErrors = true;
-            hubConfig.EnableJavaScriptProxies = false;
+            hubConfig.EnableJavaScriptProxies = true;
             app.MapSignalR("/signalr", hubConfig);
         }
     }
