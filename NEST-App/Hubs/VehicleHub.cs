@@ -12,7 +12,7 @@ namespace NEST_App.Hubs
     public class VehicleHub : Hub
     {
 
-        public Task joinGroup(string groupName){
+        public Task JoinGroup(string groupName){
             return Groups.Add(Context.ConnectionId, groupName);
         }
 
@@ -21,12 +21,12 @@ namespace NEST_App.Hubs
             return Groups.Remove(Context.ConnectionId, groupName);
         }
 
-        public void pushFlightStateUpdate(FlightStateDTO dto){
+        public void PushFlightStateUpdate(FlightStateDTO dto){
             Clients.All.flightStateUpdate(dto);
             // flightstatedto entity is not the same as models in our db context. can not guarantee atomic. need to wipe out flightstatedto
         }
 
-        public void sendCommand(CMD_NAV_Target target)
+        public void SendCommand(CMD_NAV_Target target)
         {
             Clients.Group("vehicles").sendTargetCommand(target, Context.ConnectionId);
         }
