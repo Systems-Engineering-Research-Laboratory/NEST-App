@@ -39,7 +39,7 @@ var markerStyle = new ol.style.Style({
         anchorXUnits: 'fraction',
         anchorYUnits: 'fraction',
         scale: 0.1,
-        src: '../Content/drone.png'
+        src: '../Content/img/drone.png'
     }))
 });
 

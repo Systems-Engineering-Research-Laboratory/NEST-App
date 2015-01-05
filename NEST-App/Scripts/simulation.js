@@ -142,7 +142,8 @@ $(document).ready(function () {
 
     var vehicleHub = $.connection.vehicleHub;
 
-    $('.dropdown-toggle').dropdown();
+    //Throws 'undefined' is not a function error...commenting out..
+    //$('.dropdown-toggle').dropdown();
 
     //Pull the vehicles from the database
     $.ajax({

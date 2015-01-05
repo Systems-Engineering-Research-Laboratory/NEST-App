@@ -53,18 +53,33 @@ namespace NEST_App
             bootstrapBundle.Orderer = nullOrderer;
             bundles.Add(bootstrapBundle);
 
-            //Map CSS bundle
-            var mapCSS = new CustomStyleBundle("~/bundles/mapCSS");
-            mapCSS.Include("~/Content/Map/*.css");
-            mapCSS.Transforms.Add(cssTransformer);
-            mapCSS.Orderer = nullOrderer;
-            bundles.Add(mapCSS);
-            //Map JS bundle
-            var mapJS = new CustomScriptBundle("~/bundles/mapJS");
-            mapJS.Include("~/Content/Map/*.js");
-            mapJS.Transforms.Add(jsTransformer);
-            mapJS.Orderer = nullOrderer;
-            bundles.Add(mapJS);
+            //Google Map CSS bundle
+            var googMapCSS = new CustomStyleBundle("~/bundles/googMapCSS");
+            googMapCSS.Include("~/Content/Map/GOOG/*.css");
+            googMapCSS.Transforms.Add(cssTransformer);
+            googMapCSS.Orderer = nullOrderer;
+            bundles.Add(googMapCSS);
+            
+            //Google Map JS bundle
+            var googMapJS = new CustomScriptBundle("~/bundles/googMapJS");
+            googMapJS.Include("~/Content/Map/GOOG/*.js");
+            googMapJS.Transforms.Add(jsTransformer);
+            googMapJS.Orderer = nullOrderer;
+            bundles.Add(googMapJS);
+
+            //Open Layers Map CSS bundle
+            var olMapCSS = new CustomStyleBundle("~/bundles/olMapCSS");
+            olMapCSS.Include("~/Content/Map/OL/*.css");
+            olMapCSS.Transforms.Add(cssTransformer);
+            olMapCSS.Orderer = nullOrderer;
+            bundles.Add(olMapCSS);
+
+            //Open Layers Map JS bundle
+            var olMapJS = new CustomScriptBundle("~/bundles/olMapJS");
+            olMapJS.Include("~/Content/Map/OL/*.js");
+            olMapJS.Transforms.Add(jsTransformer);
+            olMapJS.Orderer = nullOrderer;
+            bundles.Add(olMapJS);
         }
     }
 }
