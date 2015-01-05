@@ -9,8 +9,14 @@ namespace NEST_App.Controllers
     public class MapController : Controller
     {
         //
-        // GET: /Map/
+        // GET: /Map/Overview
         public ActionResult Overview()
+        {
+            return View();
+        }
+
+        // GET: /Map/GoogleMap
+        public ActionResult GoogleMap()
         {
             return View();
         }
