@@ -102,6 +102,7 @@ function getMissions(map) {
             for (var i = 0; i < data.length; i++) {
                 var idx = ids.indexOf(data[i].UAVId);
                 if (idx == -1) {
+                    // Unassigned mission, or we don't have the vehicle information.
                     availableMissions.push(data[i]);
                     continue;
                 }
@@ -125,6 +126,7 @@ function scheduleMissions(vehicleMap, missions, hub) {
         if (vehicle.Mission == null) {
             //treat js array as a queue.
             vehicle.Mission = missions.shift();
+            i--; //Shift i back
             vehicle.Mission.UAVId = vehicle.Id;
             LatLongToXY(vehicle.Mission);
             hub.server.assignMission(vehicle.Id, vehicle.Mission.Id);
