@@ -1,5 +1,9 @@
 ﻿var uavMarker;
 var map;
+var uavIcon;
+var uavTrail;
+var trailArray = [];
+infoWindow = new google.maps.InfoWindow;
 
 function initialize() {
 
@@ -7,10 +11,9 @@ function initialize() {
         zoom: 18,
         center: new google.maps.LatLng(34.2417, -118.529)
     }
-    map = new google.maps.Map(document.getElementById('map-canvas'),
-                                  mapOptions);
+    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
-    var uavIcon = new google.maps.MarkerImage(
+    uavIcon = new google.maps.MarkerImage(
         '../Content/img/drone2.png',
         null, //Size determined at runtime
         null, //Origin is 0,0
@@ -18,12 +21,19 @@ function initialize() {
         new google.maps.Size(100, 100)
     );
 
+    uavTrail = new google.maps.MarkerImage(
+        '../Content/img/blue.jpg',
+        null,
+        null,
+        new google.maps.Point(4, 50),
+        new google.maps.Size(5, 5)
+    );
+
     var myLatLng = new google.maps.LatLng(34.2417, -118.529);
     uavMarker = new google.maps.Marker({
         position: myLatLng,
         map: map,
         icon: uavIcon,
-        draggable: true
     });
 
     var shapeBounds = new google.maps.LatLngBounds(
@@ -44,7 +54,6 @@ function initialize() {
     });
 
     google.maps.event.addListener(rectangle, 'bounds_changed', newRectangle);
-    infoWindow = new google.maps.InfoWindow();
 
     function newRectangle(event) {
         var ne = rectangle.getBounds().getNorthEast();
@@ -58,29 +67,40 @@ function initialize() {
         infoWindow.setPosition(ne);
         infoWindow.open(map);
     }
-
     //End map initialize
+}
+
+function placeTrail(location) {
+    var marker = new google.maps.Marker({
+        position: location,
+        icon: uavTrail,
+    });
+    trailArray.push(marker);
 }
 
 $(document).ready(function () {
     google.maps.event.addDomListener(window, 'load', initialize);
-
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
-        console.log(vehicle); + " " + console.log(vehicle.Latitude); + " " + console.log(vehicle.Longitude);
-        uavMarker.setPosition(new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude));
-
+        var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
+        uavMarker.setPosition(LatLng);
+        placeTrail(LatLng);
         var contentString2 = '<b>UAV</b><br>' +
                 'Latitude: ' + vehicle.Latitude + '<br>' +
                 'Longitude: ' + vehicle.Longitude;
-        var infowindow2 = new google.maps.InfoWindow({
-            content: contentString2
-        });
+        infoWindow.setContent(contentString2);
 
         google.maps.event.addListener(uavMarker, 'click', function () {
-            infowindow2.open(map, uavMarker);
+            infoWindow.open(map, uavMarker);
+            for (i = 0; i < trailArray.length; i++) {
+                trailArray[i].setMap(map);
+            }
+
+        });
+        google.maps.event.addListener(map, 'click', function () {
+            for (i = 0; i < trailArray.length; i++) {
+                trailArray[i].setMap(null);
+            }
         });
     }
-
-
 });
