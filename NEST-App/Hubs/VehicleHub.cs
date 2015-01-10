@@ -5,6 +5,7 @@ using System.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using NEST_App.Models;
+using NEST_App.DAL;
 
 
 namespace NEST_App.Hubs
@@ -26,19 +27,58 @@ namespace NEST_App.Hubs
             // flightstatedto entity is not the same as models in our db context. can not guarantee atomic. need to wipe out flightstatedto
         }
 
-        public void SendCommand(CMD_NAV_Target target)
+        /**
+         * Returns -1 if the insertion into the database failed.
+         */
+        public int SendCommand(CMD_NAV_Target target)
         {
-            Clients.Group("vehicles").sendTargetCommand(target, Context.ConnectionId);
+            using (var db = new NestDbContext())
+            {
+                target = db.CMD_NAV_Target.Add(target);
+                int result = db.SaveChanges();
+                if (result == 1)
+                {
+                    //The target was added, so send the target command to the vehicles.
+                    Clients.Group("vehicles").sendTargetCommand(target, Context.ConnectionId);
+                    //Return the target ID so they know what the ID is in the database.
+                    return target.Id;
+                }
+                else
+                {
+                    //Not added, return, let caller know
+                    return -1;
+                }
+            }
         }
 
-        public void AckCommand(CMD_ACK ack, string connectionId)
+        public async void AckCommand(CMD_ACK ack, string connectionId)
         {
             Clients.Client(connectionId).Acknowledgement(ack);
+            await BroadcastAcceptedCommand(ack);
         }
 
         public void AssignMission(int UAVId, int MissionId)
         {
             Clients.All.AssignMission(UAVId, MissionId);
+        }
+
+        public async Task BroadcastAcceptedCommand(CMD_ACK ack)
+        {
+            using (var context = new NestDbContext())
+            {
+                switch (ack.CommandType)
+                {
+                    case "CMD_NAV_Target":
+                        CMD_NAV_Target target = await context.CMD_NAV_Target.FindAsync(ack.CommandId);
+                        if (target != null)
+                        {
+                            Clients.All.targetCommandAccepted(target);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 }

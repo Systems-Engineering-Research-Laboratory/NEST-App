@@ -196,10 +196,11 @@ $(document).ready(function () {
         vehicleHub.server.ackCommand({
             Id: 1234,
             CommandId: target.Id,
-            Reason: "OK"
+            Reason: "OK",
+            CommadType: "CMD_NAV_Target",
         }, connId);
     }
-    vehicleHub.client.Acknowledgement = function (ack) {
+    vehicleHub.client.broadcastAcceptedCommand = function (ack) {
         console.log(ack);
     }
     //Wait until the vehicle hub is connected before we can execute the main loop.
