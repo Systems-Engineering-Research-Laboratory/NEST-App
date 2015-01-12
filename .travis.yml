@@ -1,0 +1,8 @@
+
+language: csharp
+solution: NEST-App.sln
+notifications:
+  slack:
+    rooms:
+      - csun-nest:k5qLKmLP7WQ0wYB3vWgczrsK#general
+      - csun-nest:k5qLKmLP7WQ0wYB3vWgczrsK#github
