@@ -113,23 +113,28 @@ function Vehicle(vehicleInfo) {
     }
 
     this.performMission = function (dt) {
-        switch (this.Mission.Phase) {
-            case "enroute":
-                if (this.deadReckon(dt, this.Mission.X, this.Mission.Y)) {
-                    this.Mission.Phase = "delivering";
-                }
-                break;
-            case "delivering":
-                if (this.deliver(dt, 200, 400, 5)) {
-                    this.Mission.phase = "back to base";
-                }
-                break;
-            case "back to base":
-                if (this.deadReckon(dt, base.X, base.Y)) {
-                    this.Mission.phase = "done";
-                    this.Mission = null;
-                }
-                break;
+        if (this.isAtBase()) {
+            this.takeOff();
+        }
+        else {
+            switch (this.Mission.Phase) {
+                case "enroute":
+                    if (this.deadReckon(dt, this.Mission.X, this.Mission.Y)) {
+                        this.Mission.Phase = "delivering";
+                    }
+                    break;
+                case "delivering":
+                    if (this.deliver(dt, 200, 400, 5)) {
+                        this.Mission.phase = "back to base";
+                    }
+                    break;
+                case "back to base":
+                    if (this.backToBase(dt, base.X, base.Y)) {
+                        this.Mission.phase = "done";
+                        this.Mission = null;
+                    }
+                    break;
+            }
         }
     }
 
@@ -143,13 +148,19 @@ function Vehicle(vehicleInfo) {
         var thisY = this.FlightState.Y;
         if (calculateDistance(thisX, thisY, base.X, base.Y) < 10) {
             this.deadReckon(dt, base.X, base.Y);
+            return false;
         }
         else {
-            this.targetAltitude(dt, 0, 5);
+            return this.targetAltitude(dt, 0, 5);
         }
     }
 
-    //Just checks to make sure that the vehicle is back at base.
+    this.takeOff = function (dt) {
+        this.targetAltitude(dt, 400, 15);
+    }
+
+    //Just checks to make sure that the vehicle is back at base and on the ground.
+    //Does not count if it is on the floor.
     this.isAtBase = function () {
         var thisX = this.FlightState.X;
         var thisY = this.FlightState.Y;
