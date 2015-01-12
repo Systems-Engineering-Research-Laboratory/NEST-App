@@ -18,6 +18,8 @@
     <EntitySet Name="Maintenances" EntityType="VehicleModel.Store.Maintenances" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="MissionLogs" EntityType="VehicleModel.Store.MissionLogs" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="MissionLogActivities" EntityType="VehicleModel.Store.MissionLogActivities" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Users" EntityType="VehicleModel.Store.Users" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="UserRoles" EntityType="VehicleModel.Store.UserRoles" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="VehicleConfiguration" Association="VehicleModel.Store.VehicleConfiguration">
       <End Role="Vehicle" EntitySet="UAVs1" />
       <End Role="Configuration" EntitySet="Configurations" />
@@ -62,6 +64,10 @@
       <End Role="MissionLog" EntitySet="MissionLogs" />
       <End Role="MissionLogActivity" EntitySet="MissionLogActivities" />
     </AssociationSet>
+    <AssociationSet Name="UserUserRole" Association="VehicleModel.Store.UserUserRole">
+      <End Role="User" EntitySet="Users" />
+      <End Role="UserRole" EntitySet="UserRoles" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="UAVs1">
     <Key>
@@ -71,6 +77,8 @@
     <Property Name="Callsign" Type="nvarchar(max)" Nullable="false" />
     <Property Name="NumDeliveries" Type="int" Nullable="false" />
     <Property Name="Mileage" Type="int" Nullable="false" />
+    <Property Name="create_date" Type="datetime" Nullable="false" />
+    <Property Name="modified_date" Type="datetime" Nullable="false" />
     <Property Name="Configurations_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="FlightStates">
@@ -92,6 +100,8 @@
     <Property Name="PitchRate" Type="float" Nullable="false" />
     <Property Name="BatteryLevel" Type="float" Nullable="false" />
     <Property Name="UAVId" Type="int" Nullable="false" />
+    <Property Name="create_date" Type="datetime" Nullable="false" />
+    <Property Name="modified_date" Type="datetime" Nullable="false" />
   </EntityType>
   <EntityType Name="Configurations">
     <Key>
@@ -101,6 +111,8 @@
     <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Classification" Type="nvarchar(max)" Nullable="false" />
     <Property Name="NumberOfMotors" Type="tinyint" Nullable="false" />
+    <Property Name="create_date" Type="datetime" Nullable="false" />
+    <Property Name="modified_date" Type="datetime" Nullable="false" />
   </EntityType>
   <EntityType Name="Equipments">
     <Key>
@@ -114,6 +126,8 @@
     <Property Name="Price" Type="decimal" Nullable="false" />
     <Property Name="Weight" Type="float" Nullable="false" />
     <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="create_date" Type="datetime" Nullable="false" />
+    <Property Name="modified_date" Type="datetime" Nullable="false" />
     <Property Name="Configuration_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="EquipmentHealths">
@@ -124,6 +138,8 @@
     <Property Name="Health" Type="float" Nullable="false" />
     <Property Name="LastMaintenance" Type="nvarchar(max)" Nullable="false" />
     <Property Name="DateReceived" Type="datetime" Nullable="false" />
+    <Property Name="create_date" Type="datetime" Nullable="false" />
+    <Property Name="modified_date" Type="datetime" Nullable="false" />
     <Property Name="EquipmentList_Id" Type="int" Nullable="false" />
     <Property Name="Vehicle_Id" Type="int" Nullable="false" />
   </EntityType>
@@ -146,6 +162,8 @@
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="UAVId" Type="int" Nullable="true" />
+    <Property Name="create_date" Type="datetime" Nullable="false" />
+    <Property Name="modified_date" Type="datetime" Nullable="false" />
   </EntityType>
   <EntityType Name="Orders">
     <Key>
@@ -189,6 +207,8 @@
     <Property Name="time_remaining" Type="nvarchar(max)" Nullable="false" />
     <Property Name="id" Type="int" Nullable="false" />
     <Property Name="ScheduleId" Type="int" Nullable="false" />
+    <Property Name="create_date" Type="datetime" Nullable="false" />
+    <Property Name="modified_date" Type="datetime" Nullable="false" />
   </EntityType>
   <EntityType Name="MissionLogs">
     <Key>
@@ -196,6 +216,8 @@
     </Key>
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Mission_id" Type="int" Nullable="false" />
+    <Property Name="create_date" Type="datetime" Nullable="false" />
+    <Property Name="modified_date" Type="datetime" Nullable="false" />
   </EntityType>
   <EntityType Name="MissionLogActivities">
     <Key>
@@ -207,6 +229,26 @@
     <Property Name="create_date" Type="datetime" Nullable="false" />
     <Property Name="modified_date" Type="datetime" Nullable="false" />
     <Property Name="action_user_id" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Users">
+    <Key>
+      <PropertyRef Name="user_id" />
+    </Key>
+    <Property Name="user_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="username" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="password" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="create_date" Type="datetime" Nullable="false" />
+    <Property Name="modified_date" Type="datetime" Nullable="false" />
+    <Property Name="phone_number" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="UserRole_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="UserRoles">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="role_type" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="access_level" Type="nvarchar(max)" Nullable="false" />
   </EntityType>
   <Association Name="VehicleConfiguration">
     <End Role="Vehicle" Type="VehicleModel.Store.UAVs1" Multiplicity="*" />
@@ -337,6 +379,18 @@
       </Principal>
       <Dependent Role="MissionLogActivity">
         <PropertyRef Name="MissionLog_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="UserUserRole">
+    <End Role="User" Type="VehicleModel.Store.Users" Multiplicity="*" />
+    <End Role="UserRole" Type="VehicleModel.Store.UserRoles" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="UserRole">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="User">
+        <PropertyRef Name="UserRole_Id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -725,6 +779,8 @@
           <ScalarProperty Name="Callsign" ColumnName="Callsign" />
           <ScalarProperty Name="NumDeliveries" ColumnName="NumDeliveries" />
           <ScalarProperty Name="Mileage" ColumnName="Mileage" />
+          <ScalarProperty Name="create_date" ColumnName="create_date" />
+          <ScalarProperty Name="modified_date" ColumnName="modified_date" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -745,6 +801,8 @@
           <ScalarProperty Name="PitchRate" ColumnName="PitchRate" />
           <ScalarProperty Name="BatteryLevel" ColumnName="BatteryLevel" />
           <ScalarProperty Name="UAVId" ColumnName="UAVId" />
+          <ScalarProperty Name="create_date" ColumnName="create_date" />
+          <ScalarProperty Name="modified_date" ColumnName="modified_date" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -755,6 +813,8 @@
           <ScalarProperty Name="Name" ColumnName="Name" />
           <ScalarProperty Name="Classification" ColumnName="Classification" />
           <ScalarProperty Name="NumberOfMotors" ColumnName="NumberOfMotors" />
+          <ScalarProperty Name="create_date" ColumnName="create_date" />
+          <ScalarProperty Name="modified_date" ColumnName="modified_date" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -769,6 +829,8 @@
           <ScalarProperty Name="Price" ColumnName="Price" />
           <ScalarProperty Name="Weight" ColumnName="Weight" />
           <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="create_date" ColumnName="create_date" />
+          <ScalarProperty Name="modified_date" ColumnName="modified_date" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -779,6 +841,8 @@
           <ScalarProperty Name="Health" ColumnName="Health" />
           <ScalarProperty Name="LastMaintenance" ColumnName="LastMaintenance" />
           <ScalarProperty Name="DateReceived" ColumnName="DateReceived" />
+          <ScalarProperty Name="create_date" ColumnName="create_date" />
+          <ScalarProperty Name="modified_date" ColumnName="modified_date" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -801,6 +865,8 @@
         <MappingFragment StoreEntitySet="Schedules">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="UAVId" ColumnName="UAVId" />
+          <ScalarProperty Name="create_date" ColumnName="create_date" />
+          <ScalarProperty Name="modified_date" ColumnName="modified_date" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -847,6 +913,8 @@
           <ScalarProperty Name="next_maintenance" ColumnName="next_maintenance" />
           <ScalarProperty Name="time_remaining" ColumnName="time_remaining" />
           <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
+          <ScalarProperty Name="create_date" ColumnName="create_date" />
+          <ScalarProperty Name="modified_date" ColumnName="modified_date" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -855,6 +923,8 @@
         <MappingFragment StoreEntitySet="MissionLogs">
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="Mission_id" ColumnName="Mission_id" />
+          <ScalarProperty Name="create_date" ColumnName="create_date" />
+          <ScalarProperty Name="modified_date" ColumnName="modified_date" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -867,6 +937,27 @@
           <ScalarProperty Name="create_date" ColumnName="create_date" />
           <ScalarProperty Name="modified_date" ColumnName="modified_date" />
           <ScalarProperty Name="action_user_id" ColumnName="action_user_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Users">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.User)">
+        <MappingFragment StoreEntitySet="Users">
+          <ScalarProperty Name="user_id" ColumnName="user_id" />
+          <ScalarProperty Name="username" ColumnName="username" />
+          <ScalarProperty Name="password" ColumnName="password" />
+          <ScalarProperty Name="create_date" ColumnName="create_date" />
+          <ScalarProperty Name="modified_date" ColumnName="modified_date" />
+          <ScalarProperty Name="phone_number" ColumnName="phone_number" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserRoles">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.UserRole)">
+        <MappingFragment StoreEntitySet="UserRoles">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="role_type" ColumnName="role_type" />
+          <ScalarProperty Name="access_level" ColumnName="access_level" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -900,6 +991,14 @@
       </EndProperty>
       <EndProperty Name="EuipmentHealth">
         <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="UserUserRole" TypeName="VehicleModel.UserUserRole" StoreEntitySet="Users">
+      <EndProperty Name="UserRole">
+        <ScalarProperty Name="Id" ColumnName="UserRole_Id" />
+      </EndProperty>
+      <EndProperty Name="User">
+        <ScalarProperty Name="user_id" ColumnName="user_id" />
       </EndProperty>
     </AssociationSetMapping>
   </EntityContainerMapping>
