@@ -162,33 +162,74 @@ $(document).ready(function () {
     //Pull the vehicles from the database
     $.ajax({
         url: '/api/uavs',
-        success: function (data, textStatus, jqXHR) {
-            for (var i = 0; i < data.length; i++) {
-                map.vehicles[data[i].Id] = new Vehicle(data[i]);
-                map.ids.push(data[i].Id);
-                console.log(data[i].Id + " " + data[i].Callsign);
-                $("#dropdown-UAVIds").append('<li role="presentation"><a class="UAVId" role="menuitem" tabindex="-1" href="#">' + data[i].Id + '</a></li>');
-            }
-            //I think this is in the wrong spot. It probably needs to be in connection.hub.start()
-            $('.UAVId').click(function (eventObject) {
-                var id = parseInt(eventObject.target.text);
-                vehicleHub.server.sendCommand({
-                    Id: 123,
-                    Latitude: 34.242034,
-                    Longitude: -118.528763,
-                    Altitude: 400,
-                    UAVId: id
-                });
-            });
-
-            getFlightStates(map);
-        }
+        success: function (data, textStatus, jqXHR) { flightStateCb(map, data, textStatus, jqXHR); }
     });
 
     $("#start").click(start);
     $("#stop").click(stopSim);
 
     
+
+    //Wait until the vehicle hub is connected before we can execute the main loop.
+    //The main loop will push updates via signalr, don't want to do it prematurely.
+    $.connection.hub.start().done(
+        function () { connectedToHub(vehicleHub, map); }
+        );
+});
+
+//Flight state callback. This function will be curried and passed to the ajax query.
+function flightStateCb (map, data, textStatus, jqXHR) {
+ 
+    for (var i = 0; i < data.length; i++) {
+        map.vehicles[data[i].Id] = new Vehicle(data[i]);
+        map.ids.push(data[i].Id);
+        console.log(data[i].Id + " " + data[i].Callsign);
+        $("#dropdown-UAVIds").append('<li role="presentation"><a class="UAVId" role="menuitem" tabindex="-1" href="#">' + data[i].Id + '</a></li>');
+    }
+    //I think this is in the wrong spot. It probably needs to be in connection.hub.start()
+    $('.UAVId').click(function (eventObject) {
+        var newId = vehicleHub.server.sendCommand({
+            Id: 123,
+            Latitude: 34.242034,
+            Longitude: -118.528763,
+            Altitude: 400,
+            UAVId: id
+        });
+        console.log(newId);
+    });
+
+    getFlightStates(map);
+}
+
+function updateSimulation(vehicleHub, map) {
+    //TODO: Add scheduler here
+    //Do dead reckoning on each of the aircraft
+    var vehicles = map.vehicles;
+    var ids = map.ids;
+    for (i = 0; i < ids.length; i++) {
+        id = ids[i];
+        vehicles[id].process(dt / 1000);
+    }
+    //Pushes the flight state updates
+    pushFlightUpdates(map, vehicleHub);
+    scheduleMissions(map, availableMissions, vehicleHub);
+}
+
+function connectedToHub(vehicleHub, map) {
+    vehicleHub.server.joinGroup("vehicles");
+    setSignalrCallbacks(vehicleHub, map);
+    function mainLoop() {
+        //This boolean is switched by the start sim and stop sim buttons
+        if (runSim) {
+            updateSimulation(vehicleHub, map);
+        }
+        setTimeout(mainLoop, dt);
+    }
+    mainLoop();
+}
+
+// This function sets all the callbacks that will be called with SignalR. Please put all callbacks here.
+function setSignalrCallbacks(vehicleHub, map) {
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         console.log(vehicle);
     }
@@ -215,24 +256,4 @@ $(document).ready(function () {
     vehicleHub.client.broadcastAcceptedCommand = function (ack) {
         console.log(ack);
     }
-    //Wait until the vehicle hub is connected before we can execute the main loop.
-    //The main loop will push updates via signalr, don't want to do it prematurely.
-    $.connection.hub.start().done(function mainLoop() {
-        vehicleHub.server.joinGroup("vehicles");
-        //This boolean is switched by the start sim and stop sim buttons
-        if (runSim) {
-            //TODO: Add scheduler here
-            //Do dead reckoning on each of the aircraft
-            var vehicles = map.vehicles;
-            var ids = map.ids;
-            for (i = 0; i < ids.length; i++) {
-                id = ids[i];
-                vehicles[id].process(dt/1000);
-            }
-            //Pushes the flight state updates
-            pushFlightUpdates(map, vehicleHub);
-            scheduleMissions(map, availableMissions, vehicleHub);
-        }
-        setTimeout(mainLoop, dt);
-    });
-});
+}
