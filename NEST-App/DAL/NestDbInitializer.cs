@@ -15,7 +15,7 @@ namespace NEST_App.DAL
 
             var UAVs = new List<UAV>
             {
-                new UAV{Callsign = "HAWK21", NumDeliveries = 2134, Mileage = 234, Id = 0},
+                new UAV{Callsign = "HAWK21", NumDeliveries = 2134, Mileage = 234, Id = 0, create_date = DateTime.Now, modified_date = DateTime.Now},
                 //new UAV{Callsign = "CROW10", NumDeliveries = 1234, Mileage = 111, Id = 1},
                 //new UAV{Callsign = "PINR44", NumDeliveries = 3301, Mileage = 044, Id = 2},
                 //new UAV{Callsign = "BIRD00", NumDeliveries = 2215, Mileage = 591, Id = 3}
@@ -39,6 +39,8 @@ namespace NEST_App.DAL
             {
                 s.Timestamp = DateTime.Now;
                 context.FlightStates.Add(s);
+                s.create_date = DateTime.Now;
+                s.modified_date = DateTime.Now;
             });
             DateTime dateValue = new DateTime();
             dateValue = DateTime.Now;
@@ -48,11 +50,22 @@ namespace NEST_App.DAL
                 //new Mission{Phase = "enroute", FlightPattern = "abstract", Payload = "cheetos", Priority = 1, FinancialCost = 40, TimeAssigned = DateTime.Now, TimeCompleted = dateValue.AddHours(0.0833), DestinationCoordinates = DbGeography.FromText("POINT(-118.4502736 34.2965205 400)"),  ScheduledCompletionTime = dateValue.AddHours(0.0899), EstimatedCompletionTime = dateValue.AddHours(0.09)  }
 
             };
-            missions.ForEach(s => context.Missions.Add(s));
+            //missions.ForEach(s => context.Missions.Add(s));
 
             var schedules = new List<Schedule>
             { 
-                new Schedule{create_date = DateTime.Now, modified_date = DateTime.Now},
+                new Schedule{
+                    create_date = DateTime.Now,
+                    modified_date = DateTime.Now,
+                    Maintenances = new List<Maintenance>{
+                        new Maintenance{ create_date = DateTime.Now,
+                        modified_date = DateTime.Now,
+                        last_maintenance = DateTime.Now,
+                        next_maintenance = DateTime.Now,
+                        }
+                    },
+            Missions = missions
+                }
             };
             schedules.ForEach(s => context.Schedules.Add(s));
 
