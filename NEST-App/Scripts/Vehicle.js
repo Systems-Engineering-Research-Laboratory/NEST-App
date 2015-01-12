@@ -16,7 +16,7 @@ function Vehicle(vehicleInfo) {
     this.descending = true;
     
 
-    //Functions. Careful not to add helper functions here.
+    //Functions. Careful not to add global helper functions here.
     this.process = function (dt) {
         if (this.Command != null) {
             this.performCommand(dt);
@@ -109,12 +109,17 @@ function Vehicle(vehicleInfo) {
                 if (this.deadReckon(dt, this.Command.X, this.Command.Y)) {
                     this.Command = null;
                 }
+            case "hover":
+                if (this.deadReckon(dt, this.Command.X, this.Command.Y)) {
+                    if (this.Command.Time > 0) {
+                        this.Command.Time -= dt;
+                    }
+                }
         }
     }
 
     this.performMission = function (dt) {
-        if (this.isAtBase()) {
-            this.takeOff();
+        if (this.takeOff()) {
         }
         else {
             switch (this.Mission.Phase) {
@@ -156,7 +161,7 @@ function Vehicle(vehicleInfo) {
     }
 
     this.takeOff = function (dt) {
-        this.targetAltitude(dt, 400, 15);
+        return this.targetAltitude(dt, 400, 15);
     }
 
     //Just checks to make sure that the vehicle is back at base and on the ground.
