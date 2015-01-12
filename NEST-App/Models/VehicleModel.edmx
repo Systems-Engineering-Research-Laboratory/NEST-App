@@ -401,6 +401,12 @@
             <End Role="MissionLog" EntitySet="MissionLogs" />
             <End Role="MissionLogActivity" EntitySet="MissionLogActivities" />
           </AssociationSet>
+          <EntitySet Name="Users" EntityType="VehicleModel.User" />
+          <EntitySet Name="UserRoles" EntityType="VehicleModel.UserRole" />
+          <AssociationSet Name="UserUserRole" Association="VehicleModel.UserUserRole">
+            <End Role="User" EntitySet="Users" />
+            <End Role="UserRole" EntitySet="UserRoles" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="UAV">
           <Key>
@@ -414,6 +420,8 @@
           <Property Name="Mileage" Type="Int32" Nullable="false" />
           <NavigationProperty Name="FlightStates" Relationship="VehicleModel.UAVFlightState" FromRole="UAV" ToRole="FlightState" />
           <NavigationProperty Name="Schedules" Relationship="VehicleModel.UAVSchedule" FromRole="UAV" ToRole="Schedule" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" />
+          <Property Name="modified_date" Type="DateTime" Nullable="false" />
           </EntityType>
         <EntityType Name="FlightState">
           <Key>
@@ -435,6 +443,8 @@
           <Property Name="BatteryLevel" Type="Double" Nullable="false" />
           <Property Name="UAVId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="UAV" Relationship="VehicleModel.UAVFlightState" FromRole="FlightState" ToRole="UAV" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" />
+          <Property Name="modified_date" Type="DateTime" Nullable="false" />
         </EntityType>
         <EntityType Name="Configuration">
           <Key>
@@ -446,6 +456,8 @@
           <Property Name="Classification" Type="String" Nullable="false" />
           <Property Name="NumberOfMotors" Type="Byte" Nullable="false" />
           <NavigationProperty Name="EquipmentLists" Relationship="VehicleModel.ConfigurationEquipmentList" FromRole="Configuration" ToRole="EquipmentList" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" />
+          <Property Name="modified_date" Type="DateTime" Nullable="false" />
         </EntityType>
         <Association Name="VehicleConfiguration">
           <End Type="VehicleModel.UAV" Role="Vehicle" Multiplicity="*" />
@@ -465,6 +477,8 @@
           <NavigationProperty Name="Configuration" Relationship="VehicleModel.ConfigurationEquipmentList" FromRole="EquipmentList" ToRole="Configuration" />
           <NavigationProperty Name="EuipmentHealth" Relationship="VehicleModel.EuipmentHealthEquipmentList" FromRole="EquipmentList" ToRole="EuipmentHealth" />
           <Property Name="Description" Type="String" Nullable="false" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" />
+          <Property Name="modified_date" Type="DateTime" Nullable="false" />
         </EntityType>
         <Association Name="ConfigurationEquipmentList">
           <End Type="VehicleModel.Configuration" Role="Configuration" Multiplicity="1" />
@@ -480,6 +494,8 @@
           <Property Name="Health" Type="Double" Nullable="false" />
           <Property Name="LastMaintenance" Type="String" Nullable="false" />
           <Property Name="DateReceived" Type="DateTime" Nullable="false" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" />
+          <Property Name="modified_date" Type="DateTime" Nullable="false" />
         </EntityType>
         <Association Name="EuipmentHealthEquipmentList">
           <End Type="VehicleModel.EquipmentHealth" Role="EuipmentHealth" Multiplicity="*" />
@@ -524,6 +540,8 @@
           <Property Name="id" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Schedule" Relationship="VehicleModel.MaintenanceSchedule" FromRole="Maintenance" ToRole="Schedule" />
           <Property Name="ScheduleId" Type="Int32" Nullable="false" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" />
+          <Property Name="modified_date" Type="DateTime" Nullable="false" />
         </EntityType>
         <EntityType Name="Schedule">
           <Key>
@@ -534,6 +552,8 @@
           <Property Name="UAVId" Type="Int32" Nullable="true" />
           <NavigationProperty Name="Missions" Relationship="VehicleModel.MissionSchedule" FromRole="Schedule" ToRole="Mission" />
           <NavigationProperty Name="Maintenances" Relationship="VehicleModel.MaintenanceSchedule" FromRole="Schedule" ToRole="Maintenance" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" />
+          <Property Name="modified_date" Type="DateTime" Nullable="false" />
         </EntityType>
         <Association Name="UAVSchedule">
           <End Type="VehicleModel.UAV" Role="UAV" Multiplicity="0..1" />
@@ -628,6 +648,8 @@
           <NavigationProperty Name="Mission" Relationship="VehicleModel.MissionMissionLog" FromRole="MissionLog" ToRole="Mission" />
           <Property Name="Mission_id" Type="Int32" Nullable="false" />
           <NavigationProperty Name="MissionLogActivities" Relationship="VehicleModel.MissionLogMissionLogActivity" FromRole="MissionLog" ToRole="MissionLogActivity" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" />
+          <Property Name="modified_date" Type="DateTime" Nullable="false" />
         </EntityType>
         <EntityType Name="MissionLogActivity">
           <Key>
@@ -664,6 +686,31 @@
               <PropertyRef Name="MissionLog_id" />
             </Dependent>
           </ReferentialConstraint>
+        </Association>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="user_id" />
+          </Key>
+          <Property Name="user_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="username" Type="String" Nullable="false" />
+          <Property Name="password" Type="String" Nullable="false" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" />
+          <Property Name="modified_date" Type="DateTime" Nullable="false" />
+          <Property Name="phone_number" Type="String" Nullable="false" />
+          <NavigationProperty Name="UserRole" Relationship="VehicleModel.UserUserRole" FromRole="User" ToRole="UserRole" />
+        </EntityType>
+        <EntityType Name="UserRole">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="role_type" Type="String" Nullable="false" />
+          <Property Name="access_level" Type="String" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="VehicleModel.UserUserRole" FromRole="UserRole" ToRole="User" />
+        </EntityType>
+        <Association Name="UserUserRole">
+          <End Type="VehicleModel.User" Role="User" Multiplicity="1" />
+          <End Type="VehicleModel.UserRole" Role="UserRole" Multiplicity="1" />
         </Association>
       </Schema>
     </edmx:ConceptualModels>

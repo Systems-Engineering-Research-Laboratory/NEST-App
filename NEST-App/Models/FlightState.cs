@@ -28,6 +28,8 @@ namespace NEST_App.Models
         public double PitchRate { get; set; }
         public double BatteryLevel { get; set; }
         public int UAVId { get; set; }
+        public System.DateTime create_date { get; set; }
+        public System.DateTime modified_date { get; set; }
     
         public virtual UAV UAV { get; set; }
     }

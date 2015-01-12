@@ -22,6 +22,8 @@ namespace NEST_App.Models
     
         public int Id { get; set; }
         public Nullable<int> UAVId { get; set; }
+        public System.DateTime create_date { get; set; }
+        public System.DateTime modified_date { get; set; }
     
         public virtual UAV UAV { get; set; }
         public virtual ICollection<Mission> Missions { get; set; }

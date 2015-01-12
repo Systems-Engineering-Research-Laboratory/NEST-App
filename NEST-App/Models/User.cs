@@ -12,16 +12,15 @@ namespace NEST_App.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class EquipmentHealth
+    public partial class User
     {
-        public int Id { get; set; }
-        public double Health { get; set; }
-        public string LastMaintenance { get; set; }
-        public System.DateTime DateReceived { get; set; }
+        public int user_id { get; set; }
+        public string username { get; set; }
+        public string password { get; set; }
         public System.DateTime create_date { get; set; }
         public System.DateTime modified_date { get; set; }
+        public string phone_number { get; set; }
     
-        public virtual Equipment EquipmentList { get; set; }
-        public virtual UAV Vehicle { get; set; }
+        public virtual UserRole UserRole { get; set; }
     }
 }
