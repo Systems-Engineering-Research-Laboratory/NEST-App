@@ -1,4 +1,16 @@
 ﻿
+/**
+ * This script is a simulation that is meant to be run in the browser. It is used for testing in place of real
+ * vehicles. The implication is that this simulation should communicate with the server through the same exact
+ * interface that actual live vehicle would. Thus, this simulation's code should remain mostly unreferenced. 
+ * It mostly interfaces with the server through SignalR for real time updates. The server will handle most of
+ * the logic.
+ *
+ * It works by having a main loop that repeats every second (which can be adjusted for, the loop speed is
+ * passed in to the update function). The sim can be stopped and started again. In the future, the view that
+ * is tired too will eventually start displaying all the statuses of the UAV. 
+ *
+ */
 
 //The URL where we will perform the AJAX call to get the vehicle info from the DB.
 var uri = '/api/flightstate';
