@@ -16,7 +16,7 @@ function Vehicle(vehicleInfo) {
     this.descending = true;
     
 
-    //Functions. Careful not to add helper functions here.
+    //Functions. Careful not to add global helper functions here.
     this.process = function (dt) {
         if (this.Command != null) {
             this.performCommand(dt);
@@ -109,27 +109,37 @@ function Vehicle(vehicleInfo) {
                 if (this.deadReckon(dt, this.Command.X, this.Command.Y)) {
                     this.Command = null;
                 }
+            case "hover":
+                if (this.deadReckon(dt, this.Command.X, this.Command.Y)) {
+                    if (this.Command.Time > 0) {
+                        this.Command.Time -= dt;
+                    }
+                }
         }
     }
 
     this.performMission = function (dt) {
-        switch (this.Mission.Phase) {
-            case "enroute":
-                if (this.deadReckon(dt, this.Mission.X, this.Mission.Y)) {
-                    this.Mission.Phase = "delivering";
-                }
-                break;
-            case "delivering":
-                if (this.deliver(dt, 200, 400, 5)) {
-                    this.Mission.phase = "back to base";
-                }
-                break;
-            case "back to base":
-                if (this.deadReckon(dt, base.X, base.Y)) {
-                    this.Mission.phase = "done";
-                    this.Mission = null;
-                }
-                break;
+        if (this.takeOff()) {
+        }
+        else {
+            switch (this.Mission.Phase) {
+                case "enroute":
+                    if (this.deadReckon(dt, this.Mission.X, this.Mission.Y)) {
+                        this.Mission.Phase = "delivering";
+                    }
+                    break;
+                case "delivering":
+                    if (this.deliver(dt, 200, 400, 5)) {
+                        this.Mission.phase = "back to base";
+                    }
+                    break;
+                case "back to base":
+                    if (this.backToBase(dt, base.X, base.Y)) {
+                        this.Mission.phase = "done";
+                        this.Mission = null;
+                    }
+                    break;
+            }
         }
     }
 
@@ -143,13 +153,19 @@ function Vehicle(vehicleInfo) {
         var thisY = this.FlightState.Y;
         if (calculateDistance(thisX, thisY, base.X, base.Y) < 10) {
             this.deadReckon(dt, base.X, base.Y);
+            return false;
         }
         else {
-            this.targetAltitude(dt, 0, 5);
+            return this.targetAltitude(dt, 0, 5);
         }
     }
 
-    //Just checks to make sure that the vehicle is back at base.
+    this.takeOff = function (dt) {
+        return this.targetAltitude(dt, 400, 15);
+    }
+
+    //Just checks to make sure that the vehicle is back at base and on the ground.
+    //Does not count if it is on the floor.
     this.isAtBase = function () {
         var thisX = this.FlightState.X;
         var thisY = this.FlightState.Y;

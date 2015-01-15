@@ -25,6 +25,8 @@ namespace NEST_App.Models
         public string Callsign { get; set; }
         public int NumDeliveries { get; set; }
         public int Mileage { get; set; }
+        public System.DateTime create_date { get; set; }
+        public System.DateTime modified_date { get; set; }
     
         public virtual Configuration Configurations { get; set; }
         public virtual ICollection<EquipmentHealth> EuipmentHealths { get; set; }

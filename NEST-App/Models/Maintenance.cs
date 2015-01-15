@@ -19,6 +19,8 @@ namespace NEST_App.Models
         public string time_remaining { get; set; }
         public int id { get; set; }
         public int ScheduleId { get; set; }
+        public System.DateTime create_date { get; set; }
+        public System.DateTime modified_date { get; set; }
     
         public virtual Schedule Schedule { get; set; }
     }

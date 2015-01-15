@@ -37,5 +37,7 @@ namespace NEST_App.Models
         public virtual DbSet<Maintenance> Maintenances { get; set; }
         public virtual DbSet<MissionLog> MissionLogs { get; set; }
         public virtual DbSet<MissionLogActivity> MissionLogActivities { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserRole> UserRoles { get; set; }
     }
 }

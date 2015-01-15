@@ -27,6 +27,8 @@ namespace NEST_App.Models
         public decimal Price { get; set; }
         public double Weight { get; set; }
         public string Description { get; set; }
+        public System.DateTime create_date { get; set; }
+        public System.DateTime modified_date { get; set; }
     
         public virtual Configuration Configuration { get; set; }
         public virtual ICollection<EquipmentHealth> EuipmentHealth { get; set; }

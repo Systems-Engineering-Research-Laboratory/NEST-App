@@ -2,13 +2,13 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 01/01/2015 21:56:22
+-- Date Created: 01/12/2015 00:12:14
 -- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
 GO
-USE [C:\USERS\VARATEP-MAC\DOCUMENTS\VISUAL STUDIO 2013\PROJECTS\NEST-APP\NEST-APP\APP_DATA\NEST_DB.MDF];
+USE [C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\App_Data\NEST_DB.mdf];
 GO
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 GO
@@ -43,6 +43,12 @@ IF OBJECT_ID(N'[dbo].[FK_MissionSchedule]', 'F') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[FK_MaintenanceSchedule]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Maintenances] DROP CONSTRAINT [FK_MaintenanceSchedule];
+GO
+IF OBJECT_ID(N'[dbo].[FK_MissionMissionLog]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[MissionLogs] DROP CONSTRAINT [FK_MissionMissionLog];
+GO
+IF OBJECT_ID(N'[dbo].[FK_MissionLogMissionLogActivity]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[MissionLogActivities] DROP CONSTRAINT [FK_MissionLogMissionLogActivity];
 GO
 
 -- --------------------------------------------------
@@ -79,6 +85,12 @@ GO
 IF OBJECT_ID(N'[dbo].[Maintenances]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Maintenances];
 GO
+IF OBJECT_ID(N'[dbo].[MissionLogs]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[MissionLogs];
+GO
+IF OBJECT_ID(N'[dbo].[MissionLogActivities]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[MissionLogActivities];
+GO
 
 -- --------------------------------------------------
 -- Creating all tables
@@ -90,6 +102,8 @@ CREATE TABLE [dbo].[UAVs1] (
     [Callsign] nvarchar(max)  NOT NULL,
     [NumDeliveries] int  NOT NULL,
     [Mileage] int  NOT NULL,
+    [create_date] datetime  NOT NULL,
+    [modified_date] datetime  NOT NULL,
     [Configurations_Id] int  NOT NULL
 );
 GO
@@ -109,7 +123,9 @@ CREATE TABLE [dbo].[FlightStates] (
     [RollRate] float  NOT NULL,
     [PitchRate] float  NOT NULL,
     [BatteryLevel] float  NOT NULL,
-    [UAVId] int  NOT NULL
+    [UAVId] int  NOT NULL,
+    [create_date] datetime  NOT NULL,
+    [modified_date] datetime  NOT NULL
 );
 GO
 
@@ -118,7 +134,9 @@ CREATE TABLE [dbo].[Configurations] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [Name] nvarchar(max)  NOT NULL,
     [Classification] nvarchar(max)  NOT NULL,
-    [NumberOfMotors] tinyint  NOT NULL
+    [NumberOfMotors] tinyint  NOT NULL,
+    [create_date] datetime  NOT NULL,
+    [modified_date] datetime  NOT NULL
 );
 GO
 
@@ -132,6 +150,8 @@ CREATE TABLE [dbo].[Equipments] (
     [Price] decimal(18,0)  NOT NULL,
     [Weight] float  NOT NULL,
     [Description] nvarchar(max)  NOT NULL,
+    [create_date] datetime  NOT NULL,
+    [modified_date] datetime  NOT NULL,
     [Configuration_Id] int  NOT NULL
 );
 GO
@@ -142,6 +162,8 @@ CREATE TABLE [dbo].[EquipmentHealths] (
     [Health] float  NOT NULL,
     [LastMaintenance] nvarchar(max)  NOT NULL,
     [DateReceived] datetime  NOT NULL,
+    [create_date] datetime  NOT NULL,
+    [modified_date] datetime  NOT NULL,
     [EquipmentList_Id] int  NOT NULL,
     [Vehicle_Id] int  NOT NULL
 );
@@ -163,7 +185,9 @@ GO
 -- Creating table 'Schedules'
 CREATE TABLE [dbo].[Schedules] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [UAVId] int  NULL
+    [UAVId] int  NULL,
+    [create_date] datetime  NOT NULL,
+    [modified_date] datetime  NOT NULL
 );
 GO
 
@@ -206,14 +230,18 @@ CREATE TABLE [dbo].[Maintenances] (
     [next_maintenance] datetime  NOT NULL,
     [time_remaining] nvarchar(max)  NOT NULL,
     [id] int  NOT NULL,
-    [ScheduleId] int  NOT NULL
+    [ScheduleId] int  NOT NULL,
+    [create_date] datetime  NOT NULL,
+    [modified_date] datetime  NOT NULL
 );
 GO
 
 -- Creating table 'MissionLogs'
 CREATE TABLE [dbo].[MissionLogs] (
     [id] int IDENTITY(1,1) NOT NULL,
-    [Mission_id] int  NOT NULL
+    [Mission_id] int  NOT NULL,
+    [create_date] datetime  NOT NULL,
+    [modified_date] datetime  NOT NULL
 );
 GO
 
@@ -225,6 +253,26 @@ CREATE TABLE [dbo].[MissionLogActivities] (
     [create_date] datetime  NOT NULL,
     [modified_date] datetime  NOT NULL,
     [action_user_id] nvarchar(max)  NOT NULL
+);
+GO
+
+-- Creating table 'Users'
+CREATE TABLE [dbo].[Users] (
+    [user_id] int IDENTITY(1,1) NOT NULL,
+    [username] nvarchar(max)  NOT NULL,
+    [password] nvarchar(max)  NOT NULL,
+    [create_date] datetime  NOT NULL,
+    [modified_date] datetime  NOT NULL,
+    [phone_number] nvarchar(max)  NOT NULL,
+    [UserRole_Id] int  NOT NULL
+);
+GO
+
+-- Creating table 'UserRoles'
+CREATE TABLE [dbo].[UserRoles] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [role_type] nvarchar(max)  NOT NULL,
+    [access_level] nvarchar(max)  NOT NULL
 );
 GO
 
@@ -302,6 +350,18 @@ GO
 ALTER TABLE [dbo].[MissionLogActivities]
 ADD CONSTRAINT [PK_MissionLogActivities]
     PRIMARY KEY CLUSTERED ([id] ASC);
+GO
+
+-- Creating primary key on [user_id] in table 'Users'
+ALTER TABLE [dbo].[Users]
+ADD CONSTRAINT [PK_Users]
+    PRIMARY KEY CLUSTERED ([user_id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'UserRoles'
+ALTER TABLE [dbo].[UserRoles]
+ADD CONSTRAINT [PK_UserRoles]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
 -- --------------------------------------------------
@@ -471,6 +531,21 @@ GO
 CREATE INDEX [IX_FK_MissionLogMissionLogActivity]
 ON [dbo].[MissionLogActivities]
     ([MissionLog_id]);
+GO
+
+-- Creating foreign key on [UserRole_Id] in table 'Users'
+ALTER TABLE [dbo].[Users]
+ADD CONSTRAINT [FK_UserUserRole]
+    FOREIGN KEY ([UserRole_Id])
+    REFERENCES [dbo].[UserRoles]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_UserUserRole'
+CREATE INDEX [IX_FK_UserUserRole]
+ON [dbo].[Users]
+    ([UserRole_Id]);
 GO
 
 -- --------------------------------------------------

@@ -24,6 +24,8 @@ namespace NEST_App.Models
         public string Name { get; set; }
         public string Classification { get; set; }
         public byte NumberOfMotors { get; set; }
+        public System.DateTime create_date { get; set; }
+        public System.DateTime modified_date { get; set; }
     
         public virtual ICollection<UAV> Vehicle { get; set; }
         public virtual ICollection<Equipment> EquipmentLists { get; set; }

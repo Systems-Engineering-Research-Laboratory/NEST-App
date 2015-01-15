@@ -17,5 +17,6 @@ namespace NEST_App.Models
         public int Id { get; set; }
         public int CommandId { get; set; }
         public string Reason { get; set; }
+        public string CommandType { get; set; }
     }
 }
