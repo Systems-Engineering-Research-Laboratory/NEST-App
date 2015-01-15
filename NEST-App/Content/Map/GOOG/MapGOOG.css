@@ -2,4 +2,41 @@
             height: 100%;
             margin: 0;
             padding: 0;
+            overflow: hidden;
         }
+
+.Buttons {
+        right: 1px;
+        padding-right: 5px;
+        width: 100px;
+        height: 200px;
+        top: 60px;
+        position: fixed;
+    }
+
+#start {
+    background-color: white;
+    font-family: 'Arial, san-serif';
+    font-size: 12px;
+    cursor: pointer;
+    width: 55px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    margin: 5px 0 0 0;
+    float: right;
+}
+
+#stop {
+    background-color: white;
+    font-family: 'Arial, san-serif';
+    font-size: 12px;
+    width: 55px;
+    cursor: pointer;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    float: right;
+    margin: 10px 0 0 0;
+}
+
