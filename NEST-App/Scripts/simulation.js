@@ -138,7 +138,7 @@ function scheduleMissions(vehicleMap, missions, hub) {
         if (vehicle.Mission == null) {
             //treat js array as a queue.
             vehicle.Mission = missions.shift();
-            i--; //Shift i back
+            i--; //Shift i back because we removed from the queue, so the indexes shift (I think)
             vehicle.Mission.UAVId = vehicle.Id;
             LatLongToXY(vehicle.Mission);
             hub.server.assignMission(vehicle.Id, vehicle.Mission.Id);
@@ -161,7 +161,7 @@ $(document).ready(function () {
 
     //Pull the vehicles from the database
     $.ajax({
-        url: '/api/uavs',
+        url: '/api/simapi/initsim',
         success: function (data, textStatus, jqXHR) { flightStateCb(map, data, textStatus, jqXHR); }
     });
 
@@ -198,7 +198,8 @@ function flightStateCb (map, data, textStatus, jqXHR) {
         console.log(newId);
     });
 
-    getFlightStates(map);
+    updateButtons();
+    //getFlightStates(map);
 }
 
 function updateSimulation(vehicleHub, map) {
@@ -213,6 +214,7 @@ function updateSimulation(vehicleHub, map) {
     //Pushes the flight state updates
     pushFlightUpdates(map, vehicleHub);
     scheduleMissions(map, availableMissions, vehicleHub);
+
 }
 
 function connectedToHub(vehicleHub, map) {

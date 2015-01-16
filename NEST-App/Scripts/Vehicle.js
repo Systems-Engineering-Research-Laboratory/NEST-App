@@ -9,12 +9,25 @@ function Vehicle(vehicleInfo) {
     this.Callsign = vehicleInfo.Callsign;
     this.Mileage = vehicleInfo.Mileage;
     this.NumDeliveries = vehicleInfo.NumDeliveries;
-    this.FlightState = null;
-    this.Mission = null;
+    this.FlightState = vehicleInfo.FlightState;
+    this.Schedule = vehicleInfo.Schedule;
+    this.Mission = vehicleInfo.Schedule.Missions[0];
+    this.Schedule = vehicleInfo.Schedule;
     this.Objective = null;
     this.Command = null;
     this.descending = true;
-    
+
+    this.appendLonLat = function (obj, point) {
+        var pointText = point.Geography.WellKnownText
+        var results = pointText.match(/-?\d+(\.\d+)?/g);
+        obj.Longitude = parseFloat(results[0]);
+        obj.Latitude = parseFloat(results[1]);
+        obj.Altitude = parseFloat(results[2]);
+        LatLongToXY(obj);
+    }
+
+    this.appendLonLat(this.FlightState, this.FlightState.Position);
+    this.appendLonLat(this.Mission, this.Mission.DestinationCoordinates);
 
     //Functions. Careful not to add global helper functions here.
     this.process = function (dt) {
@@ -119,27 +132,27 @@ function Vehicle(vehicleInfo) {
     }
 
     this.performMission = function (dt) {
-        if (this.takeOff()) {
-        }
-        else {
-            switch (this.Mission.Phase) {
-                case "enroute":
-                    if (this.deadReckon(dt, this.Mission.X, this.Mission.Y)) {
-                        this.Mission.Phase = "delivering";
-                    }
-                    break;
-                case "delivering":
-                    if (this.deliver(dt, 200, 400, 5)) {
-                        this.Mission.phase = "back to base";
-                    }
-                    break;
-                case "back to base":
-                    if (this.backToBase(dt, base.X, base.Y)) {
-                        this.Mission.phase = "done";
-                        this.Mission = null;
-                    }
-                    break;
-            }
+        switch (this.Mission.Phase) {
+            case "takeoff":
+                if (this.takeOff(dt)) {
+                    this.Mission.Phase = "enroute";
+                }
+            case "enroute":
+                if (this.deadReckon(dt, this.Mission.X, this.Mission.Y)) {
+                    this.Mission.Phase = "delivering";
+                }
+                break;
+            case "delivering":
+                if (this.deliver(dt, 200, 400, 5)) {
+                    this.Mission.phase = "back to base";
+                }
+                break;
+            case "back to base":
+                if (this.backToBase(dt, base.X, base.Y)) {
+                    this.Mission.phase = "done";
+                    this.Mission = null;
+                }
+                break;
         }
     }
 

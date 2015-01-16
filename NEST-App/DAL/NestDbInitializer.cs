@@ -55,6 +55,7 @@ namespace NEST_App.DAL
             var schedules = new List<Schedule>
             { 
                 new Schedule{
+                    UAV = UAVs[0],
                     create_date = DateTime.Now,
                     modified_date = DateTime.Now,
                     Maintenances = new List<Maintenance>{
@@ -66,6 +67,7 @@ namespace NEST_App.DAL
                     },
             Missions = missions
                 }
+                
             };
             schedules.ForEach(s => context.Schedules.Add(s));
 
