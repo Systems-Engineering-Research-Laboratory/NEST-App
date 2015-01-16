@@ -56,7 +56,15 @@ function uavMarkers(data, textStatus, jqXHR) {
             map: map,
             icon: uavIcon
         });
+        var key = data[i].UAVId.toString();
         markers[data[i].UAVId].marker = marker;
+        google.maps.event.addListener(marker, 'click', (function (marker, key) {
+            
+            return function () {
+                infowindow.setContent('<div style="line-height: 1.35; overflow: hidden; white-space: nowrap;"><b>ID: </b>' +key+ '</div>');
+                infowindow.open(map, marker);
+            }
+        })(marker, key));
     }
 }
 
