@@ -2,11 +2,18 @@
 var markers = {};
 var infowindow = new google.maps.InfoWindow();
 var homeBase = new google.maps.LatLng(34.2417, -118.529);
-var uavIcon = new google.maps.MarkerImage(
+var uavIconBlack = new google.maps.MarkerImage(
         '../Content/img/drone2.png',
         null, //Size determined at runtime
         null, //Origin is 0,0
         null, //Anchor is at the bottom center of the scaled image
+        new google.maps.Size(100, 100)
+    );
+var uavIconGreen = new google.maps.MarkerImage(
+        '../Content/img/drone3.png',
+        null,
+        null,
+        null,
         new google.maps.Size(100, 100)
     );
 
@@ -54,7 +61,7 @@ function uavMarkers(data, textStatus, jqXHR) {
         var marker = new google.maps.Marker({
             position: markers[data[i].UAVId].pos,
             map: map,
-            icon: uavIcon
+            icon: uavIconBlack
         });
         var key = data[i].UAVId.toString();
         markers[data[i].UAVId].marker = marker;
@@ -86,5 +93,74 @@ $(document).ready(function () {
         success: function (data, textStatus, jqXHR) {
             uavMarkers(data, textStatus, jqXHR);
         }
+    });
+
+    /*Click-drag-select*/
+    var shiftPressed = false;
+    $(window).keydown(function (evt) {
+        if (evt.which === 16) { //shift key
+            shiftPressed = true;
+            console.log("Shift key down");
+        }
+    }).keyup(function (evt) {
+        if (evt.which === 16) {
+            shiftPressed = false;
+            console.log("Shift key up");
+        }
+    });
+
+    var mouseDownPos, gridBoundingBox = null, mouseIsDown = 0;
+    var theMap = map;
+
+    google.maps.event.addListener(theMap, 'mousemove', function (e) {
+        console.log("move mouse down, shift down", mouseIsDown, shiftPressed);
+        if ( mouseIsDown && (shiftPressed || gridBoundingBox != null )) {
+            if ( gridBoundingBox !== null ) {
+                var newbounds = new google.maps.LatLngBounds(mouseDownPos, null);
+                newbounds.extend(e.latLng);
+                gridBoundingBox.setBounds(newbounds);
+
+            } else {
+                console.log("firsts mouse move");
+                gridBoundingBox = new google.maps.Rectangle({
+                    map: theMap,
+                    bounds: null,
+                    fillOpacity: 0.15,
+                    strokeWeight: 0.9,
+                    clickable: false
+                });
+            }
+        }
+    });
+
+    google.maps.event.addListener(theMap, 'mousedown', function (e) {
+        if ( shiftPressed ) {
+            mouseIsDown = 1;
+            mouseDownPos = e.latLng;
+            theMap.setOptions({
+                draggable: false
+            });
+        }
+    });
+
+    google.maps.event.addListener(theMap, 'mouseup', function (e) {
+        if (mouseIsDown && (shiftPressed || gridBoundingBox != null)) {
+            mouseIsDown = 0;
+            if (gridBoundingBox !== null) {
+                var boundsSelectionArea = new google.maps.LatLngBounds(gridBoundingBox.getBounds().getSouthWest(), gridBoundingBox.getBounds().getNorthEast());
+                for (var key in markers) { 
+                    if (gridBoundingBox.getBounds().contains(markers[key].marker.getPosition())) {
+                        markers[key].marker.setIcon(uavIconGreen);
+                    } else {
+                        markers[key].marker.setIcon(uavIconBlack);        
+                    }
+                }
+                gridBoundingBox.setMap(null);
+            }
+            gridBoundingBox = null;
+        }
+        theMap.setOptions({
+            draggable: true
+        });
     });
 });
