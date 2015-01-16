@@ -19,17 +19,6 @@ var dt = 1000; //Timestep in milliseconds
 var phases = ["preparing", "enroute", "delivering", "returning", "landing"];
 
 
-
-
-//Just appends the X and Y coordiante of vehicles to the objects.
-function prepareVehicles(vehs) {
-    for(i = 0; i < vehs.length; i++) {
-        vehicle = vehs[i];
-        vehicle.X = longToX(vehicle.Longitude);
-        vehicle.Y = latToY(vehicle.Latitude);
-    }
-}
-
 //Randomly assign missions to vehicles. It's dead code right now, but might be useful for debugging later on
 function assignMission(vehicle) {
     var rotation = Math.random() * 360;
@@ -48,9 +37,6 @@ function assignMission(vehicle) {
     vehicle.Mission = mission;
 }
 
-function buildSim() {
-    createVehicles();
-}
 
 //Pushes all the flight state information to the database.
 function pushFlightUpdates(map, hub) {
@@ -88,23 +74,8 @@ function stopSim(eventObject) {
     updateButtons();
 }
 
-//Pull flight state info from the database.
-function getFlightStates(map) {
-    $.ajax({
-        url: '/api/flightstate',
-        success: function (data, textStatus, jqXHR) {
-            for (var i = 0; i < data.length; i++) {
-                curVeh = map.vehicles[data[i].UAVId];
-                curVeh.FlightState = data[i];
-                LatLongToXY(curVeh.FlightState);
-            }
-            getMissions(map);
-        }
-    })
-}
-
 var availableMissions = [];
-//Pull mission information from the database.
+//Pull mission information from the database. Dead code.
 function getMissions(map) {
     var ids = map.ids;
     var vehicles = map.vehicles;
@@ -127,6 +98,7 @@ function getMissions(map) {
     })
 }
 
+//Dead code
 function scheduleMissions(vehicleMap, missions, hub) {
     if(missions.length == 0){
         return;
@@ -138,7 +110,7 @@ function scheduleMissions(vehicleMap, missions, hub) {
         if (vehicle.Mission == null) {
             //treat js array as a queue.
             vehicle.Mission = missions.shift();
-            i--; //Shift i back
+            i--; //Shift i back because we removed from the queue, so the indexes shift (I think)
             vehicle.Mission.UAVId = vehicle.Id;
             LatLongToXY(vehicle.Mission);
             hub.server.assignMission(vehicle.Id, vehicle.Mission.Id);
@@ -161,7 +133,7 @@ $(document).ready(function () {
 
     //Pull the vehicles from the database
     $.ajax({
-        url: '/api/uavs',
+        url: '/api/simapi/initsim',
         success: function (data, textStatus, jqXHR) { flightStateCb(map, data, textStatus, jqXHR); }
     });
 
@@ -198,7 +170,8 @@ function flightStateCb (map, data, textStatus, jqXHR) {
         console.log(newId);
     });
 
-    getFlightStates(map);
+    updateButtons();
+    //getFlightStates(map);
 }
 
 function updateSimulation(vehicleHub, map) {
@@ -212,7 +185,7 @@ function updateSimulation(vehicleHub, map) {
     }
     //Pushes the flight state updates
     pushFlightUpdates(map, vehicleHub);
-    scheduleMissions(map, availableMissions, vehicleHub);
+
 }
 
 function connectedToHub(vehicleHub, map) {
