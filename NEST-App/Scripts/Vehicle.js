@@ -9,14 +9,27 @@ function Vehicle(vehicleInfo) {
     this.Callsign = vehicleInfo.Callsign;
     this.Mileage = vehicleInfo.Mileage;
     this.NumDeliveries = vehicleInfo.NumDeliveries;
-    this.FlightState = null;
-    this.Mission = null;
+    this.FlightState = vehicleInfo.FlightState;
+    this.Schedule = vehicleInfo.Schedule;
+    this.Mission = vehicleInfo.Schedule.Missions[0];
+    this.Schedule = vehicleInfo.Schedule;
     this.Objective = null;
     this.Command = null;
     this.descending = true;
-    
 
-    //Functions. Careful not to add helper functions here.
+    this.appendLonLat = function (obj, point) {
+        var pointText = point.Geography.WellKnownText
+        var results = pointText.match(/-?\d+(\.\d+)?/g);
+        obj.Longitude = parseFloat(results[0]);
+        obj.Latitude = parseFloat(results[1]);
+        obj.Altitude = parseFloat(results[2]);
+        LatLongToXY(obj);
+    }
+
+    this.appendLonLat(this.FlightState, this.FlightState.Position);
+    this.appendLonLat(this.Mission, this.Mission.DestinationCoordinates);
+
+    //Functions. Careful not to add global helper functions here.
     this.process = function (dt) {
         if (this.Command != null) {
             this.performCommand(dt);
@@ -109,11 +122,21 @@ function Vehicle(vehicleInfo) {
                 if (this.deadReckon(dt, this.Command.X, this.Command.Y)) {
                     this.Command = null;
                 }
+            case "hover":
+                if (this.deadReckon(dt, this.Command.X, this.Command.Y)) {
+                    if (this.Command.Time > 0) {
+                        this.Command.Time -= dt;
+                    }
+                }
         }
     }
 
     this.performMission = function (dt) {
         switch (this.Mission.Phase) {
+            case "takeoff":
+                if (this.takeOff(dt)) {
+                    this.Mission.Phase = "enroute";
+                }
             case "enroute":
                 if (this.deadReckon(dt, this.Mission.X, this.Mission.Y)) {
                     this.Mission.Phase = "delivering";
@@ -125,7 +148,7 @@ function Vehicle(vehicleInfo) {
                 }
                 break;
             case "back to base":
-                if (this.deadReckon(dt, base.X, base.Y)) {
+                if (this.backToBase(dt, base.X, base.Y)) {
                     this.Mission.phase = "done";
                     this.Mission = null;
                 }
@@ -143,13 +166,19 @@ function Vehicle(vehicleInfo) {
         var thisY = this.FlightState.Y;
         if (calculateDistance(thisX, thisY, base.X, base.Y) < 10) {
             this.deadReckon(dt, base.X, base.Y);
+            return false;
         }
         else {
-            this.targetAltitude(dt, 0, 5);
+            return this.targetAltitude(dt, 0, 5);
         }
     }
 
-    //Just checks to make sure that the vehicle is back at base.
+    this.takeOff = function (dt) {
+        return this.targetAltitude(dt, 400, 15);
+    }
+
+    //Just checks to make sure that the vehicle is back at base and on the ground.
+    //Does not count if it is on the floor.
     this.isAtBase = function () {
         var thisX = this.FlightState.X;
         var thisY = this.FlightState.Y;
