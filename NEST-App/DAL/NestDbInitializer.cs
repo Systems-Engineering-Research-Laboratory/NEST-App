@@ -54,6 +54,21 @@ namespace NEST_App.DAL
 
             var schedules = new List<Schedule>
             { 
+                new Schedule {
+                    Id = 0,
+                    create_date = DateTime.Now,
+                    modified_date = DateTime.Now,
+                    Missions = new List<Mission>{
+                        new Mission {
+                            create_date = DateTime.Now,
+                            modified_date = DateTime.Now,
+                            ScheduledCompletionTime = DateTime.Now,
+                            EstimatedCompletionTime = DateTime.Now,
+                            TimeAssigned = DateTime.Now,
+                            TimeCompleted = DateTime.Now
+                            }
+                      }
+                },
                 new Schedule{
                     UAV = UAVs[0],
                     create_date = DateTime.Now,

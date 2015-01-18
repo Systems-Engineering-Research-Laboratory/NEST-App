@@ -17,6 +17,7 @@ var uri = '/api/flightstate';
 var runSim = false;
 var dt = 1000; //Timestep in milliseconds
 var phases = ["preparing", "enroute", "delivering", "returning", "landing"];
+var availableMissions = [];
 
 
 //Randomly assign missions to vehicles. It's dead code right now, but might be useful for debugging later on
@@ -74,7 +75,7 @@ function stopSim(eventObject) {
     updateButtons();
 }
 
-var availableMissions = [];
+
 //Pull mission information from the database. Dead code.
 function getMissions(map) {
     var ids = map.ids;
@@ -137,6 +138,11 @@ $(document).ready(function () {
         success: function (data, textStatus, jqXHR) { flightStateCb(map, data, textStatus, jqXHR); }
     });
 
+    $.ajax({
+        url: '/api/Missions/unassignedmissions',
+        success: function(data, textSTatus, jqXHR) { unassignedMissionsCb (availableMissions, data, textStatus, jqXHR);}
+    })
+
     $("#start").click(start);
     $("#stop").click(stopSim);
 
@@ -174,6 +180,12 @@ function flightStateCb (map, data, textStatus, jqXHR) {
     //getFlightStates(map);
 }
 
+var missionsRecvd = false;
+function unassignedMissionsCb(container, data, textStatus, jqXHR) {
+    container = data;
+    missionsRecvd = true;
+}
+
 function updateSimulation(vehicleHub, map) {
     //TODO: Add scheduler here
     //Do dead reckoning on each of the aircraft
@@ -188,6 +200,7 @@ function updateSimulation(vehicleHub, map) {
 
 }
 
+//Main function loop
 function connectedToHub(vehicleHub, map) {
     vehicleHub.server.joinGroup("vehicles");
     setSignalrCallbacks(vehicleHub, map);

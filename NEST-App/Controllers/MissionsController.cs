@@ -43,6 +43,17 @@ namespace NEST_App.Controllers
             return missionDtos;
         }
 
+        [Route("api/missions/unassignedmissions")]
+        [HttpGet]
+        public IQueryable<Mission> UnassignedMissions()
+        {
+            var unassgn = from mis in db.Missions
+                          join sched in db.Missions on mis.ScheduleId equals sched.id
+                          where mis.Schedule.UAVId == null
+                          select mis;
+            return unassgn;
+        }
+
         // GET: api/Missions/5
         [ResponseType(typeof(Mission))]
         public async Task<IHttpActionResult> GetMission(int id)
