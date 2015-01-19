@@ -68,17 +68,23 @@ function uavMarkers(data, textStatus, jqXHR) {
         });
         var key = data[i].UAVId.toString();
         uavs[data[i].UAVId].marker = marker;
-        google.maps.event.addListener(marker, 'click', (function (marker, key) {
-            if (!ctrlPressed) {//If ctrl is not pressed, then clear selectedDrones[] before adding the clicked drone to the list
-                while (selectedDrones.length > 0) {//clear the selected drone list
-                    selectedDrones.pop();
+        google.maps.event.addListener(marker, 'click', (function (marker, key, event) {
+
+            $(window).keydown(function (evt) {
+                if (evt.ctrlKey) {//If ctrl is not pressed, then clear selectedDrones[] before adding the clicked drone to the list
+                    console.log("Ctrl key pressed");
+                    while (selectedDrones.length > 0) {//clear the selected drone list
+                        selectedDrones.pop();
+                    }
                 }
-            }
-            selectedDrones.push(uavs[key]);
+            });
+            selectedDrones.push(marker);
             return function () {
                 infowindow.setContent('<div style="line-height: 1.35; overflow: hidden; white-space: nowrap;"><b>ID: </b>' + key + '</div>');
                 infowindow.open(map, marker);
+                            console.log("Number of selected drones: " + selectedDrones.length);
             }
+
         })(marker, key));
     }
 }
@@ -110,32 +116,31 @@ $(document).ready(function () {
             shiftPressed = true;
             console.log("Shift key down");
         }
-        if (evt.ctrlKey){
-            ctrlPressed = true;
-        }
         //if shift + (0 through 9) is pressed, all selected drones will be bound to that number
         if (evt.shiftKey && ((evt.which >= 48) && (evt.which <= 57))){
             storedGroups[evt.which] = selectedDrones;
+            console.log("Number of selected drones: " + selectedDrones.length);
         }
         //if 0 through 9 is pressed, it restores that list of selected drones and turns them green
         if ((evt.which >= 48) && (evt.which <= 57)) {
+            while (selectedDrones.length > 0) {//clear the selected drone list
+                selectedDrones.pop();
+            }
             if (storedGroups[evt.which]!=null){
                 selectedDrones.push(storedGroups[evt.which]);
                 if (selectedDrones.length != 0) {
                     var i;
                     for (i = 0; i < selectedDrones.length; i++) {
-                        selectedDrones[i].marker.setIcon(uavIconGreen);
+                        //selectedDrones[i].marker.setIcon(uavIconGreen);
                     }
                 }
             }
+            console.log("Number of selected drones: " + selectedDrones.length);
         }
     }).keyup(function (evt) {
         if (evt.shiftKey) {
             shiftPressed = false;
             console.log("Shift key up");
-        }
-        if (evt.ctrlKey){
-            ctrlPressed = false;
         }
     });
 
@@ -183,15 +188,14 @@ $(document).ready(function () {
                     selectedDrones.pop();
                 }
                 var boundsSelectionArea = new google.maps.LatLngBounds(gridBoundingBox.getBounds().getSouthWest(), gridBoundingBox.getBounds().getNorthEast());
-                for (var key in markers) {
+                for (var key in uavs) {
                     if (gridBoundingBox.getBounds().contains(uavs[key].marker.getPosition())) {
                         uavs[key].marker.setIcon(uavIconGreen);
-
-                        //push the selected markers to an array
-                        selectedDrones.push(uavs[key]);
-
+                        selectedDrones.push(uavs[key]);//push the selected markers to an array
+                        console.log("Number of selected drones: " + selectedDrones.length);
                     } else {
                         uavs[key].marker.setIcon(uavIconBlack);
+                        console.log("Number of selected drones: " + selectedDrones.length);
                     }
                 }
                 gridBoundingBox.setMap(null);
