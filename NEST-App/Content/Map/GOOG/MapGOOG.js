@@ -1,5 +1,8 @@
 ﻿var map;
-var markers = {};
+var uavs = {};
+var selectedDrones = []; //store drones selected from any method here
+var storedGroups = []; //keep track of different stored groupings of UAVs
+var ctrlPressed = false;
 var infowindow = new google.maps.InfoWindow();
 var homeBase = new google.maps.LatLng(34.2417, -118.529);
 var uavIconBlack = new google.maps.MarkerImage(
@@ -53,22 +56,27 @@ function BaseControl(controlDiv, map) {
 function uavMarkers(data, textStatus, jqXHR) {
     console.log("Pulling Flightstates...", textStatus);
     for (var i = 0; i < data.length; i++) {
-        markers[data[i].UAVId] = {};
-        markers[data[i].UAVId].lat = data[i].Latitude;
-        markers[data[i].UAVId].lng = data[i].Longitude;
-        markers[data[i].UAVId].alt = data[i].Altitude;
-        markers[data[i].UAVId].pos = new google.maps.LatLng(data[i].Latitude, data[i].Longitude);
+        uavs[data[i].UAVId] = {};
+        uavs[data[i].UAVId].lat = data[i].Latitude;
+        uavs[data[i].UAVId].lng = data[i].Longitude;
+        uavs[data[i].UAVId].alt = data[i].Altitude;
+        uavs[data[i].UAVId].pos = new google.maps.LatLng(data[i].Latitude, data[i].Longitude);
         var marker = new google.maps.Marker({
-            position: markers[data[i].UAVId].pos,
+            position: uavs[data[i].UAVId].pos,
             map: map,
             icon: uavIconBlack
         });
         var key = data[i].UAVId.toString();
-        markers[data[i].UAVId].marker = marker;
+        uavs[data[i].UAVId].marker = marker;
         google.maps.event.addListener(marker, 'click', (function (marker, key) {
-            
+            if (!ctrlPressed) {//If ctrl is not pressed, then clear selectedDrones[] before adding the clicked drone to the list
+                while (selectedDrones.length > 0) {//clear the selected drone list
+                    selectedDrones.pop();
+                }
+            }
+            selectedDrones.push(uavs[key]);
             return function () {
-                infowindow.setContent('<div style="line-height: 1.35; overflow: hidden; white-space: nowrap;"><b>ID: </b>' +key+ '</div>');
+                infowindow.setContent('<div style="line-height: 1.35; overflow: hidden; white-space: nowrap;"><b>ID: </b>' + key + '</div>');
                 infowindow.open(map, marker);
             }
         })(marker, key));
@@ -98,24 +106,48 @@ $(document).ready(function () {
     /*Click-drag-select*/
     var shiftPressed = false;
     $(window).keydown(function (evt) {
-        if (evt.which === 16) { //shift key
+        if (evt.shiftKey) {
             shiftPressed = true;
             console.log("Shift key down");
         }
+        if (evt.ctrlKey){
+            ctrlPressed = true;
+        }
+        //if shift + (0 through 9) is pressed, all selected drones will be bound to that number
+        if (evt.shiftKey && ((evt.which >= 48) && (evt.which <= 57))){
+            storedGroups[evt.which] = selectedDrones;
+        }
+        //if 0 through 9 is pressed, it restores that list of selected drones and turns them green
+        if ((evt.which >= 48) && (evt.which <= 57)) {
+            if (storedGroups[evt.which]!=null){
+                selectedDrones.push(storedGroups[evt.which]);
+                if (selectedDrones.length != 0) {
+                    var i;
+                    for (i = 0; i < selectedDrones.length; i++) {
+                        selectedDrones[i].marker.setIcon(uavIconGreen);
+                    }
+                }
+            }
+        }
     }).keyup(function (evt) {
-        if (evt.which === 16) {
+        if (evt.shiftKey) {
             shiftPressed = false;
             console.log("Shift key up");
         }
+        if (evt.ctrlKey){
+            ctrlPressed = false;
+        }
     });
+
+
 
     var mouseDownPos, gridBoundingBox = null, mouseIsDown = 0;
     var theMap = map;
 
     google.maps.event.addListener(theMap, 'mousemove', function (e) {
         console.log("move mouse down, shift down", mouseIsDown, shiftPressed);
-        if ( mouseIsDown && (shiftPressed || gridBoundingBox != null )) {
-            if ( gridBoundingBox !== null ) {
+        if (mouseIsDown && (shiftPressed || gridBoundingBox != null)) {
+            if (gridBoundingBox !== null) {
                 var newbounds = new google.maps.LatLngBounds(mouseDownPos, null);
                 newbounds.extend(e.latLng);
                 gridBoundingBox.setBounds(newbounds);
@@ -134,7 +166,7 @@ $(document).ready(function () {
     });
 
     google.maps.event.addListener(theMap, 'mousedown', function (e) {
-        if ( shiftPressed ) {
+        if (shiftPressed) {
             mouseIsDown = 1;
             mouseDownPos = e.latLng;
             theMap.setOptions({
@@ -147,12 +179,19 @@ $(document).ready(function () {
         if (mouseIsDown && (shiftPressed || gridBoundingBox != null)) {
             mouseIsDown = 0;
             if (gridBoundingBox !== null) {
+                while (selectedDrones.length > 0) {//clear the selected drone list
+                    selectedDrones.pop();
+                }
                 var boundsSelectionArea = new google.maps.LatLngBounds(gridBoundingBox.getBounds().getSouthWest(), gridBoundingBox.getBounds().getNorthEast());
-                for (var key in markers) { 
-                    if (gridBoundingBox.getBounds().contains(markers[key].marker.getPosition())) {
-                        markers[key].marker.setIcon(uavIconGreen);
+                for (var key in markers) {
+                    if (gridBoundingBox.getBounds().contains(uavs[key].marker.getPosition())) {
+                        uavs[key].marker.setIcon(uavIconGreen);
+
+                        //push the selected markers to an array
+                        selectedDrones.push(uavs[key]);
+
                     } else {
-                        markers[key].marker.setIcon(uavIconBlack);        
+                        uavs[key].marker.setIcon(uavIconBlack);
                     }
                 }
                 gridBoundingBox.setMap(null);
@@ -163,4 +202,6 @@ $(document).ready(function () {
             draggable: true
         });
     });
+
+
 });
