@@ -134,20 +134,20 @@ $(document).ready(function () {
 
     //Pull the vehicles from the database
     $.ajax({
-        url: '/api/simapi/initsim',
-        success: function (data, textStatus, jqXHR) { flightStateCb(map, data, textStatus, jqXHR); }
+        url: '/api/simapi/getinitsim',
+        success: function (data, textStatus, jqXHR) { flightStateCb(map, vehicleHub, data, textStatus, jqXHR); }
     });
 
     $.ajax({
         url: '/api/Missions/unassignedmissions',
-        success: function(data, textSTatus, jqXHR) { unassignedMissionsCb (availableMissions, data, textStatus, jqXHR);}
+        success: function(data, textStatus, jqXHR) { unassignedMissionsCb (availableMissions, data, textStatus, jqXHR);}
     })
 
     $("#start").click(start);
     $("#stop").click(stopSim);
-
     
-
+    //Set up signalR subscriptions before we call start, or else the callbacks won't be fired.
+    setSignalrCallbacks(map);
     //Wait until the vehicle hub is connected before we can execute the main loop.
     //The main loop will push updates via signalr, don't want to do it prematurely.
     $.connection.hub.start().done(
@@ -156,16 +156,18 @@ $(document).ready(function () {
 });
 
 //Flight state callback. This function will be curried and passed to the ajax query.
-function flightStateCb (map, data, textStatus, jqXHR) {
+function flightStateCb (map, hub, data, textStatus, jqXHR) {
  
     for (var i = 0; i < data.length; i++) {
-        map.vehicles[data[i].Id] = new Vehicle(data[i]);
+        reporter = new Reporter();
+        map.vehicles[data[i].Id] = new Vehicle(data[i], reporter);
         map.ids.push(data[i].Id);
         console.log(data[i].Id + " " + data[i].Callsign);
         $("#dropdown-UAVIds").append('<li role="presentation"><a class="UAVId" role="menuitem" tabindex="-1" href="#">' + data[i].Id + '</a></li>');
     }
     //I think this is in the wrong spot. It probably needs to be in connection.hub.start()
     $('.UAVId').click(function (eventObject) {
+        var vehicleHub = $.connection.vehicleHub
         var newId = vehicleHub.server.sendCommand({
             Id: 123,
             Latitude: 34.242034,
@@ -196,14 +198,13 @@ function updateSimulation(vehicleHub, map) {
         vehicles[id].process(dt / 1000);
     }
     //Pushes the flight state updates
-    pushFlightUpdates(map, vehicleHub);
-
+    //pushFlightUpdates(map, vehicleHub);
+    
 }
 
 //Main function loop
 function connectedToHub(vehicleHub, map) {
     vehicleHub.server.joinGroup("vehicles");
-    setSignalrCallbacks(vehicleHub, map);
     function mainLoop() {
         //This boolean is switched by the start sim and stop sim buttons
         if (runSim) {
@@ -215,7 +216,8 @@ function connectedToHub(vehicleHub, map) {
 }
 
 // This function sets all the callbacks that will be called with SignalR. Please put all callbacks here.
-function setSignalrCallbacks(vehicleHub, map) {
+function setSignalrCallbacks(map) {
+    var vehicleHub = $.connection.vehicleHub
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         console.log(vehicle);
     }
@@ -241,5 +243,9 @@ function setSignalrCallbacks(vehicleHub, map) {
     }
     vehicleHub.client.broadcastAcceptedCommand = function (ack) {
         console.log(ack);
+    }
+
+    vehicleHub.client.flightStateUpdate = function (fs) {
+        console.log(fs);
     }
 }

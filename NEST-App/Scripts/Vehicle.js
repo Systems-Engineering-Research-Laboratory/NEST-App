@@ -4,7 +4,7 @@
 * The vehicle doesn't need to have more than that to run the simulation (for now at least). It comes with the
 * functins that allow it to behave kind of autonomously. It just goes straight to it's destination.
 */
-function Vehicle(vehicleInfo) {
+function Vehicle(vehicleInfo, reporter) {
     this.Id = vehicleInfo.Id;
     this.Callsign = vehicleInfo.Callsign;
     this.Mileage = vehicleInfo.Mileage;
@@ -16,6 +16,11 @@ function Vehicle(vehicleInfo) {
     this.Objective = null;
     this.Command = null;
     this.descending = true;
+    this.reporter = reporter;
+
+    this.setReporter = function (reporter) {
+        this.reporter = reporter;
+    }
 
     this.appendLonLat = function (obj, point) {
         var pointText = point.Geography.WellKnownText
@@ -50,6 +55,8 @@ function Vehicle(vehicleInfo) {
         }
 
         this.FlightState.BatteryLevel -= dt / 1800;
+
+        reporter.updateFlightState(this.FlightState);
     };
     //Advances the aircraft directly towards its destination. Nothing fancy here.
     this.deadReckon = function (dt, X, Y) {
@@ -184,6 +191,22 @@ function Vehicle(vehicleInfo) {
         var thisY = this.FlightState.Y;
         return this.FlightState.Altitude == 0
             && calculateDistance(thisX, thisY, base.X, base.Y) < 5;
+    }
+}
+
+function Reporter() {
+    this.hub = $.connection.vehicleHub;
+
+    this.updateMission = function (mission, opts) {
+        this.putToServer('api/mission/' + mission.Id, mission);
+    }
+
+    this.updateFlightState = function (fs, opts) {
+        this.hub.server.pushFlightStateUpdate(fs);
+    }
+
+    this.putToServer = function (url, data, success) {
+        $.ajax({ url: url, data: data, sucess: success, type: 'PUT' });
     }
 }
 
