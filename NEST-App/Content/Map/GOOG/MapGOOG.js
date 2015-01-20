@@ -125,7 +125,7 @@ $(document).ready(function () {
     /*Click-drag-select*/
     var shiftPressed = false;
     $(window).keydown(function (evt) {
-        if (evt.shiftKey) {
+        if (evt.which === 16) {
             shiftPressed = true;
             console.log("Shift key down");
         }
@@ -151,7 +151,7 @@ $(document).ready(function () {
             console.log("Number of selected drones: " + selectedDrones.length);
         }
     }).keyup(function (evt) {
-        if (evt.shiftKey) {
+        if (evt.which === 16) {
             shiftPressed = false;
             console.log("Shift key up");
         }
@@ -171,7 +171,7 @@ $(document).ready(function () {
                 gridBoundingBox.setBounds(newbounds);
 
             } else {
-                console.log("firsts mouse move");
+                console.log("first mouse move");
                 gridBoundingBox = new google.maps.Rectangle({
                     map: theMap,
                     bounds: null,
