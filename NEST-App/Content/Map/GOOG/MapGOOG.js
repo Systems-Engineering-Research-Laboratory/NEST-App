@@ -1,5 +1,6 @@
 ﻿var map;
 var uavs = {};
+var uavMarker;
 var selectedDrones = []; //store drones selected from any method here
 var storedGroups = []; //keep track of different stored groupings of UAVs
 var ctrlPressed = false;
@@ -112,6 +113,14 @@ $(document).ready(function () {
             uavMarkers(data, textStatus, jqXHR);
         }
     });
+
+    /* Vehicle movement */
+    var vehicleHub = $.connection.vehicleHub;
+    vehicleHub.client.flightStateUpdate = function (vehicle) {
+        console.log(vehicle);
+        var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
+        uavs[vehicle.Id].marker.setPosition(LatLng); //set the position for the marker belonging to the uav object
+    }
 
     /*Click-drag-select*/
     var shiftPressed = false;
