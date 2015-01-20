@@ -61,10 +61,14 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].UAVId].lng = data[i].Longitude;
         uavs[data[i].UAVId].alt = data[i].Altitude;
         uavs[data[i].UAVId].pos = new google.maps.LatLng(data[i].Latitude, data[i].Longitude);
-        var marker = new google.maps.Marker({
+        var marker = new MarkerWithLabel({
             position: uavs[data[i].UAVId].pos,
             map: map,
-            icon: uavIconBlack
+            icon: uavIconBlack,
+            labelContent: uavs[data[i].UAVId].alt,
+            labelAnchor: new google.maps.Point(31, 40),
+            labelClass: "labels",
+            labelStyle: {opacity: 0.75}
         });
         var key = data[i].UAVId.toString();
         uavs[data[i].UAVId].marker = marker;

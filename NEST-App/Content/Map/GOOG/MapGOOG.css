@@ -40,3 +40,12 @@
     margin: 10px 0 0 0;
 }
 
+.labels {
+   color: blue;
+   font-family: "Lucida Grande", "Arial", sans-serif;
+   font-size: 12px;
+   font-weight: bold;
+   text-align: center;
+   width: 60px;     
+ }
+
