@@ -1,5 +1,6 @@
 ﻿var map;
 var uavs = {};
+var uavMarker;
 var selectedDrones = []; //store drones selected from any method here
 var storedGroups = []; //keep track of different stored groupings of UAVs
 var ctrlPressed = false;
@@ -61,10 +62,14 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].UAVId].lng = data[i].Longitude;
         uavs[data[i].UAVId].alt = data[i].Altitude;
         uavs[data[i].UAVId].pos = new google.maps.LatLng(data[i].Latitude, data[i].Longitude);
-        var marker = new google.maps.Marker({
+        var marker = new MarkerWithLabel({
             position: uavs[data[i].UAVId].pos,
             map: map,
-            icon: uavIconBlack
+            icon: uavIconBlack,
+            labelContent: uavs[data[i].UAVId].alt,
+            labelAnchor: new google.maps.Point(31, 40),
+            labelClass: "labels",
+            labelStyle: {opacity: 0.75}
         });
         var key = data[i].UAVId.toString();
         uavs[data[i].UAVId].marker = marker;
@@ -109,10 +114,18 @@ $(document).ready(function () {
         }
     });
 
+    /* Vehicle movement */
+    var vehicleHub = $.connection.vehicleHub;
+    vehicleHub.client.flightStateUpdate = function (vehicle) {
+        console.log(vehicle);
+        var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
+        uavs[vehicle.Id].marker.setPosition(LatLng); //set the position for the marker belonging to the uav object
+    }
+
     /*Click-drag-select*/
     var shiftPressed = false;
     $(window).keydown(function (evt) {
-        if (evt.shiftKey) {
+        if (evt.which === 16) {
             shiftPressed = true;
             console.log("Shift key down");
         }
@@ -138,7 +151,7 @@ $(document).ready(function () {
             console.log("Number of selected drones: " + selectedDrones.length);
         }
     }).keyup(function (evt) {
-        if (evt.shiftKey) {
+        if (evt.which === 16) {
             shiftPressed = false;
             console.log("Shift key up");
         }
@@ -158,7 +171,7 @@ $(document).ready(function () {
                 gridBoundingBox.setBounds(newbounds);
 
             } else {
-                console.log("firsts mouse move");
+                console.log("first mouse move");
                 gridBoundingBox = new google.maps.Rectangle({
                     map: theMap,
                     bounds: null,
