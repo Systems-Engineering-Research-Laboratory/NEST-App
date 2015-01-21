@@ -132,7 +132,7 @@ $(document).ready(function () {
     //Throws 'undefined' is not a function error...commenting out..
     //$('.dropdown-toggle').dropdown();
 
-    //Pull the vehicles from the database
+    //Pull the vehicles from the database. This also pulls the schedule, flight state, of the vehicle.
     $.ajax({
         url: '/api/simapi/getinitsim',
         success: function (data, textStatus, jqXHR) { flightStateCb(map, vehicleHub, data, textStatus, jqXHR); }

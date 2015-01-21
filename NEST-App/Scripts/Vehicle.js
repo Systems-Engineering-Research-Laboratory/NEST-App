@@ -66,7 +66,9 @@ function Vehicle(vehicleInfo, reporter) {
         heading = calculateHeading(this.FlightState.X, this.FlightState.Y, X, Y);
         //Update the vehicle's yaw.
         //TODO: Make it actually spin slower rather than spinning instantly.
-        this.FlightState.Yaw = heading;
+        //Put the heading into the flight state for when it gets pushed to the server.
+        this.FlightState.Yaw = heading * rad2deg;
+        console.log(this.FlightState.Yaw);
         this.FlightState.VelocityX = Math.sin(heading) * velocity;
         this.FlightState.VelocityY = Math.cos(heading) * velocity;
         var distanceX = X - this.FlightState.X;
@@ -129,12 +131,14 @@ function Vehicle(vehicleInfo, reporter) {
                 if (this.deadReckon(dt, this.Command.X, this.Command.Y)) {
                     this.Command = null;
                 }
+                break;
             case "hover":
                 if (this.deadReckon(dt, this.Command.X, this.Command.Y)) {
                     if (this.Command.Time > 0) {
                         this.Command.Time -= dt;
                     }
                 }
+                break;
         }
     }
 
@@ -144,6 +148,7 @@ function Vehicle(vehicleInfo, reporter) {
                 if (this.takeOff(dt)) {
                     this.Mission.Phase = "enroute";
                 }
+                break;
             case "enroute":
                 if (this.deadReckon(dt, this.Mission.X, this.Mission.Y)) {
                     this.Mission.Phase = "delivering";
@@ -227,6 +232,8 @@ var wgsToMeters = proj4(WGS84Proj, metersProj);
 var standard = Math.cos(base.Latitude);
 var earthRadius = 6378100; //Radius of earth in meters
 var baseXY = wgsToMeters.forward([base.Longitude, base.Longitude]);
+var deg2rad = Math.PI / 180;
+var rad2deg = 1/ deg2rad;
 base.X = baseXY[0];
 base.Y = baseXY[1];
 
@@ -257,6 +264,10 @@ function calculateHeading(x1, y1, x2, y2) {
     var dx = (x2 - x1);
     var dy = (y2 - y1);
     var heading = Math.atan2(dx, dy);
+    if (heading < 0) {
+        //We wan this to be [0, 2pi), not (-pi, pi]
+        heading += Math.PI * 2;
+    }
     return heading;
 }
 
