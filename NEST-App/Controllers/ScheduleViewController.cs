@@ -2,6 +2,7 @@
 using NEST_App.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
@@ -16,8 +17,9 @@ namespace NEST_App.Controllers
         // GET: ScheduleView
         public ActionResult Index()
         {
-            var scheds = db.Schedules.ToList();
-            return View(scheds);
+           var scheds = from s in db.Schedules.Include(s => s.Missions)
+                         select s;
+           return View(scheds);
         }
     }
 }

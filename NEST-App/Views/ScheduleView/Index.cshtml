@@ -11,22 +11,20 @@
     <h4>Schedule</h4>
     <hr />
     <dl class="dl-horizontal"></dl>
-</div>
-<div style="background-color:gray; color:white; margin: 20px; padding:30px;">
-    <h1>UAV Schedule</h1>
-    <table style="width:40%">
-        <tr>
-            <td>011S</td>
-            <td>A 11:30</td>
-            <td>To Headquarters</td>
-            <td>11:58</td>
-            <td>11:57</td>
-            <td>DF3H670</td>
-        </tr>
-    </table>
-</div>
-@foreach (var scheds in Model)
+    </div>
+@foreach (var sched in Model)
 {
-    <h4> @scheds.Id</h4> 
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => sched.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => sched.Missions)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => sched.Maintenances)
+        </td>
+    </tr>
 }
+
 
