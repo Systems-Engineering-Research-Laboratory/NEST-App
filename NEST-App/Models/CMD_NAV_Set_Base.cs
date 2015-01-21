@@ -18,5 +18,6 @@ namespace NEST_App.Models
         public string Altitude { get; set; }
         public string Latitude { get; set; }
         public string Longitude { get; set; }
+        public int UAVId { get; set; }
     }
 }

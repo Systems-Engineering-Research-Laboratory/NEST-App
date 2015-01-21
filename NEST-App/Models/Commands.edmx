@@ -42,6 +42,7 @@
     <Property Name="Altitude" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Latitude" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Longitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="UAVId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="CMD_NAV_Takeoff">
     <Key>
@@ -54,6 +55,7 @@
     <Property Name="YAcceleration" Type="nvarchar(max)" Nullable="false" />
     <Property Name="ZAcceleration" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Throttle" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="UAVId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="CMD_CONDITION_Rates">
     <Key>
@@ -85,6 +87,7 @@
     <Property Name="Altitude" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Latitude" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Longitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="UAVId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="CMD_NAV_Land">
     <Key>
@@ -95,6 +98,7 @@
     <Property Name="Latitude" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Longitude" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Throttle" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="UAVId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="CMD_ACK">
     <Key>
@@ -216,6 +220,7 @@
           <Property Name="Altitude" Type="String" Nullable="false" />
           <Property Name="Latitude" Type="String" Nullable="false" />
           <Property Name="Longitude" Type="String" Nullable="false" />
+          <Property Name="UAVId" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="CMD_NAV_Hover" BaseType="Commands.CMD_NAV_Waypoint">
           <Property Name="Time" Type="String" Nullable="false" />
@@ -231,6 +236,7 @@
           <Property Name="YAcceleration" Type="String" Nullable="false" />
           <Property Name="ZAcceleration" Type="String" Nullable="false" />
           <Property Name="Throttle" Type="String" Nullable="false" />
+          <Property Name="UAVId" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="CMD_DO_Return_To_Base" BaseType="Commands.CMD_NAV_Set_Base">
           <Property Name="UseCurrent" Type="String" Nullable="false" />
@@ -277,6 +283,7 @@
           <Property Name="Altitude" Type="String" Nullable="false" />
           <Property Name="Latitude" Type="String" Nullable="false" />
           <Property Name="Longitude" Type="String" Nullable="false" />
+          <Property Name="UAVId" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="CMD_NAV_Land">
           <Key>
@@ -287,6 +294,7 @@
           <Property Name="Latitude" Type="String" Nullable="false" />
           <Property Name="Longitude" Type="String" Nullable="false" />
           <Property Name="Throttle" Type="String" Nullable="false" />
+          <Property Name="UAVId" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="CMD_ACK">
           <Key>
@@ -310,6 +318,7 @@
           <ScalarProperty Name="Altitude" ColumnName="Altitude" />
           <ScalarProperty Name="Latitude" ColumnName="Latitude" />
           <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="UAVId" ColumnName="UAVId" />
         </MappingFragment>
       </EntityTypeMapping>
       <EntityTypeMapping TypeName="IsTypeOf(Commands.CMD_NAV_Hover)">
@@ -329,6 +338,7 @@
           <ScalarProperty Name="YAcceleration" ColumnName="YAcceleration" />
           <ScalarProperty Name="ZAcceleration" ColumnName="ZAcceleration" />
           <ScalarProperty Name="Throttle" ColumnName="Throttle" />
+          <ScalarProperty Name="UAVId" ColumnName="UAVId" />
         </MappingFragment>
       </EntityTypeMapping>
       <EntityTypeMapping TypeName="IsTypeOf(Commands.CMD_DO_Change_Speed)">
@@ -381,6 +391,7 @@
           <ScalarProperty Name="Altitude" ColumnName="Altitude" />
           <ScalarProperty Name="Latitude" ColumnName="Latitude" />
           <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="UAVId" ColumnName="UAVId" />
         </MappingFragment>
       </EntityTypeMapping>
       <EntityTypeMapping TypeName="IsTypeOf(Commands.CMD_DO_Return_To_Base)">
@@ -398,6 +409,7 @@
           <ScalarProperty Name="Latitude" ColumnName="Latitude" />
           <ScalarProperty Name="Longitude" ColumnName="Longitude" />
           <ScalarProperty Name="Throttle" ColumnName="Throttle" />
+          <ScalarProperty Name="UAVId" ColumnName="UAVId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

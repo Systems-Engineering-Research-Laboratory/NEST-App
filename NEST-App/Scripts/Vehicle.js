@@ -126,13 +126,14 @@ function Vehicle(vehicleInfo, reporter) {
 
     //Perform whatever command 
     this.performCommand = function(dt) {
-        switch(this.Command.Type) {
-            case "target": //Target commands just need to be dead reckoned towards the objective.
+        switch (this.Command.type) {
+            case "CMD_NAV_Waypoint":
+            case "CMD_NAV_Target": //Target commands just need to be dead reckoned towards the objective.
                 if (this.deadReckon(dt, this.Command.X, this.Command.Y)) {
                     this.Command = null;
                 }
                 break;
-            case "hover":
+            case "CMD_NAV_Hover":
                 if (this.deadReckon(dt, this.Command.X, this.Command.Y)) {
                     if (this.Command.Time > 0) {
                         this.Command.Time -= dt;
@@ -170,6 +171,7 @@ function Vehicle(vehicleInfo, reporter) {
 
     this.setCommand = function (target) {
         this.Command = target;
+        this.reporter.ackCommand(target, target.type, "OK");
     }
 
     //Makes the vehicle go back to base
@@ -212,6 +214,37 @@ function Reporter() {
 
     this.putToServer = function (url, data, success) {
         $.ajax({ url: url, data: data, sucess: success, type: 'PUT' });
+    }
+
+    this.ackCommand = function (cmd, type, reason) {
+        this.hub.server.ackCommand({
+            CommandId: cmd.Id,
+            CommandType: type,
+            Reason: reason
+        }, cmd.connId);
+    }
+}
+
+function VehicleContainer (){
+    this.ids = [];
+    this.vehicles = [];
+
+    this.hasVehicleById = function (id) {
+        return this.ids.indexOf(id) != -1;
+    }
+
+    this.getVehicleById = function (id) {
+        var idx = this.ids.indexOf(id);
+        return this.vehicles[this.ids[idx]];
+    }
+
+    this.getVehicleByIndex = function (idx) {
+        return this.vehicles[idx];
+    }
+
+    this.addVehicle = function (veh) {
+        this.ids.push(veh.id);
+        this.vehicles.push(veh);
     }
 }
 

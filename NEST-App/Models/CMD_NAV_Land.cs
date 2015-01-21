@@ -19,5 +19,6 @@ namespace NEST_App.Models
         public string Latitude { get; set; }
         public string Longitude { get; set; }
         public string Throttle { get; set; }
+        public int UAVId { get; set; }
     }
 }

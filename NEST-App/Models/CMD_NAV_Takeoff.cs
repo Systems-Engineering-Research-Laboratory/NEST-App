@@ -21,5 +21,6 @@ namespace NEST_App.Models
         public string YAcceleration { get; set; }
         public string ZAcceleration { get; set; }
         public string Throttle { get; set; }
+        public int UAVId { get; set; }
     }
 }

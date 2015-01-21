@@ -122,10 +122,7 @@ function scheduleMissions(vehicleMap, missions, hub) {
 
 $(document).ready(function () {
     //Stores the vehicles received from the AJAX call.
-    var map = {
-        vehicles: [],
-        ids: []
-    };
+    var map = new VehicleContainer();
 
     var vehicleHub = $.connection.vehicleHub;
 
@@ -215,6 +212,26 @@ function connectedToHub(vehicleHub, map) {
     mainLoop();
 }
 
+function receivedCommand(map, cmd, type, misc) {
+    prepareCommand(cmd, type, misc);
+    setCommandOnVehicle(cmd, map);
+}
+
+function prepareCommand(cmd, type, misc) {
+    cmd.type = type;
+    if (misc.connId) {
+        cmd.connId = misc.connId;
+    }
+    LatLongToXY(cmd);
+}
+
+function setCommandOnVehicle(cmd, map) {
+    var id = cmd.UAVId
+    if (!map.hasVehicleById(id)) return;
+    var veh = map.getVehicleById(id);
+    veh.setCommand(cmd);
+}
+
 // This function sets all the callbacks that will be called with SignalR. Please put all callbacks here.
 function setSignalrCallbacks(map) {
     var vehicleHub = $.connection.vehicleHub
@@ -223,23 +240,11 @@ function setSignalrCallbacks(map) {
     }
     //This is the listener for getting target commands from signalr
     vehicleHub.client.sendTargetCommand = function (target, connId) {
-        var idx = map.ids.indexOf(target.UAVId);
-        if (idx == -1) {
-            //If JS doesn't find the index, just return.
-            return;
-        }
-        //Append some additional info for the sim.
-        target.Type = "target";
-        LatLongToXY(target);
-        map.vehicles[map.ids[idx]].setCommand(target);
-        //Send an ack to the server
-        //Just accept ack all commands for now.
-        vehicleHub.server.ackCommand({
-            Id: 1234,
-            CommandId: target.Id,
-            Reason: "OK",
-            CommadType: "CMD_NAV_Target",
-        }, connId);
+        receivedCommand(map, target, "CMD_NAV_Target", { connId: connId });
+    }
+
+    vehicleHub.waypointCommand = function (wp, connId) {
+        receivedCommand(map, wp, "CMD_NAV_Waypoint", {});
     }
     vehicleHub.client.broadcastAcceptedCommand = function (ack) {
         console.log(ack);

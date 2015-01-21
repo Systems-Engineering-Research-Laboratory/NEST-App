@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 12/08/2014 14:03:00
--- Generated from EDMX file: C:\Users\David Wu\Documents\GitHub\NEST-App\NEST-App\Models\Commands.edmx
+-- Date Created: 01/20/2015 21:05:35
+-- Generated from EDMX file: C:\Users\Jeffrey\Documents\Programming\NEST\NEST-App\Models\Commands.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -77,7 +77,8 @@ CREATE TABLE [dbo].[CMD_NAV_Waypoint] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [Altitude] nvarchar(max)  NOT NULL,
     [Latitude] nvarchar(max)  NOT NULL,
-    [Longitude] nvarchar(max)  NOT NULL
+    [Longitude] nvarchar(max)  NOT NULL,
+    [UAVId] int  NOT NULL
 );
 GO
 
@@ -89,7 +90,8 @@ CREATE TABLE [dbo].[CMD_NAV_Takeoff] (
     [XAcceleration] nvarchar(max)  NOT NULL,
     [YAcceleration] nvarchar(max)  NOT NULL,
     [ZAcceleration] nvarchar(max)  NOT NULL,
-    [Throttle] nvarchar(max)  NOT NULL
+    [Throttle] nvarchar(max)  NOT NULL,
+    [UAVId] int  NOT NULL
 );
 GO
 
@@ -120,7 +122,8 @@ CREATE TABLE [dbo].[CMD_NAV_Set_Base] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [Altitude] nvarchar(max)  NOT NULL,
     [Latitude] nvarchar(max)  NOT NULL,
-    [Longitude] nvarchar(max)  NOT NULL
+    [Longitude] nvarchar(max)  NOT NULL,
+    [UAVId] int  NOT NULL
 );
 GO
 
@@ -130,7 +133,8 @@ CREATE TABLE [dbo].[CMD_NAV_Land] (
     [Altitude] nvarchar(max)  NOT NULL,
     [Latitude] nvarchar(max)  NOT NULL,
     [Longitude] nvarchar(max)  NOT NULL,
-    [Throttle] nvarchar(max)  NOT NULL
+    [Throttle] nvarchar(max)  NOT NULL,
+    [UAVId] int  NOT NULL
 );
 GO
 
@@ -138,7 +142,8 @@ GO
 CREATE TABLE [dbo].[CMD_ACK] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [CommandId] int  NOT NULL,
-    [Reason] nvarchar(max)  NOT NULL
+    [Reason] nvarchar(max)  NOT NULL,
+    [CommandType] nvarchar(max)  NOT NULL
 );
 GO
 
