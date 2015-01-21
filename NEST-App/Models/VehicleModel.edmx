@@ -79,6 +79,10 @@
     <Property Name="Mileage" Type="int" Nullable="false" />
     <Property Name="create_date" Type="datetime" Nullable="false" />
     <Property Name="modified_date" Type="datetime" Nullable="false" />
+    <Property Name="MaxVelocity" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="MaxAcceleration" Type="float" Nullable="false" />
+    <Property Name="MaxVerticalVelocity" Type="float" Nullable="false" />
+    <Property Name="UpdateRate" Type="float" Nullable="false" />
     <Property Name="Configurations_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="FlightStates">
@@ -476,6 +480,10 @@
           <NavigationProperty Name="Schedules" Relationship="VehicleModel.UAVSchedule" FromRole="UAV" ToRole="Schedule" />
           <Property Name="create_date" Type="DateTime" Nullable="false" />
           <Property Name="modified_date" Type="DateTime" Nullable="false" />
+          <Property Name="MaxVelocity" Type="String" Nullable="false" />
+          <Property Name="MaxAcceleration" Type="Double" Nullable="false" />
+          <Property Name="MaxVerticalVelocity" Type="Double" Nullable="false" />
+          <Property Name="UpdateRate" Type="Double" Nullable="false" />
           </EntityType>
         <EntityType Name="FlightState">
           <Key>
@@ -781,6 +789,10 @@
           <ScalarProperty Name="Mileage" ColumnName="Mileage" />
           <ScalarProperty Name="create_date" ColumnName="create_date" />
           <ScalarProperty Name="modified_date" ColumnName="modified_date" />
+          <ScalarProperty Name="MaxVelocity" ColumnName="MaxVelocity" />
+          <ScalarProperty Name="MaxAcceleration" ColumnName="MaxAcceleration" />
+          <ScalarProperty Name="MaxVerticalVelocity" ColumnName="MaxVerticalVelocity" />
+          <ScalarProperty Name="UpdateRate" ColumnName="UpdateRate" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

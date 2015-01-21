@@ -7,7 +7,7 @@
       <Diagram DiagramId="6dda4366b636406bba8d239b12c2e082" Name="Diagram1" ZoomLevel="94" >
         <EntityTypeShape EntityType="VehicleModel.UAV" Width="1.5" PointX="4.5" PointY="1.625" IsExpanded="true" />
         <EntityTypeShape EntityType="VehicleModel.FlightState" Width="1.5" PointX="8.25" PointY="0.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="VehicleModel.Configuration" Width="1.5" PointX="4.5" PointY="4.625" />
+        <EntityTypeShape EntityType="VehicleModel.Configuration" Width="1.5" PointX="4.125" PointY="6.125" />
         <AssociationConnector Association="VehicleModel.VehicleConfiguration" />
         <EntityTypeShape EntityType="VehicleModel.Equipment" Width="1.5" PointX="1.5" PointY="4.25" />
         <AssociationConnector Association="VehicleModel.ConfigurationEquipmentList" />
