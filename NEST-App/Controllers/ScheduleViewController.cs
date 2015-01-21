@@ -17,8 +17,7 @@ namespace NEST_App.Controllers
         // GET: ScheduleView
         public ActionResult Index()
         {
-           var scheds = from s in db.Schedules.Include(s => s.Missions)
-                         select s;
+           var scheds = from s in db.Schedules.Include(s => s.Missions).Include(s=> s.Maintenances) select s;
            return View(scheds);
         }
     }

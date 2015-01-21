@@ -16,13 +16,24 @@
 {
     <tr>
         <td>
+            ScheduleID:
             @Html.DisplayFor(modelItem => sched.Id)
         </td>
         <td>
+            Missions:
+            <br/>
             @Html.DisplayFor(modelItem => sched.Missions)
+            @foreach (var mission in sched.Missions)
+            {
+                @("MissionID: " + mission.id.ToString())
+            }
         </td>
         <td>
-            @Html.DisplayFor(modelItem => sched.Maintenances)
+            Maintenances:
+            @foreach (var maint in sched.Maintenances)
+            {
+                @Html.DisplayText(maint.id.ToString())
+            }
         </td>
     </tr>
 }
