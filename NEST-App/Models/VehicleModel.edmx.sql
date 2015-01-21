@@ -2,13 +2,13 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 01/12/2015 00:12:14
--- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
+-- Date Created: 01/21/2015 13:36:35
+-- Generated from EDMX file: C:\Users\Jeffrey\Documents\Programming\NEST\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
 GO
-USE [C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\App_Data\NEST_DB.mdf];
+USE [NestDbContext];
 GO
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 GO
@@ -49,6 +49,9 @@ IF OBJECT_ID(N'[dbo].[FK_MissionMissionLog]', 'F') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[FK_MissionLogMissionLogActivity]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[MissionLogActivities] DROP CONSTRAINT [FK_MissionLogMissionLogActivity];
+GO
+IF OBJECT_ID(N'[dbo].[FK_UserUserRole]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Users] DROP CONSTRAINT [FK_UserUserRole];
 GO
 
 -- --------------------------------------------------
@@ -91,6 +94,12 @@ GO
 IF OBJECT_ID(N'[dbo].[MissionLogActivities]', 'U') IS NOT NULL
     DROP TABLE [dbo].[MissionLogActivities];
 GO
+IF OBJECT_ID(N'[dbo].[Users]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Users];
+GO
+IF OBJECT_ID(N'[dbo].[UserRoles]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[UserRoles];
+GO
 
 -- --------------------------------------------------
 -- Creating all tables
@@ -104,6 +113,10 @@ CREATE TABLE [dbo].[UAVs1] (
     [Mileage] int  NOT NULL,
     [create_date] datetime  NOT NULL,
     [modified_date] datetime  NOT NULL,
+    [MaxVelocity] nvarchar(max)  NOT NULL,
+    [MaxAcceleration] float  NOT NULL,
+    [MaxVerticalVelocity] float  NOT NULL,
+    [UpdateRate] float  NOT NULL,
     [Configurations_Id] int  NOT NULL
 );
 GO

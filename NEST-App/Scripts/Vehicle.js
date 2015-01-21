@@ -5,14 +5,23 @@
 * functins that allow it to behave kind of autonomously. It just goes straight to it's destination.
 */
 function Vehicle(vehicleInfo, reporter) {
+    //Model stuff
     this.Id = vehicleInfo.Id;
     this.Callsign = vehicleInfo.Callsign;
     this.Mileage = vehicleInfo.Mileage;
     this.NumDeliveries = vehicleInfo.NumDeliveries;
+    this.MaxVelocity = vehicleInfo.MaxVelocity;
+    this.MaxVerticalVelocty = vehicleInfo.MaxVerticalVelocty;
+    this.MaxAcceleration = vehicleInfo.MaxAcceleration;
+    this.UpdateRate = vehicleInfo.UpdateRate;
+
+    //Storing other entities related to UAV
     this.FlightState = vehicleInfo.FlightState;
     this.Schedule = vehicleInfo.Schedule;
     this.Mission = vehicleInfo.Schedule.Missions[0];
     this.Schedule = vehicleInfo.Schedule;
+
+    //This is just simulation stuff.
     this.Objective = null;
     this.Command = null;
     this.descending = true;
@@ -138,6 +147,11 @@ function Vehicle(vehicleInfo, reporter) {
                     if (this.Command.Time > 0) {
                         this.Command.Time -= dt;
                     }
+                }
+                break;
+            case "CMD_NAV_Takeoff":
+                if (this.targetAltitude(this.Command.Altitude)) {
+                    console.log(this.Callsign + " has reached target altitude given by CMD_NAV_Takeoff");
                 }
                 break;
         }
