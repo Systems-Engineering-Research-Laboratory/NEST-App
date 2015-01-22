@@ -1,4 +1,7 @@
 ﻿var map;
+var pointText;
+var results;
+var parse;
 var uavs = {};
 var uavMarker;
 var selectedDrones = []; //store drones selected from any method here
@@ -30,21 +33,6 @@ var mapClickIcon = new google.maps.MarkerImage(
         null,
         new google.maps.Size(35, 60)
     );
-
-function uavRotate(degrees) {
-    uavIconBlack = {
-        path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-        strokeColor: 'black',
-        scale: 5,
-        rotation: degrees
-    }
-    uavIconGreen = {
-        path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-        strokeColor: 'green',
-        scale: 5,
-        rotation: degrees
-    }
-}
 
 //Button for zooming to base on click
 function BaseControl(controlDiv, map) {
@@ -106,23 +94,31 @@ var drawingManager = new google.maps.drawing.DrawingManager({
 function uavMarkers(data, textStatus, jqXHR) {
     console.log("Pulling Flightstates...", textStatus);
     for (var i = 0; i < data.length; i++) {
-        uavs[data[i].UAVId] = {};
-        uavs[data[i].UAVId].lat = data[i].Latitude;
-        uavs[data[i].UAVId].lng = data[i].Longitude;
-        uavs[data[i].UAVId].alt = data[i].Altitude;
-        uavs[data[i].UAVId].yaw = data[i].Yaw;
-        uavs[data[i].UAVId].pos = new google.maps.LatLng(data[i].Latitude, data[i].Longitude);
+        uavs[data[i].Id] = {};
+        uavs[data[i].Id].FlightState = data[i].FlightState;
+        uavs[data[i].Id].Schedule = data[i].Schedule;
+        uavs[data[i].Id].Missions = data[i].Schedule.Missions;
+        pointText = uavs[data[i].Id].FlightState.Position.Geography.WellKnownText;
+        results = pointText.match(/-?\d+(\.\d+)?/g);
+        uavs[data[i].Id].Lat = results[1];
+        uavs[data[i].Id].Lon = results[0];
+        uavs[data[i].Id].Alt = results[2];
+        uavs[data[i].Id].Callsign = data[i].Callsign;
+        uavs[data[i].Id].Battery = data[i].FlightState.BatteryLevel;
+        uavs[data[i].Id].Position = new google.maps.LatLng(results[1], results[0]);
+
         var marker = new MarkerWithLabel({
-            position: uavs[data[i].UAVId].pos,
+            position: uavs[data[i].Id].Position,
             map: map,
             icon: uavSymbolBlack,
-            labelContent: uavs[data[i].UAVId].alt,
-            labelAnchor: new google.maps.Point(31, 0),
+            labelContent: uavs[data[i].Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uavs[data[i].Id].Alt + '<br/><b>Bat: </b>' + uavs[data[i].Id].Battery + '</div>',
+            labelAnchor: new google.maps.Point(30, -5),
             labelClass: "labels",
-            labelStyle: {opacity: 0.75}
+            labelStyle: { opacity: 0.75 }
         });
-        var key = data[i].UAVId.toString();
-        uavs[data[i].UAVId].marker = marker;
+
+        var key = data[i].Id.toString();
+        uavs[data[i].Id].marker = marker;
         google.maps.event.addListener(marker, 'click', (function (marker, key, event) {
 
             $(window).keydown(function (evt) {
@@ -137,7 +133,7 @@ function uavMarkers(data, textStatus, jqXHR) {
             return function () {
                 infowindow.setContent('<div style="line-height: 1.35; overflow: hidden; white-space: nowrap;"><b>ID: </b>' + key + '</div>');
                 infowindow.open(map, marker);
-                            console.log("Number of selected drones: " + selectedDrones.length);
+                console.log("Number of selected drones: " + selectedDrones.length);
             }
 
         })(marker, key));
@@ -159,19 +155,23 @@ $(document).ready(function () {
     drawingManager.setMap(map);
 
     $.ajax({
-        url: '/api/flightstate',
+        url: '/api/uavs/getuavinfo',
         success: function (data, textStatus, jqXHR) {
             uavMarkers(data, textStatus, jqXHR);
         }
     });
-
+   
     /* Vehicle movement */
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         console.log(vehicle);
         var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
         uavs[vehicle.Id].marker.setPosition(LatLng);
-        //uavRotate(uavs[vehicle.Id].yaw); //set the position for the marker belonging to the uav object
+        console.log(vehicle.BatteryLevel);
+        parse = parseFloat(Math.round(vehicle.BatteryLevel * 100) / 100).toFixed(2);
+        uavs[vehicle.Id].marker.setOptions({
+            labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + vehicle.Altitude + '<br/><b>Bat: </b>' + parse + '</div>'
+        })
     }
 
     /*Click-drag-select*/
