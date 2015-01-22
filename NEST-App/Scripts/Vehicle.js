@@ -74,18 +74,16 @@ function Vehicle(vehicleInfo, reporter) {
         //Find the direction it wants to go there
         heading = calculateHeading(this.FlightState.X, this.FlightState.Y, X, Y);
         //Update the vehicle's yaw.
-        //TODO: Make it actually spin slower rather than spinning instantly.
         //Put the heading into the flight state for when it gets pushed to the server.
         this.FlightState.Yaw = heading * rad2deg;
         console.log(this.FlightState.Yaw);
-        this.FlightState.VelocityX = Math.sin(heading) * velocity;
-        this.FlightState.VelocityY = Math.cos(heading) * velocity;
+        this.approachSpeed(this.MaxVelocity, heading, dt);
         var distanceX = X - this.FlightState.X;
         var distanceY = Y - this.FlightState.Y;
         var dX = this.FlightState.VelocityX * dt;
         var dY = this.FlightState.VelocityY * dt;
         //The distance to the target is less than the distance we would travel, i.e. it's reached it's destination
-        if (Math.sqrt(distanceX*distanceX+distanceY*distanceY) < Math.abs(velocity*dt)) {
+        if (Math.sqrt(distanceX*distanceX+distanceY*distanceY) < Math.abs(this.getVelocity()*dt)) {
             //We are at the target, stop and set dX to the distance to put us over the target
             dX = distanceX;
             dY = distanceY;
@@ -131,6 +129,44 @@ function Vehicle(vehicleInfo, reporter) {
         }
         this.FlightState.Altitude += speed * dt;
         return false;
+    }
+
+    //This only works on the XY plane, not for vertical velocity.
+    this.approachSpeed = function (desiredSpeed, heading, dt) {
+        var velocity = this.getVelocity();
+        if (Math.abs(velocity - desiredSpeed) < 0.005) {
+            return true;
+        }
+
+        var maxAcc = this.MaxAcceleration;
+        if (velocity > desiredSpeed) {
+            //Accelerate vs Deccelerate
+            maxAcc = -maxAcc;
+        }
+
+        var changeInSpeed = maxAcc * dt;
+        var newSpeed = changeInSpeed + velocity;
+        //Stores whether we have reached the desired speed or not.
+        var achievedSpeed = false;
+        if (newSpeed > desiredSpeed) {
+            //We managed to reach our speed, but don't overshoot it.
+            newSpeed = desiredSpeed;
+            achievedSpeed = true;
+        }
+        var radHeading = heading * rad2deg;
+        //The x is sin, not cos (because heading = 0 is north, but x is east)
+        var velX = Math.sin(radHeading) * newSpeed;
+        var velY = Math.cos(radHeading) * newSpeed;
+        //Store the new velocity values
+        this.FlightState.VelocityX = velX;
+        this.FlightState.VelocityY = velY;
+        return achievedSpeed;
+    }
+
+    this.getVelocity = function () {
+        var velX = this.FlightState.VelocityX;
+        var velY = this.FlightState.VelocityY;
+        return Math.sqrt(velX * velX + velY * velY);
     }
 
     //Perform whatever command 

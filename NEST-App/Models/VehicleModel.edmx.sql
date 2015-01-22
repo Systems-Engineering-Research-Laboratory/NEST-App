@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 01/21/2015 13:36:35
+-- Date Created: 01/21/2015 19:02:30
 -- Generated from EDMX file: C:\Users\Jeffrey\Documents\Programming\NEST\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
@@ -113,7 +113,7 @@ CREATE TABLE [dbo].[UAVs1] (
     [Mileage] int  NOT NULL,
     [create_date] datetime  NOT NULL,
     [modified_date] datetime  NOT NULL,
-    [MaxVelocity] nvarchar(max)  NOT NULL,
+    [MaxVelocity] float  NOT NULL,
     [MaxAcceleration] float  NOT NULL,
     [MaxVerticalVelocity] float  NOT NULL,
     [UpdateRate] float  NOT NULL,

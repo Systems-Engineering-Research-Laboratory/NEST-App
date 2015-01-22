@@ -27,7 +27,7 @@ namespace NEST_App.Models
         public int Mileage { get; set; }
         public System.DateTime create_date { get; set; }
         public System.DateTime modified_date { get; set; }
-        public string MaxVelocity { get; set; }
+        public double MaxVelocity { get; set; }
         public double MaxAcceleration { get; set; }
         public double MaxVerticalVelocity { get; set; }
         public double UpdateRate { get; set; }

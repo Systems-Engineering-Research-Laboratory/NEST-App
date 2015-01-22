@@ -45,6 +45,10 @@ namespace NEST_App.Controllers.Api
                            Callsign = u.Callsign,
                            create_date = u.create_date,
                            modified_date = u.modified_date,
+                           MaxVelocity = u.MaxVelocity,
+                           MaxAcceleration = u.MaxAcceleration,
+                           MaxVerticalVelocity = u.MaxVerticalVelocity,
+                           UpdateRate = u.UpdateRate,
                            Schedule = new 
                            {
                                Id = s.Id,
