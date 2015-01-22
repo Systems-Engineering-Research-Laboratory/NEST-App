@@ -153,7 +153,7 @@ function Vehicle(vehicleInfo, reporter) {
             newSpeed = desiredSpeed;
             achievedSpeed = true;
         }
-        var radHeading = heading * rad2deg;
+        var radHeading = heading;
         //The x is sin, not cos (because heading = 0 is north, but x is east)
         var velX = Math.sin(radHeading) * newSpeed;
         var velY = Math.cos(radHeading) * newSpeed;
@@ -207,12 +207,12 @@ function Vehicle(vehicleInfo, reporter) {
                 break;
             case "delivering":
                 if (this.deliver(dt, 200, 400, 5)) {
-                    this.Mission.phase = "back to base";
+                    this.Mission.Phase = "back to base";
                 }
                 break;
             case "back to base":
                 if (this.backToBase(dt, base.X, base.Y)) {
-                    this.Mission.phase = "done";
+                    this.Mission.Phase = "done";
                     this.Mission = null;
                 }
                 break;
@@ -228,7 +228,7 @@ function Vehicle(vehicleInfo, reporter) {
     this.backToBase = function (dt) {
         var thisX = this.FlightState.X;
         var thisY = this.FlightState.Y;
-        if (calculateDistance(thisX, thisY, base.X, base.Y) < 10) {
+        if (calculateDistance(thisX, thisY, base.X, base.Y) > 10) {
             this.deadReckon(dt, base.X, base.Y);
             return false;
         }
