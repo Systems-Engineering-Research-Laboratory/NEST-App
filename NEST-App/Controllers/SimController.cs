@@ -33,10 +33,8 @@ namespace NEST_App.Controllers.Api
 
         public HttpResponseMessage GetInitSim()
         {
-            var uavs = from u in db.UAVs
-                       join s in db.Schedules on u.Id equals s.UAVId.Value
-                       join m in db.Missions on s.Id equals m.ScheduleId
-                       join fs in db.FlightStates on u.Id equals fs.UAVId
+            var uavs = from u in db.UAVs.Include(u => u.FlightStates).Include(u => u.Schedules)
+                       let s = u.Schedules.OrderBy(s => s.create_date).FirstOrDefault()
                        select new
                        {
                            Id = u.Id,
@@ -57,7 +55,7 @@ namespace NEST_App.Controllers.Api
                                modified_date = s.modified_date,
                                Missions = s.Missions,
                            },
-                           FlightState = fs,
+                           FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
                        };
 
             return Request.CreateResponse(HttpStatusCode.OK, uavs);
