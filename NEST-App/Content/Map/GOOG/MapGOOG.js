@@ -6,6 +6,7 @@ var storedGroups = []; //keep track of different stored groupings of UAVs
 var ctrlPressed = false;
 var infowindow = new google.maps.InfoWindow();
 var homeBase = new google.maps.LatLng(34.2417, -118.529);
+
 var uavIconBlack = new google.maps.MarkerImage(
         '../Content/img/drone2.png',
         null, //Size determined at runtime
@@ -20,6 +21,28 @@ var uavIconGreen = new google.maps.MarkerImage(
         null,
         new google.maps.Size(100, 100)
     );
+var mapClickIcon = new google.maps.MarkerImage(
+        '../Content/img/markerBLUE.png',
+        null,
+        null,
+        null,
+        new google.maps.Size(35, 60)
+    );
+
+function uavRotate(degrees) {
+    uavIconBlack = {
+        path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+        strokeColor: 'black',
+        scale: 5,
+        rotation: degrees
+    }
+    uavIconGreen = {
+        path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+        strokeColor: 'green',
+        scale: 5,
+        rotation: degrees
+    }
+}
 
 //Button for zooming to base on click
 function BaseControl(controlDiv, map) {
@@ -54,6 +77,30 @@ function BaseControl(controlDiv, map) {
     });
 }
 
+//Drawing manager and icons for google map
+var drawingManager = new google.maps.drawing.DrawingManager({
+    drawingMode: google.maps.drawing.OverlayType.MARKER,
+    drawingControl: true,
+    drawingControlOptions: {
+        position: google.maps.ControlPosition.RIGHT,
+        drawingModes: [
+            google.maps.drawing.OverlayType.MARKER,
+            google.maps.drawing.OverlayType.CIRCLE
+        ]
+    },
+    markerOptions: {
+        icon: mapClickIcon
+    },
+    circleOptions: {
+        fillColor: '#FF0000',
+        fillOpacity: 0.5,
+        strokeWeight: 1,
+        clickable: false,
+        editable: true,
+        zIndex: 1
+    }
+});
+
 function uavMarkers(data, textStatus, jqXHR) {
     console.log("Pulling Flightstates...", textStatus);
     for (var i = 0; i < data.length; i++) {
@@ -61,6 +108,7 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].UAVId].lat = data[i].Latitude;
         uavs[data[i].UAVId].lng = data[i].Longitude;
         uavs[data[i].UAVId].alt = data[i].Altitude;
+        uavs[data[i].UAVId].yaw = data[i].Yaw;
         uavs[data[i].UAVId].pos = new google.maps.LatLng(data[i].Latitude, data[i].Longitude);
         var marker = new MarkerWithLabel({
             position: uavs[data[i].UAVId].pos,
@@ -106,6 +154,7 @@ $(document).ready(function () {
 
     homeControlDiv.index = 1;
     map.controls[google.maps.ControlPosition.RIGHT].push(homeControlDiv);
+    drawingManager.setMap(map);
 
     $.ajax({
         url: '/api/flightstate',
@@ -119,7 +168,8 @@ $(document).ready(function () {
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         console.log(vehicle);
         var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
-        uavs[vehicle.Id].marker.setPosition(LatLng); //set the position for the marker belonging to the uav object
+        uavs[vehicle.Id].marker.setPosition(LatLng);
+        //uavRotate(uavs[vehicle.Id].yaw); //set the position for the marker belonging to the uav object
     }
 
     /*Click-drag-select*/
