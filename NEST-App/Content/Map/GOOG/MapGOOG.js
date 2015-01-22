@@ -7,20 +7,22 @@ var ctrlPressed = false;
 var infowindow = new google.maps.InfoWindow();
 var homeBase = new google.maps.LatLng(34.2417, -118.529);
 
-var uavIconBlack = new google.maps.MarkerImage(
-        '../Content/img/drone2.png',
-        null, //Size determined at runtime
-        null, //Origin is 0,0
-        null, //Anchor is at the bottom center of the scaled image
-        new google.maps.Size(100, 100)
-    );
-var uavIconGreen = new google.maps.MarkerImage(
-        '../Content/img/drone3.png',
-        null,
-        null,
-        null,
-        new google.maps.Size(100, 100)
-    );
+var uavSymbolBlack = {
+    path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
+    fillColor: 'black',
+    fillOpacity: 0.8,
+    scale: 0.2,
+    anchor: new google.maps.Point(355, 360)
+};
+
+var uavSymbolGreen = {
+    path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
+    fillColor: 'green',
+    fillOpacity: 0.8,
+    scale: 0.2,
+    anchor: new google.maps.Point(355, 360)
+};
+
 var mapClickIcon = new google.maps.MarkerImage(
         '../Content/img/markerBLUE.png',
         null,
@@ -113,9 +115,9 @@ function uavMarkers(data, textStatus, jqXHR) {
         var marker = new MarkerWithLabel({
             position: uavs[data[i].UAVId].pos,
             map: map,
-            icon: uavIconBlack,
+            icon: uavSymbolBlack,
             labelContent: uavs[data[i].UAVId].alt,
-            labelAnchor: new google.maps.Point(31, 40),
+            labelAnchor: new google.maps.Point(31, 0),
             labelClass: "labels",
             labelStyle: {opacity: 0.75}
         });
@@ -253,11 +255,11 @@ $(document).ready(function () {
                 var boundsSelectionArea = new google.maps.LatLngBounds(gridBoundingBox.getBounds().getSouthWest(), gridBoundingBox.getBounds().getNorthEast());
                 for (var key in uavs) {
                     if (gridBoundingBox.getBounds().contains(uavs[key].marker.getPosition())) {
-                        uavs[key].marker.setIcon(uavIconGreen);
+                        uavs[key].marker.setIcon(uavSymbolGreen);
                         selectedDrones.push(uavs[key]);//push the selected markers to an array
                         console.log("Number of selected drones: " + selectedDrones.length);
                     } else {
-                        uavs[key].marker.setIcon(uavIconBlack);
+                        uavs[key].marker.setIcon(uavSymbolBlack);
                         console.log("Number of selected drones: " + selectedDrones.length);
                     }
                 }
