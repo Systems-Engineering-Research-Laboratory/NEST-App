@@ -11,6 +11,7 @@ var storedGroups = []; //keep track of different stored groupings of UAVs
 var ctrlPressed = false;
 var infowindow = new google.maps.InfoWindow();
 var infobox;
+var infoboxAlert;
 var selected = false;
 var homeBase = new google.maps.LatLng(34.2417, -118.529);
 
@@ -19,6 +20,7 @@ var uavSymbolBlack = {
     fillColor: 'black',
     fillOpacity: 0.8,
     scale: 0.2,
+    zIndex: 1,
     anchor: new google.maps.Point(355, 295)
 };
 
@@ -27,7 +29,7 @@ var uavCircleBlack = {
     fillColor: 'black',
     scale: 30,
     strokeWeight: 4,
-    zIndex: 1
+    zIndex: -1
 };
 
 var uavSymbolGreen = {
@@ -35,6 +37,7 @@ var uavSymbolGreen = {
     fillColor: 'green',
     fillOpacity: 0.8,
     scale: 0.2,
+    zIndex: 1,
     anchor: new google.maps.Point(355, 295)
 };
 
@@ -107,17 +110,26 @@ function BaseControl(controlDiv, map) {
     infobox = new InfoBox({
         content: document.getElementById("infobox"),
         disableAutoPan: false,
-        maxWidth: 150,
-        pixelOffset: new google.maps.Size(-140, 20),
+        maxWidth: 100,
+        pixelOffset: new google.maps.Size(-75, 30),
         zIndex: null,
         boxStyle: {
-            background: "url('http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/examples/tipbox.gif') no-repeat",
             opacity: 0.75,
-            width: "280px"
+            width: "150px"
         },
-        closeBoxMargin: "12px 4px 2px 2px",
-        closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif"
-        
+        closeBoxMargin: "9px 1px 2px 2px"
+    });
+
+    infoboxAlert = new InfoBox({
+        content: document.getElementById("infoboxAlert"),
+        disableAutoPan: false,
+        maxWidth: 20,
+        pixelOffset: new google.maps.Size(-10, -80),
+        zIndex: null,
+        boxStyle: {
+            opacity: 0.75,
+            width: "20px",
+        },
     });
 
 function uavMarkers(data, textStatus, jqXHR) {
@@ -136,6 +148,12 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].Id].Battery = data[i].FlightState.BatteryLevel;
         uavs[data[i].Id].Position = new google.maps.LatLng(results[1], results[0]);
         
+        var markerCircle = new google.maps.Marker({
+            position: uavs[data[i].Id].Position,
+            map: map,
+            icon: uavCircleBlack
+        });
+
         var marker = new MarkerWithLabel({
             position: uavs[data[i].Id].Position,
             map: map,
@@ -144,11 +162,6 @@ function uavMarkers(data, textStatus, jqXHR) {
             labelAnchor: new google.maps.Point(95, 20),
             labelClass: "labels",
             labelStyle: { opacity: 0.75 }
-        });
-        var markerCircle = new google.maps.Marker({
-            position: uavs[data[i].Id].Position,
-            map: map,
-            icon: uavCircleBlack
         });
 
         var key = data[i].Id.toString();
@@ -166,12 +179,12 @@ function uavMarkers(data, textStatus, jqXHR) {
             });
             selectedDrones.push(marker);
             return function () {
-                infowindow.setContent('<div style="line-height: 1.35; overflow: hidden; white-space: nowrap;"><b>ID: </b>' + key + '</div>');
-                infowindow.open(map, marker);
-                infobox.open(map, this);
+                /****Unused infowindow set ****/
+                //infowindow.setContent('<div style="line-height: 1.35; overflow: hidden; white-space: nowrap;"><b>ID: </b>' + key + '</div>');
+                //infowindow.open(map, marker);
+                
                 console.log("Number of selected drones: " + selectedDrones.length);
             }
-
         })(marker, key));
     }
 }
@@ -197,7 +210,15 @@ $(document).ready(function () {
             uavMarkers(data, textStatus, jqXHR);
         }
     });
-   
+
+    /**** Currently in progress 
+    google.maps.event.addListener(map, 'click', function () {
+        if (infobox) {
+            infobox.close();
+        }
+    });
+   */
+
     /* Vehicle movement */
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
@@ -216,6 +237,11 @@ $(document).ready(function () {
             labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + vehicle.Altitude + '<br/><b>Bat: </b>' + parse + '</div>',
             icon: uavs[vehicle.Id].marker.icon
         });
+        console.log(parse);
+        if (parse < .2) {
+            infobox.open(map, uavs[vehicle.Id].marker);
+            infoboxAlert.open(map, uavs[vehicle.Id].marker);
+        }
     }
 
     /*Click-drag-select*/

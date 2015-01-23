@@ -7,13 +7,28 @@
 }
     <script src="~/Scripts/DrawingLibrary.js"></script>
     <script src="~/Scripts/MarkerWithLabel.js"></script>
+    <script src="~/Scripts/InfoBox.js"></script>
     <script src="~/Scripts/jquery-2.1.0.js"></script>
     <div id="map-canvas"></div>
     <div class="buttons">
         <button type="button" id="start">Start</button>
         <button type="button" id="stop">Stop</button>
     </div>
-
+<div class="infobox-wrapper">
+    <div id="infobox">
+        <font color="red"><b>Warning:</b></font> Low Battery
+</div>
+</div>
+<style>
+    img[src="http://www.google.com/intl/en_us/mapfiles/close.gif"] {
+        display: none;
+    }
+</style>
+<div class="infobox-wrapper">
+    <div id="infoboxAlert">
+        <p>!</p>
+    </div>
+</div>
 <script src="~/Scripts/proj4.js" type="text/javascript"></script>
 <script src="~/Scripts/simulation.js" type="text/javascript"></script>
 <script src="~/Scripts/vehicle.js" type="text/javascript"></script>
