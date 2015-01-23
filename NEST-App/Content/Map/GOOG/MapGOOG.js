@@ -4,10 +4,14 @@ var results;
 var parse;
 var uavs = {};
 var uavMarker;
+var drawingManager;
+var selectedShape;
 var selectedDrones = []; //store drones selected from any method here
 var storedGroups = []; //keep track of different stored groupings of UAVs
 var ctrlPressed = false;
 var infowindow = new google.maps.InfoWindow();
+var infobox;
+var selected = false;
 var homeBase = new google.maps.LatLng(34.2417, -118.529);
 
 var uavSymbolBlack = {
@@ -15,7 +19,15 @@ var uavSymbolBlack = {
     fillColor: 'black',
     fillOpacity: 0.8,
     scale: 0.2,
-    anchor: new google.maps.Point(355, 360)
+    anchor: new google.maps.Point(355, 295)
+};
+
+var uavCircleBlack = {
+    path: google.maps.SymbolPath.CIRCLE,
+    fillColor: 'black',
+    scale: 30,
+    strokeWeight: 4,
+    zIndex: 1
 };
 
 var uavSymbolGreen = {
@@ -23,7 +35,7 @@ var uavSymbolGreen = {
     fillColor: 'green',
     fillOpacity: 0.8,
     scale: 0.2,
-    anchor: new google.maps.Point(355, 360)
+    anchor: new google.maps.Point(355, 295)
 };
 
 var mapClickIcon = new google.maps.MarkerImage(
@@ -68,7 +80,7 @@ function BaseControl(controlDiv, map) {
 }
 
 //Drawing manager and icons for google map
-var drawingManager = new google.maps.drawing.DrawingManager({
+    drawingManager = new google.maps.drawing.DrawingManager({
     drawingMode: google.maps.drawing.OverlayType.MARKER,
     drawingControl: true,
     drawingControlOptions: {
@@ -91,6 +103,23 @@ var drawingManager = new google.maps.drawing.DrawingManager({
     }
 });
 
+/******************* Emergency Info Box *********************/
+    infobox = new InfoBox({
+        content: document.getElementById("infobox"),
+        disableAutoPan: false,
+        maxWidth: 150,
+        pixelOffset: new google.maps.Size(-140, 20),
+        zIndex: null,
+        boxStyle: {
+            background: "url('http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/examples/tipbox.gif') no-repeat",
+            opacity: 0.75,
+            width: "280px"
+        },
+        closeBoxMargin: "12px 4px 2px 2px",
+        closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif"
+        
+    });
+
 function uavMarkers(data, textStatus, jqXHR) {
     console.log("Pulling Flightstates...", textStatus);
     for (var i = 0; i < data.length; i++) {
@@ -112,13 +141,19 @@ function uavMarkers(data, textStatus, jqXHR) {
             map: map,
             icon: uavSymbolBlack,
             labelContent: uavs[data[i].Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uavs[data[i].Id].Alt + '<br/><b>Bat: </b>' + uavs[data[i].Id].Battery + '</div>',
-            labelAnchor: new google.maps.Point(30, -40),
+            labelAnchor: new google.maps.Point(95, 20),
             labelClass: "labels",
             labelStyle: { opacity: 0.75 }
+        });
+        var markerCircle = new google.maps.Marker({
+            position: uavs[data[i].Id].Position,
+            map: map,
+            icon: uavCircleBlack
         });
 
         var key = data[i].Id.toString();
         uavs[data[i].Id].marker = marker;
+        uavs[data[i].Id].markerCircle = markerCircle;
         google.maps.event.addListener(marker, 'click', (function (marker, key, event) {
 
             $(window).keydown(function (evt) {
@@ -133,6 +168,7 @@ function uavMarkers(data, textStatus, jqXHR) {
             return function () {
                 infowindow.setContent('<div style="line-height: 1.35; overflow: hidden; white-space: nowrap;"><b>ID: </b>' + key + '</div>');
                 infowindow.open(map, marker);
+                infobox.open(map, this);
                 console.log("Number of selected drones: " + selectedDrones.length);
             }
 
@@ -153,6 +189,7 @@ $(document).ready(function () {
     homeControlDiv.index = 1;
     map.controls[google.maps.ControlPosition.RIGHT].push(homeControlDiv);
     drawingManager.setMap(map);
+    drawingManager.setDrawingMode(null);
 
     $.ajax({
         url: '/api/uavs/getuavinfo',
@@ -167,11 +204,17 @@ $(document).ready(function () {
         console.log(vehicle);
         var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
         uavs[vehicle.Id].marker.setPosition(LatLng);
+        uavs[vehicle.Id].markerCircle.setPosition(LatLng);
         parse = parseFloat(Math.round(vehicle.BatteryLevel * 100) / 100).toFixed(2);
         uavSymbolBlack.rotation = vehicle.Yaw;
+        uavSymbolGreen.rotation = vehicle.Yaw;
+        if (selected == false)
+            uavs[vehicle.Id].marker.setIcon(uavSymbolBlack);
+        else
+            uavs[vehicle.Id].marker.setIcon(uavSymbolGreen);
         uavs[vehicle.Id].marker.setOptions({
             labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + vehicle.Altitude + '<br/><b>Bat: </b>' + parse + '</div>',
-            icon: uavSymbolBlack
+            icon: uavs[vehicle.Id].marker.icon
         });
     }
 
@@ -256,10 +299,12 @@ $(document).ready(function () {
                 var boundsSelectionArea = new google.maps.LatLngBounds(gridBoundingBox.getBounds().getSouthWest(), gridBoundingBox.getBounds().getNorthEast());
                 for (var key in uavs) {
                     if (gridBoundingBox.getBounds().contains(uavs[key].marker.getPosition())) {
+                        selected = true;
                         uavs[key].marker.setIcon(uavSymbolGreen);
                         selectedDrones.push(uavs[key]);//push the selected markers to an array
                         console.log("Number of selected drones: " + selectedDrones.length);
                     } else {
+                        selected = false;
                         uavs[key].marker.setIcon(uavSymbolBlack);
                         console.log("Number of selected drones: " + selectedDrones.length);
                     }
