@@ -106,13 +106,13 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].Id].Callsign = data[i].Callsign;
         uavs[data[i].Id].Battery = data[i].FlightState.BatteryLevel;
         uavs[data[i].Id].Position = new google.maps.LatLng(results[1], results[0]);
-
+        
         var marker = new MarkerWithLabel({
             position: uavs[data[i].Id].Position,
             map: map,
             icon: uavSymbolBlack,
             labelContent: uavs[data[i].Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uavs[data[i].Id].Alt + '<br/><b>Bat: </b>' + uavs[data[i].Id].Battery + '</div>',
-            labelAnchor: new google.maps.Point(30, -5),
+            labelAnchor: new google.maps.Point(30, -40),
             labelClass: "labels",
             labelStyle: { opacity: 0.75 }
         });
@@ -167,11 +167,12 @@ $(document).ready(function () {
         console.log(vehicle);
         var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
         uavs[vehicle.Id].marker.setPosition(LatLng);
-        console.log(vehicle.BatteryLevel);
         parse = parseFloat(Math.round(vehicle.BatteryLevel * 100) / 100).toFixed(2);
+        uavSymbolBlack.rotation = vehicle.Yaw;
         uavs[vehicle.Id].marker.setOptions({
-            labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + vehicle.Altitude + '<br/><b>Bat: </b>' + parse + '</div>'
-        })
+            labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + vehicle.Altitude + '<br/><b>Bat: </b>' + parse + '</div>',
+            icon: uavSymbolBlack
+        });
     }
 
     /*Click-drag-select*/
