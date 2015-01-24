@@ -484,6 +484,8 @@
           <Property Name="MaxAcceleration" Type="Double" Nullable="false" />
           <Property Name="MaxVerticalVelocity" Type="Double" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
           <Property Name="UpdateRate" Type="Double" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="CruiseAltitude" Type="Double" Nullable="false" />
+          <Property Name="MinDeliveryAlt" Type="Double" Nullable="false" />
           </EntityType>
         <EntityType Name="FlightState">
           <Key>

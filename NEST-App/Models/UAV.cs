@@ -31,6 +31,8 @@ namespace NEST_App.Models
         public double MaxAcceleration { get; set; }
         public double MaxVerticalVelocity { get; set; }
         public double UpdateRate { get; set; }
+        public double CruiseAltitude { get; set; }
+        public double MinDeliveryAlt { get; set; }
     
         public virtual Configuration Configurations { get; set; }
         public virtual ICollection<EquipmentHealth> EuipmentHealths { get; set; }
