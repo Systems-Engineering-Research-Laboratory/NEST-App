@@ -23,6 +23,11 @@ namespace NEST_App
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+
+            //initializing database the correct CMD_NAV_Waypoint -- varatep 
+            NestDatabaseInitializer dbInit = new NestDatabaseInitializer();
+            dbInit.InitializeDatabase();
+
             //Inserted by Jeff to configure automapper
             Mapper.CreateMap<FlightState, FlightStateDTO>()
                 .ForMember(dest => dest.Latitude, opt => opt.ResolveUsing<FlightStateLatResolver>())
