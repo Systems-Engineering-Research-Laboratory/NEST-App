@@ -248,9 +248,6 @@
     <Compile Include="Models\CMD_CONDITION_Rates.cs">
       <DependentUpon>Commands.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\CMD_DO_Change_Dynamics.cs">
-      <DependentUpon>Commands.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\CMD_DO_Change_Speed.cs">
       <DependentUpon>Commands.tt</DependentUpon>
     </Compile>
