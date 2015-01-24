@@ -11,7 +11,7 @@ function Vehicle(vehicleInfo, reporter) {
     this.Mileage = vehicleInfo.Mileage;
     this.NumDeliveries = vehicleInfo.NumDeliveries;
     this.MaxVelocity = vehicleInfo.MaxVelocity;
-    this.MaxVerticalVelocty = vehicleInfo.MaxVerticalVelocty;
+    this.MaxVerticalVelocty = vehicleInfo.MaxVerticalVelocity;
     this.MaxAcceleration = vehicleInfo.MaxAcceleration;
     this.UpdateRate = vehicleInfo.UpdateRate;
 
@@ -22,6 +22,7 @@ function Vehicle(vehicleInfo, reporter) {
     this.Schedule = vehicleInfo.Schedule;
 
     this.Base = base;
+    LatLongToXY(this.Base);
 
     //This is just simulation stuff.
     this.Objective = null;
@@ -245,14 +246,14 @@ function Vehicle(vehicleInfo, reporter) {
 
     //Makes the vehicle go back to base
     this.backToBase = function (dt) {
-        this.flyToAndLand(dt, this.Base.X, this.Base.Y);
+        return this.flyToAndLand(dt, this.Base.X, this.Base.Y);
     }
     
     this.flyToAndLand = function (dt, destX, destY) {
         var thisX = this.FlightState.X;
         var thisY = this.FlightState.Y;
         if (calculateDistance(thisX, thisY, destX, destY) > 10) {
-            this.deadReckon(dt, base.X, base.Y);
+            this.deadReckon(dt, destX, destY);
             return false;
         }
         else {
@@ -340,6 +341,8 @@ var earthRadius = 6378100; //Radius of earth in meters
 var baseXY = wgsToMeters.forward([base.Longitude, base.Latitude]);
 LatLongToXY(baseXY);
 
+var deg2rad = Math.PI / 180;
+var rad2deg = 1 / deg2rad;
 
 //Eventually these functions need to be phased out to get more accurate calculations.
 //I'm not sure if the longitude factors into the y calculation, so I pass in the base
