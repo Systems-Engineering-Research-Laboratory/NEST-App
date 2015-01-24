@@ -190,6 +190,7 @@ function Vehicle(vehicleInfo, reporter) {
                     console.log(this.Callsign + " has reached target altitude given by CMD_NAV_Takeoff");
                 }
                 break;
+            
         }
     }
 
@@ -206,7 +207,7 @@ function Vehicle(vehicleInfo, reporter) {
                 }
                 break;
             case "delivering":
-                if (this.deliver(dt, 200, 400, 5)) {
+                if (this.deliver(dt, 200, 400, this.MaxVelocity)) {
                     this.Mission.Phase = "back to base";
                 }
                 break;
@@ -233,7 +234,7 @@ function Vehicle(vehicleInfo, reporter) {
             return false;
         }
         else {
-            return this.targetAltitude(dt, 0, 5);
+            return this.targetAltitude(dt, 0, this.MaxVerticalVelocty);
         }
     }
 
@@ -309,16 +310,13 @@ var base = {
     Longitude: -118.528763,
 }
 
-var metersProj = proj4.Proj('EPSG:3785');
-var WGS84Proj = proj4.Proj('EPSG:4326');
+var metersProj = proj4.Proj('GOOGLE');
+var WGS84Proj = proj4.Proj('WGS84');
 var wgsToMeters = proj4(WGS84Proj, metersProj);
 var standard = Math.cos(base.Latitude);
 var earthRadius = 6378100; //Radius of earth in meters
-var baseXY = wgsToMeters.forward([base.Longitude, base.Longitude]);
-var deg2rad = Math.PI / 180;
-var rad2deg = 1/ deg2rad;
-base.X = baseXY[0];
-base.Y = baseXY[1];
+var baseXY = wgsToMeters.forward([base.Longitude, base.Latitude]);
+LatLongToXY(baseXY);
 
 
 //Eventually these functions need to be phased out to get more accurate calculations.
@@ -369,5 +367,6 @@ function LatLongToXY(vehicle) {
 function calculateDistance(x1, y1, x2, y2) {
     var dx = x2 - x1;
     var dy = y2 - y1;
-    return Math.sqrt(dx * dx + dy * dy);
+    var distance = Math.sqrt(dx * dx + dy * dy);
+    return distance;
 }
