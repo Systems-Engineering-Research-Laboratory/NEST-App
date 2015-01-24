@@ -46,11 +46,8 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="TakeoffPitch" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Altitude" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="XAcceleration" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="YAcceleration" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="ZAcceleration" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Throttle" Type="nvarchar(max)" Nullable="false" />
     <Property Name="UAVId" Type="int" Nullable="false" />
+    <Property Name="Acceleration" Type="float" Nullable="false" />
   </EntityType>
   <EntityType Name="CMD_CONDITION_Rates">
     <Key>
@@ -79,7 +76,6 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Altitude" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Latitude" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Longitude" Type="nvarchar(max)" Nullable="false" />
     <Property Name="UAVId" Type="int" Nullable="false" />
@@ -122,11 +118,8 @@
     <Key>
       <PropertyRef Name="Id" />
     </Key>
-    <Property Name="Speed" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="XVelocity" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="YVelocity" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="ZVelocity" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Heading" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="HorizontalSpeed" Type="float" Nullable="true" />
+    <Property Name="VerticalSpeed" Type="float" Nullable="true" />
     <Property Name="Id" Type="int" Nullable="false" />
   </EntityType>
   <Association Name="FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint">
@@ -295,13 +288,15 @@
           <ScalarProperty Name="TakeoffPitch" ColumnName="TakeoffPitch" />
           <ScalarProperty Name="Altitude" ColumnName="Altitude" />
           <ScalarProperty Name="UAVId" ColumnName="UAVId" />
+          <ScalarProperty Name="Acceleration" ColumnName="Acceleration" />
         </MappingFragment>
       </EntityTypeMapping>
       <EntityTypeMapping TypeName="IsTypeOf(Commands.CMD_DO_Change_Speed)">
         <MappingFragment StoreEntitySet="CMD_NAV_Takeoff_CMD_DO_Change_Speed">
           <ScalarProperty Name="Id" ColumnName="Id" />
-          <ScalarProperty Name="HorizontalSpeed" ColumnName="Speed" />
-          </MappingFragment>
+          <ScalarProperty Name="HorizontalSpeed" ColumnName="HorizontalSpeed" />
+          <ScalarProperty Name="VerticalSpeed" ColumnName="VerticalSpeed" />
+        </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="CMD_CONDITION_Rates">
@@ -366,7 +361,7 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-          </EntityContainerMapping>
+  </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
