@@ -16,7 +16,6 @@
     <EntitySet Name="CMD_NAV_Waypoint_CMD_NAV_Hover" EntityType="Commands.Store.CMD_NAV_Waypoint_CMD_NAV_Hover" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Set_Base_CMD_DO_Return_To_Base" EntityType="Commands.Store.CMD_NAV_Set_Base_CMD_DO_Return_To_Base" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Takeoff_CMD_DO_Change_Speed" EntityType="Commands.Store.CMD_NAV_Takeoff_CMD_DO_Change_Speed" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="CMD_NAV_Takeoff_CMD_DO_Change_Dynamics" EntityType="Commands.Store.CMD_NAV_Takeoff_CMD_DO_Change_Dynamics" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint" Association="Commands.Store.FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint">
       <End Role="CMD_NAV_Waypoint" EntitySet="CMD_NAV_Waypoint" />
       <End Role="CMD_NAV_Hover" EntitySet="CMD_NAV_Waypoint_CMD_NAV_Hover" />
@@ -28,10 +27,6 @@
     <AssociationSet Name="FK_CMD_DO_Change_Speed_inherits_CMD_NAV_Takeoff" Association="Commands.Store.FK_CMD_DO_Change_Speed_inherits_CMD_NAV_Takeoff">
       <End Role="CMD_NAV_Takeoff" EntitySet="CMD_NAV_Takeoff" />
       <End Role="CMD_DO_Change_Speed" EntitySet="CMD_NAV_Takeoff_CMD_DO_Change_Speed" />
-    </AssociationSet>
-    <AssociationSet Name="FK_CMD_DO_Change_Dynamics_inherits_CMD_NAV_Takeoff" Association="Commands.Store.FK_CMD_DO_Change_Dynamics_inherits_CMD_NAV_Takeoff">
-      <End Role="CMD_NAV_Takeoff" EntitySet="CMD_NAV_Takeoff" />
-      <End Role="CMD_DO_Change_Dynamics" EntitySet="CMD_NAV_Takeoff_CMD_DO_Change_Dynamics" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="CMD_NAV_Waypoint">
@@ -134,15 +129,6 @@
     <Property Name="Heading" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Id" Type="int" Nullable="false" />
   </EntityType>
-  <EntityType Name="CMD_NAV_Takeoff_CMD_DO_Change_Dynamics">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Roll" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Pitch" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Yaw" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Id" Type="int" Nullable="false" />
-  </EntityType>
   <Association Name="FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint">
     <End Role="CMD_NAV_Waypoint" Type="Commands.Store.CMD_NAV_Waypoint" Multiplicity="1">
       <OnDelete Action="Cascade" />
@@ -185,20 +171,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_CMD_DO_Change_Dynamics_inherits_CMD_NAV_Takeoff">
-    <End Role="CMD_NAV_Takeoff" Type="Commands.Store.CMD_NAV_Takeoff" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
-    <End Role="CMD_DO_Change_Dynamics" Type="Commands.Store.CMD_NAV_Takeoff_CMD_DO_Change_Dynamics" Multiplicity="0..1" />
-    <ReferentialConstraint>
-      <Principal Role="CMD_NAV_Takeoff">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="CMD_DO_Change_Dynamics">
-        <PropertyRef Name="Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
 </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
@@ -211,7 +183,7 @@
           <EntitySet Name="CMD_NAV_Set_Base" EntityType="Commands.CMD_NAV_Set_Base" />
           <EntitySet Name="CMD_NAV_Land" EntityType="Commands.CMD_NAV_Land" />
           <EntitySet Name="CMD_ACK" EntityType="Commands.CMD_ACK" />
-        </EntityContainer>
+          </EntityContainer>
         <EntityType Name="CMD_NAV_Waypoint">
           <Key>
             <PropertyRef Name="Id" />
@@ -232,11 +204,8 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="TakeoffPitch" Type="String" Nullable="false" />
           <Property Name="Altitude" Type="String" Nullable="false" />
-          <Property Name="XAcceleration" Type="String" Nullable="false" />
-          <Property Name="YAcceleration" Type="String" Nullable="false" />
-          <Property Name="ZAcceleration" Type="String" Nullable="false" />
-          <Property Name="Throttle" Type="String" Nullable="false" />
           <Property Name="UAVId" Type="Int32" Nullable="false" />
+          <Property Name="Acceleration" Type="Double" Nullable="false" />
         </EntityType>
         <EntityType Name="CMD_DO_Return_To_Base" BaseType="Commands.CMD_NAV_Set_Base">
           <Property Name="UseCurrent" Type="String" Nullable="false" />
@@ -254,17 +223,9 @@
           <Property Name="YawUpdateRate" Type="String" Nullable="false" />
         </EntityType>
         <EntityType Name="CMD_DO_Change_Speed" BaseType="Commands.CMD_NAV_Takeoff">
-          <Property Name="Speed" Type="String" Nullable="false" />
-          <Property Name="XVelocity" Type="String" Nullable="false" />
-          <Property Name="YVelocity" Type="String" Nullable="false" />
-          <Property Name="ZVelocity" Type="String" Nullable="false" />
-          <Property Name="Heading" Type="String" Nullable="false" />
-        </EntityType>
-        <EntityType Name="CMD_DO_Change_Dynamics" BaseType="Commands.CMD_NAV_Takeoff">
-          <Property Name="Roll" Type="String" Nullable="false" />
-          <Property Name="Pitch" Type="String" Nullable="false" />
-          <Property Name="Yaw" Type="String" Nullable="false" />
-        </EntityType>
+          <Property Name="HorizontalSpeed" Type="Double" Nullable="true" />
+          <Property Name="VerticalSpeed" Type="Double" Nullable="true" />
+          </EntityType>
         <EntityType Name="CMD_NAV_Target">
           <Key>
             <PropertyRef Name="Id" />
@@ -280,7 +241,6 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Altitude" Type="String" Nullable="false" />
           <Property Name="Latitude" Type="String" Nullable="false" />
           <Property Name="Longitude" Type="String" Nullable="false" />
           <Property Name="UAVId" Type="Int32" Nullable="false" />
@@ -334,30 +294,14 @@
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="TakeoffPitch" ColumnName="TakeoffPitch" />
           <ScalarProperty Name="Altitude" ColumnName="Altitude" />
-          <ScalarProperty Name="XAcceleration" ColumnName="XAcceleration" />
-          <ScalarProperty Name="YAcceleration" ColumnName="YAcceleration" />
-          <ScalarProperty Name="ZAcceleration" ColumnName="ZAcceleration" />
-          <ScalarProperty Name="Throttle" ColumnName="Throttle" />
           <ScalarProperty Name="UAVId" ColumnName="UAVId" />
         </MappingFragment>
       </EntityTypeMapping>
       <EntityTypeMapping TypeName="IsTypeOf(Commands.CMD_DO_Change_Speed)">
         <MappingFragment StoreEntitySet="CMD_NAV_Takeoff_CMD_DO_Change_Speed">
           <ScalarProperty Name="Id" ColumnName="Id" />
-          <ScalarProperty Name="Speed" ColumnName="Speed" />
-          <ScalarProperty Name="XVelocity" ColumnName="XVelocity" />
-          <ScalarProperty Name="YVelocity" ColumnName="YVelocity" />
-          <ScalarProperty Name="ZVelocity" ColumnName="ZVelocity" />
-          <ScalarProperty Name="Heading" ColumnName="Heading" />
-        </MappingFragment>
-      </EntityTypeMapping>
-      <EntityTypeMapping TypeName="IsTypeOf(Commands.CMD_DO_Change_Dynamics)">
-        <MappingFragment StoreEntitySet="CMD_NAV_Takeoff_CMD_DO_Change_Dynamics">
-          <ScalarProperty Name="Id" ColumnName="Id" />
-          <ScalarProperty Name="Roll" ColumnName="Roll" />
-          <ScalarProperty Name="Pitch" ColumnName="Pitch" />
-          <ScalarProperty Name="Yaw" ColumnName="Yaw" />
-        </MappingFragment>
+          <ScalarProperty Name="HorizontalSpeed" ColumnName="Speed" />
+          </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="CMD_CONDITION_Rates">
@@ -388,7 +332,6 @@
       <EntityTypeMapping TypeName="IsTypeOf(Commands.CMD_NAV_Set_Base)">
         <MappingFragment StoreEntitySet="CMD_NAV_Set_Base">
           <ScalarProperty Name="Id" ColumnName="Id" />
-          <ScalarProperty Name="Altitude" ColumnName="Altitude" />
           <ScalarProperty Name="Latitude" ColumnName="Latitude" />
           <ScalarProperty Name="Longitude" ColumnName="Longitude" />
           <ScalarProperty Name="UAVId" ColumnName="UAVId" />
@@ -423,7 +366,7 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-  </EntityContainerMapping>
+          </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->

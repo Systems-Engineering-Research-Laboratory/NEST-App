@@ -17,10 +17,7 @@ namespace NEST_App.Models
         public int Id { get; set; }
         public string TakeoffPitch { get; set; }
         public string Altitude { get; set; }
-        public string XAcceleration { get; set; }
-        public string YAcceleration { get; set; }
-        public string ZAcceleration { get; set; }
-        public string Throttle { get; set; }
         public int UAVId { get; set; }
+        public double Acceleration { get; set; }
     }
 }

@@ -15,7 +15,6 @@ namespace NEST_App.Models
     public partial class CMD_NAV_Set_Base
     {
         public int Id { get; set; }
-        public string Altitude { get; set; }
         public string Latitude { get; set; }
         public string Longitude { get; set; }
         public int UAVId { get; set; }

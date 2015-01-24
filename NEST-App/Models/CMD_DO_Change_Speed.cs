@@ -14,10 +14,7 @@ namespace NEST_App.Models
     
     public partial class CMD_DO_Change_Speed : CMD_NAV_Takeoff
     {
-        public string Speed { get; set; }
-        public string XVelocity { get; set; }
-        public string YVelocity { get; set; }
-        public string ZVelocity { get; set; }
-        public string Heading { get; set; }
+        public Nullable<double> HorizontalSpeed { get; set; }
+        public Nullable<double> VerticalSpeed { get; set; }
     }
 }

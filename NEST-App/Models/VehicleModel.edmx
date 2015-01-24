@@ -83,6 +83,8 @@
     <Property Name="MaxAcceleration" Type="float" Nullable="false" />
     <Property Name="MaxVerticalVelocity" Type="float" StoreGeneratedPattern="Computed" Nullable="false" />
     <Property Name="UpdateRate" Type="float" StoreGeneratedPattern="Computed" Nullable="false" />
+    <Property Name="CruiseAltitude" Type="float" Nullable="false" />
+    <Property Name="MinDeliveryAlt" Type="float" Nullable="false" />
     <Property Name="Configurations_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="FlightStates">
@@ -795,6 +797,8 @@
           <ScalarProperty Name="MaxAcceleration" ColumnName="MaxAcceleration" />
           <ScalarProperty Name="MaxVerticalVelocity" ColumnName="MaxVerticalVelocity" />
           <ScalarProperty Name="UpdateRate" ColumnName="UpdateRate" />
+          <ScalarProperty Name="CruiseAltitude" ColumnName="CruiseAltitude" />
+          <ScalarProperty Name="MinDeliveryAlt" ColumnName="MinDeliveryAlt" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

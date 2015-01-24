@@ -21,6 +21,8 @@ function Vehicle(vehicleInfo, reporter) {
     this.Mission = vehicleInfo.Schedule.Missions[0];
     this.Schedule = vehicleInfo.Schedule;
 
+    this.Base = base;
+
     //This is just simulation stuff.
     this.Objective = null;
     this.Command = null;
@@ -190,7 +192,9 @@ function Vehicle(vehicleInfo, reporter) {
                     console.log(this.Callsign + " has reached target altitude given by CMD_NAV_Takeoff");
                 }
                 break;
-            
+            case "CMD_NAV_Land":
+                this.flyToAndLand(dt, this.Command.X, this.Command.Y);
+                break;
         }
     }
 
@@ -221,15 +225,33 @@ function Vehicle(vehicleInfo, reporter) {
     }
 
     this.setCommand = function (target) {
-        this.Command = target;
+        switch (target.CommandType) {
+            case "CMD_DO_Change_Speed":
+                this.MaxVelocity = this.target.HorizontalVelocity || this.MaxVelocity;
+                this.MaxVerticalVelocty = this.target.VelocityZ || this.MaxVerticalVelocty;
+                //TODO: Report UAV changes
+                break;
+            case "CMD_NAV_Set_Base":
+                this.Base.Latitude = target.Latitude;
+                this.Base.Longitude = target.Longitude;
+                LatLongToXY(this.Base);
+                break;
+            default:
+                this.Command = target;
+        }
+        
         this.reporter.ackCommand(target, target.type, "OK");
     }
 
     //Makes the vehicle go back to base
     this.backToBase = function (dt) {
+        this.flyToAndLand(dt, this.Base.X, this.Base.Y);
+    }
+    
+    this.flyToAndLand = function (dt, destX, destY) {
         var thisX = this.FlightState.X;
         var thisY = this.FlightState.Y;
-        if (calculateDistance(thisX, thisY, base.X, base.Y) > 10) {
+        if (calculateDistance(thisX, thisY, destX, destY) > 10) {
             this.deadReckon(dt, base.X, base.Y);
             return false;
         }
