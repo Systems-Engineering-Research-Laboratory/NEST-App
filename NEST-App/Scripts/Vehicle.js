@@ -194,8 +194,24 @@ function Vehicle(vehicleInfo, reporter) {
                 }
                 break;
             case "CMD_NAV_Land":
-                this.flyToAndLand(dt, this.Command.X, this.Command.Y);
+                if (this.flyToAndLand(dt, this.Command.X, this.Command.Y))
+                {
+                    this.Command = null;
+                }
                 break;
+
+            case "CMD_DO_Return_To_Base":
+                if (this.Command.UseCurrent) {
+                    var X = this.Command.X;
+                    var Y = this.Command.Y;
+                }
+                else {
+                    var X = this.base.X;
+                    var Y = this.base.Y;
+                }
+                if (this.flyToAndLand(dt, X, Y)) {
+                    this.Command = null;
+                }
         }
     }
 
