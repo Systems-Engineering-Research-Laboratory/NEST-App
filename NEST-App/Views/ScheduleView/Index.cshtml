@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<NEST_App.Models.Schedule>
 @{
-    //Layout ="~/Views/Shared/_Layout.cshtml";
-    Layout = null;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    //Layout = null;
 }
 @{
     ViewBag.Title = "Index";
@@ -32,11 +32,13 @@
                 }
             <td>
                 Maintenances:
+            </td>
                 @foreach (var maint in sched.Maintenances)
                 {
-                    @Html.DisplayText(maint.id.ToString())
+                 <td> @("UAV id: " + maint.id.ToString()) </td>
+                 <td> @("Last Maintenance: " + maint.last_maintenance.ToString()) </td>
+                 <td> @("Next Maintenance: " + maint.next_maintenance.ToString()) </td>
                 }
-            </td>
         </tr>
     </table>
 }

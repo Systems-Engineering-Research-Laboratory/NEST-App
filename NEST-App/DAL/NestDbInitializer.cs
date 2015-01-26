@@ -77,7 +77,7 @@ namespace NEST_App.DAL
                         new Maintenance{ create_date = DateTime.Now,
                         modified_date = DateTime.Now,
                         last_maintenance = DateTime.Now,
-                        next_maintenance = DateTime.Now,
+                        next_maintenance = DateTime.Now.AddMonths(1),
                         }
                     },
             Missions = missions
