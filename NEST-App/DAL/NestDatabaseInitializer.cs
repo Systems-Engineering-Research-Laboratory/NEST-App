@@ -25,7 +25,15 @@ namespace NEST_App.DAL
                 //new UAV{Callsign = "PINR44", NumDeliveries = 3301, Mileage = 044, Id = 2},
                 //new UAV{Callsign = "BIRD00", NumDeliveries = 2215, Mileage = 591, Id = 3}
             };
-            UAVs.ForEach(s => context.UAVs1.Add(s));
+           UAVs[0].Configurations = new Configuration
+           {
+               Classification = "Predator",
+               create_date = DateTime.Now,
+               modified_date = DateTime.Now,
+               Name = "Default",
+               NumberOfMotors = 4
+           };
+           //UAVs.ForEach(s => context.UAVs1.Add(s));
 
             var FlightStates = new List<FlightState>
             {
@@ -43,10 +51,10 @@ namespace NEST_App.DAL
             FlightStates.ForEach(s =>
             {
                 s.Timestamp = DateTime.Now;
-                context.FlightStates.Add(s);
                 s.create_date = DateTime.Now;
                 s.modified_date = DateTime.Now;
             });
+            UAVs[0].FlightStates = FlightStates;
             DateTime dateValue = new DateTime();
             dateValue = DateTime.Now;
             var missions = new List<Mission>
@@ -55,29 +63,40 @@ namespace NEST_App.DAL
                 //new Mission{Phase = "enroute", FlightPattern = "abstract", Payload = "cheetos", Priority = 1, FinancialCost = 40, TimeAssigned = DateTime.Now, TimeCompleted = dateValue.AddHours(0.0833), DestinationCoordinates = DbGeography.FromText("POINT(-118.4502736 34.2965205 400)"),  ScheduledCompletionTime = dateValue.AddHours(0.0899), EstimatedCompletionTime = dateValue.AddHours(0.09)  }
 
             };
-            //missions.ForEach(s => context.Missions.Add(s));
+
+            var maintenances = new List<Maintenance>
+            {
+                new Maintenance
+                {
+                    create_date = DateTime.Now.AddHours(-8),
+                    last_maintenance = DateTime.Now.AddHours(-3),
+                    modified_date = DateTime.Now,
+                    next_maintenance = DateTime.Now.AddHours(5),
+                    time_remaining = "55"
+                }
+            };
 
             var schedules = new List<Schedule>
             { 
                 new Schedule{
-                    UAV = UAVs[0],
+                    UAV = UAVs.First(),
+                    //Maintenances = maintenances,
+                    //Missions = missions,
                     create_date = DateTime.Now,
-                    modified_date = DateTime.Now,
-                    //Maintenances = new List<Maintenance>{
-                    //    new Maintenance{ create_date = DateTime.Now,
-                    //    modified_date = DateTime.Now,
-                    //    last_maintenance = DateTime.Now,
-                    //    next_maintenance = DateTime.Now,
-                    //    }
-                    //},
-            Missions = missions
+                    modified_date = DateTime.Now
                 }
                 
             };
-            schedules.ForEach(s => context.Schedules.Add(s));
-
             try
             {
+                missions.First().Schedule = schedules.First();
+                maintenances.First().Schedule = schedules.First();
+                UAVs.First().Schedules = schedules;
+                //context.FlightStates.Add(FlightStates.First());
+                //context.UAVs1.Add(UAVs.First());
+                //context.Missions.Add(missions.First());
+                //context.Maintenances.Add(maintenances.First());
+                context.Schedules.Add(schedules.First());
                 context.SaveChanges();
             }
             catch (DbEntityValidationException e)

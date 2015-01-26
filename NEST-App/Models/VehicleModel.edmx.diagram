@@ -14,7 +14,7 @@
         <EntityTypeShape EntityType="VehicleModel.EquipmentHealth" Width="1.5" PointX="1.5" PointY="1.625" />
         <AssociationConnector Association="VehicleModel.EuipmentHealthEquipmentList" />
         <AssociationConnector Association="VehicleModel.VehicleEuipmentHealth" />
-        <EntityTypeShape EntityType="VehicleModel.NonownshipVehicle" Width="1.5" PointX="8.25" PointY="4.625" />
+        <EntityTypeShape EntityType="VehicleModel.NonownshipVehicle" Width="1.5" PointX="8.5" PointY="5.75" />
         <AssociationConnector Association="VehicleModel.UAVFlightState" />
         <EntityTypeShape EntityType="VehicleModel.Maintenance" Width="1.5" PointX="2" PointY="8.625" />
         <EntityTypeShape EntityType="VehicleModel.Schedule" Width="1.5" PointX="5.625" PointY="8.625" />

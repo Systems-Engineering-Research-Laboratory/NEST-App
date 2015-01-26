@@ -23,7 +23,7 @@ namespace NEST_App.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Classification { get; set; }
-        public byte NumberOfMotors { get; set; }
+        public int NumberOfMotors { get; set; }
         public System.DateTime create_date { get; set; }
         public System.DateTime modified_date { get; set; }
     

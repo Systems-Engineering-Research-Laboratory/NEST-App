@@ -84,10 +84,9 @@
   <EntityType Name="FlightStates">
     <Key>
       <PropertyRef Name="Id" />
-      <PropertyRef Name="Timestamp" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Timestamp" Type="datetime" StoreGeneratedPattern="Computed" Nullable="false" />
+    <Property Name="Timestamp" Type="datetime" Nullable="false" />
     <Property Name="Position" Type="geography" Nullable="false" SRID="4326" />
     <Property Name="VelocityX" Type="float" Nullable="false" />
     <Property Name="VelocityY" Type="float" Nullable="false" />
@@ -110,7 +109,7 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Classification" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="NumberOfMotors" Type="tinyint" Nullable="false" />
+    <Property Name="NumberOfMotors" Type="int" Nullable="false" />
     <Property Name="create_date" Type="datetime" Nullable="false" />
     <Property Name="modified_date" Type="datetime" Nullable="false" />
   </EntityType>
@@ -480,10 +479,9 @@
         <EntityType Name="FlightState">
           <Key>
             <PropertyRef Name="Id" />
-            <PropertyRef Name="Timestamp" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Timestamp" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="Timestamp" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" />
           <Property Name="Position" Type="GeographyPoint" Nullable="false" />
           <Property Name="VelocityX" Type="Double" Nullable="false" />
           <Property Name="VelocityY" Type="Double" Nullable="false" />
@@ -508,7 +506,7 @@
           <NavigationProperty Name="Vehicle" Relationship="VehicleModel.VehicleConfiguration" FromRole="Configuration" ToRole="Vehicle" />
           <Property Name="Name" Type="String" Nullable="false" />
           <Property Name="Classification" Type="String" Nullable="false" />
-          <Property Name="NumberOfMotors" Type="Byte" Nullable="false" />
+          <Property Name="NumberOfMotors" Type="Int32" Nullable="false" />
           <NavigationProperty Name="EquipmentLists" Relationship="VehicleModel.ConfigurationEquipmentList" FromRole="Configuration" ToRole="EquipmentList" />
           <Property Name="create_date" Type="DateTime" Nullable="false" />
           <Property Name="modified_date" Type="DateTime" Nullable="false" />
