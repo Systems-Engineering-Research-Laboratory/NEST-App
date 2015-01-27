@@ -10,6 +10,7 @@
 namespace NEST_App.Models
 {
     using System;
+    using NEST_App.Models;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     

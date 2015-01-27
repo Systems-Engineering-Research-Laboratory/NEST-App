@@ -234,6 +234,7 @@
     <Compile Include="Controllers\ScheduleViewController.cs" />
     <Compile Include="Controllers\SimController.cs" />
     <Compile Include="Controllers\UAVsController.cs" />
+    <Compile Include="DAL\NestDatabaseInitializer.cs" />
     <Compile Include="DAL\NestDbContext.cs" />
     <Compile Include="DAL\NestDbInitializer.cs" />
     <Compile Include="Global.asax.cs">
@@ -418,7 +419,6 @@
     <Content Include="Content\Map\OL\MapOL.js" />
     <Content Include="Content\Map\GOOG\MapGOOG.css" />
     <Content Include="Content\nest_style.css" />
-    <Content Include="Database1.mdf" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
