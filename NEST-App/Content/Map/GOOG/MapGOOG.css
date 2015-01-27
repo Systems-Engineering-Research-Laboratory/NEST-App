@@ -5,14 +5,22 @@
             overflow: hidden;
         }
 
-.Buttons {
+.right-buttons {
         right: 1px;
         padding-right: 5px;
         width: 100px;
         height: 200px;
-        top: 95px;
+        top: 40px;
         position: fixed;
     }
+
+.left-buttons {
+        left: 40px;
+        width: 200px;
+        height: 200px;
+        top: 35px;
+        position: fixed;
+}
 
 #start {
     background-color: white;
@@ -23,7 +31,6 @@
     border-style: solid;
     border-width: 1px;
     border-color: black;
-    margin: 5px 0 0 0;
     float: right;
 }
 
@@ -84,3 +91,49 @@
      font-size: 30px;
  }
 
+#panel {
+  width: 200px;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  float: right;
+}
+
+#color-palette {
+  clear: both;
+}
+
+.color-button {
+  width: 14px;
+  height: 14px;
+  font-size: 0;
+  margin: 2px;
+  margin-left: 5px;
+  float: left;
+  cursor: pointer;
+}
+
+#delete-button {
+    margin-top: 10px;
+    background-color: white;
+    font-family: 'Arial, san-serif';
+    font-size: 12px;
+    cursor: pointer;
+    width: 55px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    float: left;
+}
+
+#delete-all-button {
+    margin-top: 10px;
+    background-color: white;
+    font-family: 'Arial, san-serif';
+    font-size: 12px;
+    cursor: pointer;
+    width: 55px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    margin-left: 10px;
+}

@@ -5,15 +5,24 @@
 @{
     ViewBag.Title = "Google Map";
 }
-    <script src="~/Scripts/DrawingLibrary.js"></script>
-    <script src="~/Scripts/MarkerWithLabel.js"></script>
-    <script src="~/Scripts/InfoBox.js"></script>
+   
+<script src="~/Scripts/DrawingLibrary.js"></script>
+<script src="~/Scripts/MarkerWithLabel.js"></script>
+<script src="~/Scripts/InfoBox.js"></script>
     <script src="~/Scripts/jquery-2.1.0.js"></script>
     <div id="map-canvas"></div>
-    <div class="buttons">
+    <div class="right-buttons">
         <button type="button" id="start">Start</button>
         <button type="button" id="stop">Stop</button>
     </div>
+    <div class="left-buttons">
+        <div id="panel">
+            <div id="color-palette"></div>
+        </div>
+        <button id="delete-button">Delete One</button>
+        <button id="delete-all-button">Delete All</button>
+    </div>
+    
 <div class="infobox-wrapper">
     <div id="infobox">
         <font color="red"><b>Warning:</b></font> Low Battery

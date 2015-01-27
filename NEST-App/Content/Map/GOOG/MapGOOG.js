@@ -3,9 +3,10 @@ var pointText;
 var results;
 var parse;
 var uavs = {};
-var uavMarker;
+var overlays = []; //Array for the polygon shapes as overlays
 var drawingManager;
 var selectedShape;
+var uavMarker;
 var selectedDrones = []; //store drones selected from any method here
 var storedGroups = []; //keep track of different stored groupings of UAVs
 var ctrlPressed = false;
@@ -14,6 +15,14 @@ var infobox;
 var infoboxAlert;
 var selected = false;
 var homeBase = new google.maps.LatLng(34.2417, -118.529);
+var colors = ['#1E90FF', '#FF1493', '#32CD32', '#FF8C00', '#4B0082'];
+var selectedColor;
+var colorButtons = {};
+var polyOptions = { //Options set for the polygon shapes and drawing manager
+    strokeWeight: 0,
+    fillOpacity: 0.45,
+    editable: true
+};
 
 var uavSymbolBlack = {
     path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
@@ -81,30 +90,6 @@ function BaseControl(controlDiv, map) {
         map.setZoom(18);
     });
 }
-
-//Drawing manager and icons for google map
-    drawingManager = new google.maps.drawing.DrawingManager({
-    drawingMode: google.maps.drawing.OverlayType.MARKER,
-    drawingControl: true,
-    drawingControlOptions: {
-        position: google.maps.ControlPosition.RIGHT,
-        drawingModes: [
-            google.maps.drawing.OverlayType.MARKER,
-            google.maps.drawing.OverlayType.CIRCLE
-        ]
-    },
-    markerOptions: {
-        icon: mapClickIcon
-    },
-    circleOptions: {
-        fillColor: '#FF0000',
-        fillOpacity: 0.5,
-        strokeWeight: 1,
-        clickable: false,
-        editable: true,
-        zIndex: 1
-    }
-});
 
 /******************* Emergency Info Box *********************/
     infobox = new InfoBox({
@@ -189,11 +174,99 @@ function uavMarkers(data, textStatus, jqXHR) {
     }
 }
 
+function clearSelection() {
+    if (selectedShape) {
+        selectedShape.setEditable(false);
+        selectedShape = null;
+    }
+}
+
+function setSelection(shape) {
+    clearSelection();
+    selectedShape = shape;
+    shape.setEditable(true);
+    selectColor(shape.get('fillColor') || shape.get('strokeColor'));
+}
+
+function deleteSelectedShape() {
+    if (selectedShape) {
+        selectedShape.setMap(null);
+    }
+}
+
+function deleteAllShape() {
+    for (var i = 0; i < overlays.length; i++) {
+        overlays[i].overlay.setMap(null);
+    }
+    overlays = [];
+}
+
+function selectColor(color) {
+    selectedColor = color;
+    for (var i = 0; i < colors.length; ++i) {
+        var currentColor = colors[i];
+        colorButtons[currentColor].style.border = currentColor == color ? '2px solid #789' : '2px solid #fff';
+    }
+
+    //Fill the shapes with the color selected by user
+    var polylineOptions = drawingManager.get('polylineOptions');
+    polylineOptions.strokeColor = color;
+    drawingManager.set('polylineOptions', polylineOptions);
+
+    var rectangleOptions = drawingManager.get('rectangleOptions');
+    rectangleOptions.fillColor = color;
+    drawingManager.set('rectangleOptions', rectangleOptions);
+
+    var circleOptions = drawingManager.get('circleOptions');
+    circleOptions.fillColor = color;
+    drawingManager.set('circleOptions', circleOptions);
+
+    var polygonOptions = drawingManager.get('polygonOptions');
+    polygonOptions.fillColor = color;
+    drawingManager.set('polygonOptions', polygonOptions);
+}
+
+function setSelectedShapeColor(color) {
+    if (selectedShape) {
+        if (selectedShape.type == google.maps.drawing.OverlayType.POLYLINE) {
+            selectedShape.set('strokeColor', color);
+        } else {
+            selectedShape.set('fillColor', color);
+        }
+    }
+}
+
+function makeColorButton(color) {
+    var button = document.createElement('span');
+    button.className = 'color-button';
+    button.style.backgroundColor = color;
+    google.maps.event.addDomListener(button, 'click', function () {
+        selectColor(color);
+        setSelectedShapeColor(color);
+    });
+
+    return button;
+}
+
+function buildColorPalette() {
+    var colorPalette = document.getElementById('color-palette');
+    for (var i = 0; i < colors.length; ++i) {
+        var currentColor = colors[i];
+        var colorButton = makeColorButton(currentColor);
+        colorPalette.appendChild(colorButton);
+        colorButtons[currentColor] = colorButton;
+    }
+    selectColor(colors[0]);
+}
+
 $(document).ready(function () {
     var mapOptions = {
         zoom: 18,
         center: new google.maps.LatLng(34.2417, -118.529),
-        disableDoubleClickZoom: true
+        disableDefaultUI: true,
+        zoomControl: true,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        disableDoubleClickZoom: true,
     }
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
     var homeControlDiv = document.createElement('div');
@@ -201,8 +274,6 @@ $(document).ready(function () {
 
     homeControlDiv.index = 1;
     map.controls[google.maps.ControlPosition.RIGHT].push(homeControlDiv);
-    drawingManager.setMap(map);
-    drawingManager.setDrawingMode(null);
 
     $.ajax({
         url: '/api/uavs/getuavinfo',
@@ -218,6 +289,47 @@ $(document).ready(function () {
         }
     });
    */
+
+    //Drawing manager top left, allows user to draw shapes and lines on the map
+    drawingManager = new google.maps.drawing.DrawingManager({
+        drawingMode: google.maps.drawing.OverlayType.POLYGON,
+        markerOptions: {
+            draggable: true
+        },
+        polylineOptions: {
+            editable: true
+        },
+        rectangleOptions: polyOptions,
+        circleOptions: polyOptions,
+        polygonOptions: polyOptions,
+        map: map
+    });
+
+    drawingManager.setMap(map);
+    drawingManager.setDrawingMode(null);
+
+    google.maps.event.addListener(drawingManager, 'overlaycomplete', function (e) {
+        overlays.push(e);
+        if (e.type != google.maps.drawing.OverlayType.MARKER) {
+            //Switch to non-drawing after a shape is drawn
+            drawingManager.setDrawingMode(null);
+            //Select the shape when user clicks on it
+            var newShape = e.overlay;
+            newShape.type = e.type;
+            google.maps.event.addListener(newShape, 'click', function () {
+                setSelection(newShape);
+            });
+            setSelection(newShape);
+        }
+    });
+
+    //Delete shapes and clear selection
+    google.maps.event.addListener(drawingManager, 'drawingmode_changed', clearSelection);
+    google.maps.event.addListener(map, 'click', clearSelection);
+    google.maps.event.addDomListener(document.getElementById('delete-button'), 'click', deleteSelectedShape);
+    google.maps.event.addDomListener(document.getElementById('delete-all-button'), 'click', deleteAllShape);
+    buildColorPalette();
+
 
     /* Vehicle movement */
     var vehicleHub = $.connection.vehicleHub;
@@ -278,8 +390,6 @@ $(document).ready(function () {
             console.log("Shift key up");
         }
     });
-
-
 
     var mouseDownPos, gridBoundingBox = null, mouseIsDown = 0;
     var theMap = map;
