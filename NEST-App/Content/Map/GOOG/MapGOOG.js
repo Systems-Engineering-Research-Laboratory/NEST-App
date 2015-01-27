@@ -10,7 +10,6 @@ var uavMarker;
 var selectedDrones = []; //store drones selected from any method here
 var storedGroups = []; //keep track of different stored groupings of UAVs
 var ctrlPressed = false;
-var infowindow = new google.maps.InfoWindow();
 var infobox;
 var infoboxAlert;
 var selected = false;
@@ -289,6 +288,17 @@ $(document).ready(function () {
         }
     });
    */
+    //Right click for infowindow coordinates on map
+    google.maps.event.addListener(map, "rightclick", function (event) {
+        var lat = event.latLng.lat();
+        var lng = event.latLng.lng();
+        var point = new google.maps.LatLng(lat, lng);
+        var infowindow = new google.maps.InfoWindow({
+            content: '<div style="line-height: 1.35; overflow: hidden; white-space: nowrap;"><b>Lat: </b>' + lat + '<br/><b>Lng: </b>' + lng + '</div>',
+            position: point
+        });
+        infowindow.open(map);
+    });
 
     //Drawing manager top left, allows user to draw shapes and lines on the map
     drawingManager = new google.maps.drawing.DrawingManager({
