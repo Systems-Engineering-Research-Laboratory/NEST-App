@@ -44,7 +44,9 @@ function Vehicle(vehicleInfo, reporter) {
     }
 
     this.appendLonLat(this.FlightState, this.FlightState.Position);
-    this.appendLonLat(this.Mission, this.Mission.DestinationCoordinates);
+    if (this.Mission) {
+        this.appendLonLat(this.Mission, this.Mission.DestinationCoordinates);
+    }
 
     //Functions. Careful not to add global helper functions here.
     this.process = function (dt) {
