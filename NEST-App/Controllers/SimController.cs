@@ -30,10 +30,10 @@ namespace NEST_App.Controllers.Api
     public class SimApiController : ApiController
     {
 
-        private VehicleModelContainer db = new VehicleModelContainer();
+        private NestContainer db = new NestContainer();
         public HttpResponseMessage GetInitSim()
         {
-            var uavs = from u in db.UAVs1.Include(u => u.FlightStates).Include(u => u.Schedules)
+            var uavs = from u in db.UAVs.Include(u => u.FlightStates).Include(u => u.Schedules)
                        let s = u.Schedules.OrderBy(s => s.create_date).FirstOrDefault()
                        select new
                        {

@@ -403,7 +403,7 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="VehicleModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
-        <EntityContainer Name="VehicleModelContainer" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="NestContainer" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="UAVs" EntityType="VehicleModel.UAV" />
           <EntitySet Name="FlightStates" EntityType="VehicleModel.FlightState" />
           <EntitySet Name="Configurations" EntityType="VehicleModel.Configuration" />
@@ -781,7 +781,7 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
     <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-  <EntityContainerMapping StorageEntityContainer="VehicleModelStoreContainer" CdmEntityContainer="VehicleModelContainer">
+  <EntityContainerMapping StorageEntityContainer="VehicleModelStoreContainer" CdmEntityContainer="NestContainer">
     <EntitySetMapping Name="UAVs">
       <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.UAV)">
         <MappingFragment StoreEntitySet="UAVs1">

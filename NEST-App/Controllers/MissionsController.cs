@@ -17,7 +17,7 @@ namespace NEST_App.Controllers
 {
     public class MissionsController : ApiController
     {
-        private VehicleModelContainer db = new VehicleModelContainer();
+        private NestContainer db = new NestContainer();
 
         // GET: api/Missions
         public IQueryable<MissionDTO> GetMissions()

@@ -14,10 +14,10 @@ namespace NEST_App.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class VehicleModelContainer : DbContext
+    public partial class NestContainer : DbContext
     {
-        public VehicleModelContainer()
-            : base("name=VehicleModelContainer")
+        public NestContainer()
+            : base("name=NestContainer")
         {
         }
     

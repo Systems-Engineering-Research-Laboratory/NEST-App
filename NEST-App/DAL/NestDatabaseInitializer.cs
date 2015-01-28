@@ -9,13 +9,13 @@ using System.Data.Entity.Validation;
 
 namespace NEST_App.DAL
 {
-    public class NestDatabaseInitializer : System.Data.Entity.DropCreateDatabaseAlways<VehicleModelContainer>
+    public class NestDatabaseInitializer : System.Data.Entity.DropCreateDatabaseAlways<NestContainer>
     {
         public void InitializeDatabase()
         {
-            Seed(new VehicleModelContainer());
+            Seed(new NestContainer());
         }
-        protected override void Seed(VehicleModelContainer context)
+        protected override void Seed(NestContainer context)
         {
             //if(context.Database.Exists())
             //{
@@ -99,7 +99,7 @@ namespace NEST_App.DAL
                 maintenances.First().Schedule = schedules.First();
                 UAVs.First().Schedules = schedules;
                 //context.FlightStates.Add(FlightStates.First());
-                context.UAVs1.Add(UAVs.First());
+                context.UAVs.Add(UAVs.First());
                 //context.Missions.Add(missions.First());
                 //context.Maintenances.Add(maintenances.First());
                 //context.Schedules.Add(schedules.First());

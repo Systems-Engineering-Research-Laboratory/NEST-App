@@ -18,7 +18,7 @@ namespace NEST_App.Controllers
 {
     public class UAVsController : Controller
     {
-        private NestDbContext db = new NestDbContext();
+        private NestContainer db = new NestContainer();
 
         // GET: UAVs/Index
         public ActionResult Index()
@@ -35,7 +35,7 @@ namespace NEST_App.Controllers.Api
 {
     public class UAVsController : ApiController
     {
-        private NestDbContext db = new NestDbContext();
+        private NestContainer db = new NestContainer();
 
         //GET: api/uavs/getuavinfo
         public HttpResponseMessage GetUAVInfo()
