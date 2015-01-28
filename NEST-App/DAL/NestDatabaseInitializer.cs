@@ -17,10 +17,15 @@ namespace NEST_App.DAL
         }
         protected override void Seed(VehicleModelContainer context)
         {
+            if(context.Database.Exists())
+            {
+                context.Database.Delete();
+            }
+            context.Database.Create();
             // We can initialize everything here and store it into the database
            var UAVs = new List<UAV>
             {
-                new UAV{Callsign = "HAWK21", NumDeliveries = 2134, Mileage = 234, Id = 0, create_date = DateTime.Now, modified_date = DateTime.Now},
+                new UAV{Callsign = "HAWK21", NumDeliveries = 2134, Mileage = 234, Id = 0, create_date = DateTime.Now, modified_date = DateTime.Now, MaxAcceleration = 20, MaxVelocity = 20, MaxVerticalVelocity = 20, MinDeliveryAlt = 100, UpdateRate = 1000},
                 //new UAV{Callsign = "CROW10", NumDeliveries = 1234, Mileage = 111, Id = 1},
                 //new UAV{Callsign = "PINR44", NumDeliveries = 3301, Mileage = 044, Id = 2},
                 //new UAV{Callsign = "BIRD00", NumDeliveries = 2215, Mileage = 591, Id = 3}
@@ -54,7 +59,7 @@ namespace NEST_App.DAL
                 s.create_date = DateTime.Now;
                 s.modified_date = DateTime.Now;
             });
-            UAVs[0].FlightStates = FlightStates;
+            //UAVs[0].FlightStates = FlightStates;
             DateTime dateValue = new DateTime();
             dateValue = DateTime.Now;
             var missions = new List<Mission>
@@ -93,10 +98,10 @@ namespace NEST_App.DAL
                 maintenances.First().Schedule = schedules.First();
                 UAVs.First().Schedules = schedules;
                 //context.FlightStates.Add(FlightStates.First());
-                //context.UAVs1.Add(UAVs.First());
+                context.UAVs1.Add(UAVs.First());
                 //context.Missions.Add(missions.First());
                 //context.Maintenances.Add(maintenances.First());
-                context.Schedules.Add(schedules.First());
+                //context.Schedules.Add(schedules.First());
                 context.SaveChanges();
             }
             catch (DbEntityValidationException e)
