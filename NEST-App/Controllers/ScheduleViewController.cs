@@ -11,8 +11,8 @@ using System.Web.Mvc;
 namespace NEST_App.Controllers
 {
     public class ScheduleViewController : Controller
-    {
-        private NestDbContext db = new NestDbContext();
+    { 
+        private NestContainer db = new NestContainer();
 
         // GET: ScheduleView
         public ActionResult Index()
