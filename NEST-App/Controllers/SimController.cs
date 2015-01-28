@@ -29,11 +29,11 @@ namespace NEST_App.Controllers.Api
 {
     public class SimApiController : ApiController
     {
-        private NestDbContext db = new NestDbContext();
 
+        private VehicleModelContainer db = new VehicleModelContainer();
         public HttpResponseMessage GetInitSim()
         {
-            var uavs = from u in db.UAVs.Include(u => u.FlightStates).Include(u => u.Schedules)
+            var uavs = from u in db.UAVs1.Include(u => u.FlightStates).Include(u => u.Schedules)
                        let s = u.Schedules.OrderBy(s => s.create_date).FirstOrDefault()
                        select new
                        {
@@ -57,8 +57,8 @@ namespace NEST_App.Controllers.Api
                            },
                            FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
                        };
-
-            return Request.CreateResponse(HttpStatusCode.OK, uavs);
+                return Request.CreateResponse(HttpStatusCode.OK, uavs);
+            
         }
     }
 }

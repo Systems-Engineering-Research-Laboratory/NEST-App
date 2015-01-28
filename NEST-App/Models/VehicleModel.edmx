@@ -81,8 +81,8 @@
     <Property Name="modified_date" Type="datetime" Nullable="false" />
     <Property Name="MaxVelocity" Type="float" Nullable="false" />
     <Property Name="MaxAcceleration" Type="float" Nullable="false" />
-    <Property Name="MaxVerticalVelocity" Type="float" StoreGeneratedPattern="Computed" Nullable="false" />
-    <Property Name="UpdateRate" Type="float" StoreGeneratedPattern="Computed" Nullable="false" />
+    <Property Name="MaxVerticalVelocity" Type="float" StoreGeneratedPattern="None" Nullable="false" />
+    <Property Name="UpdateRate" Type="float" StoreGeneratedPattern="None" Nullable="false" />
     <Property Name="CruiseAltitude" Type="float" Nullable="false" />
     <Property Name="MinDeliveryAlt" Type="float" Nullable="false" />
     <Property Name="Configurations_Id" Type="int" Nullable="false" />
@@ -483,8 +483,8 @@
           <Property Name="modified_date" Type="DateTime" Nullable="false" />
           <Property Name="MaxVelocity" Type="Double" Nullable="false" />
           <Property Name="MaxAcceleration" Type="Double" Nullable="false" />
-          <Property Name="MaxVerticalVelocity" Type="Double" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
-          <Property Name="UpdateRate" Type="Double" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="MaxVerticalVelocity" Type="Double" Nullable="false" annotation:StoreGeneratedPattern="None" />
+          <Property Name="UpdateRate" Type="Double" Nullable="false" annotation:StoreGeneratedPattern="None" />
           <Property Name="CruiseAltitude" Type="Double" Nullable="false" />
           <Property Name="MinDeliveryAlt" Type="Double" Nullable="false" />
           </EntityType>
