@@ -6,7 +6,7 @@
     <edmx:StorageModels>
     <Schema Namespace="VehicleModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
   <EntityContainer Name="VehicleModelStoreContainer">
-    <EntitySet Name="UAVs1" EntityType="VehicleModel.Store.UAVs1" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="UAVs" EntityType="VehicleModel.Store.UAVs" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="FlightStates" EntityType="VehicleModel.Store.FlightStates" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Configurations" EntityType="VehicleModel.Store.Configurations" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Equipments" EntityType="VehicleModel.Store.Equipments" store:Type="Tables" Schema="dbo" />
@@ -21,7 +21,7 @@
     <EntitySet Name="Users" EntityType="VehicleModel.Store.Users" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="UserRoles" EntityType="VehicleModel.Store.UserRoles" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="VehicleConfiguration" Association="VehicleModel.Store.VehicleConfiguration">
-      <End Role="Vehicle" EntitySet="UAVs1" />
+      <End Role="Vehicle" EntitySet="UAVs" />
       <End Role="Configuration" EntitySet="Configurations" />
     </AssociationSet>
     <AssociationSet Name="ConfigurationEquipmentList" Association="VehicleModel.Store.ConfigurationEquipmentList">
@@ -33,15 +33,15 @@
       <End Role="EquipmentList" EntitySet="Equipments" />
     </AssociationSet>
     <AssociationSet Name="VehicleEuipmentHealth" Association="VehicleModel.Store.VehicleEuipmentHealth">
-      <End Role="Vehicle" EntitySet="UAVs1" />
+      <End Role="Vehicle" EntitySet="UAVs" />
       <End Role="EuipmentHealth" EntitySet="EquipmentHealths" />
     </AssociationSet>
     <AssociationSet Name="UAVFlightState" Association="VehicleModel.Store.UAVFlightState">
-      <End Role="UAV" EntitySet="UAVs1" />
+      <End Role="UAV" EntitySet="UAVs" />
       <End Role="FlightState" EntitySet="FlightStates" />
     </AssociationSet>
     <AssociationSet Name="UAVSchedule" Association="VehicleModel.Store.UAVSchedule">
-      <End Role="UAV" EntitySet="UAVs1" />
+      <End Role="UAV" EntitySet="UAVs" />
       <End Role="Schedule" EntitySet="Schedules" />
     </AssociationSet>
     <AssociationSet Name="MissionOrder" Association="VehicleModel.Store.MissionOrder">
@@ -69,7 +69,7 @@
       <End Role="UserRole" EntitySet="UserRoles" />
     </AssociationSet>
   </EntityContainer>
-  <EntityType Name="UAVs1">
+  <EntityType Name="UAVs">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
@@ -81,8 +81,8 @@
     <Property Name="modified_date" Type="datetime" Nullable="false" />
     <Property Name="MaxVelocity" Type="float" Nullable="false" />
     <Property Name="MaxAcceleration" Type="float" Nullable="false" />
-    <Property Name="MaxVerticalVelocity" Type="float" StoreGeneratedPattern="None" Nullable="false" />
-    <Property Name="UpdateRate" Type="float" StoreGeneratedPattern="None" Nullable="false" />
+    <Property Name="MaxVerticalVelocity" Type="float" Nullable="false" />
+    <Property Name="UpdateRate" Type="float" Nullable="false" />
     <Property Name="CruiseAltitude" Type="float" Nullable="false" />
     <Property Name="MinDeliveryAlt" Type="float" Nullable="false" />
     <Property Name="Configurations_Id" Type="int" Nullable="false" />
@@ -256,7 +256,7 @@
     <Property Name="access_level" Type="nvarchar(max)" Nullable="false" />
   </EntityType>
   <Association Name="VehicleConfiguration">
-    <End Role="Vehicle" Type="VehicleModel.Store.UAVs1" Multiplicity="*" />
+    <End Role="Vehicle" Type="VehicleModel.Store.UAVs" Multiplicity="*" />
     <End Role="Configuration" Type="VehicleModel.Store.Configurations" Multiplicity="1" />
     <ReferentialConstraint>
       <Principal Role="Configuration">
@@ -292,7 +292,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="VehicleEuipmentHealth">
-    <End Role="Vehicle" Type="VehicleModel.Store.UAVs1" Multiplicity="1" />
+    <End Role="Vehicle" Type="VehicleModel.Store.UAVs" Multiplicity="1" />
     <End Role="EuipmentHealth" Type="VehicleModel.Store.EquipmentHealths" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Vehicle">
@@ -304,7 +304,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="UAVFlightState">
-    <End Role="UAV" Type="VehicleModel.Store.UAVs1" Multiplicity="1" />
+    <End Role="UAV" Type="VehicleModel.Store.UAVs" Multiplicity="1" />
     <End Role="FlightState" Type="VehicleModel.Store.FlightStates" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="UAV">
@@ -316,7 +316,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="UAVSchedule">
-    <End Role="UAV" Type="VehicleModel.Store.UAVs1" Multiplicity="0..1" />
+    <End Role="UAV" Type="VehicleModel.Store.UAVs" Multiplicity="0..1" />
     <End Role="Schedule" Type="VehicleModel.Store.Schedules" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="UAV">
@@ -784,7 +784,7 @@
   <EntityContainerMapping StorageEntityContainer="VehicleModelStoreContainer" CdmEntityContainer="NestContainer">
     <EntitySetMapping Name="UAVs">
       <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.UAV)">
-        <MappingFragment StoreEntitySet="UAVs1">
+        <MappingFragment StoreEntitySet="UAVs">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Callsign" ColumnName="Callsign" />
           <ScalarProperty Name="NumDeliveries" ColumnName="NumDeliveries" />
@@ -977,7 +977,7 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <AssociationSetMapping Name="VehicleConfiguration" TypeName="VehicleModel.VehicleConfiguration" StoreEntitySet="UAVs1">
+    <AssociationSetMapping Name="VehicleConfiguration" TypeName="VehicleModel.VehicleConfiguration" StoreEntitySet="UAVs">
       <EndProperty Name="Configuration">
         <ScalarProperty Name="Id" ColumnName="Configurations_Id" />
       </EndProperty>
