@@ -2,13 +2,13 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 01/23/2015 17:25:21
--- Generated from EDMX file: C:\Users\Jeffrey\Documents\Programming\NEST\NEST-App\Models\VehicleModel.edmx
+-- Date Created: 01/27/2015 18:47:08
+-- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
 GO
-USE [NestDbContext];
+USE [C:\USERS\VARATEP-MAC\DOCUMENTS\VISUAL STUDIO 2013\PROJECTS\NEST-APP\NEST-APP\APP_DATA\NEST_DB.MDF]
 GO
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 GO
@@ -149,7 +149,7 @@ CREATE TABLE [dbo].[Configurations] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [Name] nvarchar(max)  NOT NULL,
     [Classification] nvarchar(max)  NOT NULL,
-    [NumberOfMotors] tinyint  NOT NULL,
+    [NumberOfMotors] int  NOT NULL,
     [create_date] datetime  NOT NULL,
     [modified_date] datetime  NOT NULL
 );
@@ -301,10 +301,10 @@ ADD CONSTRAINT [PK_UAVs1]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
--- Creating primary key on [Id], [Timestamp] in table 'FlightStates'
+-- Creating primary key on [Id] in table 'FlightStates'
 ALTER TABLE [dbo].[FlightStates]
 ADD CONSTRAINT [PK_FlightStates]
-    PRIMARY KEY CLUSTERED ([Id], [Timestamp] ASC);
+    PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
 -- Creating primary key on [Id] in table 'Configurations'

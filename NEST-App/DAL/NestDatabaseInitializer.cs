@@ -20,7 +20,7 @@ namespace NEST_App.DAL
             // We can initialize everything here and store it into the database
            var UAVs = new List<UAV>
             {
-                new UAV{Callsign = "HAWK21", NumDeliveries = 2134, Mileage = 234, Id = 0, create_date = DateTime.Now, modified_date = DateTime.Now},
+               new UAV{Callsign = "HAWK21", NumDeliveries = 2134, Mileage = 234, Id = 0, create_date = DateTime.Now, modified_date = DateTime.Now, MaxVelocity= 20.0, MaxVerticalVelocity=20.0, MaxAcceleration=5.0, UpdateRate = 1},
                 //new UAV{Callsign = "CROW10", NumDeliveries = 1234, Mileage = 111, Id = 1},
                 //new UAV{Callsign = "PINR44", NumDeliveries = 3301, Mileage = 044, Id = 2},
                 //new UAV{Callsign = "BIRD00", NumDeliveries = 2215, Mileage = 591, Id = 3}
