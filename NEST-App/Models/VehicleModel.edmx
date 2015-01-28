@@ -404,11 +404,11 @@
     <edmx:ConceptualModels>
       <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="VehicleModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
         <EntityContainer Name="VehicleModelContainer" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="UAVs1" EntityType="VehicleModel.UAV" />
+          <EntitySet Name="UAVs" EntityType="VehicleModel.UAV" />
           <EntitySet Name="FlightStates" EntityType="VehicleModel.FlightState" />
           <EntitySet Name="Configurations" EntityType="VehicleModel.Configuration" />
           <AssociationSet Name="VehicleConfiguration" Association="VehicleModel.VehicleConfiguration">
-            <End Role="Vehicle" EntitySet="UAVs1" />
+            <End Role="Vehicle" EntitySet="UAVs" />
             <End Role="Configuration" EntitySet="Configurations" />
           </AssociationSet>
           <EntitySet Name="Equipments" EntityType="VehicleModel.Equipment" />
@@ -422,17 +422,17 @@
             <End Role="EquipmentList" EntitySet="Equipments" />
           </AssociationSet>
           <AssociationSet Name="VehicleEuipmentHealth" Association="VehicleModel.VehicleEuipmentHealth">
-            <End Role="Vehicle" EntitySet="UAVs1" />
+            <End Role="Vehicle" EntitySet="UAVs" />
             <End Role="EuipmentHealth" EntitySet="EquipmentHealths" />
           </AssociationSet>
           <EntitySet Name="NonownshipVehicles" EntityType="VehicleModel.NonownshipVehicle" />
           <AssociationSet Name="UAVFlightState" Association="VehicleModel.UAVFlightState">
-            <End Role="UAV" EntitySet="UAVs1" />
+            <End Role="UAV" EntitySet="UAVs" />
             <End Role="FlightState" EntitySet="FlightStates" />
           </AssociationSet>
           <EntitySet Name="Schedules" EntityType="VehicleModel.Schedule" />
           <AssociationSet Name="UAVSchedule" Association="VehicleModel.UAVSchedule">
-            <End Role="UAV" EntitySet="UAVs1" />
+            <End Role="UAV" EntitySet="UAVs" />
             <End Role="Schedule" EntitySet="Schedules" />
           </AssociationSet>
           <EntitySet Name="Orders" EntityType="VehicleModel.Order" />
@@ -782,7 +782,7 @@
     <edmx:Mappings>
     <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
   <EntityContainerMapping StorageEntityContainer="VehicleModelStoreContainer" CdmEntityContainer="VehicleModelContainer">
-    <EntitySetMapping Name="UAVs1">
+    <EntitySetMapping Name="UAVs">
       <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.UAV)">
         <MappingFragment StoreEntitySet="UAVs1">
           <ScalarProperty Name="Id" ColumnName="Id" />

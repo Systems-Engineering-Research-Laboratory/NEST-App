@@ -26,7 +26,7 @@ namespace NEST_App.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<UAV> UAVs1 { get; set; }
+        public virtual DbSet<UAV> UAVs { get; set; }
         public virtual DbSet<FlightState> FlightStates { get; set; }
         public virtual DbSet<Configuration> Configurations { get; set; }
         public virtual DbSet<Equipment> Equipments { get; set; }
