@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 01/23/2015 17:25:21
--- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
+-- Date Created: 01/28/2015 16:03:29
+-- Generated from EDMX file: C:\Users\Jeffrey\Documents\Programming\NEST\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -18,7 +18,7 @@ GO
 -- --------------------------------------------------
 
 IF OBJECT_ID(N'[dbo].[FK_VehicleConfiguration]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[UAVs1] DROP CONSTRAINT [FK_VehicleConfiguration];
+    ALTER TABLE [dbo].[UAVs] DROP CONSTRAINT [FK_VehicleConfiguration];
 GO
 IF OBJECT_ID(N'[dbo].[FK_ConfigurationEquipmentList]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Equipments] DROP CONSTRAINT [FK_ConfigurationEquipmentList];
@@ -58,8 +58,8 @@ GO
 -- Dropping existing tables
 -- --------------------------------------------------
 
-IF OBJECT_ID(N'[dbo].[UAVs1]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[UAVs1];
+IF OBJECT_ID(N'[dbo].[UAVs]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[UAVs];
 GO
 IF OBJECT_ID(N'[dbo].[FlightStates]', 'U') IS NOT NULL
     DROP TABLE [dbo].[FlightStates];
@@ -105,8 +105,8 @@ GO
 -- Creating all tables
 -- --------------------------------------------------
 
--- Creating table 'UAVs1'
-CREATE TABLE [dbo].[UAVs1] (
+-- Creating table 'UAVs'
+CREATE TABLE [dbo].[UAVs] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [Callsign] nvarchar(max)  NOT NULL,
     [NumDeliveries] int  NOT NULL,
@@ -291,13 +291,106 @@ CREATE TABLE [dbo].[UserRoles] (
 );
 GO
 
+-- Creating table 'CMD_NAV_Waypoint'
+CREATE TABLE [dbo].[CMD_NAV_Waypoint] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [Altitude] nvarchar(max)  NOT NULL,
+    [Latitude] nvarchar(max)  NOT NULL,
+    [Longitude] nvarchar(max)  NOT NULL,
+    [UAVId] int  NOT NULL
+);
+GO
+
+-- Creating table 'CMD_NAV_Takeoff'
+CREATE TABLE [dbo].[CMD_NAV_Takeoff] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [TakeoffPitch] nvarchar(max)  NOT NULL,
+    [Altitude] nvarchar(max)  NOT NULL,
+    [UAVId] int  NOT NULL,
+    [Acceleration] float  NOT NULL
+);
+GO
+
+-- Creating table 'CMD_CONDITION_Rates'
+CREATE TABLE [dbo].[CMD_CONDITION_Rates] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [AltitudeUpdateRate] nvarchar(max)  NOT NULL,
+    [ThrottleUpdateRate] nvarchar(max)  NOT NULL,
+    [LatitudeUpdateRate] nvarchar(max)  NOT NULL,
+    [RollUpdateRate] nvarchar(max)  NOT NULL,
+    [PitchUpdateRate] nvarchar(max)  NOT NULL,
+    [YawUpdateRate] nvarchar(max)  NOT NULL
+);
+GO
+
+-- Creating table 'CMD_NAV_Target'
+CREATE TABLE [dbo].[CMD_NAV_Target] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [Altitude] float  NOT NULL,
+    [Latitude] float  NOT NULL,
+    [Longitude] float  NOT NULL,
+    [UAVId] int  NOT NULL
+);
+GO
+
+-- Creating table 'CMD_NAV_Set_Base'
+CREATE TABLE [dbo].[CMD_NAV_Set_Base] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [Latitude] nvarchar(max)  NOT NULL,
+    [Longitude] nvarchar(max)  NOT NULL,
+    [UAVId] int  NOT NULL
+);
+GO
+
+-- Creating table 'CMD_NAV_Land'
+CREATE TABLE [dbo].[CMD_NAV_Land] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [Altitude] nvarchar(max)  NOT NULL,
+    [Latitude] nvarchar(max)  NOT NULL,
+    [Longitude] nvarchar(max)  NOT NULL,
+    [Throttle] nvarchar(max)  NOT NULL,
+    [UAVId] int  NOT NULL
+);
+GO
+
+-- Creating table 'CMD_ACK'
+CREATE TABLE [dbo].[CMD_ACK] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [CommandId] int  NOT NULL,
+    [Reason] nvarchar(max)  NOT NULL,
+    [CommandType] nvarchar(max)  NOT NULL
+);
+GO
+
+-- Creating table 'CMD_NAV_Waypoint_CMD_NAV_Hover'
+CREATE TABLE [dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover] (
+    [Time] nvarchar(max)  NOT NULL,
+    [Id] int  NOT NULL
+);
+GO
+
+-- Creating table 'CMD_NAV_Set_Base_CMD_DO_Return_To_Base'
+CREATE TABLE [dbo].[CMD_NAV_Set_Base_CMD_DO_Return_To_Base] (
+    [UseCurrent] nvarchar(max)  NOT NULL,
+    [Id] int  NOT NULL
+);
+GO
+
+-- Creating table 'CMD_NAV_Takeoff_CMD_DO_Change_Speed'
+CREATE TABLE [dbo].[CMD_NAV_Takeoff_CMD_DO_Change_Speed] (
+    [HorizontalSpeed] float  NULL,
+    [VerticalSpeed] float  NULL,
+    [Id] int  NOT NULL
+);
+GO
+
 -- --------------------------------------------------
 -- Creating all PRIMARY KEY constraints
 -- --------------------------------------------------
 
--- Creating primary key on [Id] in table 'UAVs1'
-ALTER TABLE [dbo].[UAVs1]
-ADD CONSTRAINT [PK_UAVs1]
+-- Creating primary key on [Id] in table 'UAVs'
+ALTER TABLE [dbo].[UAVs]
+ADD CONSTRAINT [PK_UAVs]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
@@ -379,12 +472,72 @@ ADD CONSTRAINT [PK_UserRoles]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
+-- Creating primary key on [Id] in table 'CMD_NAV_Waypoint'
+ALTER TABLE [dbo].[CMD_NAV_Waypoint]
+ADD CONSTRAINT [PK_CMD_NAV_Waypoint]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'CMD_NAV_Takeoff'
+ALTER TABLE [dbo].[CMD_NAV_Takeoff]
+ADD CONSTRAINT [PK_CMD_NAV_Takeoff]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'CMD_CONDITION_Rates'
+ALTER TABLE [dbo].[CMD_CONDITION_Rates]
+ADD CONSTRAINT [PK_CMD_CONDITION_Rates]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'CMD_NAV_Target'
+ALTER TABLE [dbo].[CMD_NAV_Target]
+ADD CONSTRAINT [PK_CMD_NAV_Target]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'CMD_NAV_Set_Base'
+ALTER TABLE [dbo].[CMD_NAV_Set_Base]
+ADD CONSTRAINT [PK_CMD_NAV_Set_Base]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'CMD_NAV_Land'
+ALTER TABLE [dbo].[CMD_NAV_Land]
+ADD CONSTRAINT [PK_CMD_NAV_Land]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'CMD_ACK'
+ALTER TABLE [dbo].[CMD_ACK]
+ADD CONSTRAINT [PK_CMD_ACK]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'CMD_NAV_Waypoint_CMD_NAV_Hover'
+ALTER TABLE [dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover]
+ADD CONSTRAINT [PK_CMD_NAV_Waypoint_CMD_NAV_Hover]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'CMD_NAV_Set_Base_CMD_DO_Return_To_Base'
+ALTER TABLE [dbo].[CMD_NAV_Set_Base_CMD_DO_Return_To_Base]
+ADD CONSTRAINT [PK_CMD_NAV_Set_Base_CMD_DO_Return_To_Base]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'CMD_NAV_Takeoff_CMD_DO_Change_Speed'
+ALTER TABLE [dbo].[CMD_NAV_Takeoff_CMD_DO_Change_Speed]
+ADD CONSTRAINT [PK_CMD_NAV_Takeoff_CMD_DO_Change_Speed]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
 -- --------------------------------------------------
 -- Creating all FOREIGN KEY constraints
 -- --------------------------------------------------
 
--- Creating foreign key on [Configurations_Id] in table 'UAVs1'
-ALTER TABLE [dbo].[UAVs1]
+-- Creating foreign key on [Configurations_Id] in table 'UAVs'
+ALTER TABLE [dbo].[UAVs]
 ADD CONSTRAINT [FK_VehicleConfiguration]
     FOREIGN KEY ([Configurations_Id])
     REFERENCES [dbo].[Configurations]
@@ -394,7 +547,7 @@ GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_VehicleConfiguration'
 CREATE INDEX [IX_FK_VehicleConfiguration]
-ON [dbo].[UAVs1]
+ON [dbo].[UAVs]
     ([Configurations_Id]);
 GO
 
@@ -432,7 +585,7 @@ GO
 ALTER TABLE [dbo].[EquipmentHealths]
 ADD CONSTRAINT [FK_VehicleEuipmentHealth]
     FOREIGN KEY ([Vehicle_Id])
-    REFERENCES [dbo].[UAVs1]
+    REFERENCES [dbo].[UAVs]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
 GO
@@ -447,7 +600,7 @@ GO
 ALTER TABLE [dbo].[FlightStates]
 ADD CONSTRAINT [FK_UAVFlightState]
     FOREIGN KEY ([UAVId])
-    REFERENCES [dbo].[UAVs1]
+    REFERENCES [dbo].[UAVs]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
 GO
@@ -462,7 +615,7 @@ GO
 ALTER TABLE [dbo].[Schedules]
 ADD CONSTRAINT [FK_UAVSchedule]
     FOREIGN KEY ([UAVId])
-    REFERENCES [dbo].[UAVs1]
+    REFERENCES [dbo].[UAVs]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
 GO
@@ -561,6 +714,33 @@ GO
 CREATE INDEX [IX_FK_UserUserRole]
 ON [dbo].[Users]
     ([UserRole_Id]);
+GO
+
+-- Creating foreign key on [Id] in table 'CMD_NAV_Waypoint_CMD_NAV_Hover'
+ALTER TABLE [dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover]
+ADD CONSTRAINT [FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint]
+    FOREIGN KEY ([Id])
+    REFERENCES [dbo].[CMD_NAV_Waypoint]
+        ([Id])
+    ON DELETE CASCADE ON UPDATE NO ACTION;
+GO
+
+-- Creating foreign key on [Id] in table 'CMD_NAV_Set_Base_CMD_DO_Return_To_Base'
+ALTER TABLE [dbo].[CMD_NAV_Set_Base_CMD_DO_Return_To_Base]
+ADD CONSTRAINT [FK_CMD_DO_Return_To_Base_inherits_CMD_NAV_Set_Base]
+    FOREIGN KEY ([Id])
+    REFERENCES [dbo].[CMD_NAV_Set_Base]
+        ([Id])
+    ON DELETE CASCADE ON UPDATE NO ACTION;
+GO
+
+-- Creating foreign key on [Id] in table 'CMD_NAV_Takeoff_CMD_DO_Change_Speed'
+ALTER TABLE [dbo].[CMD_NAV_Takeoff_CMD_DO_Change_Speed]
+ADD CONSTRAINT [FK_CMD_DO_Change_Speed_inherits_CMD_NAV_Takeoff]
+    FOREIGN KEY ([Id])
+    REFERENCES [dbo].[CMD_NAV_Takeoff]
+        ([Id])
+    ON DELETE CASCADE ON UPDATE NO ACTION;
 GO
 
 -- --------------------------------------------------

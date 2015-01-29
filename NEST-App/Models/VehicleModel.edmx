@@ -6,7 +6,7 @@
     <edmx:StorageModels>
     <Schema Namespace="VehicleModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
   <EntityContainer Name="VehicleModelStoreContainer">
-    <EntitySet Name="UAVs1" EntityType="VehicleModel.Store.UAVs1" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="UAVs" EntityType="VehicleModel.Store.UAVs" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="FlightStates" EntityType="VehicleModel.Store.FlightStates" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Configurations" EntityType="VehicleModel.Store.Configurations" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Equipments" EntityType="VehicleModel.Store.Equipments" store:Type="Tables" Schema="dbo" />
@@ -20,8 +20,18 @@
     <EntitySet Name="MissionLogActivities" EntityType="VehicleModel.Store.MissionLogActivities" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Users" EntityType="VehicleModel.Store.Users" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="UserRoles" EntityType="VehicleModel.Store.UserRoles" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CMD_NAV_Waypoint" EntityType="VehicleModel.Store.CMD_NAV_Waypoint" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CMD_NAV_Takeoff" EntityType="VehicleModel.Store.CMD_NAV_Takeoff" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CMD_CONDITION_Rates" EntityType="VehicleModel.Store.CMD_CONDITION_Rates" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CMD_NAV_Target" EntityType="VehicleModel.Store.CMD_NAV_Target" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CMD_NAV_Set_Base" EntityType="VehicleModel.Store.CMD_NAV_Set_Base" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CMD_NAV_Land" EntityType="VehicleModel.Store.CMD_NAV_Land" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CMD_ACK" EntityType="VehicleModel.Store.CMD_ACK" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CMD_NAV_Waypoint_CMD_NAV_Hover" EntityType="VehicleModel.Store.CMD_NAV_Waypoint_CMD_NAV_Hover" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CMD_NAV_Set_Base_CMD_DO_Return_To_Base" EntityType="VehicleModel.Store.CMD_NAV_Set_Base_CMD_DO_Return_To_Base" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CMD_NAV_Takeoff_CMD_DO_Change_Speed" EntityType="VehicleModel.Store.CMD_NAV_Takeoff_CMD_DO_Change_Speed" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="VehicleConfiguration" Association="VehicleModel.Store.VehicleConfiguration">
-      <End Role="Vehicle" EntitySet="UAVs1" />
+      <End Role="Vehicle" EntitySet="UAVs" />
       <End Role="Configuration" EntitySet="Configurations" />
     </AssociationSet>
     <AssociationSet Name="ConfigurationEquipmentList" Association="VehicleModel.Store.ConfigurationEquipmentList">
@@ -33,15 +43,15 @@
       <End Role="EquipmentList" EntitySet="Equipments" />
     </AssociationSet>
     <AssociationSet Name="VehicleEuipmentHealth" Association="VehicleModel.Store.VehicleEuipmentHealth">
-      <End Role="Vehicle" EntitySet="UAVs1" />
+      <End Role="Vehicle" EntitySet="UAVs" />
       <End Role="EuipmentHealth" EntitySet="EquipmentHealths" />
     </AssociationSet>
     <AssociationSet Name="UAVFlightState" Association="VehicleModel.Store.UAVFlightState">
-      <End Role="UAV" EntitySet="UAVs1" />
+      <End Role="UAV" EntitySet="UAVs" />
       <End Role="FlightState" EntitySet="FlightStates" />
     </AssociationSet>
     <AssociationSet Name="UAVSchedule" Association="VehicleModel.Store.UAVSchedule">
-      <End Role="UAV" EntitySet="UAVs1" />
+      <End Role="UAV" EntitySet="UAVs" />
       <End Role="Schedule" EntitySet="Schedules" />
     </AssociationSet>
     <AssociationSet Name="MissionOrder" Association="VehicleModel.Store.MissionOrder">
@@ -68,8 +78,20 @@
       <End Role="User" EntitySet="Users" />
       <End Role="UserRole" EntitySet="UserRoles" />
     </AssociationSet>
+    <AssociationSet Name="FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint" Association="VehicleModel.Store.FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint">
+      <End Role="CMD_NAV_Waypoint" EntitySet="CMD_NAV_Waypoint" />
+      <End Role="CMD_NAV_Hover" EntitySet="CMD_NAV_Waypoint_CMD_NAV_Hover" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CMD_DO_Return_To_Base_inherits_CMD_NAV_Set_Base" Association="VehicleModel.Store.FK_CMD_DO_Return_To_Base_inherits_CMD_NAV_Set_Base">
+      <End Role="CMD_NAV_Set_Base" EntitySet="CMD_NAV_Set_Base" />
+      <End Role="CMD_DO_Return_To_Base" EntitySet="CMD_NAV_Set_Base_CMD_DO_Return_To_Base" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CMD_DO_Change_Speed_inherits_CMD_NAV_Takeoff" Association="VehicleModel.Store.FK_CMD_DO_Change_Speed_inherits_CMD_NAV_Takeoff">
+      <End Role="CMD_NAV_Takeoff" EntitySet="CMD_NAV_Takeoff" />
+      <End Role="CMD_DO_Change_Speed" EntitySet="CMD_NAV_Takeoff_CMD_DO_Change_Speed" />
+    </AssociationSet>
   </EntityContainer>
-  <EntityType Name="UAVs1">
+  <EntityType Name="UAVs">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
@@ -81,8 +103,8 @@
     <Property Name="modified_date" Type="datetime" Nullable="false" />
     <Property Name="MaxVelocity" Type="float" Nullable="false" />
     <Property Name="MaxAcceleration" Type="float" Nullable="false" />
-    <Property Name="MaxVerticalVelocity" Type="float" StoreGeneratedPattern="None" Nullable="false" />
-    <Property Name="UpdateRate" Type="float" StoreGeneratedPattern="None" Nullable="false" />
+    <Property Name="MaxVerticalVelocity" Type="float" Nullable="false" />
+    <Property Name="UpdateRate" Type="float" Nullable="false" />
     <Property Name="CruiseAltitude" Type="float" Nullable="false" />
     <Property Name="MinDeliveryAlt" Type="float" Nullable="false" />
     <Property Name="Configurations_Id" Type="int" Nullable="false" />
@@ -255,8 +277,101 @@
     <Property Name="role_type" Type="nvarchar(max)" Nullable="false" />
     <Property Name="access_level" Type="nvarchar(max)" Nullable="false" />
   </EntityType>
+  <EntityType Name="CMD_NAV_Waypoint">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Altitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Latitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Longitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="UAVId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CMD_NAV_Takeoff">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="TakeoffPitch" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Altitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="UAVId" Type="int" Nullable="false" />
+    <Property Name="Acceleration" Type="float" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CMD_CONDITION_Rates">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="AltitudeUpdateRate" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="ThrottleUpdateRate" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="LatitudeUpdateRate" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="RollUpdateRate" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="PitchUpdateRate" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="YawUpdateRate" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CMD_NAV_Target">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Altitude" Type="float" Nullable="false" />
+    <Property Name="Latitude" Type="float" Nullable="false" />
+    <Property Name="Longitude" Type="float" Nullable="false" />
+    <Property Name="UAVId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CMD_NAV_Set_Base">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Latitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Longitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="UAVId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CMD_NAV_Land">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Altitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Latitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Longitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Throttle" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="UAVId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CMD_ACK">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CommandId" Type="int" Nullable="false" />
+    <Property Name="Reason" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="CommandType" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CMD_NAV_Waypoint_CMD_NAV_Hover">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Time" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CMD_NAV_Set_Base_CMD_DO_Return_To_Base">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="UseCurrent" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CMD_NAV_Takeoff_CMD_DO_Change_Speed">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="HorizontalSpeed" Type="float" Nullable="true" />
+    <Property Name="VerticalSpeed" Type="float" Nullable="true" />
+    <Property Name="Id" Type="int" Nullable="false" />
+  </EntityType>
   <Association Name="VehicleConfiguration">
-    <End Role="Vehicle" Type="VehicleModel.Store.UAVs1" Multiplicity="*" />
+    <End Role="Vehicle" Type="VehicleModel.Store.UAVs" Multiplicity="*" />
     <End Role="Configuration" Type="VehicleModel.Store.Configurations" Multiplicity="1" />
     <ReferentialConstraint>
       <Principal Role="Configuration">
@@ -292,7 +407,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="VehicleEuipmentHealth">
-    <End Role="Vehicle" Type="VehicleModel.Store.UAVs1" Multiplicity="1" />
+    <End Role="Vehicle" Type="VehicleModel.Store.UAVs" Multiplicity="1" />
     <End Role="EuipmentHealth" Type="VehicleModel.Store.EquipmentHealths" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Vehicle">
@@ -304,7 +419,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="UAVFlightState">
-    <End Role="UAV" Type="VehicleModel.Store.UAVs1" Multiplicity="1" />
+    <End Role="UAV" Type="VehicleModel.Store.UAVs" Multiplicity="1" />
     <End Role="FlightState" Type="VehicleModel.Store.FlightStates" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="UAV">
@@ -316,7 +431,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="UAVSchedule">
-    <End Role="UAV" Type="VehicleModel.Store.UAVs1" Multiplicity="0..1" />
+    <End Role="UAV" Type="VehicleModel.Store.UAVs" Multiplicity="0..1" />
     <End Role="Schedule" Type="VehicleModel.Store.Schedules" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="UAV">
@@ -399,6 +514,48 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint">
+    <End Role="CMD_NAV_Waypoint" Type="VehicleModel.Store.CMD_NAV_Waypoint" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="CMD_NAV_Hover" Type="VehicleModel.Store.CMD_NAV_Waypoint_CMD_NAV_Hover" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="CMD_NAV_Waypoint">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CMD_NAV_Hover">
+        <PropertyRef Name="Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CMD_DO_Return_To_Base_inherits_CMD_NAV_Set_Base">
+    <End Role="CMD_NAV_Set_Base" Type="VehicleModel.Store.CMD_NAV_Set_Base" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="CMD_DO_Return_To_Base" Type="VehicleModel.Store.CMD_NAV_Set_Base_CMD_DO_Return_To_Base" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="CMD_NAV_Set_Base">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CMD_DO_Return_To_Base">
+        <PropertyRef Name="Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CMD_DO_Change_Speed_inherits_CMD_NAV_Takeoff">
+    <End Role="CMD_NAV_Takeoff" Type="VehicleModel.Store.CMD_NAV_Takeoff" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="CMD_DO_Change_Speed" Type="VehicleModel.Store.CMD_NAV_Takeoff_CMD_DO_Change_Speed" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="CMD_NAV_Takeoff">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CMD_DO_Change_Speed">
+        <PropertyRef Name="Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
@@ -466,6 +623,13 @@
             <End Role="User" EntitySet="Users" />
             <End Role="UserRole" EntitySet="UserRoles" />
           </AssociationSet>
+          <EntitySet Name="CMD_NAV_Waypoint" EntityType="VehicleModel.CMD_NAV_Waypoint" />
+          <EntitySet Name="CMD_NAV_Takeoff" EntityType="VehicleModel.CMD_NAV_Takeoff" />
+          <EntitySet Name="CMD_CONDITION_Rates" EntityType="VehicleModel.CMD_CONDITION_Rates" />
+          <EntitySet Name="CMD_NAV_Target" EntityType="VehicleModel.CMD_NAV_Target" />
+          <EntitySet Name="CMD_NAV_Set_Base" EntityType="VehicleModel.CMD_NAV_Set_Base" />
+          <EntitySet Name="CMD_NAV_Land" EntityType="VehicleModel.CMD_NAV_Land" />
+          <EntitySet Name="CMD_ACK" EntityType="VehicleModel.CMD_ACK" />
           </EntityContainer>
         <EntityType Name="UAV">
           <Key>
@@ -776,6 +940,87 @@
           <End Type="VehicleModel.User" Role="User" Multiplicity="1" />
           <End Type="VehicleModel.UserRole" Role="UserRole" Multiplicity="1" />
         </Association>
+        <EntityType Name="CMD_NAV_Waypoint">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Altitude" Type="String" Nullable="false" />
+          <Property Name="Latitude" Type="String" Nullable="false" />
+          <Property Name="Longitude" Type="String" Nullable="false" />
+          <Property Name="UAVId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_NAV_Hover" BaseType="VehicleModel.CMD_NAV_Waypoint">
+          <Property Name="Time" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_NAV_Takeoff">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TakeoffPitch" Type="String" Nullable="false" />
+          <Property Name="Altitude" Type="String" Nullable="false" />
+          <Property Name="UAVId" Type="Int32" Nullable="false" />
+          <Property Name="Acceleration" Type="Double" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_DO_Return_To_Base" BaseType="VehicleModel.CMD_NAV_Set_Base">
+          <Property Name="UseCurrent" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_CONDITION_Rates">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AltitudeUpdateRate" Type="String" Nullable="false" />
+          <Property Name="ThrottleUpdateRate" Type="String" Nullable="false" />
+          <Property Name="LatitudeUpdateRate" Type="String" Nullable="false" />
+          <Property Name="RollUpdateRate" Type="String" Nullable="false" />
+          <Property Name="PitchUpdateRate" Type="String" Nullable="false" />
+          <Property Name="YawUpdateRate" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_DO_Change_Speed" BaseType="VehicleModel.CMD_NAV_Takeoff">
+          <Property Name="HorizontalSpeed" Type="Double" Nullable="true" />
+          <Property Name="VerticalSpeed" Type="Double" Nullable="true" />
+        </EntityType>
+        <EntityType Name="CMD_NAV_Target">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Altitude" Type="Double" Nullable="false" />
+          <Property Name="Latitude" Type="Double" Nullable="false" />
+          <Property Name="Longitude" Type="Double" Nullable="false" />
+          <Property Name="UAVId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_NAV_Set_Base">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Latitude" Type="String" Nullable="false" />
+          <Property Name="Longitude" Type="String" Nullable="false" />
+          <Property Name="UAVId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_NAV_Land">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Altitude" Type="String" Nullable="false" />
+          <Property Name="Latitude" Type="String" Nullable="false" />
+          <Property Name="Longitude" Type="String" Nullable="false" />
+          <Property Name="Throttle" Type="String" Nullable="false" />
+          <Property Name="UAVId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_ACK">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CommandId" Type="Int32" Nullable="false" />
+          <Property Name="Reason" Type="String" Nullable="false" />
+          <Property Name="CommandType" Type="String" Nullable="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -784,7 +1029,7 @@
   <EntityContainerMapping StorageEntityContainer="VehicleModelStoreContainer" CdmEntityContainer="NestContainer">
     <EntitySetMapping Name="UAVs">
       <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.UAV)">
-        <MappingFragment StoreEntitySet="UAVs1">
+        <MappingFragment StoreEntitySet="UAVs">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Callsign" ColumnName="Callsign" />
           <ScalarProperty Name="NumDeliveries" ColumnName="NumDeliveries" />
@@ -977,7 +1222,104 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <AssociationSetMapping Name="VehicleConfiguration" TypeName="VehicleModel.VehicleConfiguration" StoreEntitySet="UAVs1">
+    <EntitySetMapping Name="CMD_NAV_Waypoint">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.CMD_NAV_Waypoint)">
+        <MappingFragment StoreEntitySet="CMD_NAV_Waypoint">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Altitude" ColumnName="Altitude" />
+          <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+          <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="UAVId" ColumnName="UAVId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.CMD_NAV_Hover)">
+        <MappingFragment StoreEntitySet="CMD_NAV_Waypoint_CMD_NAV_Hover">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Time" ColumnName="Time" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CMD_NAV_Takeoff">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.CMD_NAV_Takeoff)">
+        <MappingFragment StoreEntitySet="CMD_NAV_Takeoff">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="TakeoffPitch" ColumnName="TakeoffPitch" />
+          <ScalarProperty Name="Altitude" ColumnName="Altitude" />
+          <ScalarProperty Name="UAVId" ColumnName="UAVId" />
+          <ScalarProperty Name="Acceleration" ColumnName="Acceleration" />
+        </MappingFragment>
+      </EntityTypeMapping>
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.CMD_DO_Change_Speed)">
+        <MappingFragment StoreEntitySet="CMD_NAV_Takeoff_CMD_DO_Change_Speed">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="HorizontalSpeed" ColumnName="HorizontalSpeed" />
+          <ScalarProperty Name="VerticalSpeed" ColumnName="VerticalSpeed" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CMD_CONDITION_Rates">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.CMD_CONDITION_Rates)">
+        <MappingFragment StoreEntitySet="CMD_CONDITION_Rates">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="AltitudeUpdateRate" ColumnName="AltitudeUpdateRate" />
+          <ScalarProperty Name="ThrottleUpdateRate" ColumnName="ThrottleUpdateRate" />
+          <ScalarProperty Name="LatitudeUpdateRate" ColumnName="LatitudeUpdateRate" />
+          <ScalarProperty Name="RollUpdateRate" ColumnName="RollUpdateRate" />
+          <ScalarProperty Name="PitchUpdateRate" ColumnName="PitchUpdateRate" />
+          <ScalarProperty Name="YawUpdateRate" ColumnName="YawUpdateRate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CMD_NAV_Target">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.CMD_NAV_Target)">
+        <MappingFragment StoreEntitySet="CMD_NAV_Target">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Altitude" ColumnName="Altitude" />
+          <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+          <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="UAVId" ColumnName="UAVId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CMD_NAV_Set_Base">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.CMD_NAV_Set_Base)">
+        <MappingFragment StoreEntitySet="CMD_NAV_Set_Base">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+          <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="UAVId" ColumnName="UAVId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.CMD_DO_Return_To_Base)">
+        <MappingFragment StoreEntitySet="CMD_NAV_Set_Base_CMD_DO_Return_To_Base">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="UseCurrent" ColumnName="UseCurrent" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CMD_NAV_Land">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.CMD_NAV_Land)">
+        <MappingFragment StoreEntitySet="CMD_NAV_Land">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Altitude" ColumnName="Altitude" />
+          <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+          <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="Throttle" ColumnName="Throttle" />
+          <ScalarProperty Name="UAVId" ColumnName="UAVId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CMD_ACK">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.CMD_ACK)">
+        <MappingFragment StoreEntitySet="CMD_ACK">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="CommandId" ColumnName="CommandId" />
+          <ScalarProperty Name="Reason" ColumnName="Reason" />
+          <ScalarProperty Name="CommandType" ColumnName="CommandType" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="VehicleConfiguration" TypeName="VehicleModel.VehicleConfiguration" StoreEntitySet="UAVs">
       <EndProperty Name="Configuration">
         <ScalarProperty Name="Id" ColumnName="Configurations_Id" />
       </EndProperty>

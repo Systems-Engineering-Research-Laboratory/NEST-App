@@ -258,7 +258,6 @@ function Vehicle(vehicleInfo, reporter) {
             default:
                 this.Command = target;
         }
-        
         this.reporter.ackCommand(target, target.type, "OK");
     }
 

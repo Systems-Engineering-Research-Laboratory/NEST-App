@@ -16,7 +16,7 @@ namespace NEST_App.Controllers
 {
     public class ScheduleController : ApiController
     {
-        private NestDbContext db = new NestDbContext();
+        private NestContainer db = new NestContainer();
 
 
         /* ****

@@ -40,5 +40,12 @@ namespace NEST_App.Models
         public virtual DbSet<MissionLogActivity> MissionLogActivities { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
+        public virtual DbSet<CMD_NAV_Waypoint> CMD_NAV_Waypoint { get; set; }
+        public virtual DbSet<CMD_NAV_Takeoff> CMD_NAV_Takeoff { get; set; }
+        public virtual DbSet<CMD_CONDITION_Rates> CMD_CONDITION_Rates { get; set; }
+        public virtual DbSet<CMD_NAV_Target> CMD_NAV_Target { get; set; }
+        public virtual DbSet<CMD_NAV_Set_Base> CMD_NAV_Set_Base { get; set; }
+        public virtual DbSet<CMD_NAV_Land> CMD_NAV_Land { get; set; }
+        public virtual DbSet<CMD_ACK> CMD_ACK { get; set; }
     }
 }
