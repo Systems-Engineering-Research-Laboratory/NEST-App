@@ -27,6 +27,7 @@
     <EntitySet Name="CMD_NAV_Set_Base" EntityType="VehicleModel.Store.CMD_NAV_Set_Base" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Land" EntityType="VehicleModel.Store.CMD_NAV_Land" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_ACK" EntityType="VehicleModel.Store.CMD_ACK" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Waypoints" EntityType="VehicleModel.Store.Waypoints" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Waypoint_CMD_NAV_Hover" EntityType="VehicleModel.Store.CMD_NAV_Waypoint_CMD_NAV_Hover" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Set_Base_CMD_DO_Return_To_Base" EntityType="VehicleModel.Store.CMD_NAV_Set_Base_CMD_DO_Return_To_Base" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Takeoff_CMD_DO_Change_Speed" EntityType="VehicleModel.Store.CMD_NAV_Takeoff_CMD_DO_Change_Speed" store:Type="Tables" Schema="dbo" />
@@ -77,6 +78,14 @@
     <AssociationSet Name="UserUserRole" Association="VehicleModel.Store.UserUserRole">
       <End Role="User" EntitySet="Users" />
       <End Role="UserRole" EntitySet="UserRoles" />
+    </AssociationSet>
+    <AssociationSet Name="WaypointWaypoint" Association="VehicleModel.Store.WaypointWaypoint">
+      <End Role="Waypoint" EntitySet="Waypoints" />
+      <End Role="NextWaypoint" EntitySet="Waypoints" />
+    </AssociationSet>
+    <AssociationSet Name="WaypointMission" Association="VehicleModel.Store.WaypointMission">
+      <End Role="Waypoint" EntitySet="Waypoints" />
+      <End Role="Mission" EntitySet="Missions" />
     </AssociationSet>
     <AssociationSet Name="FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint" Association="VehicleModel.Store.FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint">
       <End Role="CMD_NAV_Waypoint" EntitySet="CMD_NAV_Waypoint" />
@@ -191,6 +200,7 @@
     <Property Name="UAVId" Type="int" Nullable="true" />
     <Property Name="create_date" Type="datetime" Nullable="false" />
     <Property Name="modified_date" Type="datetime" Nullable="false" />
+    <Property Name="CurrentMission" Type="int" Nullable="true" />
   </EntityType>
   <EntityType Name="Orders">
     <Key>
@@ -347,6 +357,20 @@
     <Property Name="CommandId" Type="int" Nullable="false" />
     <Property Name="Reason" Type="nvarchar(max)" Nullable="false" />
     <Property Name="CommandType" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Waypoints">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="WaypointName" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="NextWaypointId" Type="int" Nullable="true" />
+    <Property Name="WasSkipped" Type="bit" Nullable="false" />
+    <Property Name="TimeCompleted" Type="datetime" Nullable="false" />
+    <Property Name="Location" Type="geometry" Nullable="false" SRID="0" />
+    <Property Name="Action" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="GeneratedBy" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="MissionId" Type="int" Nullable="true" />
   </EntityType>
   <EntityType Name="CMD_NAV_Waypoint_CMD_NAV_Hover">
     <Key>
@@ -514,6 +538,30 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="WaypointWaypoint">
+    <End Role="Waypoint" Type="VehicleModel.Store.Waypoints" Multiplicity="*" />
+    <End Role="NextWaypoint" Type="VehicleModel.Store.Waypoints" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="NextWaypoint">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Waypoint">
+        <PropertyRef Name="NextWaypointId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="WaypointMission">
+    <End Role="Waypoint" Type="VehicleModel.Store.Waypoints" Multiplicity="*" />
+    <End Role="Mission" Type="VehicleModel.Store.Missions" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="Mission">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Waypoint">
+        <PropertyRef Name="MissionId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint">
     <End Role="CMD_NAV_Waypoint" Type="VehicleModel.Store.CMD_NAV_Waypoint" Multiplicity="1">
       <OnDelete Action="Cascade" />
@@ -630,6 +678,15 @@
           <EntitySet Name="CMD_NAV_Set_Base" EntityType="VehicleModel.CMD_NAV_Set_Base" />
           <EntitySet Name="CMD_NAV_Land" EntityType="VehicleModel.CMD_NAV_Land" />
           <EntitySet Name="CMD_ACK" EntityType="VehicleModel.CMD_ACK" />
+          <EntitySet Name="Waypoints" EntityType="VehicleModel.Waypoint" />
+          <AssociationSet Name="WaypointWaypoint" Association="VehicleModel.WaypointWaypoint">
+            <End Role="Waypoint" EntitySet="Waypoints" />
+            <End Role="NextWaypoint" EntitySet="Waypoints" />
+          </AssociationSet>
+          <AssociationSet Name="WaypointMission" Association="VehicleModel.WaypointMission">
+            <End Role="Waypoint" EntitySet="Waypoints" />
+            <End Role="Mission" EntitySet="Missions" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="UAV">
           <Key>
@@ -782,6 +839,7 @@
           <NavigationProperty Name="Maintenances" Relationship="VehicleModel.MaintenanceSchedule" FromRole="Schedule" ToRole="Maintenance" />
           <Property Name="create_date" Type="DateTime" Nullable="false" />
           <Property Name="modified_date" Type="DateTime" Nullable="false" />
+          <Property Name="CurrentMission" Type="Int32" Nullable="true" />
         </EntityType>
         <Association Name="UAVSchedule">
           <End Type="VehicleModel.UAV" Role="UAV" Multiplicity="0..1" />
@@ -816,6 +874,7 @@
           <NavigationProperty Name="MissionLogs" Relationship="VehicleModel.MissionMissionLog" FromRole="Mission" ToRole="MissionLog" />
           <Property Name="create_date" Type="DateTime" Nullable="false" />
           <Property Name="modified_date" Type="DateTime" Nullable="false" />
+          <NavigationProperty Name="Waypoint" Relationship="VehicleModel.WaypointMission" FromRole="Mission" ToRole="Waypoint" />
         </EntityType>
         <EntityType Name="Order">
           <Key>
@@ -1021,6 +1080,46 @@
           <Property Name="Reason" Type="String" Nullable="false" />
           <Property Name="CommandType" Type="String" Nullable="false" />
         </EntityType>
+        <EntityType Name="Waypoint">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="WaypointName" Type="String" Nullable="false" />
+          <Property Name="NextWaypointId" Type="Int32" Nullable="true" />
+          <Property Name="WasSkipped" Type="Boolean" Nullable="false" />
+          <Property Name="TimeCompleted" Type="DateTime" Nullable="false" />
+          <Property Name="Location" Type="GeometryPoint" Nullable="false" />
+          <Property Name="Action" Type="String" Nullable="false" />
+          <Property Name="GeneratedBy" Type="String" Nullable="false" />
+          <NavigationProperty Name="NextWaypoint" Relationship="VehicleModel.WaypointWaypoint" FromRole="Waypoint" ToRole="NextWaypoint" />
+          <Property Name="MissionId" Type="Int32" Nullable="true" />
+          <NavigationProperty Name="Missions" Relationship="VehicleModel.WaypointMission" FromRole="Waypoint" ToRole="Mission" />
+          </EntityType>
+        <Association Name="WaypointWaypoint">
+          <End Type="VehicleModel.Waypoint" Role="Waypoint" Multiplicity="*" />
+          <End Type="VehicleModel.Waypoint" Role="NextWaypoint" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="NextWaypoint">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Waypoint">
+              <PropertyRef Name="NextWaypointId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="WaypointMission">
+          <End Type="VehicleModel.Waypoint" Role="Waypoint" Multiplicity="*" />
+          <End Type="VehicleModel.Mission" Role="Mission" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Mission">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Waypoint">
+              <PropertyRef Name="MissionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1128,6 +1227,7 @@
           <ScalarProperty Name="UAVId" ColumnName="UAVId" />
           <ScalarProperty Name="create_date" ColumnName="create_date" />
           <ScalarProperty Name="modified_date" ColumnName="modified_date" />
+          <ScalarProperty Name="CurrentMission" ColumnName="CurrentMission" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -1316,6 +1416,21 @@
           <ScalarProperty Name="CommandId" ColumnName="CommandId" />
           <ScalarProperty Name="Reason" ColumnName="Reason" />
           <ScalarProperty Name="CommandType" ColumnName="CommandType" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Waypoints">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.Waypoint)">
+        <MappingFragment StoreEntitySet="Waypoints">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="WaypointName" ColumnName="WaypointName" />
+          <ScalarProperty Name="NextWaypointId" ColumnName="NextWaypointId" />
+          <ScalarProperty Name="WasSkipped" ColumnName="WasSkipped" />
+          <ScalarProperty Name="TimeCompleted" ColumnName="TimeCompleted" />
+          <ScalarProperty Name="Location" ColumnName="Location" />
+          <ScalarProperty Name="Action" ColumnName="Action" />
+          <ScalarProperty Name="GeneratedBy" ColumnName="GeneratedBy" />
+          <ScalarProperty Name="MissionId" ColumnName="MissionId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

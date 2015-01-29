@@ -4,46 +4,49 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="6dda4366b636406bba8d239b12c2e082" Name="Diagram1" ZoomLevel="94" >
-        <EntityTypeShape EntityType="VehicleModel.UAV" Width="1.5" PointX="4.5" PointY="1.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="VehicleModel.FlightState" Width="1.5" PointX="7" PointY="0.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="VehicleModel.Configuration" Width="1.5" PointX="4.125" PointY="6.125" />
+      <Diagram DiagramId="6dda4366b636406bba8d239b12c2e082" Name="Diagram1" ZoomLevel="95" >
+        <EntityTypeShape EntityType="VehicleModel.UAV" Width="1.5" PointX="5.875" PointY="3.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="VehicleModel.FlightState" Width="1.5" PointX="8.375" PointY="2.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="VehicleModel.Configuration" Width="1.5" PointX="5.5" PointY="8" />
         <AssociationConnector Association="VehicleModel.VehicleConfiguration" />
-        <EntityTypeShape EntityType="VehicleModel.Equipment" Width="1.5" PointX="1.5" PointY="4.75" />
+        <EntityTypeShape EntityType="VehicleModel.Equipment" Width="1.5" PointX="2.875" PointY="6.625" />
         <AssociationConnector Association="VehicleModel.ConfigurationEquipmentList" />
-        <EntityTypeShape EntityType="VehicleModel.EquipmentHealth" Width="1.5" PointX="1.5" PointY="1.625" />
+        <EntityTypeShape EntityType="VehicleModel.EquipmentHealth" Width="1.5" PointX="2.875" PointY="3.5" />
         <AssociationConnector Association="VehicleModel.EuipmentHealthEquipmentList" />
         <AssociationConnector Association="VehicleModel.VehicleEuipmentHealth" />
-        <EntityTypeShape EntityType="VehicleModel.NonownshipVehicle" Width="1.5" PointX="9.75" PointY="4.375" />
+        <EntityTypeShape EntityType="VehicleModel.NonownshipVehicle" Width="1.5" PointX="11.125" PointY="6.25" />
         <AssociationConnector Association="VehicleModel.UAVFlightState" />
-        <EntityTypeShape EntityType="VehicleModel.Maintenance" Width="1.5" PointX="2" PointY="8.625" />
-        <EntityTypeShape EntityType="VehicleModel.Schedule" Width="1.5" PointX="6" PointY="8.875" />
+        <EntityTypeShape EntityType="VehicleModel.Maintenance" Width="1.5" PointX="3.375" PointY="10.5" />
+        <EntityTypeShape EntityType="VehicleModel.Schedule" Width="1.5" PointX="7.375" PointY="10.75" />
         <AssociationConnector Association="VehicleModel.UAVSchedule" />
-        <EntityTypeShape EntityType="VehicleModel.Mission" Width="1.5" PointX="5.5" PointY="12" />
-        <EntityTypeShape EntityType="VehicleModel.Order" Width="1.5" PointX="1.375" PointY="11.625" />
+        <EntityTypeShape EntityType="VehicleModel.Mission" Width="1.5" PointX="6.875" PointY="13.875" />
+        <EntityTypeShape EntityType="VehicleModel.Order" Width="1.5" PointX="2.75" PointY="13.5" />
         <AssociationConnector Association="VehicleModel.MissionOrder" />
         <AssociationConnector Association="VehicleModel.MissionSchedule" />
         <AssociationConnector Association="VehicleModel.MaintenanceSchedule" />
-        <EntityTypeShape EntityType="VehicleModel.MissionLog" Width="1.5" PointX="8.75" PointY="12.875" />
-        <EntityTypeShape EntityType="VehicleModel.MissionLogActivity" Width="1.5" PointX="11.875" PointY="12.375" />
+        <EntityTypeShape EntityType="VehicleModel.MissionLog" Width="1.5" PointX="10.125" PointY="14.75" />
+        <EntityTypeShape EntityType="VehicleModel.MissionLogActivity" Width="1.5" PointX="13.25" PointY="14.25" />
         <AssociationConnector Association="VehicleModel.MissionMissionLog" />
         <AssociationConnector Association="VehicleModel.MissionLogMissionLogActivity" />
-        <EntityTypeShape EntityType="VehicleModel.User" Width="1.5" PointX="9" PointY="9.125" />
-        <EntityTypeShape EntityType="VehicleModel.UserRole" Width="1.5" PointX="12.75" PointY="8.375" />
+        <EntityTypeShape EntityType="VehicleModel.User" Width="1.5" PointX="10.375" PointY="11" />
+        <EntityTypeShape EntityType="VehicleModel.UserRole" Width="1.5" PointX="14.125" PointY="10.25" />
         <AssociationConnector Association="VehicleModel.UserUserRole" />
-        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Waypoint" Width="1.5" PointX="22.875" PointY="1.25" />
-        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Hover" Width="1.5" PointX="22.875" PointY="4.375" />
-        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Takeoff" Width="1.5" PointX="19" PointY="0.5" />
-        <EntityTypeShape EntityType="VehicleModel.CMD_DO_Return_To_Base" Width="1.5" PointX="19.5" PointY="10" />
-        <EntityTypeShape EntityType="VehicleModel.CMD_CONDITION_Rates" Width="1.5" PointX="12.5" PointY="0.875" />
-        <EntityTypeShape EntityType="VehicleModel.CMD_DO_Change_Speed" Width="1.5" PointX="19" PointY="3.25" />
-        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Target" Width="1.5" PointX="14.5" PointY="0.875" />
-        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Set_Base" Width="1.5" PointX="19" PointY="5.875" />
-        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Land" Width="1.5" PointX="15.5" PointY="3.875" />
-        <EntityTypeShape EntityType="VehicleModel.CMD_ACK" Width="1.5" PointX="16.5" PointY="0.875" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Waypoint" Width="1.5" PointX="24.25" PointY="3.125" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Hover" Width="1.5" PointX="24.25" PointY="6.25" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Takeoff" Width="1.5" PointX="20.375" PointY="2.375" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_DO_Return_To_Base" Width="1.5" PointX="20.875" PointY="11.875" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_CONDITION_Rates" Width="1.5" PointX="13.875" PointY="2.75" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_DO_Change_Speed" Width="1.5" PointX="20.375" PointY="5.125" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Target" Width="1.5" PointX="15.875" PointY="2.75" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Set_Base" Width="1.5" PointX="20.375" PointY="7.75" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Land" Width="1.5" PointX="16.875" PointY="5.75" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_ACK" Width="1.5" PointX="17.875" PointY="2.75" />
         <InheritanceConnector EntityType="VehicleModel.CMD_DO_Change_Speed" />
         <InheritanceConnector EntityType="VehicleModel.CMD_NAV_Hover" />
         <InheritanceConnector EntityType="VehicleModel.CMD_DO_Return_To_Base" />
+        <EntityTypeShape EntityType="VehicleModel.Waypoint" Width="1.5" PointX="1.875" PointY="17.375" />
+        <AssociationConnector Association="VehicleModel.WaypointWaypoint" />
+        <AssociationConnector Association="VehicleModel.WaypointMission" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

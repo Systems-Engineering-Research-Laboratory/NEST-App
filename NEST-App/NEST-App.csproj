@@ -368,6 +368,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>VehicleModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\Waypoint.cs">
+      <DependentUpon>VehicleModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Weather.cs">
       <DependentUpon>Mapinfo.tt</DependentUpon>
     </Compile>

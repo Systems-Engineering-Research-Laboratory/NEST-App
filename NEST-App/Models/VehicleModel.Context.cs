@@ -47,5 +47,6 @@ namespace NEST_App.Models
         public virtual DbSet<CMD_NAV_Set_Base> CMD_NAV_Set_Base { get; set; }
         public virtual DbSet<CMD_NAV_Land> CMD_NAV_Land { get; set; }
         public virtual DbSet<CMD_ACK> CMD_ACK { get; set; }
+        public virtual DbSet<Waypoint> Waypoints { get; set; }
     }
 }

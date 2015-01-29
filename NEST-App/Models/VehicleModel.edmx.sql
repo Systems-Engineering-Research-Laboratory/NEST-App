@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 01/28/2015 16:03:29
+-- Date Created: 01/28/2015 19:27:53
 -- Generated from EDMX file: C:\Users\Jeffrey\Documents\Programming\NEST\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
@@ -53,6 +53,21 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_UserUserRole]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Users] DROP CONSTRAINT [FK_UserUserRole];
 GO
+IF OBJECT_ID(N'[dbo].[FK_WaypointWaypoint]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Waypoints] DROP CONSTRAINT [FK_WaypointWaypoint];
+GO
+IF OBJECT_ID(N'[dbo].[FK_WaypointMission]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Waypoints] DROP CONSTRAINT [FK_WaypointMission];
+GO
+IF OBJECT_ID(N'[dbo].[FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover] DROP CONSTRAINT [FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint];
+GO
+IF OBJECT_ID(N'[dbo].[FK_CMD_DO_Return_To_Base_inherits_CMD_NAV_Set_Base]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[CMD_NAV_Set_Base_CMD_DO_Return_To_Base] DROP CONSTRAINT [FK_CMD_DO_Return_To_Base_inherits_CMD_NAV_Set_Base];
+GO
+IF OBJECT_ID(N'[dbo].[FK_CMD_DO_Change_Speed_inherits_CMD_NAV_Takeoff]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[CMD_NAV_Takeoff_CMD_DO_Change_Speed] DROP CONSTRAINT [FK_CMD_DO_Change_Speed_inherits_CMD_NAV_Takeoff];
+GO
 
 -- --------------------------------------------------
 -- Dropping existing tables
@@ -99,6 +114,39 @@ IF OBJECT_ID(N'[dbo].[Users]', 'U') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[UserRoles]', 'U') IS NOT NULL
     DROP TABLE [dbo].[UserRoles];
+GO
+IF OBJECT_ID(N'[dbo].[CMD_NAV_Waypoint]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[CMD_NAV_Waypoint];
+GO
+IF OBJECT_ID(N'[dbo].[CMD_NAV_Takeoff]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[CMD_NAV_Takeoff];
+GO
+IF OBJECT_ID(N'[dbo].[CMD_CONDITION_Rates]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[CMD_CONDITION_Rates];
+GO
+IF OBJECT_ID(N'[dbo].[CMD_NAV_Target]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[CMD_NAV_Target];
+GO
+IF OBJECT_ID(N'[dbo].[CMD_NAV_Set_Base]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[CMD_NAV_Set_Base];
+GO
+IF OBJECT_ID(N'[dbo].[CMD_NAV_Land]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[CMD_NAV_Land];
+GO
+IF OBJECT_ID(N'[dbo].[CMD_ACK]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[CMD_ACK];
+GO
+IF OBJECT_ID(N'[dbo].[Waypoints]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Waypoints];
+GO
+IF OBJECT_ID(N'[dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover];
+GO
+IF OBJECT_ID(N'[dbo].[CMD_NAV_Set_Base_CMD_DO_Return_To_Base]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[CMD_NAV_Set_Base_CMD_DO_Return_To_Base];
+GO
+IF OBJECT_ID(N'[dbo].[CMD_NAV_Takeoff_CMD_DO_Change_Speed]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[CMD_NAV_Takeoff_CMD_DO_Change_Speed];
 GO
 
 -- --------------------------------------------------
@@ -202,7 +250,8 @@ CREATE TABLE [dbo].[Schedules] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [UAVId] int  NULL,
     [create_date] datetime  NOT NULL,
-    [modified_date] datetime  NOT NULL
+    [modified_date] datetime  NOT NULL,
+    [CurrentMission] int  NULL
 );
 GO
 
@@ -362,6 +411,20 @@ CREATE TABLE [dbo].[CMD_ACK] (
 );
 GO
 
+-- Creating table 'Waypoints'
+CREATE TABLE [dbo].[Waypoints] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [WaypointName] nvarchar(max)  NOT NULL,
+    [NextWaypointId] int  NULL,
+    [WasSkipped] bit  NOT NULL,
+    [TimeCompleted] datetime  NOT NULL,
+    [Location] geometry  NOT NULL,
+    [Action] nvarchar(max)  NOT NULL,
+    [GeneratedBy] nvarchar(max)  NOT NULL,
+    [MissionId] int  NULL
+);
+GO
+
 -- Creating table 'CMD_NAV_Waypoint_CMD_NAV_Hover'
 CREATE TABLE [dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover] (
     [Time] nvarchar(max)  NOT NULL,
@@ -511,6 +574,12 @@ GO
 -- Creating primary key on [Id] in table 'CMD_ACK'
 ALTER TABLE [dbo].[CMD_ACK]
 ADD CONSTRAINT [PK_CMD_ACK]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'Waypoints'
+ALTER TABLE [dbo].[Waypoints]
+ADD CONSTRAINT [PK_Waypoints]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
@@ -714,6 +783,36 @@ GO
 CREATE INDEX [IX_FK_UserUserRole]
 ON [dbo].[Users]
     ([UserRole_Id]);
+GO
+
+-- Creating foreign key on [NextWaypointId] in table 'Waypoints'
+ALTER TABLE [dbo].[Waypoints]
+ADD CONSTRAINT [FK_WaypointWaypoint]
+    FOREIGN KEY ([NextWaypointId])
+    REFERENCES [dbo].[Waypoints]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_WaypointWaypoint'
+CREATE INDEX [IX_FK_WaypointWaypoint]
+ON [dbo].[Waypoints]
+    ([NextWaypointId]);
+GO
+
+-- Creating foreign key on [MissionId] in table 'Waypoints'
+ALTER TABLE [dbo].[Waypoints]
+ADD CONSTRAINT [FK_WaypointMission]
+    FOREIGN KEY ([MissionId])
+    REFERENCES [dbo].[Missions]
+        ([id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_WaypointMission'
+CREATE INDEX [IX_FK_WaypointMission]
+ON [dbo].[Waypoints]
+    ([MissionId]);
 GO
 
 -- Creating foreign key on [Id] in table 'CMD_NAV_Waypoint_CMD_NAV_Hover'

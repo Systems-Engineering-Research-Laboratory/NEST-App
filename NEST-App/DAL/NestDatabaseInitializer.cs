@@ -17,11 +17,11 @@ namespace NEST_App.DAL
         }
         protected override void Seed(NestContainer context)
         {
-            //if(context.Database.Exists())
-            //{
-            //    context.Database.Delete();
-            //}
-            //context.Database.Create();
+            if (context.Database.Exists())
+            {
+                context.Database.Delete();
+            }
+            context.Database.Create();
             // We can initialize everything here and store it into the database
            var UAVs = new List<UAV>
             {
