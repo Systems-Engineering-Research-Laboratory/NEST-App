@@ -874,7 +874,7 @@
           <NavigationProperty Name="MissionLogs" Relationship="VehicleModel.MissionMissionLog" FromRole="Mission" ToRole="MissionLog" />
           <Property Name="create_date" Type="DateTime" Nullable="false" />
           <Property Name="modified_date" Type="DateTime" Nullable="false" />
-          <NavigationProperty Name="Waypoint" Relationship="VehicleModel.WaypointMission" FromRole="Mission" ToRole="Waypoint" />
+          <NavigationProperty Name="Waypoints" Relationship="VehicleModel.WaypointMission" FromRole="Mission" ToRole="Waypoint" />
         </EntityType>
         <EntityType Name="Order">
           <Key>

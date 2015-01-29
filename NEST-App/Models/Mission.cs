@@ -18,7 +18,7 @@ namespace NEST_App.Models
         {
             this.Orders = new HashSet<Order>();
             this.MissionLogs = new HashSet<MissionLog>();
-            this.Waypoint = new HashSet<Waypoint>();
+            this.Waypoints = new HashSet<Waypoint>();
         }
     
         public string Phase { get; set; }
@@ -39,6 +39,6 @@ namespace NEST_App.Models
         public virtual ICollection<Order> Orders { get; set; }
         public virtual Schedule Schedule { get; set; }
         public virtual ICollection<MissionLog> MissionLogs { get; set; }
-        public virtual ICollection<Waypoint> Waypoint { get; set; }
+        public virtual ICollection<Waypoint> Waypoints { get; set; }
     }
 }

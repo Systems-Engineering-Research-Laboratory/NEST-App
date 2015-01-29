@@ -19,6 +19,19 @@ namespace NEST_App.Controllers
     {
         private NestContainer db = new NestContainer();
 
+        [HttpGet]
+        [ResponseType(typeof(Waypoint))]
+        public async Task<IHttpActionResult> Waypoints(int id)
+        {
+            Mission mission = await db.Missions.FindAsync(id);
+            if (mission == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(mission.Waypoints);
+        }
+
         // GET: api/Missions
         public IQueryable<MissionDTO> GetMissions()
         {

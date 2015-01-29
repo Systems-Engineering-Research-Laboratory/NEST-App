@@ -19,7 +19,9 @@ namespace NEST_App
 
             config.Routes.MapHttpRoute(
                 name: "ApiWithAction",
-                routeTemplate: "api/{controller}/{action}");
+                routeTemplate: "api/{controller}/{action}/{id}",
+                defaults: new { id = RouteParameter.Optional }
+            );
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
