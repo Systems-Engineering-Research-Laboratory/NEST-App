@@ -9,7 +9,7 @@
         <EntityTypeShape EntityType="VehicleModel.FlightState" Width="1.5" PointX="7" PointY="0.5" IsExpanded="true" />
         <EntityTypeShape EntityType="VehicleModel.Configuration" Width="1.5" PointX="4.125" PointY="6.125" />
         <AssociationConnector Association="VehicleModel.VehicleConfiguration" />
-        <EntityTypeShape EntityType="VehicleModel.Equipment" Width="1.5" PointX="1.5" PointY="4.25" />
+        <EntityTypeShape EntityType="VehicleModel.Equipment" Width="1.5" PointX="1.5" PointY="4.75" />
         <AssociationConnector Association="VehicleModel.ConfigurationEquipmentList" />
         <EntityTypeShape EntityType="VehicleModel.EquipmentHealth" Width="1.5" PointX="1.5" PointY="1.625" />
         <AssociationConnector Association="VehicleModel.EuipmentHealthEquipmentList" />
@@ -31,6 +31,19 @@
         <EntityTypeShape EntityType="VehicleModel.User" Width="1.5" PointX="9" PointY="9.125" />
         <EntityTypeShape EntityType="VehicleModel.UserRole" Width="1.5" PointX="12.75" PointY="8.375" />
         <AssociationConnector Association="VehicleModel.UserUserRole" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Waypoint" Width="1.5" PointX="22.875" PointY="1.25" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Hover" Width="1.5" PointX="22.875" PointY="4.375" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Takeoff" Width="1.5" PointX="19" PointY="0.5" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_DO_Return_To_Base" Width="1.5" PointX="19.5" PointY="10" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_CONDITION_Rates" Width="1.5" PointX="12.5" PointY="0.875" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_DO_Change_Speed" Width="1.5" PointX="19" PointY="3.25" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Target" Width="1.5" PointX="14.5" PointY="0.875" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Set_Base" Width="1.5" PointX="19" PointY="5.875" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Land" Width="1.5" PointX="15.5" PointY="3.875" />
+        <EntityTypeShape EntityType="VehicleModel.CMD_ACK" Width="1.5" PointX="16.5" PointY="0.875" />
+        <InheritanceConnector EntityType="VehicleModel.CMD_DO_Change_Speed" />
+        <InheritanceConnector EntityType="VehicleModel.CMD_NAV_Hover" />
+        <InheritanceConnector EntityType="VehicleModel.CMD_DO_Return_To_Base" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
