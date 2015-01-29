@@ -273,21 +273,6 @@
     <Compile Include="Models\CMD_NAV_Waypoint.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Commands.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Commands.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Commands.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Commands.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Commands.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Commands.edmx</DependentUpon>
-    </Compile>
     <Compile Include="Models\Configuration.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
@@ -476,7 +461,6 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>VehicleModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <Content Include="Models\Commands.edmx.sql" />
     <Content Include="Models\VehicleModel.edmx.diagram">
       <DependentUpon>VehicleModel.edmx</DependentUpon>
     </Content>
@@ -507,23 +491,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>Mapinfo.edmx</DependentUpon>
       <LastGenOutput>Mapinfo.cs</LastGenOutput>
-    </Content>
-    <EntityDeploy Include="Models\Commands.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>Commands.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\Commands.edmx.diagram">
-      <DependentUpon>Commands.edmx</DependentUpon>
-    </Content>
-    <Content Include="Models\Commands.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Commands.Context.cs</LastGenOutput>
-      <DependentUpon>Commands.edmx</DependentUpon>
-    </Content>
-    <Content Include="Models\Commands.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Commands.cs</LastGenOutput>
-      <DependentUpon>Commands.edmx</DependentUpon>
     </Content>
     <EntityDeploy Include="Models\Scheduling.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
