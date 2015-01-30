@@ -15,7 +15,7 @@ namespace NEST_App.Models.DTOs
         public decimal FinancialCost { get; set; }
         public int UAVId { get; set; }
         public System.DateTime TimeAssigned { get; set; }
-        public System.DateTime TimeCompleted { get; set; }
+        public System.DateTime? TimeCompleted { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public double Altitude { get; set; }

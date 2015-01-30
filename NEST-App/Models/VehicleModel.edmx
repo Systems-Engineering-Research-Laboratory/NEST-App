@@ -226,7 +226,7 @@
     <Property Name="Priority" Type="int" Nullable="false" />
     <Property Name="FinancialCost" Type="decimal" Nullable="true" Precision="19" Scale="4" />
     <Property Name="TimeAssigned" Type="datetime" Nullable="false" />
-    <Property Name="TimeCompleted" Type="datetime" Nullable="false" />
+    <Property Name="TimeCompleted" Type="datetime" Nullable="true" />
     <Property Name="DestinationCoordinates" Type="geography" Nullable="false" SRID="4326" />
     <Property Name="ScheduledCompletionTime" Type="datetime" Nullable="false" />
     <Property Name="EstimatedCompletionTime" Type="datetime" Nullable="false" />
@@ -366,11 +366,12 @@
     <Property Name="WaypointName" Type="nvarchar(max)" Nullable="false" />
     <Property Name="NextWaypointId" Type="int" Nullable="true" />
     <Property Name="WasSkipped" Type="bit" Nullable="false" />
-    <Property Name="TimeCompleted" Type="datetime" Nullable="false" />
-    <Property Name="Location" Type="geometry" Nullable="false" SRID="0" />
+    <Property Name="TimeCompleted" Type="datetime" Nullable="true" />
+    <Property Name="Position" Type="geography" Nullable="false" SRID="4326" />
     <Property Name="Action" Type="nvarchar(max)" Nullable="false" />
     <Property Name="GeneratedBy" Type="nvarchar(max)" Nullable="false" />
     <Property Name="MissionId" Type="int" Nullable="true" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
   <EntityType Name="CMD_NAV_Waypoint_CMD_NAV_Hover">
     <Key>
@@ -863,7 +864,7 @@
           <Property Name="Priority" Type="Int32" Nullable="false" />
           <Property Name="FinancialCost" Type="Decimal" Precision="19" Scale="4" />
           <Property Name="TimeAssigned" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="TimeCompleted" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="TimeCompleted" Type="DateTime" Nullable="true" Precision="3" />
           <Property Name="DestinationCoordinates" Type="Geography" Nullable="false" />
           <Property Name="ScheduledCompletionTime" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="EstimatedCompletionTime" Type="DateTime" Nullable="false" Precision="3" />
@@ -1085,16 +1086,17 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="WaypointName" Type="String" Nullable="false" />
+          <Property Name="WaypointName" Type="String" Nullable="false" annotation:StoreGeneratedPattern="None" />
           <Property Name="NextWaypointId" Type="Int32" Nullable="true" />
           <Property Name="WasSkipped" Type="Boolean" Nullable="false" />
-          <Property Name="TimeCompleted" Type="DateTime" Nullable="false" />
-          <Property Name="Location" Type="GeometryPoint" Nullable="false" />
+          <Property Name="TimeCompleted" Type="DateTime" Nullable="true" />
+          <Property Name="Position" Nullable="false" Type="GeographyPoint" />
           <Property Name="Action" Type="String" Nullable="false" />
           <Property Name="GeneratedBy" Type="String" Nullable="false" />
           <NavigationProperty Name="NextWaypoint" Relationship="VehicleModel.WaypointWaypoint" FromRole="Waypoint" ToRole="NextWaypoint" />
           <Property Name="MissionId" Type="Int32" Nullable="true" />
           <NavigationProperty Name="Missions" Relationship="VehicleModel.WaypointMission" FromRole="Waypoint" ToRole="Mission" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
           </EntityType>
         <Association Name="WaypointWaypoint">
           <End Type="VehicleModel.Waypoint" Role="Waypoint" Multiplicity="*" />
@@ -1427,10 +1429,11 @@
           <ScalarProperty Name="NextWaypointId" ColumnName="NextWaypointId" />
           <ScalarProperty Name="WasSkipped" ColumnName="WasSkipped" />
           <ScalarProperty Name="TimeCompleted" ColumnName="TimeCompleted" />
-          <ScalarProperty Name="Location" ColumnName="Location" />
+          <ScalarProperty Name="Position" ColumnName="Position" />
           <ScalarProperty Name="Action" ColumnName="Action" />
           <ScalarProperty Name="GeneratedBy" ColumnName="GeneratedBy" />
           <ScalarProperty Name="MissionId" ColumnName="MissionId" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

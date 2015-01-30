@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 01/28/2015 19:27:53
+-- Date Created: 01/29/2015 10:03:56
 -- Generated from EDMX file: C:\Users\Jeffrey\Documents\Programming\NEST\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
@@ -277,7 +277,7 @@ CREATE TABLE [dbo].[Missions] (
     [Priority] int  NOT NULL,
     [FinancialCost] decimal(19,4)  NULL,
     [TimeAssigned] datetime  NOT NULL,
-    [TimeCompleted] datetime  NOT NULL,
+    [TimeCompleted] datetime  NULL,
     [DestinationCoordinates] geography  NOT NULL,
     [ScheduledCompletionTime] datetime  NOT NULL,
     [EstimatedCompletionTime] datetime  NOT NULL,
@@ -417,11 +417,12 @@ CREATE TABLE [dbo].[Waypoints] (
     [WaypointName] nvarchar(max)  NOT NULL,
     [NextWaypointId] int  NULL,
     [WasSkipped] bit  NOT NULL,
-    [TimeCompleted] datetime  NOT NULL,
-    [Location] geometry  NOT NULL,
+    [TimeCompleted] datetime  NULL,
+    [Position] geography  NOT NULL,
     [Action] nvarchar(max)  NOT NULL,
     [GeneratedBy] nvarchar(max)  NOT NULL,
-    [MissionId] int  NULL
+    [MissionId] int  NULL,
+    [IsActive] bit  NOT NULL
 );
 GO
 

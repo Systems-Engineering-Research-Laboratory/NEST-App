@@ -27,7 +27,7 @@ namespace NEST_App.Models
         public int Priority { get; set; }
         public Nullable<decimal> FinancialCost { get; set; }
         public System.DateTime TimeAssigned { get; set; }
-        public System.DateTime TimeCompleted { get; set; }
+        public Nullable<System.DateTime> TimeCompleted { get; set; }
         public System.Data.Entity.Spatial.DbGeography DestinationCoordinates { get; set; }
         public System.DateTime ScheduledCompletionTime { get; set; }
         public System.DateTime EstimatedCompletionTime { get; set; }

@@ -20,16 +20,23 @@ namespace NEST_App.Controllers
         private NestContainer db = new NestContainer();
 
         [HttpGet]
-        [ResponseType(typeof(Waypoint))]
-        public async Task<IHttpActionResult> Waypoints(int id)
+        
+        public async Task<IEnumerable<object>> Waypoints(int id)
         {
             Mission mission = await db.Missions.FindAsync(id);
-            if (mission == null)
-            {
-                return NotFound();
-            }
 
-            return Ok(mission.Waypoints);
+            var wps = from wp in mission.Waypoints
+                      select new
+                      {
+                          MissionId = wp.MissionId,
+                          wp.NextWaypointId,
+                          Position = wp.Position,
+                          isActive = wp.IsActive,
+                          Id = wp.Id,
+                          TimeCompleted = wp.TimeCompleted,
+                          WaypointName = wp.WaypointName
+                      };
+            return wps;
         }
 
         // GET: api/Missions
