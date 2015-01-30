@@ -12,27 +12,21 @@ namespace NEST_App.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Weather
+    public partial class Weather : MapRestricted
     {
-        public int WeatherID { get; set; }
         public string Location { get; set; }
         public string Name_Station { get; set; }
-        public string AvgWindSpdMPH { get; set; }
-        public string AvgWindDir { get; set; }
-        public string MaxWindSpdMPH { get; set; }
-        public string WindDiratMax { get; set; }
-        public string AvgTempDeg_F { get; set; }
-        public string MaxTempDeg_F { get; set; }
-        public string MinTempDeg_F { get; set; }
-        public string AvgRH_Perc { get; set; }
-        public string AvgBarPress_mb { get; set; }
-        public string TotalRainInches { get; set; }
-        public string AvgSolar_WPerm2 { get; set; }
-        public string BattVoltMin { get; set; }
-        public string Warning { get; set; }
-    
-        public virtual MapInformation MapInfo { get; set; }
-        public virtual UAV_Warehouse UAV_Utilities { get; set; }
-        public virtual RestrictedArea RestrictedArea { get; set; }
+        public decimal AvgWindSpdMPH { get; set; }
+        public decimal AvgWindDir { get; set; }
+        public decimal MaxWindSpdMPH { get; set; }
+        public decimal WindDiratMax { get; set; }
+        public decimal AvgTempDeg_F { get; set; }
+        public decimal MaxTempDeg_F { get; set; }
+        public decimal MinTempDeg_F { get; set; }
+        public decimal AvgRH_Perc { get; set; }
+        public decimal AvgBarPress_mb { get; set; }
+        public decimal TotalRainInches { get; set; }
+        public decimal AvgSolar_WPerm2 { get; set; }
+        public decimal BattVoltMin { get; set; }
     }
 }

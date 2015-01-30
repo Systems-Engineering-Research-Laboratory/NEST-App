@@ -25,9 +25,8 @@ namespace NEST_App.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public DbSet<UAVInformation> UAVInformationSet { get; set; }
-        public DbSet<PopulationDensity> PopulationDensitySet { get; set; }
-        public DbSet<MapInformation> MapInformationSet { get; set; }
-        public DbSet<Weather> WeatherSet { get; set; }
+        public DbSet<MapArea> MapAreaSet { get; set; }
+        public DbSet<MapRestricted> MapRestrictedSet { get; set; }
+        public DbSet<MapPoint> MapPointSet { get; set; }
     }
 }
