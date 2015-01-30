@@ -45,7 +45,7 @@ function Vehicle(vehicleInfo, reporter) {
 
     this.appendLonLat(this.FlightState, this.FlightState.Position);
     if (this.Mission) {
-        this.appendLonLat(this.Mission, this.Mission.DestinationCoordinates);
+        appendLonLatFromDbPoint(this.Mission, this.Mission.DestinationCoordinates);
     }
 
     //Functions. Careful not to add global helper functions here.
@@ -295,16 +295,18 @@ function Vehicle(vehicleInfo, reporter) {
 function Reporter() {
     this.hub = $.connection.vehicleHub;
 
+    this.pendingResult = false;
+
     this.updateMission = function (mission, opts) {
-        this.putToServer('api/mission/' + mission.Id, mission);
+        this.putToServer('api/missions/' + mission.Id, mission);
     }
 
     this.updateFlightState = function (fs, opts) {
         this.hub.server.pushFlightStateUpdate(fs);
     }
 
-    this.putToServer = function (url, data, success) {
-        $.ajax({ url: url, data: data, sucess: success, type: 'PUT' });
+    this.putToServer = function (url, success) {
+        $.ajax({ url: url, sucess: success, type: 'PUT' });
     }
 
     this.ackCommand = function (cmd, type, reason) {
@@ -314,7 +316,21 @@ function Reporter() {
             Reason: reason
         }, cmd.connId);
     }
+
+    this.retrieveWaypointsByMissionId = function(id, success) {
+        this.pendingResult = false;
+        var url = '/api/missions/waypoints/' + id;
+        $.ajax({
+            url: url,
+        }).done( function (data, textStatus, jqXHR){ 
+            this.pendingResult = false;
+            if(success)
+                success(data, textStatus, jqXHR);
+        });
+    }
 }
+
+
 
 function VehicleContainer (){
     this.ids = [];
@@ -336,6 +352,59 @@ function VehicleContainer (){
     this.addVehicle = function (veh) {
         this.ids.push(veh.id);
         this.vehicles.push(veh);
+    }
+}
+
+function PathGenerator(areaContainer, reporter) {
+    this.areaContainer = areaContainer;
+    this.mission = mission;
+    this.waypoints = waypoints;
+    this.reporter = reporter;
+
+    this.resolvePath = function(mission, wps, veh) {
+        //For now, we are just going to get the direct waypoints.
+        if (wps.length < 2) {
+            var wps = this.withEndPoints(mission, wps, veh);
+        }
+        return wps;
+    }
+
+    this.withEndPoints = function (mission, wps, veh) {
+        //If the wps is less than 2, then we are missing the end points of the waypoints.
+        if(wps && wps.length < 2) {
+            wps = this.getBeginningAndEnd(mission, wps, veh);
+        }
+        return wps;
+    }
+
+    //Immediately return the beginning and end of the waypoints.
+    this.getBeginningAndEnd = function (mission, wps, veh) {
+        var fs = veh.FlightState;
+        //If the mission is completed, just go back to base.
+        var objective = mission.TimeCompleted? veh.Base : mission;
+        var pts = [Waypoint({Latitude: fs.Latitude, Longitude: fs.Longitude}),
+            Waypoint({Latitude: objective.Latitude, objective: mission.Longitude})];
+        return pts;
+    }
+
+}
+
+function Waypoint(info) {
+    if (info.Name) {
+        this.Name = info.Name;
+    }
+    if (info.Position) {
+        appendLonLatFromDbPoint(this, info.Position);
+        LatLongToXY(this);
+        this.Position = info.Position;
+    }
+    else if(info.Latitude && info.Longitude) {
+        this.Latitude = Latitude;
+        this.Longitude = Longitude;
+        LatLongToXY(this);
+    }
+    if(info.NextWaypointId) {
+        this.NextWaypointId = info.NextWaypointId;
     }
 }
 
@@ -411,4 +480,13 @@ function calculateDistance(x1, y1, x2, y2) {
     var dy = y2 - y1;
     var distance = Math.sqrt(dx * dx + dy * dy);
     return distance;
+}
+
+appendLonLatFromDbPoint = function (obj, point) {
+    var pointText = point.Geography.WellKnownText
+    var results = pointText.match(/-?\d+(\.\d+)?/g);
+    obj.Longitude = parseFloat(results[0]);
+    obj.Latitude = parseFloat(results[1]);
+    obj.Altitude = parseFloat(results[2]);
+    LatLongToXY(obj);
 }
