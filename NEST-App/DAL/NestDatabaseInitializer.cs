@@ -106,11 +106,11 @@ namespace NEST_App.DAL
                 missions.First().Schedule = schedules.First();
                 maintenances.First().Schedule = schedules.First();
                 UAVs.First().Schedules = schedules;
-                //context.FlightStates.Add(FlightStates.First());
+                context.FlightStates.Add(FlightStates.First());
                 context.UAVs.Add(UAVs.First());
-                //context.Missions.Add(missions.First());
-                //context.Maintenances.Add(maintenances.First());
-                //context.Schedules.Add(schedules.First());
+                context.Missions.Add(missions.First());
+                context.Maintenances.Add(maintenances.First());
+                context.Schedules.Add(schedules.First());
                 context.SaveChanges();
             }
             catch (DbEntityValidationException e)
