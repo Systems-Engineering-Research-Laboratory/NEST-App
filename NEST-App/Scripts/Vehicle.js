@@ -29,19 +29,25 @@ function Vehicle(vehicleInfo, reporter) {
     this.Command = null;
     this.descending = true;
     this.reporter = reporter;
-    if (this.Mission) {
-        this.reporter.retrieveWaypointsByMissionId(this.Mission.id, function (data) {
-            if (data.length < 2) {
-                this.generateWaypoints();
-            }
-            else {
-                this.waypoints = data;
-                this.currentWaypoint = this.waypoints[0];
-                this.waypoints[1].obj = this.Mission;
-                this.waypoints[1].objType = "mission";
-            }
-        });
+    var that = this;
+    this.gotNewWaypoints = function (data) {
+        console.log(that);
+        if (data.length < 2) {
+            that.generateWaypoints();
+        }
+        else {
+            var wps = data.map(function (curVal) { return new Waypoint(curVal); });
+            that.waypoints = wps;
+            that.currentWaypoint = that.waypoints[0];
+            that.waypoints[1].obj = that.Mission;
+            that.waypoints[1].objType = "mission";
+        }
     }
+
+    if (this.Mission) {
+        this.reporter.retrieveWaypointsByMissionId(this.Mission.id, this, this.gotNewWaypoints);
+    }
+
 
     this.setReporter = function (reporter) {
         this.reporter = reporter;
@@ -72,7 +78,7 @@ function Vehicle(vehicleInfo, reporter) {
         }
         if (this.currentWaypoint) {
             if (this.performWaypoint(dt)) {
-                this.getNexyWaypoint();
+                this.getNextWaypoint();
             }
         }
         else if (!this.isAtBase()) {
@@ -340,6 +346,22 @@ function Vehicle(vehicleInfo, reporter) {
             this.resolvePath(this.Mission, [], this);
         }
     }
+
+    this.getNextWaypoint = function () {
+        var wp = this.currentWaypoint;
+        var wps = this.waypoints;
+        for (var i = 0; i < wps.length; i++) {
+            var candidate = wps[i];
+            if (wp.NextWaypointId == candidate.Id) {
+                this.currentWaypoint = candidate;
+                break;
+            }
+        }
+        if (this.currentWaypoint == wp) {
+            this.currentWaypoint = null;
+        }
+        //TODO: Report that we finished this wp
+    }
 }
 
 function Reporter() {
@@ -367,32 +389,16 @@ function Reporter() {
         }, cmd.connId);
     }
 
-    this.retrieveWaypointsByMissionId = function(id, success) {
+    this.retrieveWaypointsByMissionId = function(id, caller, success) {
         this.pendingResult = false;
         var url = '/api/missions/waypoints/' + id;
-        $.ajax({
+        return $.ajax({
             url: url,
-        }).done( function (data, textStatus, jqXHR){ 
-            this.pendingResult = false;
-            if(success)
-                success(data, textStatus, jqXHR);
+            success: function(data, textStatus, jqXHR) {success(data, textStatus, jqXHR);}
         });
     }
 
-    this.getNextWaypoint = function () {
-        var wp = this.currentWaypoint;
-        for (var i = 0; i < this.Waypoints.length; i++) {
-            var candidate = this.Waypoints[i];
-            if (wp.NextWaypointId == candidate.Id) {
-                this.currentWaypoint = candidate;
-                break;
-            }
-        }
-        if (this.currentWaypoint == wp) {
-            this.currentWaypoint = null;
-        }
-        //TODO: Report that we finished this wp
-    }
+    
 }
 
 
