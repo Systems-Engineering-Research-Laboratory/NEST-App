@@ -13,15 +13,15 @@ namespace NEST_App.DAL
     {
         public void InitializeDatabase()
         {
-            Seed(new NestContainer());
+            //Seed(new NestContainer());
         }
         protected override void Seed(NestContainer context)
         {
-            if (context.Database.Exists())
-            {
-                context.Database.Delete();
-            }
-            context.Database.Create();
+            //if (context.Database.Exists())
+            //{
+            //    context.Database.Delete();
+            //}
+            //context.Database.Create();
             // We can initialize everything here and store it into the database
            var UAVs = new List<UAV>
             {
@@ -106,10 +106,10 @@ namespace NEST_App.DAL
                 missions.First().Schedule = schedules.First();
                 maintenances.First().Schedule = schedules.First();
                 UAVs.First().Schedules = schedules;
-                context.FlightStates.Add(FlightStates.First());
-                context.UAVs.Add(UAVs.First());
-                context.Missions.Add(missions.First());
-                context.Maintenances.Add(maintenances.First());
+                //context.FlightStates.Add(FlightStates.First());
+                //context.UAVs.Add(UAVs.First());
+                //context.Missions.Add(missions.First());
+                //context.Maintenances.Add(maintenances.First());
                 context.Schedules.Add(schedules.First());
                 context.SaveChanges();
             }
