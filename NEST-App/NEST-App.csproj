@@ -225,6 +225,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\DetailViewController.cs" />
     <Compile Include="Controllers\FlightStateController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InterfaceController.cs" />
@@ -563,6 +564,7 @@
     <Content Include="Views\Interface\Index.cshtml" />
     <Content Include="Views\ScheduleView\Index.cshtml" />
     <Content Include="Views\Map\GoogleMap.cshtml" />
+    <Content Include="Views\DetailView\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

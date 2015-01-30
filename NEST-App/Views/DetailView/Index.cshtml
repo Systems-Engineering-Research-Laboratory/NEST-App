@@ -1,0 +1,64 @@
+﻿@using NEST_App.Models
+@model dynamic
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    ViewBag.Title = "Index";
+}
+
+<!DOCTYPE html>
+
+
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <br />
+    <table class="table" style="width: 50%">
+        <tr>
+            <th>Callsign</th>
+            <th>NumDeliveries</th>
+            <th>Mileage</th>
+            <th>Battery Level</th>
+        </tr>
+        @foreach (UAV uav in Model.UAVs)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => uav.Callsign)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => uav.NumDeliveries)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => uav.Mileage)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().BatteryLevel)
+                </td>
+            </tr>
+        }
+    </table>
+    <div id="map-canvas" style="height: 100%; margin: 0; padding: 0; overflow: hidden;"></div>
+</body>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=drawing"></script>
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/Scripts/jquery.signalR-2.0.2.js")
+@Scripts.Render("~/signalr/hubs")
+<script type="text/javascript">
+    $(document).ready(function () {
+        var mapOptions = {
+            zoom: 18,
+            center: new google.maps.LatLng(34.2417, -118.529),
+            disableDefaultUI: true,
+            zoomControl: true,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            disableDoubleClickZoom: true,
+        }
+        map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    });
+</script>
