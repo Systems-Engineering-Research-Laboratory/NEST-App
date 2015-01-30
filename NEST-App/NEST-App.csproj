@@ -286,6 +286,9 @@
     <Compile Include="Models\EquipmentHealth.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\EventLog.cs">
+      <DependentUpon>VehicleModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\FlightState.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
     </Compile>
