@@ -2,13 +2,13 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 01/29/2015 10:03:56
--- Generated from EDMX file: C:\Users\Jeffrey\Documents\Programming\NEST\NEST-App\Models\VehicleModel.edmx
+-- Date Created: 01/29/2015 21:45:21
+-- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
 GO
-USE [NEST_DB];
+USE [NEST_DB_5a2058062e8243a9892cd610bd19c2d2]
 GO
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 GO
@@ -138,6 +138,9 @@ IF OBJECT_ID(N'[dbo].[CMD_ACK]', 'U') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[Waypoints]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Waypoints];
+GO
+IF OBJECT_ID(N'[dbo].[EventLogs]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[EventLogs];
 GO
 IF OBJECT_ID(N'[dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover]', 'U') IS NOT NULL
     DROP TABLE [dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover];
@@ -426,6 +429,17 @@ CREATE TABLE [dbo].[Waypoints] (
 );
 GO
 
+-- Creating table 'EventLogs'
+CREATE TABLE [dbo].[EventLogs] (
+    [event_id] int IDENTITY(1,1) NOT NULL,
+    [create_date] datetime  NOT NULL,
+    [modified_date] datetime  NOT NULL,
+    [uav_id] int  NOT NULL,
+    [message] nvarchar(max)  NOT NULL,
+    [criticality] nvarchar(max)  NOT NULL
+);
+GO
+
 -- Creating table 'CMD_NAV_Waypoint_CMD_NAV_Hover'
 CREATE TABLE [dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover] (
     [Time] nvarchar(max)  NOT NULL,
@@ -582,6 +596,12 @@ GO
 ALTER TABLE [dbo].[Waypoints]
 ADD CONSTRAINT [PK_Waypoints]
     PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [event_id] in table 'EventLogs'
+ALTER TABLE [dbo].[EventLogs]
+ADD CONSTRAINT [PK_EventLogs]
+    PRIMARY KEY CLUSTERED ([event_id] ASC);
 GO
 
 -- Creating primary key on [Id] in table 'CMD_NAV_Waypoint_CMD_NAV_Hover'

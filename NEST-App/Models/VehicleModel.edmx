@@ -28,6 +28,7 @@
     <EntitySet Name="CMD_NAV_Land" EntityType="VehicleModel.Store.CMD_NAV_Land" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_ACK" EntityType="VehicleModel.Store.CMD_ACK" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Waypoints" EntityType="VehicleModel.Store.Waypoints" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="EventLogs" EntityType="VehicleModel.Store.EventLogs" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Waypoint_CMD_NAV_Hover" EntityType="VehicleModel.Store.CMD_NAV_Waypoint_CMD_NAV_Hover" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Set_Base_CMD_DO_Return_To_Base" EntityType="VehicleModel.Store.CMD_NAV_Set_Base_CMD_DO_Return_To_Base" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Takeoff_CMD_DO_Change_Speed" EntityType="VehicleModel.Store.CMD_NAV_Takeoff_CMD_DO_Change_Speed" store:Type="Tables" Schema="dbo" />
@@ -373,6 +374,17 @@
     <Property Name="MissionId" Type="int" Nullable="true" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
+  <EntityType Name="EventLogs">
+    <Key>
+      <PropertyRef Name="event_id" />
+    </Key>
+    <Property Name="event_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="create_date" Type="datetime" Nullable="false" />
+    <Property Name="modified_date" Type="datetime" Nullable="false" />
+    <Property Name="uav_id" Type="int" Nullable="false" />
+    <Property Name="message" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="criticality" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
   <EntityType Name="CMD_NAV_Waypoint_CMD_NAV_Hover">
     <Key>
       <PropertyRef Name="Id" />
@@ -688,6 +700,7 @@
             <End Role="Waypoint" EntitySet="Waypoints" />
             <End Role="Mission" EntitySet="Missions" />
           </AssociationSet>
+          <EntitySet Name="EventLogs" EntityType="VehicleModel.EventLog" />
           </EntityContainer>
         <EntityType Name="UAV">
           <Key>
@@ -1122,6 +1135,17 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="EventLog">
+          <Key>
+            <PropertyRef Name="event_id" />
+          </Key>
+          <Property Name="event_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" />
+          <Property Name="modified_date" Type="DateTime" Nullable="false" />
+          <Property Name="uav_id" Type="Int32" Nullable="false" />
+          <Property Name="message" Type="String" Nullable="false" />
+          <Property Name="criticality" Type="String" Nullable="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1434,6 +1458,18 @@
           <ScalarProperty Name="GeneratedBy" ColumnName="GeneratedBy" />
           <ScalarProperty Name="MissionId" ColumnName="MissionId" />
           <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="EventLogs">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.EventLog)">
+        <MappingFragment StoreEntitySet="EventLogs">
+          <ScalarProperty Name="event_id" ColumnName="event_id" />
+          <ScalarProperty Name="create_date" ColumnName="create_date" />
+          <ScalarProperty Name="modified_date" ColumnName="modified_date" />
+          <ScalarProperty Name="uav_id" ColumnName="uav_id" />
+          <ScalarProperty Name="message" ColumnName="message" />
+          <ScalarProperty Name="criticality" ColumnName="criticality" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

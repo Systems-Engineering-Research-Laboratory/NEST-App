@@ -57,6 +57,17 @@ var mapClickIcon = new google.maps.MarkerImage(
         new google.maps.Size(35, 60)
     );
 
+var goldStarBase = {
+    path: 'M 125,5 155,90 245,90 175,145 200,230 125,180 50,230 75,145 5,90 95,90 z',
+    fillColor: 'yellow',
+    fillOpacity: 0.8,
+    scale: 0.3,
+    strokeColor: 'gold',
+    strokeWeight: 4,
+    anchor: new google.maps.Point(90, 140)
+};
+
+
 //Button for zooming to base on click
 function BaseControl(controlDiv, map) {
     controlDiv.style.padding = '6px';
@@ -134,13 +145,11 @@ function uavMarkers(data, textStatus, jqXHR) {
         
         var markerCircle = new google.maps.Marker({
             position: uavs[data[i].Id].Position,
-            map: map,
             icon: uavCircleBlack
         });
 
         var marker = new MarkerWithLabel({
             position: uavs[data[i].Id].Position,
-            map: map,
             icon: uavSymbolBlack,
             labelContent: uavs[data[i].Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uavs[data[i].Id].Alt + '<br/><b>Bat: </b>' + uavs[data[i].Id].Battery + '</div>',
             labelAnchor: new google.maps.Point(95, 20),
@@ -271,6 +280,12 @@ $(document).ready(function () {
     var homeControlDiv = document.createElement('div');
     var homeControl = new BaseControl(homeControlDiv, map);
 
+    var marker = new google.maps.Marker({
+        position: homeBase,
+        icon: goldStarBase,
+        map: map
+    });
+
     homeControlDiv.index = 1;
     map.controls[google.maps.ControlPosition.RIGHT].push(homeControlDiv);
 
@@ -346,6 +361,8 @@ $(document).ready(function () {
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         console.log(vehicle);
         var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
+        uavs[vehicle.Id].marker.setMap(map);
+        uavs[vehicle.Id].markerCircle.setMap(map);
         uavs[vehicle.Id].marker.setPosition(LatLng);
         uavs[vehicle.Id].markerCircle.setPosition(LatLng);
         parse = parseFloat(Math.round(vehicle.BatteryLevel * 100) / 100).toFixed(2);

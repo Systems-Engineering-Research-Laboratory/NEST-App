@@ -29,7 +29,7 @@
         <AssociationConnector Association="VehicleModel.MissionMissionLog" />
         <AssociationConnector Association="VehicleModel.MissionLogMissionLogActivity" />
         <EntityTypeShape EntityType="VehicleModel.User" Width="1.5" PointX="10.375" PointY="11" />
-        <EntityTypeShape EntityType="VehicleModel.UserRole" Width="1.5" PointX="14.125" PointY="10.25" />
+        <EntityTypeShape EntityType="VehicleModel.UserRole" Width="1.5" PointX="14.25" PointY="13.125" />
         <AssociationConnector Association="VehicleModel.UserUserRole" />
         <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Waypoint" Width="1.5" PointX="24.25" PointY="3.125" />
         <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Hover" Width="1.5" PointX="24.25" PointY="6.25" />
@@ -47,6 +47,7 @@
         <EntityTypeShape EntityType="VehicleModel.Waypoint" Width="1.5" PointX="1.875" PointY="17.375" />
         <AssociationConnector Association="VehicleModel.WaypointWaypoint" />
         <AssociationConnector Association="VehicleModel.WaypointMission" />
+        <EntityTypeShape EntityType="VehicleModel.EventLog" Width="1.5" PointX="15.125" PointY="10.125" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
