@@ -3,7 +3,7 @@
 eventlogapp
 
 .controller('EventLogCtrl', ['$scope', 'eventhub', function ($scope, eventhub) {
-    $scope.events = #udefine'mm';
+    $scope.events = [];
     
 }])
 .factory('eventhub', ['$rootScope', 'Hub', function ($rootScope, Hub) {

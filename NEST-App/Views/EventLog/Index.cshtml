@@ -1,8 +1,37 @@
-﻿
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 @{
     ViewBag.Title = "Index";
 }
 
 <h2>Event Logs</h2>
+
+
+<table class="table table-striped table-hover" ng-app="EventLogCtrl">
+    <tr>
+        <td>
+            <strong>UAV ID</strong>
+        </td>
+        <td>
+            <strong>UAV Callsign</strong>
+        </td>
+        <td>
+            <strong>Status</strong>
+        </td>
+    </tr>
+    <tr ng-repeat="evt in events">
+        <td>
+            evt.uav_id
+        </td>
+        <td>
+            evt.uav_callsign
+        </td>
+        <td>
+            evt.uav_status
+        </td>
+    </tr>
+</table>
+
 
 <script src="~/Views/EventLog/eventlog.js"></script>
