@@ -45,7 +45,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MultiPoint_coordinates" Type="GeographyMultiPolygon" Nullable="false" />
+          <Property Name="MultiPoint_coordinates" Type="Geography" Nullable="false" />
           <Property Name="MultiPoint_name" Type="String" Nullable="false" />
           <Property Name="PopulationDensity" Type="Double" Nullable="false" />
           <Property Name="SeaLevel" Type="Double" Nullable="false" />
@@ -76,7 +76,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Point_coordinates" Type="GeographyMultiPoint" Nullable="false" />
+          <Property Name="Point_coordinates" Type="Geography" Nullable="false" />
           <Property Name="Point_name" Type="String" Nullable="false" />
           <Property Name="PopulationDensity" Type="Double" Nullable="false" />
           <Property Name="SeaLevel" Type="Double" Nullable="false" />
