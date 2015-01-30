@@ -18,10 +18,14 @@ function Vehicle(vehicleInfo, reporter) {
     //Storing other entities related to UAV
     this.FlightState = vehicleInfo.FlightState;
     this.Schedule = vehicleInfo.Schedule;
+    //This is the current mission the vehicle is on.
     this.Mission = vehicleInfo.Schedule.Missions[0];
     this.Schedule = vehicleInfo.Schedule;
 
+    //The current base of the vehicle.
     this.Base = base;
+
+    //Append the X&Y values of the base to the vehicle.
     LatLongToXY(this.Base);
 
     //This is just simulation stuff.
@@ -29,9 +33,11 @@ function Vehicle(vehicleInfo, reporter) {
     this.Command = null;
     this.descending = true;
     this.reporter = reporter;
+    
+    //Allows for us to use this in the callback. Closures yo
     var that = this;
+    //Used as callback to retrieve waypoints from the server.
     this.gotNewWaypoints = function (data) {
-        console.log(that);
         if (data.length < 2) {
             that.generateWaypoints();
         }
@@ -44,6 +50,7 @@ function Vehicle(vehicleInfo, reporter) {
         }
     }
 
+    //If the mission is defined, get the waypoints associated with it
     if (this.Mission) {
         this.reporter.retrieveWaypointsByMissionId(this.Mission.id, this, this.gotNewWaypoints);
     }
@@ -57,6 +64,7 @@ function Vehicle(vehicleInfo, reporter) {
         this.pathGen = gen;
     }
 
+    
     this.appendLonLat = function (obj, point) {
         var pointText = point.Geography.WellKnownText
         var results = pointText.match(/-?\d+(\.\d+)?/g);
@@ -66,29 +74,35 @@ function Vehicle(vehicleInfo, reporter) {
         LatLongToXY(obj);
     }
 
-    this.appendLonLat(this.FlightState, this.FlightState.Position);
+    appendLonLatFromDbPoint(this.FlightState, this.FlightState.Position);
     if (this.Mission) {
         appendLonLatFromDbPoint(this.Mission, this.Mission.DestinationCoordinates);
     }
 
     //Functions. Careful not to add global helper functions here.
     this.process = function (dt) {
-        if (this.currentWaypoint == null && this.reporter.pendingResult) {
+        //If the current waypoint is null but the reporter is pending, just return.
+        if (this.currentWaypoint && this.reporter.pendingResult) {
             return;
         }
+        //Process this waypoint if we have one
         if (this.currentWaypoint) {
             if (this.performWaypoint(dt)) {
                 this.getNextWaypoint();
             }
         }
+        //Well, I guess we have nothing better to do!
         else if (!this.isAtBase()) {
             this.backToBase(dt);
         }
+            //Charging at base
         else {
             this.FlightState.BatteryLevel += 5 * dt / 18000;
             if (this.FlightState.BatteryLevel > 1) {
                 this.FlightState.BatteryLevel = 1;
             }
+            //Don't let the flight states get too stale, even if we are sitting at base.
+            reporter.updateFlightState(this.FlightState);
             //Make sure we don't drop the battery level 
             return;
         }
@@ -100,6 +114,7 @@ function Vehicle(vehicleInfo, reporter) {
 
     this.performWaypoint = function(dt) {
         var wp = this.currentWaypoint;
+        //Get the original object, call the callback to perform the object specific functions
         if (wp.obj) {
             switch (wp.objType) {
                 case "mission":
@@ -109,9 +124,11 @@ function Vehicle(vehicleInfo, reporter) {
                     var cb = this.performCommand;
                     break;
             }
+            //If we are done, returns true. Means we can consume the waypoint.
             return cb(dt, wp.obj);
         }
         else {
+            //Just go to, this is just a navigational point.
             return this.deadReckon(dt, wp.X, wp.Y);
         }
     }
@@ -350,6 +367,7 @@ function Vehicle(vehicleInfo, reporter) {
     this.getNextWaypoint = function () {
         var wp = this.currentWaypoint;
         var wps = this.waypoints;
+        //Find the next waypoint;
         for (var i = 0; i < wps.length; i++) {
             var candidate = wps[i];
             if (wp.NextWaypointId == candidate.Id) {
@@ -357,6 +375,7 @@ function Vehicle(vehicleInfo, reporter) {
                 break;
             }
         }
+        //If we didn't find it, then put null
         if (this.currentWaypoint == wp) {
             this.currentWaypoint = null;
         }
@@ -364,6 +383,8 @@ function Vehicle(vehicleInfo, reporter) {
     }
 }
 
+//Wrapper object that wraps up communications to the server. A pretty leaky abstraction though.
+//Something require callbacks leaking the fact that values cannot be returned immediately. Oh well!
 function Reporter() {
     this.hub = $.connection.vehicleHub;
 
@@ -499,6 +520,9 @@ var base = {
     Longitude: -118.528763,
 }
 
+//Convert from web mercator to WGS84 and back if needed
+//Using web mercator makes sure that whatever lat longs we send out
+//display correctly to the users.
 var metersProj = proj4.Proj('GOOGLE');
 var WGS84Proj = proj4.Proj('WGS84');
 var wgsToMeters = proj4(WGS84Proj, metersProj);
@@ -532,9 +556,12 @@ function xToLong(x) {
 //Radius of operations in meters.
 var radius = 16093.4;
 
+//Uses trigonometry to figure out the heading from the passed in UTM coordinates
 function calculateHeading(x1, y1, x2, y2) {
     var dx = (x2 - x1);
     var dy = (y2 - y1);
+    // atan(y/x) is the slope of a line in an x,y plane (we do dx / dy due to north being 0)
+    // atan2 allows the returned range to be between (-pi, pi].
     var heading = Math.atan2(dx, dy);
     if (heading < 0) {
         //We wan this to be [0, 2pi), not (-pi, pi]
@@ -543,18 +570,22 @@ function calculateHeading(x1, y1, x2, y2) {
     return heading;
 }
 
+//Opposite of the below function
 function XYToLatLong(vehicle) {
     var longLat = wgsToMeters.inverse([vehicle.X, vehicle.Y]);
     vehicle.Longitude = longLat[0];
     vehicle.Latitude = longLat[1];
 }
 
+//Take the lat long and convert them to mercator using proj4js
 function LatLongToXY(vehicle) {
     var xy = wgsToMeters.forward([vehicle.Longitude, vehicle.Latitude]);
     vehicle.X = xy[0];
     vehicle.Y = xy[1];
 }
 
+//Uses pythagoream theorem to calculate the distance between two points.
+//Only works if you are using UTM or some equivalent. Does not work on lat longs.
 function calculateDistance(x1, y1, x2, y2) {
     var dx = x2 - x1;
     var dy = y2 - y1;
@@ -562,11 +593,16 @@ function calculateDistance(x1, y1, x2, y2) {
     return distance;
 }
 
+//Takes the well formed geography and appends the lat and long as doubles, then appends the X and Y we get from the lat and long
 appendLonLatFromDbPoint = function (obj, point) {
     var pointText = point.Geography.WellKnownText
+    //This looks for doubles, e.g. 23.3, 2, -119. Requires a number in the front I think. 
+    //I took it from stack overflow somewhere, so be wary
     var results = pointText.match(/-?\d+(\.\d+)?/g);
+    //The point should give 3 doubles, long lat altitude in that order
     obj.Longitude = parseFloat(results[0]);
     obj.Latitude = parseFloat(results[1]);
     obj.Altitude = parseFloat(results[2]);
+    //Append the XY mercator values
     LatLongToXY(obj);
 }
