@@ -2,13 +2,13 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 01/29/2015 21:45:21
+-- Date Created: 01/30/2015 21:29:21
 -- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
 GO
-USE [NEST_DB_5a2058062e8243a9892cd610bd19c2d2]
+USE [C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\App_Data\NEST_DB.mdf];
 GO
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 GO
@@ -440,6 +440,52 @@ CREATE TABLE [dbo].[EventLogs] (
 );
 GO
 
+-- Creating table 'MapAreaSet'
+CREATE TABLE [dbo].[MapAreaSet] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [MultiPoint_coordinates] geography  NOT NULL,
+    [MultiPoint_name] nvarchar(max)  NOT NULL,
+    [PopulationDensity] float  NOT NULL,
+    [SeaLevel] float  NOT NULL,
+    [SafeLandingLocation] nvarchar(max)  NOT NULL,
+    [NonOwnShipAircraftPath] nvarchar(max)  NOT NULL,
+    [Time_created] datetime  NOT NULL,
+    [Creator_created] nvarchar(max)  NOT NULL,
+    [Warning] bit  NOT NULL
+);
+GO
+
+-- Creating table 'MapRestrictedSet'
+CREATE TABLE [dbo].[MapRestrictedSet] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [Ellipse_center_coordinates] geometry  NOT NULL,
+    [Ellipse_majorAxis] float  NOT NULL,
+    [Ellipse_minorAxis] float  NOT NULL,
+    [PopulationDensity] nvarchar(max)  NOT NULL,
+    [SeaLevel] float  NOT NULL,
+    [NonOwnShipAircraftPath] nvarchar(max)  NOT NULL,
+    [Creator_created] nvarchar(max)  NOT NULL,
+    [Time_created] datetime  NOT NULL,
+    [Reason_created] nvarchar(max)  NOT NULL,
+    [Warning] bit  NOT NULL
+);
+GO
+
+-- Creating table 'MapPointSet'
+CREATE TABLE [dbo].[MapPointSet] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [Point_coordinates] geography  NOT NULL,
+    [Point_name] nvarchar(max)  NOT NULL,
+    [PopulationDensity] float  NOT NULL,
+    [SeaLevel] float  NOT NULL,
+    [SafeLandingLocation] nvarchar(max)  NOT NULL,
+    [NonOwnShipAircraftPath] nvarchar(max)  NOT NULL,
+    [Time_created] datetime  NOT NULL,
+    [Creator_created] nvarchar(max)  NOT NULL,
+    [Warning] bit  NOT NULL
+);
+GO
+
 -- Creating table 'CMD_NAV_Waypoint_CMD_NAV_Hover'
 CREATE TABLE [dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover] (
     [Time] nvarchar(max)  NOT NULL,
@@ -458,6 +504,26 @@ GO
 CREATE TABLE [dbo].[CMD_NAV_Takeoff_CMD_DO_Change_Speed] (
     [HorizontalSpeed] float  NULL,
     [VerticalSpeed] float  NULL,
+    [Id] int  NOT NULL
+);
+GO
+
+-- Creating table 'MapRestrictedSet_Weather'
+CREATE TABLE [dbo].[MapRestrictedSet_Weather] (
+    [Location] nvarchar(max)  NOT NULL,
+    [Name_Station] nvarchar(max)  NOT NULL,
+    [AvgWindSpdMPH] decimal(18,0)  NOT NULL,
+    [AvgWindDir] decimal(18,0)  NOT NULL,
+    [MaxWindSpdMPH] decimal(18,0)  NOT NULL,
+    [WindDiratMax] decimal(18,0)  NOT NULL,
+    [AvgTempDeg_F] decimal(18,0)  NOT NULL,
+    [MaxTempDeg_F] decimal(18,0)  NOT NULL,
+    [MinTempDeg_F] decimal(18,0)  NOT NULL,
+    [AvgRH_Perc] decimal(18,0)  NOT NULL,
+    [AvgBarPress_mb] decimal(18,0)  NOT NULL,
+    [TotalRainInches] decimal(18,0)  NOT NULL,
+    [AvgSolar_WPerm2] decimal(18,0)  NOT NULL,
+    [BattVoltMin] decimal(18,0)  NOT NULL,
     [Id] int  NOT NULL
 );
 GO
@@ -604,6 +670,24 @@ ADD CONSTRAINT [PK_EventLogs]
     PRIMARY KEY CLUSTERED ([event_id] ASC);
 GO
 
+-- Creating primary key on [Id] in table 'MapAreaSet'
+ALTER TABLE [dbo].[MapAreaSet]
+ADD CONSTRAINT [PK_MapAreaSet]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'MapRestrictedSet'
+ALTER TABLE [dbo].[MapRestrictedSet]
+ADD CONSTRAINT [PK_MapRestrictedSet]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'MapPointSet'
+ALTER TABLE [dbo].[MapPointSet]
+ADD CONSTRAINT [PK_MapPointSet]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
 -- Creating primary key on [Id] in table 'CMD_NAV_Waypoint_CMD_NAV_Hover'
 ALTER TABLE [dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover]
 ADD CONSTRAINT [PK_CMD_NAV_Waypoint_CMD_NAV_Hover]
@@ -619,6 +703,12 @@ GO
 -- Creating primary key on [Id] in table 'CMD_NAV_Takeoff_CMD_DO_Change_Speed'
 ALTER TABLE [dbo].[CMD_NAV_Takeoff_CMD_DO_Change_Speed]
 ADD CONSTRAINT [PK_CMD_NAV_Takeoff_CMD_DO_Change_Speed]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'MapRestrictedSet_Weather'
+ALTER TABLE [dbo].[MapRestrictedSet_Weather]
+ADD CONSTRAINT [PK_MapRestrictedSet_Weather]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
@@ -859,6 +949,15 @@ ALTER TABLE [dbo].[CMD_NAV_Takeoff_CMD_DO_Change_Speed]
 ADD CONSTRAINT [FK_CMD_DO_Change_Speed_inherits_CMD_NAV_Takeoff]
     FOREIGN KEY ([Id])
     REFERENCES [dbo].[CMD_NAV_Takeoff]
+        ([Id])
+    ON DELETE CASCADE ON UPDATE NO ACTION;
+GO
+
+-- Creating foreign key on [Id] in table 'MapRestrictedSet_Weather'
+ALTER TABLE [dbo].[MapRestrictedSet_Weather]
+ADD CONSTRAINT [FK_Weather_inherits_MapRestricted]
+    FOREIGN KEY ([Id])
+    REFERENCES [dbo].[MapRestrictedSet]
         ([Id])
     ON DELETE CASCADE ON UPDATE NO ACTION;
 GO

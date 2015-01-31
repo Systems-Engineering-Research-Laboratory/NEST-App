@@ -29,9 +29,13 @@
     <EntitySet Name="CMD_ACK" EntityType="VehicleModel.Store.CMD_ACK" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Waypoints" EntityType="VehicleModel.Store.Waypoints" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="EventLogs" EntityType="VehicleModel.Store.EventLogs" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="MapAreaSet" EntityType="VehicleModel.Store.MapAreaSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="MapRestrictedSet" EntityType="VehicleModel.Store.MapRestrictedSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="MapPointSet" EntityType="VehicleModel.Store.MapPointSet" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Waypoint_CMD_NAV_Hover" EntityType="VehicleModel.Store.CMD_NAV_Waypoint_CMD_NAV_Hover" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Set_Base_CMD_DO_Return_To_Base" EntityType="VehicleModel.Store.CMD_NAV_Set_Base_CMD_DO_Return_To_Base" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Takeoff_CMD_DO_Change_Speed" EntityType="VehicleModel.Store.CMD_NAV_Takeoff_CMD_DO_Change_Speed" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="MapRestrictedSet_Weather" EntityType="VehicleModel.Store.MapRestrictedSet_Weather" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="VehicleConfiguration" Association="VehicleModel.Store.VehicleConfiguration">
       <End Role="Vehicle" EntitySet="UAVs" />
       <End Role="Configuration" EntitySet="Configurations" />
@@ -99,6 +103,10 @@
     <AssociationSet Name="FK_CMD_DO_Change_Speed_inherits_CMD_NAV_Takeoff" Association="VehicleModel.Store.FK_CMD_DO_Change_Speed_inherits_CMD_NAV_Takeoff">
       <End Role="CMD_NAV_Takeoff" EntitySet="CMD_NAV_Takeoff" />
       <End Role="CMD_DO_Change_Speed" EntitySet="CMD_NAV_Takeoff_CMD_DO_Change_Speed" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Weather_inherits_MapRestricted" Association="VehicleModel.Store.FK_Weather_inherits_MapRestricted">
+      <End Role="MapRestricted" EntitySet="MapRestrictedSet" />
+      <End Role="Weather" EntitySet="MapRestrictedSet_Weather" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="UAVs">
@@ -385,6 +393,52 @@
     <Property Name="message" Type="nvarchar(max)" Nullable="false" />
     <Property Name="criticality" Type="nvarchar(max)" Nullable="false" />
   </EntityType>
+  <EntityType Name="MapAreaSet">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="MultiPoint_coordinates" Type="geography" Nullable="false" SRID="4326" />
+    <Property Name="MultiPoint_name" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="PopulationDensity" Type="float" Nullable="false" />
+    <Property Name="SeaLevel" Type="float" Nullable="false" />
+    <Property Name="SafeLandingLocation" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="NonOwnShipAircraftPath" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Time_created" Type="datetime" Nullable="false" />
+    <Property Name="Creator_created" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Warning" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="MapRestrictedSet">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Ellipse_center_coordinates" Type="geometry" Nullable="false" SRID="0" />
+    <Property Name="Ellipse_majorAxis" Type="float" Nullable="false" />
+    <Property Name="Ellipse_minorAxis" Type="float" Nullable="false" />
+    <Property Name="PopulationDensity" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="SeaLevel" Type="float" Nullable="false" />
+    <Property Name="NonOwnShipAircraftPath" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Creator_created" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Time_created" Type="datetime" Nullable="false" />
+    <Property Name="Reason_created" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Warning" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="MapPointSet">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Point_coordinates" Type="geography" Nullable="false" SRID="4326" />
+    <Property Name="Point_name" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="PopulationDensity" Type="float" Nullable="false" />
+    <Property Name="SeaLevel" Type="float" Nullable="false" />
+    <Property Name="SafeLandingLocation" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="NonOwnShipAircraftPath" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Time_created" Type="datetime" Nullable="false" />
+    <Property Name="Creator_created" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Warning" Type="bit" Nullable="false" />
+  </EntityType>
   <EntityType Name="CMD_NAV_Waypoint_CMD_NAV_Hover">
     <Key>
       <PropertyRef Name="Id" />
@@ -405,6 +459,26 @@
     </Key>
     <Property Name="HorizontalSpeed" Type="float" Nullable="true" />
     <Property Name="VerticalSpeed" Type="float" Nullable="true" />
+    <Property Name="Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="MapRestrictedSet_Weather">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Location" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Name_Station" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="AvgWindSpdMPH" Type="decimal" Nullable="false" />
+    <Property Name="AvgWindDir" Type="decimal" Nullable="false" />
+    <Property Name="MaxWindSpdMPH" Type="decimal" Nullable="false" />
+    <Property Name="WindDiratMax" Type="decimal" Nullable="false" />
+    <Property Name="AvgTempDeg_F" Type="decimal" Nullable="false" />
+    <Property Name="MaxTempDeg_F" Type="decimal" Nullable="false" />
+    <Property Name="MinTempDeg_F" Type="decimal" Nullable="false" />
+    <Property Name="AvgRH_Perc" Type="decimal" Nullable="false" />
+    <Property Name="AvgBarPress_mb" Type="decimal" Nullable="false" />
+    <Property Name="TotalRainInches" Type="decimal" Nullable="false" />
+    <Property Name="AvgSolar_WPerm2" Type="decimal" Nullable="false" />
+    <Property Name="BattVoltMin" Type="decimal" Nullable="false" />
     <Property Name="Id" Type="int" Nullable="false" />
   </EntityType>
   <Association Name="VehicleConfiguration">
@@ -617,6 +691,20 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_Weather_inherits_MapRestricted">
+    <End Role="MapRestricted" Type="VehicleModel.Store.MapRestrictedSet" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Weather" Type="VehicleModel.Store.MapRestrictedSet_Weather" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="MapRestricted">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Weather">
+        <PropertyRef Name="Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
@@ -701,6 +789,9 @@
             <End Role="Mission" EntitySet="Missions" />
           </AssociationSet>
           <EntitySet Name="EventLogs" EntityType="VehicleModel.EventLog" />
+          <EntitySet Name="MapAreaSet" EntityType="VehicleModel.MapArea" />
+          <EntitySet Name="MapRestrictedSet" EntityType="VehicleModel.MapRestricted" />
+          <EntitySet Name="MapPointSet" EntityType="VehicleModel.MapPoint" />
           </EntityContainer>
         <EntityType Name="UAV">
           <Key>
@@ -1146,6 +1237,68 @@
           <Property Name="message" Type="String" Nullable="false" />
           <Property Name="criticality" Type="String" Nullable="false" />
         </EntityType>
+        <EntityType Name="MapArea">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MultiPoint_coordinates" Type="Geography" Nullable="false" />
+          <Property Name="MultiPoint_name" Type="String" Nullable="false" />
+          <Property Name="PopulationDensity" Type="Double" Nullable="false" />
+          <Property Name="SeaLevel" Type="Double" Nullable="false" />
+          <Property Name="SafeLandingLocation" Type="String" Nullable="false" />
+          <Property Name="NonOwnShipAircraftPath" Type="String" Nullable="false" />
+          <Property Name="Time_created" Type="DateTime" Nullable="false" />
+          <Property Name="Creator_created" Type="String" Nullable="false" />
+          <Property Name="Warning" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MapRestricted">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Ellipse_center_coordinates" Type="GeometryMultiPoint" Nullable="false" />
+          <Property Name="Ellipse_majorAxis" Type="Double" Nullable="false" />
+          <Property Name="Ellipse_minorAxis" Type="Double" Nullable="false" />
+          <Property Name="PopulationDensity" Type="String" Nullable="false" />
+          <Property Name="SeaLevel" Type="Double" Nullable="false" />
+          <Property Name="NonOwnShipAircraftPath" Type="String" Nullable="false" />
+          <Property Name="Creator_created" Type="String" Nullable="false" />
+          <Property Name="Time_created" Type="DateTime" Nullable="false" />
+          <Property Name="Reason_created" Type="String" Nullable="false" />
+          <Property Name="Warning" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MapPoint">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Point_coordinates" Type="Geography" Nullable="false" />
+          <Property Name="Point_name" Type="String" Nullable="false" />
+          <Property Name="PopulationDensity" Type="Double" Nullable="false" />
+          <Property Name="SeaLevel" Type="Double" Nullable="false" />
+          <Property Name="SafeLandingLocation" Type="String" Nullable="false" />
+          <Property Name="NonOwnShipAircraftPath" Type="String" Nullable="false" />
+          <Property Name="Time_created" Type="DateTime" Nullable="false" />
+          <Property Name="Creator_created" Type="String" Nullable="false" />
+          <Property Name="Warning" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Weather" BaseType="VehicleModel.MapRestricted">
+          <Property Name="Location" Type="String" Nullable="false" />
+          <Property Name="Name_Station" Type="String" Nullable="false" />
+          <Property Name="AvgWindSpdMPH" Type="Decimal" Nullable="false" />
+          <Property Name="AvgWindDir" Type="Decimal" Nullable="false" />
+          <Property Name="MaxWindSpdMPH" Type="Decimal" Nullable="false" />
+          <Property Name="WindDiratMax" Type="Decimal" Nullable="false" />
+          <Property Name="AvgTempDeg_F" Type="Decimal" Nullable="false" />
+          <Property Name="MaxTempDeg_F" Type="Decimal" Nullable="false" />
+          <Property Name="MinTempDeg_F" Type="Decimal" Nullable="false" />
+          <Property Name="AvgRH_Perc" Type="Decimal" Nullable="false" />
+          <Property Name="AvgBarPress_mb" Type="Decimal" Nullable="false" />
+          <Property Name="TotalRainInches" Type="Decimal" Nullable="false" />
+          <Property Name="AvgSolar_WPerm2" Type="Decimal" Nullable="false" />
+          <Property Name="BattVoltMin" Type="Decimal" Nullable="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1470,6 +1623,74 @@
           <ScalarProperty Name="uav_id" ColumnName="uav_id" />
           <ScalarProperty Name="message" ColumnName="message" />
           <ScalarProperty Name="criticality" ColumnName="criticality" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="MapAreaSet">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.MapArea)">
+        <MappingFragment StoreEntitySet="MapAreaSet">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="MultiPoint_coordinates" ColumnName="MultiPoint_coordinates" />
+          <ScalarProperty Name="MultiPoint_name" ColumnName="MultiPoint_name" />
+          <ScalarProperty Name="PopulationDensity" ColumnName="PopulationDensity" />
+          <ScalarProperty Name="SeaLevel" ColumnName="SeaLevel" />
+          <ScalarProperty Name="SafeLandingLocation" ColumnName="SafeLandingLocation" />
+          <ScalarProperty Name="NonOwnShipAircraftPath" ColumnName="NonOwnShipAircraftPath" />
+          <ScalarProperty Name="Time_created" ColumnName="Time_created" />
+          <ScalarProperty Name="Creator_created" ColumnName="Creator_created" />
+          <ScalarProperty Name="Warning" ColumnName="Warning" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="MapRestrictedSet">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.MapRestricted)">
+        <MappingFragment StoreEntitySet="MapRestrictedSet">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Ellipse_center_coordinates" ColumnName="Ellipse_center_coordinates" />
+          <ScalarProperty Name="Ellipse_majorAxis" ColumnName="Ellipse_majorAxis" />
+          <ScalarProperty Name="Ellipse_minorAxis" ColumnName="Ellipse_minorAxis" />
+          <ScalarProperty Name="PopulationDensity" ColumnName="PopulationDensity" />
+          <ScalarProperty Name="SeaLevel" ColumnName="SeaLevel" />
+          <ScalarProperty Name="NonOwnShipAircraftPath" ColumnName="NonOwnShipAircraftPath" />
+          <ScalarProperty Name="Creator_created" ColumnName="Creator_created" />
+          <ScalarProperty Name="Time_created" ColumnName="Time_created" />
+          <ScalarProperty Name="Reason_created" ColumnName="Reason_created" />
+          <ScalarProperty Name="Warning" ColumnName="Warning" />
+        </MappingFragment>
+      </EntityTypeMapping>
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.Weather)">
+        <MappingFragment StoreEntitySet="MapRestrictedSet_Weather">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Location" ColumnName="Location" />
+          <ScalarProperty Name="Name_Station" ColumnName="Name_Station" />
+          <ScalarProperty Name="AvgWindSpdMPH" ColumnName="AvgWindSpdMPH" />
+          <ScalarProperty Name="AvgWindDir" ColumnName="AvgWindDir" />
+          <ScalarProperty Name="MaxWindSpdMPH" ColumnName="MaxWindSpdMPH" />
+          <ScalarProperty Name="WindDiratMax" ColumnName="WindDiratMax" />
+          <ScalarProperty Name="AvgTempDeg_F" ColumnName="AvgTempDeg_F" />
+          <ScalarProperty Name="MaxTempDeg_F" ColumnName="MaxTempDeg_F" />
+          <ScalarProperty Name="MinTempDeg_F" ColumnName="MinTempDeg_F" />
+          <ScalarProperty Name="AvgRH_Perc" ColumnName="AvgRH_Perc" />
+          <ScalarProperty Name="AvgBarPress_mb" ColumnName="AvgBarPress_mb" />
+          <ScalarProperty Name="TotalRainInches" ColumnName="TotalRainInches" />
+          <ScalarProperty Name="AvgSolar_WPerm2" ColumnName="AvgSolar_WPerm2" />
+          <ScalarProperty Name="BattVoltMin" ColumnName="BattVoltMin" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="MapPointSet">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.MapPoint)">
+        <MappingFragment StoreEntitySet="MapPointSet">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Point_coordinates" ColumnName="Point_coordinates" />
+          <ScalarProperty Name="Point_name" ColumnName="Point_name" />
+          <ScalarProperty Name="PopulationDensity" ColumnName="PopulationDensity" />
+          <ScalarProperty Name="SeaLevel" ColumnName="SeaLevel" />
+          <ScalarProperty Name="SafeLandingLocation" ColumnName="SafeLandingLocation" />
+          <ScalarProperty Name="NonOwnShipAircraftPath" ColumnName="NonOwnShipAircraftPath" />
+          <ScalarProperty Name="Time_created" ColumnName="Time_created" />
+          <ScalarProperty Name="Creator_created" ColumnName="Creator_created" />
+          <ScalarProperty Name="Warning" ColumnName="Warning" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

@@ -49,5 +49,8 @@ namespace NEST_App.Models
         public virtual DbSet<CMD_ACK> CMD_ACK { get; set; }
         public virtual DbSet<Waypoint> Waypoints { get; set; }
         public virtual DbSet<EventLog> EventLogs { get; set; }
+        public virtual DbSet<MapArea> MapAreaSet { get; set; }
+        public virtual DbSet<MapRestricted> MapRestrictedSet { get; set; }
+        public virtual DbSet<MapPoint> MapPointSet { get; set; }
     }
 }
