@@ -1,4 +1,4 @@
-﻿var eventlogapp = angular.module('EventLog', ['SignalR']);
+﻿var eventlogapp = angular.module('EventLog', ['SignalR', 'ngRoute', 'ngResource']);
 
 eventlogapp
 
@@ -7,5 +7,8 @@ eventlogapp
     
 }])
 .factory('eventhub', ['$rootScope', 'Hub', function ($rootScope, Hub) {
+    var eventhub = {};
+    return {
 
+    }
 }])

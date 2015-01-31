@@ -1310,7 +1310,7 @@
     <Content Include="Scripts\simulation.js" />
     <Content Include="Scripts\vehicle.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Views\EventLog\eventlog.js" />
+    <Content Include="Scripts\app\eventlog.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
