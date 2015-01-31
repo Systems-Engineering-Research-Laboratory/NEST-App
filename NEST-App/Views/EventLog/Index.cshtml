@@ -17,18 +17,24 @@
             <strong>UAV Callsign</strong>
         </td>
         <td>
-            <strong>Status</strong>
+            <strong>Message</strong>
+        </td>
+        <td>
+            <strong>Time</strong>
         </td>
     </tr>
     <tr ng-repeat="evt in events">
         <td>
-            evt.uav_id
+            {{evt.uav_id}}
         </td>
         <td>
-            evt.uav_callsign
+            {{evt.uav_callsign}}
         </td>
         <td>
-            evt.uav_status
+            {{evt.message}}
+        </td>
+        <td>
+            {{evt.create_date}}
         </td>
     </tr>
 </table>
