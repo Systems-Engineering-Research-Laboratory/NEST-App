@@ -32,7 +32,7 @@ namespace NEST_App.Hubs
          */
         public int SendCommand(CMD_NAV_Target target)
         {
-            using (var db = new NestDbContext())
+            using (var db = new NestContainer())
             {
                 target = db.CMD_NAV_Target.Add(target);
                 int result = db.SaveChanges();
