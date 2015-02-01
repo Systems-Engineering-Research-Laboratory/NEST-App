@@ -13,15 +13,15 @@ namespace NEST_App.DAL
     {
         public void InitializeDatabase()
         {
-            //Seed(new NestContainer());
+            Seed(new NestContainer());
         }
         protected override void Seed(NestContainer context)
         {
-            //if (context.Database.Exists())
-            //{
-            //    context.Database.Delete();
-            //}
-            //context.Database.Create();
+            if (context.Database.Exists())
+            {
+                context.Database.Delete();
+            }
+            context.Database.Create();
             // We can initialize everything here and store it into the database
             
            
@@ -74,10 +74,12 @@ namespace NEST_App.DAL
 
             var wps = new List<Waypoint>
             {
-                new Waypoint{ WaypointName = "Jeff's Waypoint", IsActive = true, WasSkipped = false, GeneratedBy = "Jeff", Action = "Fly Through", Position = DbGeography.FromText("POINT(-118.4902736 34.2365205 400)"), Missions = missions[0]},
-                new Waypoint{ WaypointName = "Jeff's Waypoint", IsActive = true, WasSkipped = false, GeneratedBy = "Jeff", Action = "Fly Through", Position = DbGeography.FromText("POINT(-118.529 34.2417 400)"), Missions = missions[0] }
+                new Waypoint{ WaypointName = "Jeff's Next Next Waypoint", IsActive = true, WasSkipped = false, GeneratedBy = "Jeff", Action = "Fly Through", Position = DbGeography.FromText("POINT(-118.4902736 34.2365205 400)"), Missions = missions[0]},
+                new Waypoint{ WaypointName = "Jeff's Waypoint", IsActive = true, WasSkipped = false, GeneratedBy = "Jeff", Action = "Fly Through", Position = DbGeography.FromText("POINT(-118.529 34.2417 400)"), Missions = missions[0] },
+                new Waypoint{ WaypointName = "Jeff's Next Waypoint", IsActive = true, WasSkipped = false, GeneratedBy = "Jeff", Action = "Fly Through", Position = DbGeography.FromText("POINT(-118.4992736 34.2365205 400)"), Missions = missions[0]}
             };
-            wps[1].NextWaypoint = wps[0];
+            wps[1].NextWaypoint = wps[2];
+            wps[2].NextWaypoint = wps[0];
             context.Waypoints.AddRange(wps);
 
             var maintenances = new List<Maintenance>
