@@ -20,5 +20,6 @@ namespace NEST_App.Models
         public int uav_id { get; set; }
         public string message { get; set; }
         public string criticality { get; set; }
+        public string uav_callsign { get; set; }
     }
 }

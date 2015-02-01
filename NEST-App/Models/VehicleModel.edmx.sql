@@ -2,13 +2,13 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 01/30/2015 21:29:21
+-- Date Created: 01/31/2015 21:02:51
 -- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
 GO
-USE [C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\App_Data\NEST_DB.mdf];
+USE [C:\USERS\VARATEP-MAC\DOCUMENTS\VISUAL STUDIO 2013\PROJECTS\NEST-APP\NEST-APP\APP_DATA\NEST_DB.MDF];
 GO
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 GO
@@ -67,6 +67,9 @@ IF OBJECT_ID(N'[dbo].[FK_CMD_DO_Return_To_Base_inherits_CMD_NAV_Set_Base]', 'F')
 GO
 IF OBJECT_ID(N'[dbo].[FK_CMD_DO_Change_Speed_inherits_CMD_NAV_Takeoff]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[CMD_NAV_Takeoff_CMD_DO_Change_Speed] DROP CONSTRAINT [FK_CMD_DO_Change_Speed_inherits_CMD_NAV_Takeoff];
+GO
+IF OBJECT_ID(N'[dbo].[FK_Weather_inherits_MapRestricted]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[MapRestrictedSet_Weather] DROP CONSTRAINT [FK_Weather_inherits_MapRestricted];
 GO
 
 -- --------------------------------------------------
@@ -142,6 +145,15 @@ GO
 IF OBJECT_ID(N'[dbo].[EventLogs]', 'U') IS NOT NULL
     DROP TABLE [dbo].[EventLogs];
 GO
+IF OBJECT_ID(N'[dbo].[MapAreaSet]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[MapAreaSet];
+GO
+IF OBJECT_ID(N'[dbo].[MapRestrictedSet]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[MapRestrictedSet];
+GO
+IF OBJECT_ID(N'[dbo].[MapPointSet]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[MapPointSet];
+GO
 IF OBJECT_ID(N'[dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover]', 'U') IS NOT NULL
     DROP TABLE [dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover];
 GO
@@ -150,6 +162,9 @@ IF OBJECT_ID(N'[dbo].[CMD_NAV_Set_Base_CMD_DO_Return_To_Base]', 'U') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[CMD_NAV_Takeoff_CMD_DO_Change_Speed]', 'U') IS NOT NULL
     DROP TABLE [dbo].[CMD_NAV_Takeoff_CMD_DO_Change_Speed];
+GO
+IF OBJECT_ID(N'[dbo].[MapRestrictedSet_Weather]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[MapRestrictedSet_Weather];
 GO
 
 -- --------------------------------------------------
@@ -436,7 +451,8 @@ CREATE TABLE [dbo].[EventLogs] (
     [modified_date] datetime  NOT NULL,
     [uav_id] int  NOT NULL,
     [message] nvarchar(max)  NOT NULL,
-    [criticality] nvarchar(max)  NOT NULL
+    [criticality] nvarchar(max)  NOT NULL,
+    [uav_callsign] nvarchar(max)  NOT NULL
 );
 GO
 
