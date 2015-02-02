@@ -72,6 +72,20 @@ namespace NEST_App.DAL
 
             };
 
+            var RestrictedArea = new List<MapRestricted>
+            {
+                new MapRestricted{
+                    Ellipse_center_coordinates = DbGeography.FromText("POINT(-118.529 34.2417 400)"), 
+                    Ellipse_NorthAxis = 10, 
+                    Ellipse_EastAxis = 5, 
+                    PopulationDensity = 6080, 
+                    SeaLevel = 246, 
+                    Creator_created = "NEST", 
+                    Time_created = DateTime.Now, 
+                    Reason_created = "Test", 
+                    Warning = true}
+            };
+
             var wps = new List<Waypoint>
             {
                 new Waypoint{ WaypointName = "Jeff's Next Next Waypoint", IsActive = true, WasSkipped = false, GeneratedBy = "Jeff", Action = "Fly Through", Position = DbGeography.FromText("POINT(-118.4902736 34.2365205 400)"), Missions = missions[0]},

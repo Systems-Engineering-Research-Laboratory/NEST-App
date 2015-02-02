@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="6dda4366b636406bba8d239b12c2e082" Name="Diagram1" ZoomLevel="116" >
+      <Diagram DiagramId="6dda4366b636406bba8d239b12c2e082" Name="Diagram1" ZoomLevel="72" >
         <EntityTypeShape EntityType="VehicleModel.UAV" Width="1.5" PointX="5.875" PointY="3.5" IsExpanded="true" />
         <EntityTypeShape EntityType="VehicleModel.FlightState" Width="1.5" PointX="8.375" PointY="2.375" IsExpanded="true" />
         <EntityTypeShape EntityType="VehicleModel.Configuration" Width="1.5" PointX="5.5" PointY="8" />
@@ -14,7 +14,7 @@
         <EntityTypeShape EntityType="VehicleModel.EquipmentHealth" Width="1.5" PointX="2.875" PointY="3.5" />
         <AssociationConnector Association="VehicleModel.EuipmentHealthEquipmentList" />
         <AssociationConnector Association="VehicleModel.VehicleEuipmentHealth" />
-        <EntityTypeShape EntityType="VehicleModel.NonownshipVehicle" Width="1.5" PointX="11.125" PointY="6.25" />
+        <EntityTypeShape EntityType="VehicleModel.NonownshipVehicle" Width="1.5" PointX="16.625" PointY="18" />
         <AssociationConnector Association="VehicleModel.UAVFlightState" />
         <EntityTypeShape EntityType="VehicleModel.Maintenance" Width="1.5" PointX="3.375" PointY="10.5" />
         <EntityTypeShape EntityType="VehicleModel.Schedule" Width="1.5" PointX="7.375" PointY="10.75" />
@@ -49,10 +49,10 @@
         <AssociationConnector Association="VehicleModel.WaypointMission" />
         <EntityTypeShape EntityType="VehicleModel.EventLog" Width="1.5" PointX="15.125" PointY="10.125" />
         <InheritanceConnector EntityType="VehicleModel.Weather" />
-        <EntityTypeShape EntityType="VehicleModel.MapArea" Width="1.5" PointX="33" PointY="10.875" />
-        <EntityTypeShape EntityType="VehicleModel.MapRestricted" Width="1.5" PointX="36.25" PointY="9.625" />
-        <EntityTypeShape EntityType="VehicleModel.MapPoint" Width="1.5" PointX="33.75" PointY="17" />
-        <EntityTypeShape EntityType="VehicleModel.Weather" Width="1.5" PointX="36.25" PointY="13.5" />
+        <EntityTypeShape EntityType="VehicleModel.MapArea" Width="1.5" PointX="10.125" PointY="18.75" />
+        <EntityTypeShape EntityType="VehicleModel.MapRestricted" Width="2.125" PointX="13.375" PointY="17.5" />
+        <EntityTypeShape EntityType="VehicleModel.MapPoint" Width="1.5" PointX="10.125" PointY="22.375" />
+        <EntityTypeShape EntityType="VehicleModel.Weather" Width="1.5" PointX="13.375" PointY="21.375" />
         <InheritanceConnector EntityType="VehicleModel.Weather" />
       </Diagram>
     </edmx:Diagrams>
