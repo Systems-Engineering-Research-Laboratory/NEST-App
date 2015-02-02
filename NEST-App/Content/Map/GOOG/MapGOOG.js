@@ -1,4 +1,6 @@
 ﻿var map;
+var mapListeners = map; //use this to add listeners to the map
+var vehicleHub = $.connection.vehicleHub
 var pointText;
 var results;
 var parse;
@@ -7,6 +9,9 @@ var overlays = []; //Array for the polygon shapes as overlays
 var drawingManager;
 var selectedShape;
 var uavMarker;
+var trialArray = [];
+var waypointMarker = null;
+var selectedUAV; //the uav that's been selected
 var selectedDrones = []; //store drones selected from any method here
 var storedGroups = []; //keep track of different stored groupings of UAVs
 var ctrlPressed = false;
@@ -22,6 +27,10 @@ var polyOptions = { //Options set for the polygon shapes and drawing manager
     fillOpacity: 0.45,
     editable: true
 };
+var uavTrials = [{
+    id: 0,
+    trial: []
+}];
 
 var uavSymbolBlack = {
     path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
@@ -131,6 +140,7 @@ function uavMarkers(data, textStatus, jqXHR) {
     console.log("Pulling Flightstates...", textStatus);
     for (var i = 0; i < data.length; i++) {
         uavs[data[i].Id] = {};
+        uavs[data[i].Id].Id = data[i].Id;
         uavs[data[i].Id].FlightState = data[i].FlightState;
         uavs[data[i].Id].Schedule = data[i].Schedule;
         uavs[data[i].Id].Missions = data[i].Schedule.Missions;
@@ -170,7 +180,19 @@ function uavMarkers(data, textStatus, jqXHR) {
                     }
                 }
             });
+            selectedUAV = marker;
             selectedDrones.push(marker);
+
+            ////add trial to the map
+            ////still working on it
+            //if (selectedUAV) {
+            //    selectedUav.id.uavTrials[trailArray.length - 2].setMap(map);
+            //}
+
+            // enable waypoint buttons
+            $("#goBtn").removeClass("disabled");
+            $("#clickToGoBtn").removeClass("disabled");
+
             return function () {
                 /****Unused infowindow set ****/
                 //infowindow.setContent('<div style="line-height: 1.35; overflow: hidden; white-space: nowrap;"><b>ID: </b>' + key + '</div>');
@@ -267,6 +289,115 @@ function buildColorPalette() {
     selectColor(colors[0]);
 }
 
+////store uav trials
+////still working on it
+//function storeTrail(uavID, location) {
+//    var notThere;
+//    var marker = new google.maps.Marker({
+//        position: location,
+//        icon: uavTrail,
+//    });
+        
+//    for (var i = 0; i < uavTrials.length; i++) {
+//        if (uavTrials[i].id === uavID) {
+//            //set trial
+//            if (uavTrials[i].trial.length <= 30) {
+//                uavTrials[i].trail.push(marker);
+//            }
+//            else {
+//                uavTrials[i].trial.shift();
+//                uavTrials[i].trail.push(marker);
+//            }
+//            notThere = false;
+//            break;
+//        }
+//        else {
+//            notThere = true;
+//        }
+//    }
+    
+//    if (notThere) {
+//        //push new uavTrials
+//        uavTrials.push({
+//            id: uavID,
+//            trial: []
+//        });
+//        storeTrial(uavID, location);
+//    }
+//}
+
+// click on map to set a waypoint
+// todo: make a cancel button
+function clickToGo() {
+    if (selectedUAV != null) {
+        goTo_hide();
+
+        //setting dropMarkerListener
+        dropMarkerListener = google.maps.event.addListener(mapListeners, 'click', dropWaypoint(event));
+
+        //actually adding the listener to the map
+        google.maps.event.addListener(mapListeners, 'click', dropWaypoint(event));
+    }
+}
+
+function dropWaypoint(event) {
+    if (dropMarkerListener != null) {
+        //call function to create marker
+        if (waypointMarker) {
+            waypointMarker.setMap(null);
+            waypointMarker = null;
+        }
+        waypointMarker = createMarker(event.latLng, "name", "<b>Location</b><br>" + event.latLng);
+
+        // make uav fly to the dropped pin
+        goWaypoint(event.latLng.lat(), event.latLng.lng());     
+
+        // remove listener so the marker can only be placed once
+        google.maps.event.removeListener(dropMarkerListener);
+        dropMarkerListener = null;
+    }
+            
+    // reset selected uav if there's no waypoint
+    else if (waypointMarker) {
+        uavInfoWindow.close();
+        otherInfoWindow.close();
+    }
+    else {
+        for (i = 0; i < trailArray.length; i++) {
+            trailArray[i].setMap(null);
+        }
+        selectedUAV = null;
+        uavInfoWindow.close();
+    }
+    $("#UAVId").html("Select an UAV first");
+    $("#goBtn").addClass("disabled");
+    $("#clickToGoBtn").addClass("disabled");
+}
+
+function goWaypoint(lat, long) {
+    vehicleHub.server.sendCommand({
+        Id: 123,
+        Latitude: lat,
+        Longitude: long,
+        Altitude: 400,
+        UAVId: selectedUAV.Id
+    });
+}
+
+
+function goTo_show() {
+    document.getElementById("CommPopPlaceHolder").style.display = "block";
+}
+
+function goTo_hide() {
+    document.getElementById("CommPopPlaceHolder").style.display = "none";
+}
+
+function clear() {
+    document.getElementById("go_lat").value = "";
+    document.getElementById("go_long").value = "";
+}
+
 $(document).ready(function () {
     var mapOptions = {
         zoom: 18,
@@ -277,6 +408,16 @@ $(document).ready(function () {
         disableDoubleClickZoom: true,
     }
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+    //setting trial style
+    uavTrail = new google.maps.MarkerImage(
+        '../Content/img/blue.jpg',
+        null,
+        null,
+        new google.maps.Point(4, 50),
+        new google.maps.Size(5, 5)
+    );
+
     var homeControlDiv = document.createElement('div');
     var homeControl = new BaseControl(homeControlDiv, map);
 
@@ -288,6 +429,11 @@ $(document).ready(function () {
 
     homeControlDiv.index = 1;
     map.controls[google.maps.ControlPosition.RIGHT].push(homeControlDiv);
+
+    // add event listener
+    if (document.getElementById("go_lat") != isNaN && document.getElementById("go_long") != isNaN) {
+        document.getElementById("goWaypoint").addEventListener("click", goWaypoint(document.getElementById("go_lat"), document.getElementById("go_long")));
+    }
 
     $.ajax({
         url: '/api/uavs/getuavinfo',
@@ -357,10 +503,11 @@ $(document).ready(function () {
 
 
     /* Vehicle movement */
-    var vehicleHub = $.connection.vehicleHub;
+
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         console.log(vehicle);
         var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
+        storeTrail(LatLng);
         uavs[vehicle.Id].marker.setMap(map);
         uavs[vehicle.Id].markerCircle.setMap(map);
         uavs[vehicle.Id].marker.setPosition(LatLng);
@@ -419,9 +566,9 @@ $(document).ready(function () {
     });
 
     var mouseDownPos, gridBoundingBox = null, mouseIsDown = 0;
-    var theMap = map;
+    var mapListeners = map;
 
-    google.maps.event.addListener(theMap, 'mousemove', function (e) {
+    google.maps.event.addListener(mapListeners, 'mousemove', function (e) {
         console.log("move mouse down, shift down", mouseIsDown, shiftPressed);
         if (mouseIsDown && (shiftPressed || gridBoundingBox != null)) {
             if (gridBoundingBox !== null) {
@@ -432,7 +579,7 @@ $(document).ready(function () {
             } else {
                 console.log("first mouse move");
                 gridBoundingBox = new google.maps.Rectangle({
-                    map: theMap,
+                    map: mapListeners,
                     bounds: null,
                     fillOpacity: 0.15,
                     strokeWeight: 0.9,
@@ -442,17 +589,17 @@ $(document).ready(function () {
         }
     });
 
-    google.maps.event.addListener(theMap, 'mousedown', function (e) {
+    google.maps.event.addListener(mapListeners, 'mousedown', function (e) {
         if (shiftPressed) {
             mouseIsDown = 1;
             mouseDownPos = e.latLng;
-            theMap.setOptions({
+            mapListeners.setOptions({
                 draggable: false
             });
         }
     });
 
-    google.maps.event.addListener(theMap, 'mouseup', function (e) {
+    google.maps.event.addListener(mapListeners, 'mouseup', function (e) {
         if (mouseIsDown && (shiftPressed || gridBoundingBox != null)) {
             mouseIsDown = 0;
             if (gridBoundingBox !== null) {
@@ -476,7 +623,7 @@ $(document).ready(function () {
             }
             gridBoundingBox = null;
         }
-        theMap.setOptions({
+        mapListeners.setOptions({
             draggable: true
         });
     });
