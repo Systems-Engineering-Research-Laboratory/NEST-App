@@ -26,9 +26,9 @@ namespace NEST_App.DAL
             context.Database.Create();
             // We can initialize everything here and store it into the database    
             string line;
-            string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            string filePath = Path.Combine(userPath, "Documents\\NEST-App\\NEST-App\\Content\\dictionary.txt");
+            string userPath = AppDomain.CurrentDomain.BaseDirectory;
 
+            string filePath = Path.Combine(userPath, "Content\\dictionary.txt");
             StreamReader file = new StreamReader(filePath);
             int uavCounter = 0;
             int uavTotal = 1;
