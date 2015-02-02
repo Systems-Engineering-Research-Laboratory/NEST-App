@@ -1,30 +1,35 @@
-﻿html, body, #map-canvas {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
+﻿@import url(http://fonts.googleapis.com/css?family=Arvo);
+
+* {
+    font-family: 'Arvo', sans-serif;
+}
+
+html, body, #map-canvas {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
 
 .right-buttons {
-        right: 1px;
-        padding-right: 5px;
-        width: 100px;
-        height: 200px;
-        top: 40px;
-        position: fixed;
-    }
+    right: 1px;
+    padding-right: 5px;
+    width: 100px;
+    height: 200px;
+    top: 40px;
+    position: fixed;
+}
 
 .left-buttons {
-        left: 40px;
-        width: 200px;
-        height: 200px;
-        top: 35px;
-        position: fixed;
+    left: 40px;
+    width: 200px;
+    height: 200px;
+    top: 35px;
+    position: fixed;
 }
 
 #start {
     background-color: white;
-    font-family: 'Arial, san-serif';
     font-size: 12px;
     cursor: pointer;
     width: 55px;
@@ -36,7 +41,6 @@
 
 #stop {
     background-color: white;
-    font-family: 'Arial, san-serif';
     font-size: 12px;
     width: 55px;
     cursor: pointer;
@@ -48,74 +52,70 @@
 }
 
 .labels {
-   color: blue;
-   font-family: "Lucida Grande", "Arial", sans-serif;
-   font-size: 12px;
-   font-weight: bold;
-   text-align: center;
-   width: 60px;     
- }
+    color: blue;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    width: 60px;
+}
 
 .infobox-wrapper {
-    display:none;
+    display: none;
 }
-#infobox{
-    border:1px solid black;
+
+#infobox {
+    border: 1px solid black;
     margin-top: 8px;
-    background:#333;
-    color:#FFF;
-    font-family:Arial, Helvetica, sans-serif;
-    font-size:12px;
+    background: #333;
+    color: #FFF;
+    font-size: 12px;
     padding: .5em 1em;
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
     border-radius: 1px;
 }
 
- #infoboxAlert {
-    border:1px solid red;
+#infoboxAlert {
+    border: 1px solid red;
     height: 25px;
-    background:#333;
-    color:#FFF;
-    font-family:Arial, Helvetica, sans-serif;
+    background: #333;
+    color: #FFF;
     padding: 3px 3px 10px 4px;
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
     border-radius: 1px;
- }
+}
 
- #infoboxAlert p {
-     color: #ff0000;
-     margin: 0;
-     font-weight: bold;
-     font-size: 30px;
- }
+    #infoboxAlert p {
+        color: #ff0000;
+        margin: 0;
+        font-weight: bold;
+        font-size: 30px;
+    }
 
 #panel {
-  width: 200px;
-  font-family: Arial, sans-serif;
-  font-size: 13px;
-  float: right;
+    width: 200px;
+    font-size: 13px;
+    float: right;
 }
 
 #color-palette {
-  clear: both;
+    clear: both;
 }
 
 .color-button {
-  width: 14px;
-  height: 14px;
-  font-size: 0;
-  margin: 2px;
-  margin-left: 5px;
-  float: left;
-  cursor: pointer;
+    width: 14px;
+    height: 14px;
+    font-size: 0;
+    margin: 2px;
+    margin-left: 5px;
+    float: left;
+    cursor: pointer;
 }
 
 #delete-button {
     margin-top: 10px;
     background-color: white;
-    font-family: 'Arial, san-serif';
     font-size: 12px;
     cursor: pointer;
     width: 55px;
@@ -128,7 +128,6 @@
 #delete-all-button {
     margin-top: 10px;
     background-color: white;
-    font-family: 'Arial, san-serif';
     font-size: 12px;
     cursor: pointer;
     width: 55px;
@@ -136,4 +135,74 @@
     border-width: 1px;
     border-color: black;
     margin-left: 10px;
+}
+
+#goWaypoint {
+    background-color: white;
+    font-size: 12px;
+    width: 55px;
+    cursor: pointer;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    float: right;
+    margin: 10px 0 0 0;
+}
+
+#CommPopPlaceHolder {
+    position: fixed;
+    margin: auto;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: none;		
+    background-color: rgba(185, 185, 185, 0.57);
+    overflow: auto;
+}
+
+#CommPop {
+    position: absolute; 
+    left: 50%;
+    top: 17%;
+    margin-left: -248px;
+}
+
+#waypoint_popup {
+    max-width: 600px;
+    min-width: 250px;
+    padding: 10px 50px;
+    border: 2px solid gray;
+    border-radius: 10px;
+    background-color: white;
+    overflow: hidden;
+}
+
+#goBtn {
+    position: relative;
+    float: left;
+    margin-left: 37%;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#clearBtn {
+    position: relative;
+    float: left;
+    margin-left: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#close_button {
+    position: absolute;
+    font-size: 2em;
+    color: red;
+    right: -11px;
+    top: -10px;
+    cursor: pointer;
+}
+
+#clickToGoBtn {
+    margin-left: 25px;
 }

@@ -14,8 +14,8 @@ namespace NEST_App
             BundleTable.EnableOptimizations = false;
 
             bundles.UseCdn = true;
-            var cssTransformer = new CssTransformer();
-            var jsTransformer = new JsTransformer();
+            var cssTransformer = new StyleTransformer();
+            var jsTransformer = new ScriptTransformer();
             var nullOrderer = new NullOrderer();
 
             var cssBundle = new CustomStyleBundle("~/bundles/css");
@@ -29,6 +29,12 @@ namespace NEST_App
             jqueryBundle.Transforms.Add(jsTransformer);
             jqueryBundle.Orderer = nullOrderer;
             bundles.Add(jqueryBundle);
+
+            var signalRBundle = new CustomScriptBundle("~/bundles/jquery-signalR");
+            jqueryBundle.Include("~/Scripts/jquery.signalR-{version}.js", "~/Scripts/jquery.signalR-{version}.min.js");
+            jqueryBundle.Transforms.Add(jsTransformer);
+            jqueryBundle.Orderer = nullOrderer;
+            bundles.Add(signalRBundle);
 
             var jqueryvalBundle = new CustomScriptBundle("~/bundles/jqueryval");
             jqueryvalBundle.Include("~/Scripts/jquery.validate*");
@@ -48,10 +54,16 @@ namespace NEST_App
 
 
             var bootstrapBundle = new CustomScriptBundle("~/bundles/bootstrap");
-            bootstrapBundle.Include("~/Scripts/bootstrap.js", "~/Scripts/respond.js");
+            bootstrapBundle.Include("~/Scripts/bootstrap.js", "~/Scripts/bootstrap.min.js", "~/Scripts/respond.js");
             bootstrapBundle.Transforms.Add(jsTransformer);
             bootstrapBundle.Orderer = nullOrderer;
             bundles.Add(bootstrapBundle);
+
+            var bootstrapLess = new CustomStyleBundle("~/bundles/bootstrapLess");
+            bootstrapLess.Include("~/Content/bootstrap/bootstrap.less");
+            bootstrapLess.Transforms.Add(cssTransformer);
+            bootstrapLess.Orderer = nullOrderer;
+            bundles.Add(bootstrapLess);
 
             //Google Map CSS bundle
             var googMapCSS = new CustomStyleBundle("~/bundles/googMapCSS");
