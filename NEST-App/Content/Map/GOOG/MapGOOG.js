@@ -1,6 +1,6 @@
 ﻿var map;
 var mapListeners = map; //use this to add listeners to the map
-var vehicleHub;
+var vehicleHub = $.connection.vehicleHub
 var pointText;
 var results;
 var parse;
@@ -140,6 +140,7 @@ function uavMarkers(data, textStatus, jqXHR) {
     console.log("Pulling Flightstates...", textStatus);
     for (var i = 0; i < data.length; i++) {
         uavs[data[i].Id] = {};
+        uavs[data[i].Id].Id = data[i].Id;
         uavs[data[i].Id].FlightState = data[i].FlightState;
         uavs[data[i].Id].Schedule = data[i].Schedule;
         uavs[data[i].Id].Missions = data[i].Schedule.Missions;
@@ -502,7 +503,7 @@ $(document).ready(function () {
 
 
     /* Vehicle movement */
-    vehicleHub = $.connection.vehicleHub;
+
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         console.log(vehicle);
         var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
