@@ -95,7 +95,6 @@ namespace NEST_App.DAL
 
             };
 
-<<<<<<< HEAD
             var RestrictedArea = new List<MapRestricted>
             {
                 new MapRestricted{
@@ -111,9 +110,6 @@ namespace NEST_App.DAL
             };
 
             var wps = new List<Waypoint>
-=======
-                    var wps = new List<Waypoint>
->>>>>>> origin/master
             {
                 new Waypoint{ WaypointName = "Jeff's Next Next Waypoint", IsActive = true, WasSkipped = false, GeneratedBy = "Jeff", Action = "Fly Through", Position = DbGeography.FromText("POINT(-118.4902736 34.2365205 400)"), Missions = missions[0]},
                 new Waypoint{ WaypointName = "Jeff's Waypoint", IsActive = true, WasSkipped = false, GeneratedBy = "Jeff", Action = "Fly Through", Position = DbGeography.FromText("POINT(-118.529 34.2417 400)"), Missions = missions[0] },
