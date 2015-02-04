@@ -189,32 +189,50 @@ function uavMarkers(data, textStatus, jqXHR) {
             labelAnchor: new google.maps.Point(95, 20),
             labelClass: "labels",
             labelStyle: { opacity: 0.75 },
+            zIndex: 999999,
             uav: uavs[data[i].Id]
         });
+
 
         var key = data[i].Id.toString();
         uavs[data[i].Id].marker = marker;
         uavs[data[i].Id].markerCircle = markerCircle;
         uavs[data[i].Id].flightPath = flightPath;
-        uavs[data[i].Id].marker.setMap(map);
         uavs[data[i].Id].markerCircle.setMap(map);
-        uavs[data[i].Id].flightPath.setMap(map);
-        google.maps.event.addListener(marker, 'click', (function (marker, key, event) {
-        $(window).keydown(function (evt) {
-            if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, ignore immediate key repeats and proceed
-                ctrlDown = false;
-                console.log("Ctrl key pressed");
+        uavs[data[i].Id].marker.setMap(map);
+        marker.set('flightPath', flightPath);
+        marker.set('flightToggle', false);
+        var flightToggle = false;
+        google.maps.event.addListener(marker, 'click', (function () {
+            this.setIcon(uavSymbolGreen);
+            if (this.flightToggle == false) {
+                this.flightPath.setMap(map);
             }
-            else {//otherwise, empty the selectedDrones map
-                   
+            else {
+                this.flightPath.setMap(null);
+            }
+            $(window).keydown(function (evt) {
+           
+            });
+            if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, add the drone to the list
+                //console.log("hit if");
+                ctrlDown = false;
+                selectedUAV = marker.uav;
+                selectedDrones.push(selectedUAV);
+            }
+            else {//otherwise, empty the selectedDrones list and add the drone to the empty list
+                //console.log("hit else");
                 while (selectedDrones.length > 0) {//clear the selected drone list
                     selectedDrones.pop();
                 }
+                selectedUAV = marker.uav;
+                selectedDrones.push(selectedUAV);
             }
-        });
-        selectedUAV = marker.uav;
-        console.log("UAV selected: " + selectedUAV);
-        selectedDrones.push(selectedUAV);
+        //selectedUAV = marker.uav;
+        //selectedDrones.push(selectedUAV);
+        //console.log("UAV selected: " + selectedUAV);
+        console.log("Number of drones selected: " + selectedDrones.length);
+        
 
             ////add trail to the map
             ////still working on it
@@ -233,7 +251,7 @@ function uavMarkers(data, textStatus, jqXHR) {
 
                 console.log("Number of selected drones: " + selectedDrones.length);
             }
-        })(marker, key));
+        }));
     }
 }
 
@@ -373,6 +391,9 @@ function clickToGo() {
     }
 }
 
+
+
+
 function dropWaypoint(event) {
     if (dropMarkerListener != null) {
         //call function to create marker
@@ -441,6 +462,10 @@ $(document).ready(function () {
         disableDoubleClickZoom: true,
     }
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+
+
+
 
     //setting trail style
     uavTrail = new google.maps.MarkerImage(
