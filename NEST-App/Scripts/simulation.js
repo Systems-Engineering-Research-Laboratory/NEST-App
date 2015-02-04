@@ -15,7 +15,7 @@
 //The URL where we will perform the AJAX call to get the vehicle info from the DB.
 var uri = '/api/flightstate';
 var runSim = false;
-var dt = 1000; //Timestep in milliseconds
+var dt = 50; //Timestep in milliseconds
 var phases = ["preparing", "enroute", "delivering", "returning", "landing"];
 var availableMissions = [];
 
@@ -149,7 +149,7 @@ $(document).ready(function () {
     //The main loop will push updates via signalr, don't want to do it prematurely.
     $.connection.hub.start().done(
         function () { connectedToHub(vehicleHub, map); }
-        );
+       );
 });
 
 //Flight state callback. This function will be curried and passed to the ajax query.
