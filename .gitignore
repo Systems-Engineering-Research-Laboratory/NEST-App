@@ -75,6 +75,3 @@ _[Ss]cripts
 *.dot[Cc]over
 *.ldf
 .travis.yml.orig
-#########################
-# Database		#
-*.mdf

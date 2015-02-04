@@ -56,7 +56,7 @@ namespace NEST_App.Controllers
                       select new
                       {
                           MissionId = wp.MissionId,
-                          wp.NextWaypointId,
+                          NextWaypointId = wp.NextWaypointId,
                           Position = wp.Position,
                           isActive = wp.IsActive,
                           Id = wp.Id,
