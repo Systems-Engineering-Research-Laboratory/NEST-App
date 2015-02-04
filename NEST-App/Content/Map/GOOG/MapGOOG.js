@@ -589,21 +589,22 @@ $(document).ready(function () {
         });
         console.log(parse);
         if (parse < .2) {
-            infobox.open(map, uavs[vehicle.Id].marker);
-            infoboxAlert.open(map, uavs[vehicle.Id].marker);
-
-            var eventLog = {
-                uav_id: uavs[vehicle.Id].Id,
-                message: message,
-                criticality: "critical",
-                uav_callsign: uavs[vehicle.Id].Callsign,
-                operator_screen_name: "Test Operator",
-                UAVId: uavs[vehicle.Id].Id
-            };
-            console.log(eventLog);
-            emitHub.server.emit(eventLog);
+         
+            //console.log(eventLog);
+            //emitHub.server.emit(eventLog);
             if (warningMessageCounter == 0) {
                 warningMessageCounter++;
+                infobox.open(map, uavs[vehicle.Id].marker);
+                infoboxAlert.open(map, uavs[vehicle.Id].marker);
+
+                var eventLog = {
+                    uav_id: uavs[vehicle.Id].Id,
+                    message: message,
+                    criticality: "critical",
+                    uav_callsign: uavs[vehicle.Id].Callsign,
+                    operator_screen_name: "Test Operator",
+                    UAVId: uavs[vehicle.Id].Id
+                };
                 $.ajax({
                     type: "POST",
                     url: "/api/uavs/postuavevent",
