@@ -542,7 +542,7 @@ $(document).ready(function () {
     $.connection.hub.start().done(function () {
         console.log("connection started for evt log");
     });
-    
+    var warningMessageCounter = 0;
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         console.log(vehicle);
@@ -568,20 +568,27 @@ $(document).ready(function () {
         if (parse < .2) {
             infobox.open(map, uavs[vehicle.Id].marker);
             infoboxAlert.open(map, uavs[vehicle.Id].marker);
-            //console.log(document.getElementById("infobox"));
-            //console.log($("#infobox").attr("msg"));
-            
+
             var eventLog = {
-                event_id: 1,
                 uav_id: uavs[vehicle.Id].Id,
                 message: message,
                 criticality: "critical",
                 uav_callsign: uavs[vehicle.Id].Callsign,
-                operator_screen_name: "Test Operator"
-                
+                operator_screen_name: "Test Operator",
+                UAVId: uavs[vehicle.Id].Id
             };
             console.log(eventLog);
             emitHub.server.emit(eventLog);
+            if (warningMessageCounter == 0) {
+                warningMessageCounter++;
+                $.ajax({
+                    type: "POST",
+                    url: "/api/uavs/postuavevent",
+                    success: function () { },
+                    data: eventLog
+
+                });
+            }
         }
     }
 

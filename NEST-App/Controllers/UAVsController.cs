@@ -70,6 +70,16 @@ namespace NEST_App.Controllers.Api
                        };
             return Request.CreateResponse(HttpStatusCode.OK, uavs);
         }
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.Route("api/uavs/postuavevent")]
+        public void PostUavEvent(EventLog evnt)
+        {
+            evnt.create_date = DateTime.Now;
+            evnt.modified_date = DateTime.Now;
+            db.EventLogs.Add(evnt);
+            db.SaveChanges();
+        }
+
 
         // GET: api/UAVs
         public IQueryable<UAV> GetUAVs()
