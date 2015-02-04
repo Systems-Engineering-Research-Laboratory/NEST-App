@@ -15,7 +15,7 @@ var waypointMarker = null;
 var selectedUAV; //the uav that's been selected
 var selectedDrones = []; //store drones selected from any method here
 var storedGroups = []; //keep track of different stored groupings of UAVs
-var ctrlPressed = false;
+var ctrlDown = false;
 var infobox;
 var infoboxAlert;
 var selected = false;
@@ -154,6 +154,28 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].Id].Callsign = data[i].Callsign;
         uavs[data[i].Id].Battery = data[i].FlightState.BatteryLevel;
         uavs[data[i].Id].Position = new google.maps.LatLng(results[1], results[0]);
+        uavs[data[i].Id].Mission = data[i].Mission;
+
+        destText = uavs[data[i].Id].Mission.DestinationCoordinates.Geography.WellKnownText;
+        res = destText.match(/-?\d+(\.\d+)?/g);
+        var destLat = res[1];
+        var destLon = res[0];
+        var destAlt = res[2];
+        uavs[data[i].Id].Destination = new google.maps.LatLng(res[1], res[0]);
+
+        //Creates the flightpath line from start to destination
+        var flightPlanCoords = [
+            uavs[data[i].Id].Position,
+            uavs[data[i].Id].Destination
+        ];
+
+        var flightPath = new google.maps.Polyline({
+            path: flightPlanCoords,
+            geodesic: true,
+            strokeColor: 'blue',
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        });
 
         var markerCircle = new google.maps.Marker({
             position: uavs[data[i].Id].Position,
@@ -173,22 +195,26 @@ function uavMarkers(data, textStatus, jqXHR) {
         var key = data[i].Id.toString();
         uavs[data[i].Id].marker = marker;
         uavs[data[i].Id].markerCircle = markerCircle;
+        uavs[data[i].Id].flightPath = flightPath;
         uavs[data[i].Id].marker.setMap(map);
         uavs[data[i].Id].markerCircle.setMap(map);
-        
+        uavs[data[i].Id].flightPath.setMap(map);
         google.maps.event.addListener(marker, 'click', (function (marker, key, event) {
-
-            $(window).keydown(function (evt) {
-                if (evt.ctrlKey) {//If ctrl is not pressed, then clear selectedDrones[] before adding the clicked drone to the list
-                    console.log("Ctrl key pressed");
-                    while (selectedDrones.length > 0) {//clear the selected drone list
-                        selectedDrones.pop();
-                    }
+        $(window).keydown(function (evt) {
+            if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, ignore immediate key repeats and proceed
+                ctrlDown = false;
+                console.log("Ctrl key pressed");
+            }
+            else {//otherwise, empty the selectedDrones map
+                   
+                while (selectedDrones.length > 0) {//clear the selected drone list
+                    selectedDrones.pop();
                 }
-            });
-            selectedUAV = marker.uav;
-            console.log("UAV selected: " + selectedUAV);
-            selectedDrones.push(selectedUAV);
+            }
+        });
+        selectedUAV = marker.uav;
+        console.log("UAV selected: " + selectedUAV);
+        selectedDrones.push(selectedUAV);
 
             ////add trail to the map
             ////still working on it
@@ -543,12 +569,15 @@ $(document).ready(function () {
     $(window).keydown(function (evt) {
         if (evt.which === 16) {
             shiftPressed = true;
-            console.log("Shift key down");
+            //console.log("Shift key down");
+        }
+        if (evt.ctrlKey) {
+            ctrlDown = true;
         }
         //if shift + (0 through 9) is pressed, all selected drones will be bound to that number
         if (evt.shiftKey && ((evt.which >= 48) && (evt.which <= 57))) {
             storedGroups[evt.which] = selectedDrones;
-            console.log("Number of selected drones: " + selectedDrones.length);
+            //console.log("Number of selected drones: " + selectedDrones.length);
         }
         //if 0 through 9 is pressed, it restores that list of selected drones and turns them green
         if ((evt.which >= 48) && (evt.which <= 57)) {
@@ -569,7 +598,7 @@ $(document).ready(function () {
     }).keyup(function (evt) {
         if (evt.which === 16) {
             shiftPressed = false;
-            console.log("Shift key up");
+            //console.log("Shift key up");
         }
     });
 
