@@ -44,10 +44,11 @@ function Vehicle(vehicleInfo, reporter) {
         else {
             var wps = data.map(function (curVal) { return new Waypoint(curVal); });
             that.waypoints = wps;
+            var misIdx = wps.length - 1;
             that.currentWaypoint = that.waypoints[0];
             that.currentWpIndex = 0;
-            that.waypoints[1].obj = that.Mission;
-            that.waypoints[1].objType = "mission";
+            that.waypoints[misIdx].obj = that.Mission;
+            that.waypoints[misIdx].objType = "mission";
         }
     }
 
