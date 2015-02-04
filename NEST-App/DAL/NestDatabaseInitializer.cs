@@ -23,7 +23,7 @@ namespace NEST_App.DAL
             {
                 context.Database.Delete();
             }
-            context.Database.Create();
+            context.Database.CreateIfNotExists();
             // We can initialize everything here and store it into the database    
             string line;
             string userPath = AppDomain.CurrentDomain.BaseDirectory;

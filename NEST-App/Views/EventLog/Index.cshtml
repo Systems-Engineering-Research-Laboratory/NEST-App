@@ -21,10 +21,13 @@
             <strong>Message</strong>
         </td>
         <td>
+            <strong>Operator</strong>
+        </td>
+        <td>
             <strong>Time</strong>
         </td>
     </tr>
-    <tr ng-repeat="evt in events" ng-style="{background-color:}">
+    <tr ng-repeat="evt in events" ng-style="getRowStyle(evt.criticality)">
         <td>
             {{evt.uav_id}}
         </td>
@@ -34,6 +37,9 @@
         <td>
             <span ng-show="evt.criticality == 'warning'" class="glyphicon glyphicon-warning-sign" style="color:black;background-color:yellow;"></span>
             {{evt.message}}
+        </td>
+        <td>
+            {{evt.operator_screen_name}}
         </td>
         <td>
             {{evt.create_date}}

@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 02/02/2015 11:40:28
--- Generated from EDMX file: C:\Users\Kaylee's Window\Desktop\490\NEST-App\NEST-App\Models\VehicleModel.edmx
+-- Date Created: 02/03/2015 23:16:14
+-- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -452,7 +452,8 @@ CREATE TABLE [dbo].[EventLogs] (
     [uav_id] int  NOT NULL,
     [message] nvarchar(max)  NOT NULL,
     [criticality] nvarchar(max)  NOT NULL,
-    [uav_callsign] nvarchar(max)  NOT NULL
+    [uav_callsign] nvarchar(max)  NOT NULL,
+    [operator_screen_name] nvarchar(max)  NOT NULL
 );
 GO
 
