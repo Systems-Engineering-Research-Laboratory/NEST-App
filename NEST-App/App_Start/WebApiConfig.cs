@@ -15,12 +15,17 @@ namespace NEST_App
                 = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 
             // Web API routes
-            // Jeff - My VS says it can't find this, but it still runs and it works. Don't listen to VS's lies.
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",
+                defaults: new { id = RouteParameter.Optional }
+            );
+
+            config.Routes.MapHttpRoute(
+                name: "ApiWithAction",
+                routeTemplate: "api/{controller}/{action}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
         }
