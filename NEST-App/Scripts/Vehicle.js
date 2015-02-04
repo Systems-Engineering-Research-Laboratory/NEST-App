@@ -118,14 +118,14 @@ function Vehicle(vehicleInfo, reporter) {
         if (wp.obj) {
             switch (wp.objType) {
                 case "mission":
-                    var cb = this.performMission;
+                    return this.performMission(dt, wp.obj);
                     break;
                 case "command":
-                    var cb = this.performCommand;
+                    return this.performCommand(dt, wp.obj);
                     break;
             }
             //If we are done, returns true. Means we can consume the waypoint.
-            return cb(dt, wp.obj);
+            
         }
         else {
             //Just go to, this is just a navigational point.
@@ -507,6 +507,7 @@ function Waypoint(info) {
     if(info.NextWaypointId) {
         this.NextWaypointId = info.NextWaypointId;
     }
+    this.Id = info.Id;
 }
 
 //Helper functions and globals.
