@@ -23,6 +23,8 @@ namespace NEST_App
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+            //Remove XML
+            GlobalConfiguration.Configuration.Formatters.Remove(GlobalConfiguration.Configuration.Formatters.XmlFormatter);
 
             //initializing database the correct CMD_NAV_Waypoint -- varatep 
             NestDatabaseInitializer dbInit = new NestDatabaseInitializer();
