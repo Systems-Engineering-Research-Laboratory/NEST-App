@@ -2,13 +2,13 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 01/31/2015 21:02:51
--- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
+-- Date Created: 02/02/2015 11:40:28
+-- Generated from EDMX file: C:\Users\Kaylee's Window\Desktop\490\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
 GO
-USE [C:\USERS\VARATEP-MAC\DOCUMENTS\VISUAL STUDIO 2013\PROJECTS\NEST-APP\NEST-APP\APP_DATA\NEST_DB.MDF];
+USE [NEST_DB];
 GO
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 GO
@@ -253,11 +253,11 @@ GO
 -- Creating table 'NonownshipVehicles'
 CREATE TABLE [dbo].[NonownshipVehicles] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [Position] geometry  NOT NULL,
+    [Position] geography  NOT NULL,
     [Velocity] float  NOT NULL,
-    [VelocityX] nvarchar(max)  NOT NULL,
-    [VelocityY] nvarchar(max)  NOT NULL,
-    [VelocityZ] nvarchar(max)  NOT NULL,
+    [VelocityX] float  NOT NULL,
+    [VelocityY] float  NOT NULL,
+    [VelocityZ] float  NOT NULL,
     [Yaw] float  NOT NULL,
     [FlightPlan] nvarchar(max)  NOT NULL
 );
@@ -474,12 +474,11 @@ GO
 -- Creating table 'MapRestrictedSet'
 CREATE TABLE [dbo].[MapRestrictedSet] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [Ellipse_center_coordinates] geometry  NOT NULL,
-    [Ellipse_majorAxis] float  NOT NULL,
-    [Ellipse_minorAxis] float  NOT NULL,
-    [PopulationDensity] nvarchar(max)  NOT NULL,
+    [Ellipse_center_coordinates] geography  NOT NULL,
+    [Ellipse_NorthAxis] float  NOT NULL,
+    [Ellipse_EastAxis] float  NOT NULL,
+    [PopulationDensity] float  NOT NULL,
     [SeaLevel] float  NOT NULL,
-    [NonOwnShipAircraftPath] nvarchar(max)  NOT NULL,
     [Creator_created] nvarchar(max)  NOT NULL,
     [Time_created] datetime  NOT NULL,
     [Reason_created] nvarchar(max)  NOT NULL,

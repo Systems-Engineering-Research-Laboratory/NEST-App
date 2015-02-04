@@ -15,11 +15,11 @@ namespace NEST_App.Models
     public partial class NonownshipVehicle
     {
         public int Id { get; set; }
-        public System.Data.Entity.Spatial.DbGeometry Position { get; set; }
+        public System.Data.Entity.Spatial.DbGeography Position { get; set; }
         public double Velocity { get; set; }
-        public string VelocityX { get; set; }
-        public string VelocityY { get; set; }
-        public string VelocityZ { get; set; }
+        public double VelocityX { get; set; }
+        public double VelocityY { get; set; }
+        public double VelocityZ { get; set; }
         public double Yaw { get; set; }
         public string FlightPlan { get; set; }
     }

@@ -193,11 +193,11 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Position" Type="geometry" Nullable="false" SRID="0" />
+    <Property Name="Position" Type="geography" Nullable="false" SRID="4326" />
     <Property Name="Velocity" Type="float" Nullable="false" />
-    <Property Name="VelocityX" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="VelocityY" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="VelocityZ" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="VelocityX" Type="float" Nullable="false" />
+    <Property Name="VelocityY" Type="float" Nullable="false" />
+    <Property Name="VelocityZ" Type="float" Nullable="false" />
     <Property Name="Yaw" Type="float" Nullable="false" />
     <Property Name="FlightPlan" Type="nvarchar(max)" Nullable="false" />
   </EntityType>
@@ -414,12 +414,11 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Ellipse_center_coordinates" Type="geometry" Nullable="false" SRID="0" />
-    <Property Name="Ellipse_majorAxis" Type="float" Nullable="false" />
-    <Property Name="Ellipse_minorAxis" Type="float" Nullable="false" />
-    <Property Name="PopulationDensity" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Ellipse_center_coordinates" Type="geography" Nullable="false" SRID="4326" />
+    <Property Name="Ellipse_NorthAxis" Type="float" Nullable="false" />
+    <Property Name="Ellipse_EastAxis" Type="float" Nullable="false" />
+    <Property Name="PopulationDensity" Type="float" Nullable="false" />
     <Property Name="SeaLevel" Type="float" Nullable="false" />
-    <Property Name="NonOwnShipAircraftPath" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Creator_created" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Time_created" Type="datetime" Nullable="false" />
     <Property Name="Reason_created" Type="nvarchar(max)" Nullable="false" />
@@ -901,11 +900,11 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Position" Type="GeometryPoint" Nullable="false" />
+          <Property Name="Position" Type="GeographyPoint" Nullable="false" />
           <Property Name="Velocity" Type="Double" Nullable="false" />
-          <Property Name="VelocityX" Type="String" Nullable="false" />
-          <Property Name="VelocityY" Type="String" Nullable="false" />
-          <Property Name="VelocityZ" Type="String" Nullable="false" />
+          <Property Name="VelocityX" Type="Double" Nullable="false" />
+          <Property Name="VelocityY" Type="Double" Nullable="false" />
+          <Property Name="VelocityZ" Type="Double" Nullable="false" />
           <Property Name="Yaw" Type="Double" Nullable="false" />
           <Property Name="FlightPlan" Type="String" Nullable="false" />
         </EntityType>
@@ -1259,12 +1258,11 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Ellipse_center_coordinates" Type="GeometryMultiPoint" Nullable="false" />
-          <Property Name="Ellipse_majorAxis" Type="Double" Nullable="false" />
-          <Property Name="Ellipse_minorAxis" Type="Double" Nullable="false" />
-          <Property Name="PopulationDensity" Type="String" Nullable="false" />
+          <Property Name="Ellipse_center_coordinates" Type="GeographyMultiPoint" Nullable="false" />
+          <Property Name="Ellipse_NorthAxis" Type="Double" Nullable="false" />
+          <Property Name="Ellipse_EastAxis" Type="Double" Nullable="false" />
+          <Property Name="PopulationDensity" Type="Double" Nullable="false" />
           <Property Name="SeaLevel" Type="Double" Nullable="false" />
-          <Property Name="NonOwnShipAircraftPath" Type="String" Nullable="false" />
           <Property Name="Creator_created" Type="String" Nullable="false" />
           <Property Name="Time_created" Type="DateTime" Nullable="false" />
           <Property Name="Reason_created" Type="String" Nullable="false" />
@@ -1650,11 +1648,10 @@
         <MappingFragment StoreEntitySet="MapRestrictedSet">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Ellipse_center_coordinates" ColumnName="Ellipse_center_coordinates" />
-          <ScalarProperty Name="Ellipse_majorAxis" ColumnName="Ellipse_majorAxis" />
-          <ScalarProperty Name="Ellipse_minorAxis" ColumnName="Ellipse_minorAxis" />
+          <ScalarProperty Name="Ellipse_NorthAxis" ColumnName="Ellipse_NorthAxis" />
+          <ScalarProperty Name="Ellipse_EastAxis" ColumnName="Ellipse_EastAxis" />
           <ScalarProperty Name="PopulationDensity" ColumnName="PopulationDensity" />
           <ScalarProperty Name="SeaLevel" ColumnName="SeaLevel" />
-          <ScalarProperty Name="NonOwnShipAircraftPath" ColumnName="NonOwnShipAircraftPath" />
           <ScalarProperty Name="Creator_created" ColumnName="Creator_created" />
           <ScalarProperty Name="Time_created" ColumnName="Time_created" />
           <ScalarProperty Name="Reason_created" ColumnName="Reason_created" />
