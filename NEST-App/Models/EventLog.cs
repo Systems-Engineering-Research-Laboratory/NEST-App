@@ -21,5 +21,6 @@ namespace NEST_App.Models
         public string message { get; set; }
         public string criticality { get; set; }
         public string uav_callsign { get; set; }
+        public string operator_screen_name { get; set; }
     }
 }

@@ -11,8 +11,9 @@ eventlogapp
                 event_id: event.event_id || 1,
                 uav_id: event.uav_id || 1,
                 message: event.message || "Hello World",
-                criticality: event.criticality || "major",
-                uav_callsign: event.uav_callsign || "PINR001"
+                criticality: event.criticality || "critical",
+                uav_callsign: event.uav_callsign || "PINR001",
+                operator_screen_name: event.operator_screen_name || "varatep"
             };
             return EventLog;
         };
@@ -40,6 +41,17 @@ eventlogapp
         });
         $scope.fakeEmit = function () {
             $scope.hub.emit(new EventLog());
+        };
+        $scope.getRowStyle = function (criticality) {
+            if (criticality === "warning") {
+                return {
+                    backgroundColor: "#EEEB8D"
+                };
+            } else if (criticality === "critical") {
+                return {
+                    backgroundColor: "#CD0000"
+                };
+            }
         };
     };
     $scope.init();

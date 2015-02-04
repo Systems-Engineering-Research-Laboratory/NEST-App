@@ -9,7 +9,7 @@
 
 <div ng-app="EventLog" ng-controller="EventLogCtrl">
     <button class="btn btn-primary" ng-click="fakeEmit()">Fake Emit</button>
-<table class="table table-striped table-hover">
+<table class="table table-hover">
     <tr>
         <td>
             <strong>UAV ID</strong>
@@ -21,10 +21,13 @@
             <strong>Message</strong>
         </td>
         <td>
+            <strong>Operator</strong>
+        </td>
+        <td>
             <strong>Time</strong>
         </td>
     </tr>
-    <tr ng-repeat="evt in events">
+    <tr ng-repeat="evt in events" ng-style="getRowStyle(evt.criticality)">
         <td>
             {{evt.uav_id}}
         </td>
@@ -32,7 +35,11 @@
             {{evt.uav_callsign}}
         </td>
         <td>
+            <span ng-show="evt.criticality == 'warning'" class="glyphicon glyphicon-warning-sign" style="color:black;background-color:yellow;"></span>
             {{evt.message}}
+        </td>
+        <td>
+            {{evt.operator_screen_name}}
         </td>
         <td>
             {{evt.create_date}}

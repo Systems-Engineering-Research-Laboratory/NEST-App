@@ -393,6 +393,7 @@
     <Property Name="message" Type="nvarchar(max)" Nullable="false" />
     <Property Name="criticality" Type="nvarchar(max)" Nullable="false" />
     <Property Name="uav_callsign" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="operator_screen_name" Type="nvarchar(max)" Nullable="false" />
   </EntityType>
   <EntityType Name="MapAreaSet">
     <Key>
@@ -1237,6 +1238,7 @@
           <Property Name="message" Type="String" Nullable="false" />
           <Property Name="criticality" Type="String" Nullable="false" />
           <Property Name="uav_callsign" Type="String" Nullable="false" />
+          <Property Name="operator_screen_name" Type="String" Nullable="false" />
         </EntityType>
         <EntityType Name="MapArea">
           <Key>
@@ -1624,6 +1626,7 @@
           <ScalarProperty Name="message" ColumnName="message" />
           <ScalarProperty Name="criticality" ColumnName="criticality" />
           <ScalarProperty Name="uav_callsign" ColumnName="uav_callsign" />
+          <ScalarProperty Name="operator_screen_name" ColumnName="operator_screen_name" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
