@@ -260,6 +260,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InterfaceController.cs" />
     <Compile Include="Controllers\MapController.cs" />
+    <Compile Include="Controllers\MapRestrictedsController.cs" />
     <Compile Include="Controllers\MissionsController.cs" />
     <Compile Include="Controllers\ScheduleController.cs" />
     <Compile Include="Controllers\ScheduleViewController.cs" />
