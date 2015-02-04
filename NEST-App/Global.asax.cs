@@ -23,10 +23,6 @@ namespace NEST_App
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            //Return JSON only
-            GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            GlobalConfiguration.Configuration.Formatters.Remove(GlobalConfiguration.Configuration.Formatters.XmlFormatter);
-
 
             //initializing database the correct CMD_NAV_Waypoint -- varatep 
             NestDatabaseInitializer dbInit = new NestDatabaseInitializer();
