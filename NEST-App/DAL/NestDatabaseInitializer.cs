@@ -152,6 +152,7 @@ namespace NEST_App.DAL
                         //context.Missions.Add(missions.First());
                         //context.Maintenances.Add(maintenances.First());
                         context.Schedules.Add(schedules.First());
+                        context.MapRestrictedSet.AddRange(RestrictedArea);
                         context.SaveChanges();
                     }
                     catch (DbEntityValidationException e)
