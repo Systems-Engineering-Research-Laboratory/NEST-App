@@ -92,6 +92,10 @@
       <End Role="Waypoint" EntitySet="Waypoints" />
       <End Role="Mission" EntitySet="Missions" />
     </AssociationSet>
+    <AssociationSet Name="UAVEventLog" Association="VehicleModel.Store.UAVEventLog">
+      <End Role="UAV" EntitySet="UAVs" />
+      <End Role="EventLog" EntitySet="EventLogs" />
+    </AssociationSet>
     <AssociationSet Name="FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint" Association="VehicleModel.Store.FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint">
       <End Role="CMD_NAV_Waypoint" EntitySet="CMD_NAV_Waypoint" />
       <End Role="CMD_NAV_Hover" EntitySet="CMD_NAV_Waypoint_CMD_NAV_Hover" />
@@ -394,6 +398,7 @@
     <Property Name="criticality" Type="nvarchar(max)" Nullable="false" />
     <Property Name="uav_callsign" Type="nvarchar(max)" Nullable="false" />
     <Property Name="operator_screen_name" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="UAVId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="MapAreaSet">
     <Key>
@@ -650,6 +655,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="UAVEventLog">
+    <End Role="UAV" Type="VehicleModel.Store.UAVs" Multiplicity="1" />
+    <End Role="EventLog" Type="VehicleModel.Store.EventLogs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="UAV">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="EventLog">
+        <PropertyRef Name="UAVId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint">
     <End Role="CMD_NAV_Waypoint" Type="VehicleModel.Store.CMD_NAV_Waypoint" Multiplicity="1">
       <OnDelete Action="Cascade" />
@@ -793,6 +810,10 @@
           <EntitySet Name="MapAreaSet" EntityType="VehicleModel.MapArea" />
           <EntitySet Name="MapRestrictedSet" EntityType="VehicleModel.MapRestricted" />
           <EntitySet Name="MapPointSet" EntityType="VehicleModel.MapPoint" />
+          <AssociationSet Name="UAVEventLog" Association="VehicleModel.UAVEventLog">
+            <End Role="UAV" EntitySet="UAVs" />
+            <End Role="EventLog" EntitySet="EventLogs" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="UAV">
           <Key>
@@ -814,6 +835,7 @@
           <Property Name="UpdateRate" Type="Double" Nullable="false" annotation:StoreGeneratedPattern="None" />
           <Property Name="CruiseAltitude" Type="Double" Nullable="false" />
           <Property Name="MinDeliveryAlt" Type="Double" Nullable="false" />
+          <NavigationProperty Name="EventLogs" Relationship="VehicleModel.UAVEventLog" FromRole="UAV" ToRole="EventLog" />
           </EntityType>
         <EntityType Name="FlightState">
           <Key>
@@ -1239,6 +1261,8 @@
           <Property Name="criticality" Type="String" Nullable="false" />
           <Property Name="uav_callsign" Type="String" Nullable="false" />
           <Property Name="operator_screen_name" Type="String" Nullable="false" />
+          <NavigationProperty Name="UAV" Relationship="VehicleModel.UAVEventLog" FromRole="EventLog" ToRole="UAV" />
+          <Property Name="UAVId" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="MapArea">
           <Key>
@@ -1301,6 +1325,18 @@
           <Property Name="AvgSolar_WPerm2" Type="Decimal" Nullable="false" />
           <Property Name="BattVoltMin" Type="Decimal" Nullable="false" />
         </EntityType>
+        <Association Name="UAVEventLog">
+          <End Type="VehicleModel.UAV" Role="UAV" Multiplicity="1" />
+          <End Type="VehicleModel.EventLog" Role="EventLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UAV">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EventLog">
+              <PropertyRef Name="UAVId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1627,6 +1663,7 @@
           <ScalarProperty Name="criticality" ColumnName="criticality" />
           <ScalarProperty Name="uav_callsign" ColumnName="uav_callsign" />
           <ScalarProperty Name="operator_screen_name" ColumnName="operator_screen_name" />
+          <ScalarProperty Name="UAVId" ColumnName="UAVId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

@@ -25,7 +25,7 @@ namespace NEST_App.Controllers.Api
         [System.Web.Mvc.Route("api/uavs/getuavinfo")]
         public HttpResponseMessage GetUAVInfo()
         {
-            var uavs = from u in db.UAVs.Include(u => u.FlightStates).Include(u => u.Schedules)
+            var uavs = from u in db.UAVs.Include(u => u.FlightStates).Include(u => u.Schedules).Include(u => u.EventLogs)
                        let s = u.Schedules.OrderBy(s => s.create_date).FirstOrDefault()
                        let m = s.Missions.OrderBy(m => m.create_date).FirstOrDefault()
                        select new
@@ -66,6 +66,7 @@ namespace NEST_App.Controllers.Api
                                modified_date = m.modified_date,
                            },
                            FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
+                           EventLog = u.EventLogs,
                        };
             return Request.CreateResponse(HttpStatusCode.OK, uavs);
         }
