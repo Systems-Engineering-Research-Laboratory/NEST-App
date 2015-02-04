@@ -14,31 +14,34 @@
     </div>
 @foreach (var sched in Model)
 {
-    <table cellspacing="8">
+    <table cellspacing="10">
         <tr>
             <td>
                 ScheduleID:
                 @Html.DisplayFor(modelItem => sched.Id)
             </td>
                 Missions:
-                @Html.DisplayFor(modelItem => sched.Missions)
+                @*@Html.DisplayFor(modelItem => sched.Missions)*@
                 @foreach (var mission in sched.Missions)
                 {
                   <td>  @("MissionID: " + mission.id.ToString()) </td>
                   <td>  @("Estimated Completion Time: " + mission.EstimatedCompletionTime.ToString()) </td>
                   <td>  @("Scheduled Completion Time: " + mission.ScheduledCompletionTime.ToString()) </td>
-                  //<td>  @("Destination Coordinates: " + mission.DestinationCoordinates.ToString()) </td>
+                  <td>  @("Destination Coordinates: " + mission.DestinationCoordinates.ToString()) </td>
+                  <td>  @("Phase:" + mission.Phase.ToString())</td>
 
                 }
+            </tr>
+        <tr>
             <td>
                 Maintenances:
             </td>
-                @foreach (var maint in sched.Maintenances)
-                {
-                 <td> @("UAV id: " + maint.id.ToString()) </td>
-                 <td> @("Last Maintenance: " + maint.last_maintenance.ToString()) </td>
-                 <td> @("Next Maintenance: " + maint.next_maintenance.ToString()) </td>
-                }
+            @foreach (var maint in sched.Maintenances)
+            {
+                <td> @("UAV id: " + maint.id.ToString()) </td>
+                <td> @("Last Maintenance: " + maint.last_maintenance.ToString()) </td>
+                <td> @("Next Maintenance: " + maint.next_maintenance.ToString()) </td>
+            }
         </tr>
     </table>
 }
