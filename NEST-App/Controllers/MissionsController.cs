@@ -20,7 +20,7 @@ namespace NEST_App.Controllers
         private NestContainer db = new NestContainer();
 
         [HttpGet]
-        [Route("api/missions/waypoints/{id}")]
+
         public async Task<IEnumerable<object>> Waypoints(int id)
         {
             Mission mission = await db.Missions.FindAsync(id);
