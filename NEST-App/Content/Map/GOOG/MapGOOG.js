@@ -142,6 +142,7 @@ function uavMarkers(data, textStatus, jqXHR) {
     for (var i = 0; i < data.length; i++) {
         uavs[data[i].Id] = {};
         uavs[data[i].Id].Id = data[i].Id;
+        
         uavs[data[i].Id].FlightState = data[i].FlightState;
         uavs[data[i].Id].Schedule = data[i].Schedule;
         uavs[data[i].Id].Missions = data[i].Schedule.Missions;
@@ -172,6 +173,9 @@ function uavMarkers(data, textStatus, jqXHR) {
         var key = data[i].Id.toString();
         uavs[data[i].Id].marker = marker;
         uavs[data[i].Id].markerCircle = markerCircle;
+        uavs[data[i].Id].marker.setMap(map);
+        uavs[data[i].Id].markerCircle.setMap(map);
+        
         google.maps.event.addListener(marker, 'click', (function (marker, key, event) {
 
             $(window).keydown(function (evt) {
@@ -504,24 +508,25 @@ $(document).ready(function () {
     google.maps.event.addDomListener(document.getElementById('delete-all-button'), 'click', deleteAllShape);
     buildColorPalette();
 
-
+    
     /* Vehicle movement */
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         console.log(vehicle);
         var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
         storeTrail(vehicle.Id, LatLng);
-        uavs[vehicle.Id].marker.setMap(map);
-        uavs[vehicle.Id].markerCircle.setMap(map);
+
         uavs[vehicle.Id].marker.setPosition(LatLng);
         uavs[vehicle.Id].markerCircle.setPosition(LatLng);
         parse = parseFloat(Math.round(vehicle.BatteryLevel * 100) / 100).toFixed(2);
         uavSymbolBlack.rotation = vehicle.Yaw;
         uavSymbolGreen.rotation = vehicle.Yaw;
+        
         if (selected == false)
             uavs[vehicle.Id].marker.setIcon(uavSymbolBlack);
         else
             uavs[vehicle.Id].marker.setIcon(uavSymbolGreen);
+           
         uavs[vehicle.Id].marker.setOptions({
             labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + vehicle.Altitude + '<br/><b>Bat: </b>' + parse + '</div>',
             icon: uavs[vehicle.Id].marker.icon
