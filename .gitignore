@@ -75,4 +75,5 @@ _[Ss]cripts
 *.dot[Cc]over
 *.ldf
 .travis.yml.orig
+NEST-App/App_Data/NEST_DB.mdf
 *.mdf
