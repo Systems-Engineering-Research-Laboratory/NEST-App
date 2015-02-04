@@ -24,7 +24,7 @@
             <strong>Time</strong>
         </td>
     </tr>
-    <tr ng-repeat="evt in events">
+    <tr ng-repeat="evt in events" ng-style="{background-color:}">
         <td>
             {{evt.uav_id}}
         </td>
@@ -32,6 +32,7 @@
             {{evt.uav_callsign}}
         </td>
         <td>
+            <span ng-show="evt.criticality == 'warning'" class="glyphicon glyphicon-warning-sign" style="color:black;background-color:yellow;"></span>
             {{evt.message}}
         </td>
         <td>
