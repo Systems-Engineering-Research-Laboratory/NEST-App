@@ -1,5 +1,4 @@
 ﻿(function ($) {
-    "use strict";
 
     var $jmelosegui = $.jmelosegui = {
 
@@ -50,12 +49,12 @@
         return $jmelosegui.create(this, {
             name: 'GoogleMap',
             init: function (element, options) {
-                return new $jmelosegui.Googlemap(element, options);
+                return new $jmelosegui.map(element, options);
             },
             options: options,
             success: function (map) {
                 map.load();
-            },
+            }
         });
 
     };
@@ -64,20 +63,20 @@
     $jmelosegui.GooglePolygon = function (map, config) {
         //init
         this.Map = map;
-        this.gPolygon = null;
+        this.GPolygon = null;
         //properties
-        this.clickable = config.clickable;
-        this.fillColor = config.fillColor;
-        this.fillOpacity = config.fillOpacity;
-        this.points = config.points;
-        this.strokeColor = config.strokeColor;
-        this.strokeOpacity = config.strokeOpacity;
-        this.strokeWeight = config.strokeWeight;
-        this.points = [];
+        this.Clickable = config.Clickable;
+        this.FillColor = config.FillColor;
+        this.FillOpacity = config.FillOpacity;
+        this.Points = config.Points;
+        this.StrokeColor = config.StrokeColor;
+        this.StrokeOpacity = config.StrokeOpacity;
+        this.StrokeWeight = config.StrokeWeight;
+        this.Points = [];
 
-        if (config.points) {
-            for (var i = 0; i < config.points.length; i++) {
-                this.points.push(new google.maps.LatLng(config.points[i].latitude, config.points[i].longitude));
+        if (config.Points) {
+            for (var i = 0; i < config.Points.length; i++) {
+                this.Points.push(new google.maps.LatLng(config.Points[i].Latitude, config.Points[i].Longitude));
             }
         }
 
@@ -85,16 +84,16 @@
 
     $jmelosegui.GooglePolygon.prototype = {
         isLoaded: function () {
-            return this.gPolygon !== null;
+            return this.GPolygon !== null;
         },
         load: function () {
             var options = {
-                paths: this.points,
-                strokeColor: this.strokeColor,
-                strokeOpacity: this.strokeOpacity,
-                strokeWeight: this.strokeWeight,
-                fillColor: this.fillColor,
-                fillOpacity: this.fillOpacity
+                paths: this.Points,
+                strokeColor: this.StrokeColor,
+                strokeOpacity: this.StrokeOpacity,
+                strokeWeight: this.StrokeWeight,
+                fillColor: this.FillColor,
+                fillOpacity: this.FillOpacity
             };
             var polygon = new google.maps.Polygon(options);
             polygon.setMap(this.Map);
@@ -105,17 +104,17 @@
     $jmelosegui.GoogleCircle = function (map, config) {
         //init
         this.Map = map;
-        this.gCircle = null;
+        this.GCircle = null;
         //properties
-        this.clickable = config.clickable;
-        this.fillColor = config.fillColor;
-        this.fillOpacity = config.fillOpacity;
-        this.points = config.points;
-        this.strokeColor = config.strokeColor;
-        this.strokeOpacity = config.strokeOpacity;
-        this.strokeWeight = config.strokeWeight;
-        this.center = config.center;
-        this.radius = config.radius;
+        this.Clickable = config.Clickable;
+        this.FillColor = config.FillColor;
+        this.FillOpacity = config.FillOpacity;
+        this.Points = config.Points;
+        this.StrokeColor = config.StrokeColor;
+        this.StrokeOpacity = config.StrokeOpacity;
+        this.StrokeWeight = config.StrokeWeight;
+        this.Center = config.Center;
+        this.Radius = config.Radius;
     };
 
     $jmelosegui.GoogleCircle.prototype = {
@@ -124,13 +123,13 @@
         },
         load: function () {
             var options = {
-                center: new google.maps.LatLng(this.center.latitude, this.center.longitude),
-                radius: this.radius,
-                strokeColor: this.strokeColor,
-                strokeOpacity: this.strokeOpacity,
-                strokeWeight: this.strokeWeight,
-                fillColor: this.fillColor,
-                fillOpacity: this.fillOpacity
+                center: new google.maps.LatLng(this.Center.Latitude, this.Center.Longitude),
+                radius: this.Radius,
+                strokeColor: this.StrokeColor,
+                strokeOpacity: this.StrokeOpacity,
+                strokeWeight: this.StrokeWeight,
+                fillColor: this.FillColor,
+                fillOpacity: this.FillOpacity
             };
             var circle = new google.maps.Circle(options);
             circle.setMap(this.Map);
@@ -140,19 +139,19 @@
     //Markers
     $jmelosegui.GoogleMarker = function (map, index, config) {
         // init
-        this.gMarker = null;
+        this.GMarker = null;
         this.Map = map;
-        this.index = index;
+        this.Index = index;
         //properties
-        this.latitude = config.lat;
-        this.longitude = config.lng;
-        this.title = config.title;
-        this.icon = config.icon;
-        this.clickable = config.clickable ? config.clickable : true;
-        this.draggable = config.draggable;
-        this.window = config.window;
-        this.zIndex = config.zIndex ? config.zIndex : 0;
-        this.enableMarkersClustering = config.enableMarkersClustering ? config.enableMarkersClustering : false;
+        this.Latitude = config.Latitude;
+        this.Longitude = config.Longitude;
+        this.Title = config.Title;
+        this.Icon = config.Icon;
+        this.Clickable = config.Clickable;
+        this.Draggable = config.Draggable;
+        this.Window = config.Window;
+        this.CreateNewWindow = config.CreateNewWindow;
+        this.EnableMarkersClustering = config.EnableMarkersClustering;
     };
 
     var infowindow;
@@ -160,37 +159,36 @@
     $jmelosegui.GoogleMarker.prototype = {
 
         isLoaded: function () {
-            return (this.gMarker !== null);
+            return (this.GMarker !== null);
         },
         initialize: function () {
-            if (this.window) {
-                google.maps.event.addListener(this.gMarker, 'click', $jmelosegui.delegate(this, this.openInfoWindow));
+            if (this.Window) {
+                google.maps.event.addListener(this.GMarker, 'click', $jmelosegui.delegate(this, this.openInfoWindow));
             }
         },
         createImage: function (options) {
-            var image = new google.maps.MarkerImage(options.path,
-                new google.maps.Size(options.size.width, options.size.height),
-                new google.maps.Point(options.point.x, options.point.y),
-                new google.maps.Point(options.anchor.x, options.anchor.y));
+            var image = new google.maps.MarkerImage(options.Path,
+                new google.maps.Size(options.Size.Width, options.Size.Height),
+                new google.maps.Point(options.Point.X, options.Point.Y),
+                new google.maps.Point(options.Anchor.X, options.Anchor.Y));
             return image;
         },
         load: function (point) {
-            this.latitude = point.lat();
-            this.longitude = point.lng();
+            this.Latitude = point.lat();
+            this.Longitude = point.lng();
             var markerOptions = {
-                position: new google.maps.LatLng(this.latitude, this.longitude),
-                map: this.enableMarkersClustering ? null : this.Map,
-                title: this.title,
-                clickable: this.clickable,
-                draggable: this.draggable,
-                icon: this.icon ? this.createImage(this.icon) : null,
-                zIndex: this.zIndex
+                position: new google.maps.LatLng(this.Latitude, this.Longitude),
+                map: this.EnableMarkersClustering ? null : this.Map,
+                title: this.Title,
+                clickable: this.Clickable,
+                draggable: this.Draggable,
+                icon: this.Icon ? this.createImage(this.Icon) : null
             };
             // create
-            this.gMarker = new google.maps.Marker(markerOptions);
+            this.GMarker = new google.maps.Marker(markerOptions);
             this.initialize();
-            if (this.enableMarkersClustering === true) {
-                markersCluster.push(this.gMarker);
+            if (this.EnableMarkersClustering === true) {
+                markersCluster.push(this.GMarker);
             }
         },
         openInfoWindow: function () {
@@ -198,307 +196,143 @@
                 if (infowindow) {
                     infowindow.close();
                 }
-                var node = document.getElementById(this.window.content).cloneNode(true);
+                var node = document.getElementById(this.Window.Content).cloneNode(true);
                 infowindow = new google.maps.InfoWindow();
                 infowindow.setContent(node.innerHTML);
-                infowindow.open(this.Map, this.gMarker);
+                infowindow.open(this.Map, this.GMarker);
             }
         }
     };
 
-    //Image Map Types
-    $jmelosegui.ImageMapType = function (map, config) {
-
-        this.map = map;
-        this.name = config.name;
-        this.alt = config.altName;
-        this.maxZoom = config.maxZoom;
-        this.minZoom = config.minZoom;
-        this.radius = config.radius;
-        this.opacity = config.opacity;
-
-        this.repeatHorizontally = config.repeatHorizontally;
-        this.repeatVertically = config.repeatVertically;
-        this.tileSize = new google.maps.Size(config.tileSize.width, config.tileSize.height);
-        this.tileUrlPattern = config.tileUrlPattern;
-    }
-
-    $jmelosegui.ImageMapType.prototype = {
-        getTileUrl: function (coord, zoom) {
-            var normalizedCoord = this.getNormalizedCoord(coord, zoom);
-
-            if (!normalizedCoord) {
-                return null;
-            }
-
-            var imageUrl = this.format(this.tileUrlPattern, coord.x, coord.y, zoom, this.tileSize.width, this.tileSize.height);
-            console.log(imageUrl);
-            return imageUrl;
-
-        },
-
-        getNormalizedCoord: function getNormalizedCoord(coord, zoom) {
-            var y = coord.y;
-            var x = coord.x;
-            var tileRange = 1 << zoom;
-
-            if (y < 0 || y >= tileRange) {
-                if (this.repeatVertically) {
-                    y = (y % tileRange + tileRange) % tileRange;
-                } else {
-                    return null;
-                }
-            }
-
-            if (x < 0 || x >= tileRange) {
-                if (this.repeatHorizontally) {
-                    x = (x % tileRange + tileRange) % tileRange;
-                } else {
-                    return null;
-                }
-            }
-
-            return {
-                x: x,
-                y: y
-            };
-        },
-
-        format: function (value) {
-            var args = Array.prototype.slice.call(arguments, 1);
-            return value.replace(/{(\d+)}/g, function (match, number) {
-                return typeof args[number] != 'undefined'
-                  ? args[number]
-                  : match
-                ;
-            });
-        }
-    }
-
-    // Styled Map Types
-    $jmelosegui.StyledMapType = function (map, config) {
-
-        this.map = map;
-        this.name = config.name;
-        this.alt = config.altName;
-        this.maxZoom = config.maxZoom;
-        this.minZoom = config.minZoom;
-        this.radius = config.radius;
-        this.opacity = config.opacity;
-
-        this.styles = config.styles;
-    }
-
-    $jmelosegui.StyledMapType.prototype = {}
-
-    $jmelosegui.Googlemap = function (element, options) {
+    $jmelosegui.map = function (element, options) {
 
         this.element = element;
         $.extend(this, options);
 
-        this.clientId = options.clientId;
-        this.address = options.address;
-        this.disableDoubleClickZoom = options.disableDoubleClickZoom;
-        this.enableMarkersClustering = options.enableMarkersClustering;
-        this.markerClusteringOptions = options.markerClusteringOptions;
-        this.height = options.height;
-        this.width = options.width;
-        this.latitude = options.center.latitude;
-        this.longitude = options.center.longitude;
-        this.useCurrentPosition = options.center.useCurrentPosition;
-        this.zoom = (options.zoom !== undefined) ? options.zoom : 6;
-        this.maxZoom = (options.maxZoom !== undefined) ? options.maxZoom : null;
-        this.minZoom = (options.minZoom !== undefined) ? options.minZoom : null;
-        this.mapTypeId = options.mapTypeId;
-        this.mapTypeControlPosition = (options.mapTypeControlPosition !== undefined) ? options.mapTypeControlPosition : 'TOP_RIGHT';
-        this.mapTypeControlStyle = options.mapTypeControlStyle;
-        this.mapTypeControlVisible = (options.mapTypeControlVisible !== undefined) ? options.mapTypeControlVisible : true;
+        this.ClientID = options.ClientID;
+        this.Address = options.Address;
+        this.DisableDoubleClickZoom = options.DisableDoubleClickZoom;
+        this.EnableMarkersClustering = options.EnableMarkersClustering;
+        this.MarkerClusteringOptions = options.MarkerClusteringOptions;
+        this.Height = options.Height;
+        this.Width = options.Width;
+        this.Latitude = options.Latitude;
+        this.Longitude = options.Longitude;
+        this.Zoom = options.Zoom;
+        this.MapType = options.MapType;
+        this.MapTypeControlPosition = (options.MapTypeControlPosition !== undefined) ? options.MapTypeControlPosition : 'TOP_RIGHT';
+        this.MapTypeControlStyle = options.MapTypeControlStyle;
+        this.MapTypeControlVisible = (options.MapTypeControlVisible !== undefined) ? options.MapTypeControlVisible : true;
 
-        this.panControlVisible = (options.panControlVisible !== undefined) ? options.panControlVisible : true;
-        this.panControlPosition = (options.panControlPosition !== undefined) ? options.panControlPosition : 'TOP_LEFT';
+        this.PanControlVisible = (options.PanControlVisible !== undefined) ? options.PanControlVisible : true;
+        this.PanControlPosition = (options.PanControlPosition !== undefined) ? options.PanControlPosition : 'TOP_LEFT';
 
-        this.zoomControlVisible = (options.zoomControlVisible !== undefined) ? options.zoomControlVisible : true;
-        this.zoomControlPosition = (options.zoomControlPosition !== undefined) ? options.zoomControlPosition : 'TOP_LEFT';
-        this.zoomControlStyle = options.zoomControlStyle;
+        this.ZoomControlVisible = (options.ZoomControlVisible !== undefined) ? options.ZoomControlVisible : true;
+        this.ZoomControlPosition = (options.ZoomControlPosition !== undefined) ? options.ZoomControlPosition : 'TOP_LEFT';
+        this.ZoomControlStyle = options.ZoomControlStyle;
 
-        this.streetViewControlVisible = (options.streetViewControlVisible !== undefined) ? options.streetViewControlVisible : true;
-        this.streetViewControlPosition = (options.streetViewControlPosition !== undefined) ? options.streetViewControlPosition : 'TOP_LEFT';
+        this.StreetViewControlVisible = (options.StreetViewControlVisible !== undefined) ? options.StreetViewControlVisible : true;
+        this.StreetViewControlPosition = (options.StreetViewControlPosition !== undefined) ? options.StreetViewControlPosition : 'TOP_LEFT';
 
-        this.overviewMapControlVisible = (options.overviewMapControlVisible !== undefined) ? options.overviewMapControlVisible : false;
-        this.overviewMapControlOpened = (options.overviewMapControlOpened !== undefined) ? options.overviewMapControlOpened : false;
+        this.OverviewMapControlVisible = (options.OverviewMapControlVisible !== undefined) ? options.OverviewMapControlVisible : true;
+        this.OverviewMapControlOpened = (options.OverviewMapControlOpened !== undefined) ? options.OverviewMapControlOpened : false;
 
 
-        this.navigationControlPosition = (options.navigationControlPosition !== undefined) ? options.navigationControlPosition : 'TOP_LEFT';
-        this.navigationControlType = options.navigationControlType;
-        this.navigationControlVisible = (options.navigationControlVisible !== undefined) ? options.navigationControlVisible : true;
+        this.NavigationControlPosition = (options.NavigationControlPosition !== undefined) ? options.NavigationControlPosition : 'TOP_LEFT';
+        this.NavigationControlType = options.NavigationControlType;
+        this.NavigationControlVisible = (options.NavigationControlVisible !== undefined) ? options.NavigationControlVisible : true;
 
-        this.scaleControlVisible = (options.scaleControlVisible !== undefined) ? options.scaleControlVisible : false;
+        this.ScaleControlVisible = (options.ScaleControlVisible !== undefined) ? options.ScaleControlVisible : false;
         this.GMap = null;
 
-        this.markers = eval(options.markers);
-        this.circles = eval(options.circles);
-        this.polygons = eval(options.polygons);
-        this.imageMapTypes = eval(options.imageMapTypes);
-        this.styledMapTypes = eval(options.styledMapTypes);
-
-        this.events = [];
-
-        if (options.bounds_changed !== undefined) {
-            this.events.push({ 'bounds_changed': options.bounds_changed });
-        }
-        if (options.center_changed !== undefined) {
-            this.events.push({ 'center_changed': options.center_changed });
-        }
-        if (options.click !== undefined) {
-            this.events.push({ 'click': options.click });
-        }
-        if (options.dblclick !== undefined) {
-            this.events.push({ 'dblclick': options.dblclick });
-        }
-        if (options.rightclick !== undefined) {
-            this.events.push({ 'rightclick': options.rightclick });
-        }
-        if (options.drag !== undefined) {
-            this.events.push({ 'drag': options.drag });
-        }
-        if (options.dragend !== undefined) {
-            this.events.push({ 'dragend': options.dragend });
-        }
-        if (options.dragstart !== undefined) {
-            this.events.push({ 'dragstart': options.dragstart });
-        }
-        if (options.heading_changed !== undefined) {
-            this.events.push({ 'heading_changed': options.heading_changed });
-        }
-        if (options.idle !== undefined) {
-            this.events.push({ 'idle': options.idle });
-        }
-        if (options.maptypeid_changed !== undefined) {
-            this.events.push({ 'maptypeid_changed': options.maptypeid_changed });
-        }
-        if (options.projection_changed !== undefined) {
-            this.events.push({ 'projection_changed': options.projection_changed });
-        }
-        if (options.resize !== undefined) {
-            this.events.push({ 'resize': options.resize });
-        }
-        if (options.mousemove !== undefined) {
-            this.events.push({ 'mousemove': options.mousemove });
-        }
-        if (options.mouseout !== undefined) {
-            this.events.push({ 'mouseout': options.mouseout });
-        }
-        if (options.mouseover !== undefined) {
-            this.events.push({ 'mouseover': options.mouseover });
-        }
-        if (options.tilesloaded !== undefined) {
-            this.events.push({ 'tilesloaded': options.tilesloaded });
-        }
-        if (options.tilt_changed !== undefined) {
-            this.events.push({ 'tilt_changed': options.tilt_changed });
-        }
-        if (options.zoom_changed !== undefined) {
-            this.events.push({ 'zoom_changed': options.zoom_changed });
-        }
-        if (options.map_loaded !== undefined) {
-            this.map_loaded = options.map_loaded;
-        }
+        this.Markers = eval(options.Markers);
+        this.Polygons = eval(options.Polygons);
 
         $jmelosegui.bind(this, {
             load: this.onLoad
         });
     };
 
-    $jmelosegui.Googlemap.prototype = {
+    $jmelosegui.map.prototype = {
         initialize: function () {
 
-            var innerOptions = {
-                zoom: this.zoom,
-                minZoom: this.minZoom,
-                maxZoom: this.maxZoom,
-                center: new google.maps.LatLng(this.latitude, this.longitude),
-                disableDoubleClickZoom: this.disableDoubleClickZoom,
-                draggable: this.draggable,
-                mapTypeId: this.getMapTypeId(),
-                mapTypeControl: this.mapTypeControlVisible,
-                mapTypeControlOptions: {
-                    style: this.getMapTypeControlStyle(),
-                    position: this.getControlPosition(this.mapTypeControlPosition),
-                },
-                panControl: this.panControlVisible,
-                panControlOptions: {
-                    position: this.getControlPosition(this.panControlPosition)
-                },
-                zoomControl: this.zoomControlVisible,
-                zoomControlOptions: {
-                    position: this.getControlPosition(this.zoomControlPosition),
-                    style: this.getZoomControlStyle()
-                },
-                overviewMapControl: this.overviewMapControlVisible,
-                overviewMapControlOptions: {
-                    opened: this.overviewMapControlOpened
-                },
-                streetViewControl: this.streetViewControlVisible,
-                streetViewControlOptions: {
-                    position: this.getControlPosition(this.streetViewControlPosition)
-                },
-                scaleControl: this.scaleControlVisible
-            };
-            var i;
-            if (this.imageMapTypes) {
-                innerOptions.mapTypeControlOptions.mapTypeIds = [];
-                for (i = 0; i < this.imageMapTypes.length; i++) {
-                    innerOptions.mapTypeControlOptions.mapTypeIds.push(this.imageMapTypes[i].name);
-                }
-            }
-
-            if (this.styledMapTypes) {
-                if (innerOptions.mapTypeControlOptions.mapTypeIds === undefined) {
-                    innerOptions.mapTypeControlOptions.mapTypeIds = [];
-                }
-                for (i = 0; i < this.styledMapTypes.length; i++) {
-                    innerOptions.mapTypeControlOptions.mapTypeIds.push(this.styledMapTypes[i].name);
-                }
-            }
-
-            this.GMap = new google.maps.Map(this.getElement(), innerOptions);
-        },
-        getZoomControlStyle: function () {
-            switch (this.zoomControlStyle) {
-                case 'LARGE':
-                    return google.maps.ZoomControlStyle.LARGE;
-                case 'SMALL':
-                    return google.maps.ZoomControlStyle.SMALL;
-                default:
-                    return google.maps.ZoomControlStyle.DEFAULT;
-            }
-        },
-        getMapTypeControlStyle: function () {
-            switch (this.mapTypeControlStyle) {
-                case 'DROPDOWN_MENU':
-                    return google.maps.MapTypeControlStyle.DROPDOWN_MENU;
-                case 'HORIZONTAL_BAR':
-                    return google.maps.MapTypeControlStyle.HORIZONTAL_BAR;
-                default:
-                    return google.maps.MapTypeControlStyle.DEFAULT;
-            }
-        },
-        getMapTypeId: function () {
-            switch (this.mapTypeId) {
+            var mapType;
+            switch (this.MapType) {
                 case 'HYBRID':
-                    return google.maps.MapTypeId.HYBRID;
+                    mapType = google.maps.MapTypeId.HYBRID;
+                    break;
                 case 'SATELLITE':
-                    return google.maps.MapTypeId.SATELLITE;
+                    mapType = google.maps.MapTypeId.SATELLITE;
+                    break;
                 case 'TERRAIN':
-                    return google.maps.MapTypeId.TERRAIN;
-                case 'ROADMAP':
-                    return google.maps.MapTypeId.ROADMAP;
+                    mapType = google.maps.MapTypeId.TERRAIN;
+                    break;
                 default:
-                    return this.mapTypeId;
+                    mapType = google.maps.MapTypeId.ROADMAP;
+                    break;
             }
+
+            var mapTypeControlStyle;
+            switch (this.MapTypeControlStyle) {
+                case 'DROPDOWN_MENU':
+                    mapTypeControlStyle = google.maps.MapTypeControlStyle.DROPDOWN_MENU;
+                    break;
+                case 'HORIZONTAL_BAR':
+                    mapTypeControlStyle = google.maps.MapTypeControlStyle.HORIZONTAL_BAR;
+                    break;
+                default:
+                    mapTypeControlStyle = google.maps.MapTypeControlStyle.DEFAULT;
+                    break;
+            }
+
+            var zoomControlStyle;
+            switch (this.ZoomControlStyle) {
+                case 'LARGE':
+                    zoomControlStyle = google.maps.ZoomControlStyle.LARGE;
+                    break;
+                case 'SMALL':
+                    zoomControlStyle = google.maps.ZoomControlStyle.SMALL;
+                    break;
+                default:
+                    zoomControlStyle = google.maps.ZoomControlStyle.DEFAULT;
+                    break;
+            }
+
+            var innerOptions = {
+                zoom: this.Zoom,
+                center: new google.maps.LatLng(this.Latitude, this.Longitude),
+                disableDoubleClickZoom: this.DisableDoubleClickZoom,
+                draggable: this.Draggable,
+                mapTypeId: mapType,
+                mapTypeControl: this.MapTypeControlVisible,
+                mapTypeControlOptions: {
+                    style: mapTypeControlStyle,
+                    position: this.getControlPosition(this.MapTypeControlPosition)
+                },
+                panControl: this.PanControlVisible,
+                panControlOptions: {
+                    position: this.getControlPosition(this.PanControlPosition)
+                },
+                zoomControl: this.ZoomControlVisible,
+                zoomControlOptions: {
+                    position: this.getControlPosition(this.ZoomControlPosition),
+                    style: zoomControlStyle
+                },
+                overviewMapControl: this.OverviewMapControlVisible,
+                overviewMapControlOptions: {
+                    opened: this.OverviewMapControlOpened
+                },
+                streetViewControl: this.StreetViewControlVisible,
+                streetViewControlOptions: {
+                    position: this.getControlPosition(this.StreetViewControlPosition)
+                },
+                scaleControl: this.ScaleControlVisible
+            };
+            this.GMap = new google.maps.Map(this.getElement(), innerOptions);
+
         },
         getElement: function () {
-            return document.getElementById(this.clientId);
+            return document.getElementById(this.ClientID);
         },
         getControlPosition: function (position) {
             switch (position) {
@@ -528,26 +362,26 @@
                     return google.maps.ControlPosition.RIGHT_TOP;
             }
         },
-        refreshMap: function () {
-            var options = {
-                maxZoom: this.markerClusteringOptions.maxZoom,
-                gridSize: this.markerClusteringOptions.gridSize,
-                averageCenter: this.markerClusteringOptions.averageCenter,
-                zoomOnClick: this.markerClusteringOptions.zoomOnClick,
-                hideSingleGroupMarker: this.markerClusteringOptions.hideSingleGroupMarker,
-                styles: this.markerClusteringOptions.customStyles
-            };
-            new MarkerClusterer(this.GMap, markersCluster, options);
-        },
         renderCircle: function (c) {
             c.load();
         },
+        refreshMap: function () {
+            var options = {
+                maxZoom: this.MarkerClusteringOptions.MaxZoom,
+                gridSize: this.MarkerClusteringOptions.GridSize,
+                averageCenter: this.MarkerClusteringOptions.AverageCenter,
+                zoomOnClick: this.MarkerClusteringOptions.ZoomOnClick,
+                hideSingleGroupMarker: this.MarkerClusteringOptions.HideSingleGroupMarker,
+                styles: this.MarkerClusteringOptions.CustomStyles
+            };
+            new MarkerClusterer(this.GMap, markersCluster, options);
+        },
         renderMarker: function (m) {
 
-            if ((m.latitude != 0) && (m.longitude != 0)) {
+            if ((m.Latitude != 0) && (m.Longitude != 0)) {
 
                 try {
-                    m.load(new google.maps.LatLng(m.latitude, m.longitude), false);
+                    m.load(new google.maps.LatLng(m.Latitude, m.Longitude), false);
                 }
                 catch (ex) { }
             }
@@ -559,114 +393,47 @@
             if (point) {
                 this.initialize();
                 this.render();
-                this.attachMapEvents();
-                if (this.map_loaded !== undefined) {
-                    var args = { 'map': this.GMap };
-                    this.map_loaded(args);
-                }
             }
             else {
-                if (this.useCurrentPosition && navigator.geolocation) {
-                    var self = this;
-                    navigator.geolocation.getCurrentPosition(function (position) {
-
-                        self.latitude = position.coords.latitude;
-                        self.longitude = position.coords.longitude;
-                        self.load(new google.maps.LatLng(self.latitude, self.longitude));
-
-                    }, function () {
-                        console.log("Error: The Geolocation service failed.");
-                        self.load(new google.maps.LatLng(this.latitude, this.longitude));
-                    });
-                } else {
-                    this.load(new google.maps.LatLng(this.latitude, this.longitude));
-                }
+                if ((this.Latitude != 0) && (this.Longitude != 0))
+                    this.load(new google.maps.LatLng(this.Latitude, this.Longitude));
             }
-        },
-        attachMapEvents: function () {
-            for (var i = 0; i < this.events.length; i++) {
-                var eventName = Object.getOwnPropertyNames(this.events[i])[0];
-                this.mapEventsCallBack(this.GMap, this.events[i][eventName], eventName);
-            }
-        },
-        mapEventsCallBack: function (map, handler, eventName) {            
-            google.maps.event.addListener(map, eventName, function (e) {
-                var args = { 'map': map, 'eventName': eventName };
-                $.extend(args, e);
-                handler(args);
-            });
         },
         render: function () {
             // markers
-            var i;
-            if (this.markers) {
-                for (i = 0; i < this.markers.length; i++) {
-                    var config = this.markers[i];
-
-                    if (!config.lat) {
-                        config.lat = this.GMap.center.lat();
-                    }
-
-                    if (!config.lng) {
-                        config.lng = this.GMap.center.lng();
-                    }
-
-                    config.enableMarkersClustering = this.enableMarkersClustering;
+            if (this.Markers) {
+                for (var i = 0; i < this.Markers.length; i++) {
+                    var config = this.Markers[i];
+                    config.EnableMarkersClustering = this.EnableMarkersClustering;
                     var marker = new $jmelosegui.GoogleMarker(this.GMap, i, config);
                     this.renderMarker(marker);
                 };
-                if (this.enableMarkersClustering === true) {
+                if (this.EnableMarkersClustering === true) {
                     this.refreshMap();
                 }
             }
             // polygons
-            if (this.polygons) {
-                for (i = 0; i < this.polygons.length; i++) {
-                    var polygon = new $jmelosegui.GooglePolygon(this.GMap, this.polygons[i]);
+            if (this.Polygons) {
+                for (var i = 0; i < this.Polygons.length; i++) {
+                    var polygon = new $jmelosegui.GooglePolygon(this.GMap, this.Polygons[i]);
                     this.renderPolygon(polygon);
                 }
             }
             // circles
-            if (this.circles) {
-                for (i = 0; i < this.circles.length; i++) {
-                    var circle = new $jmelosegui.GoogleCircle(this.GMap, this.circles[i]);
+            if (this.Circles) {
+                for (var i = 0; i < this.Circles.length; i++) {
+                    var circle = new $jmelosegui.GoogleCircle(this.GMap, this.Circles[i]);
                     this.renderPolygon(circle);
                 }
             }
-            // mapTypes
-            var mapType;
-            if (this.imageMapTypes) {
-                for (i = 0; i < this.imageMapTypes.length; i++) {
-                    mapType = new $jmelosegui.ImageMapType(this.GMap, this.imageMapTypes[i]);
-                    this.addImageMapType(this.GMap, mapType);
-                }
-            }
-
-            if (this.styledMapTypes) {
-                for (i = 0; i < this.styledMapTypes.length; i++) {
-                    mapType = new $jmelosegui.StyledMapType(this.GMap, this.styledMapTypes[i]);
-                    this.addStyledMapType(this.GMap, mapType);
-                }
-            }
-            this.GMap.setMapTypeId(this.getMapTypeId());
         },
         // Items --------------------------------------------------------------------------------------
         // Marker
         addMarker: function (config, render) {
-            if (!this.markers) this.markers = new Array();
-            var marker = new $jmelosegui.GoogleMarker(this, this.markers.length, config);
-            this.markers.push(marker);
+            if (!this.Markers) this.Markers = new Array();
+            var marker = new $jmelosegui.GoogleMarker(this, this.Markers.length, config);
+            this.Markers.push(marker);
             if (render) this.renderMarker(marker);
-        },
-        // Image MapTypes
-        addImageMapType: function (map, mapType) {
-            var gImageMapType = new google.maps.ImageMapType(mapType);
-            map.mapTypes.set(mapType.name, gImageMapType);
-        },
-        // Styled MapTypes
-        addStyledMapType: function (map, mapType) {
-            var gStyledMapType = new google.maps.StyledMapType(mapType.styles, mapType);
-            map.mapTypes.set(mapType.name, gStyledMapType);
         }
     };
 

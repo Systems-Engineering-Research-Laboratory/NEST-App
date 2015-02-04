@@ -25,6 +25,7 @@ namespace NEST_App.Controllers.Api
         {
             var uavs = from u in db.UAVs.Include(u => u.FlightStates).Include(u => u.Schedules)
                        let s = u.Schedules.OrderBy(s => s.create_date).FirstOrDefault()
+                       let m = s.Missions.OrderBy(m => m.create_date).FirstOrDefault()
                        select new
                        {
                            Id = u.Id,
@@ -44,6 +45,23 @@ namespace NEST_App.Controllers.Api
                                create_date = s.create_date,
                                modified_date = s.modified_date,
                                Missions = s.Missions,
+                           },
+                           Mission = new
+                           {
+                               Phase = m.Phase,
+                               FlightPattern = m.FlightPattern,
+                               Payload = m.Payload,
+                               Priority = m.Priority,
+                               FinancialCost = m.FinancialCost,
+                               TimeAssigned = m.TimeAssigned,
+                               TimeCompleted = m.TimeCompleted,
+                               DestinationCoordinates = m.DestinationCoordinates,
+                               ScheduledCompletionTime = m.ScheduledCompletionTime,
+                               EstimatedCompletionTime = m.EstimatedCompletionTime,
+                               Id = m.id,
+                               ScheduleId = m.ScheduleId,
+                               create_date = m.create_date,
+                               modified_date = m.modified_date,
                            },
                            FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
                        };

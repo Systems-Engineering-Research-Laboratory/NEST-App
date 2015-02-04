@@ -5,10 +5,11 @@
 @{
     ViewBag.Title = "Google Map";
 }
+
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=drawing"></script>
 <script src="~/Scripts/MarkerWithLabel.js"></script>
 <script src="~/Scripts/InfoBox.js"></script>
-
+<script src="~/Scripts/jquery-2.1.2.js"></script>
 <div id="map-canvas"></div>
 <div class="right-buttons">
     <button type="button" id="start">Start</button>
@@ -21,6 +22,22 @@
     </div>
     <button id="delete-button">Delete One</button>
     <button id="delete-all-button">Delete All</button>
+</div>
+
+<div class="infobox-wrapper">
+    <div id="infobox">
+        <font color="red"><b>Warning:</b></font> Low Battery
+    </div>
+</div>
+<style>
+    img[src="http://www.google.com/intl/en_us/mapfiles/close.gif"] {
+        display: none;
+    }
+</style>
+<div class="infobox-wrapper">
+    <div id="infoboxAlert">
+        <p>!</p>
+    </div>
 </div>
 
 <!-- command pop up placeholder -->
@@ -45,23 +62,10 @@
     </div>
 </div>         <!-- end of placeholder -->
 
-    
-<div class="infobox-wrapper">
-    <div id="infobox">
-        <font color="red"><b>Warning:</b></font> Low Battery
-    </div>
-</div>
 
-<style>
-    img[src="http://www.google.com/intl/en_us/mapfiles/close.gif"] {
-        display: none;
-    }
-</style>
-<div class="infobox-wrapper">
-    <div id="infoboxAlert">
-        <p>!</p>
-    </div>
-</div>
+<script src="~/Scripts/proj4.js" type="text/javascript"></script>
+<script src="~/Scripts/simulation.js" type="text/javascript"></script>
+<script src="~/Scripts/vehicle.js" type="text/javascript"></script>
 
 @Scripts.Render("~/bundles/jquery")
 @Scripts.Render("~/bundles/jquery-signalR")
@@ -71,8 +75,5 @@
 @Styles.Render("~/bundles/googMapCSS")
 @Styles.Render("~/bundles/bootstrapLess")
 
-<script src="~/Scripts/proj4.js" type="text/javascript"></script>
-<script src="~/Scripts/simulation.js" type="text/javascript"></script>
-<script src="~/Scripts/vehicle.js" type="text/javascript"></script>
 
 

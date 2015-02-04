@@ -14,8 +14,8 @@ namespace NEST_App
             BundleTable.EnableOptimizations = false;
 
             bundles.UseCdn = true;
-            var cssTransformer = new StyleTransformer();
-            var jsTransformer = new ScriptTransformer();
+            var cssTransformer = new CssTransformer();
+            var jsTransformer = new JsTransformer();
             var nullOrderer = new NullOrderer();
 
             var cssBundle = new CustomStyleBundle("~/bundles/css");
