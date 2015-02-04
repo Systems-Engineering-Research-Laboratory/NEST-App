@@ -89,6 +89,7 @@ function Vehicle(vehicleInfo, reporter) {
         //Process this waypoint if we have one
         if (this.currentWaypoint) {
             if (this.performWaypoint(dt)) {
+                console.log("Finished with waypoint " + this.currentWaypoint.WaypointName);
                 this.getNextWaypoint();
             }
         }
@@ -292,11 +293,14 @@ function Vehicle(vehicleInfo, reporter) {
             case "enroute":
                 if (this.deadReckon(dt, mis.X, mis.Y)) {
                     mis.Phase = "delivering";
+                    return false;
                 }
                 break;
             case "delivering":
                 if (this.deliver(dt, 200, 400, this.MaxVelocity)) {
                     mis.Phase = "back to base";
+                    return true;
+                    //TODO: Assign the path back to the base.
                 }
                 break;
             case "back to base":
@@ -372,9 +376,11 @@ function Vehicle(vehicleInfo, reporter) {
             var nextIdx = this.currentWpIndex + 1;
             this.currentWaypoint = wps[nextIdx];
             this.currentWpIndex = nextIdx;
+            console.log("UAV " + this.Callsign + " next waypoint: " + this.currentWaypoint.WaypointName);
         }
         //If we didn't find it, then put null
         else {
+            console.log("UAV " + this.Callsign + " done with waypoints.");
             this.currentWaypoint = null;
             this.currentWpIdx = null;
         }
