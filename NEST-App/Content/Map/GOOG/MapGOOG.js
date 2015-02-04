@@ -112,6 +112,7 @@ function BaseControl(controlDiv, map) {
 }
 
 /******************* Emergency Info Box *********************/
+var message = $("#infobox").attr("msg");
 infobox = new InfoBox({
     content: document.getElementById("infobox"),
     disableAutoPan: false,
@@ -199,6 +200,7 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].Id].marker.setMap(map);
         uavs[data[i].Id].markerCircle.setMap(map);
         uavs[data[i].Id].flightPath.setMap(map);
+
         google.maps.event.addListener(marker, 'click', (function (marker, key, event) {
         $(window).keydown(function (evt) {
             if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, ignore immediate key repeats and proceed
@@ -536,6 +538,11 @@ $(document).ready(function () {
 
     
     /* Vehicle movement */
+    var emitHub = $.connection.eventLogHub;
+    $.connection.hub.start().done(function () {
+        console.log("connection started for evt log");
+    });
+    
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         console.log(vehicle);
@@ -561,6 +568,20 @@ $(document).ready(function () {
         if (parse < .2) {
             infobox.open(map, uavs[vehicle.Id].marker);
             infoboxAlert.open(map, uavs[vehicle.Id].marker);
+            //console.log(document.getElementById("infobox"));
+            //console.log($("#infobox").attr("msg"));
+            
+            var eventLog = {
+                event_id: 1,
+                uav_id: uavs[vehicle.Id].Id,
+                message: message,
+                criticality: "critical",
+                uav_callsign: uavs[vehicle.Id].Callsign,
+                operator_screen_name: "Test Operator"
+                
+            };
+            console.log(eventLog);
+            emitHub.server.emit(eventLog);
         }
     }
 
@@ -664,6 +685,4 @@ $(document).ready(function () {
             draggable: true
         });
     });
-
-
 });

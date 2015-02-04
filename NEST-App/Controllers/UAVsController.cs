@@ -21,6 +21,8 @@ namespace NEST_App.Controllers.Api
         private NestContainer db = new NestContainer();
 
         //GET: api/uavs/getuavinfo
+        [System.Web.Mvc.HttpGet]
+        [System.Web.Mvc.Route("api/uavs/getuavinfo")]
         public HttpResponseMessage GetUAVInfo()
         {
             var uavs = from u in db.UAVs.Include(u => u.FlightStates).Include(u => u.Schedules)
