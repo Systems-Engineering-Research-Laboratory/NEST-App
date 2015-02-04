@@ -374,6 +374,7 @@ function dropWaypoint(event) {
     $("#clickToGoBtn").addClass("disabled");
 }
 
+/* Fix this
 function goWaypoint(lat, long) {
     vehicleHub.server.sendCommand({
         Id: 123,
@@ -383,7 +384,7 @@ function goWaypoint(lat, long) {
         UAVId: selectedUAV.Id
     });
 }
-
+*/
 
 function goTo_show() {
     document.getElementById("CommPopPlaceHolder").style.display = "block";
@@ -430,11 +431,11 @@ $(document).ready(function () {
     homeControlDiv.index = 1;
     map.controls[google.maps.ControlPosition.RIGHT].push(homeControlDiv);
 
-    // add event listener
+    /* Fix this
     if (document.getElementById("go_lat") != isNaN && document.getElementById("go_long") != isNaN) {
         document.getElementById("goWaypoint").addEventListener("click", goWaypoint(document.getElementById("go_lat"), document.getElementById("go_long")));
     }
-
+    */
     $.ajax({
         url: '/api/uavs/getuavinfo',
         success: function (data, textStatus, jqXHR) {
@@ -505,7 +506,6 @@ $(document).ready(function () {
     /* Vehicle movement */
 
     vehicleHub.client.flightStateUpdate = function (vehicle) {
-        console.log(vehicle);
         var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
         storeTrail(LatLng);
         uavs[vehicle.Id].marker.setMap(map);
@@ -519,6 +519,7 @@ $(document).ready(function () {
             uavs[vehicle.Id].marker.setIcon(uavSymbolBlack);
         else
             uavs[vehicle.Id].marker.setIcon(uavSymbolGreen);
+
         uavs[vehicle.Id].marker.setOptions({
             labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + vehicle.Altitude + '<br/><b>Bat: </b>' + parse + '</div>',
             icon: uavs[vehicle.Id].marker.icon
