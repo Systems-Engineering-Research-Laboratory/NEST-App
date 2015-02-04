@@ -45,6 +45,7 @@ function Vehicle(vehicleInfo, reporter) {
             var wps = data.map(function (curVal) { return new Waypoint(curVal); });
             that.waypoints = wps;
             that.currentWaypoint = that.waypoints[0];
+            that.currentWpIndex = 0;
             that.waypoints[1].obj = that.Mission;
             that.waypoints[1].objType = "mission";
         }
@@ -367,17 +368,15 @@ function Vehicle(vehicleInfo, reporter) {
     this.getNextWaypoint = function () {
         var wp = this.currentWaypoint;
         var wps = this.waypoints;
-        //Find the next waypoint;
-        for (var i = 0; i < wps.length; i++) {
-            var candidate = wps[i];
-            if (wp.NextWaypointId == candidate.Id) {
-                this.currentWaypoint = candidate;
-                break;
-            }
+        if (this.currentWpIndex != null && this.currentWpIndex + 1 < wps.length) {
+            var nextIdx = this.currentWpIndex + 1;
+            this.currentWaypoint = wps[nextIdx];
+            this.currentWpIndex = nextIdx;
         }
         //If we didn't find it, then put null
-        if (this.currentWaypoint == wp) {
+        else {
             this.currentWaypoint = null;
+            this.currentWpIdx = null;
         }
         //TODO: Report that we finished this wp
     }
@@ -484,6 +483,32 @@ function PathGenerator(areaContainer, reporter) {
         return pts;
     }
 
+    this.addWaypointInbetween = function(before, newPoint, wps, veh) {
+        if (!this.validatePoint(newPoint)) {
+            return false;
+        }
+        var bidx = wps.indexOf(before);
+        
+        var after = bidx + 1 < wps.length? wps[bidx + 1] : null;
+        //Build a new waypoint from the passed in information.
+        newWp = new Waypoint({
+            Latitude: newPoint.Latitude,
+            Longitude: newPoint.Longitude,
+            Action: newPoint.Action,
+            NextWaypointId: after ? after.Id : undefined,
+            NextWaypoint: after? after : undefined,
+        });
+        
+        //Insert the new waypoint into the array
+        wps.splice(idx + 1, 0, newWp);
+        before.NextWaypoint = newWp;
+        //TODO: Add reporter inserting waypoint.
+        return true;
+    }
+
+    this.validatePoint = function (testPoint) {
+        return true;
+    }
 }
 
 

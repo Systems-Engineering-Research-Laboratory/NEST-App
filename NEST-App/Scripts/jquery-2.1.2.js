@@ -1,5 +1,5 @@
 /*!
- * jQuery JavaScript Library v2.1.3
+ * jQuery JavaScript Library v2.1.2
  * http://jquery.com/
  *
  * Includes Sizzle.js
@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2014-12-18T15:11Z
+ * Date: 2014-12-17T14:01Z
  */
 
 (function( global, factory ) {
@@ -67,7 +67,7 @@ var
 	// Use the correct document accordingly with window argument (sandbox)
 	document = window.document,
 
-	version = "2.1.3",
+	version = "2.1.2",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -7572,7 +7572,7 @@ var
 	allTypes = "*/".concat( "*" ),
 
 	// Document location
-	ajaxLocation = window.location.href,
+	ajaxLocation = location.href,
 
 	// Segment location into parts
 	ajaxLocParts = rurl.exec( ajaxLocation.toLowerCase() ) || [];
