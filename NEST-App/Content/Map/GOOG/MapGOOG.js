@@ -143,7 +143,7 @@ function uavMarkers(data, textStatus, jqXHR) {
     for (var i = 0; i < data.length; i++) {
         uavs[data[i].Id] = {};
         uavs[data[i].Id].Id = data[i].Id;
-        
+
         uavs[data[i].Id].FlightState = data[i].FlightState;
         uavs[data[i].Id].Schedule = data[i].Schedule;
         uavs[data[i].Id].Missions = data[i].Schedule.Missions;
@@ -200,7 +200,6 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].Id].markerCircle = markerCircle;
         uavs[data[i].Id].flightPath = flightPath;
         uavs[data[i].Id].markerCircle.setMap(map);
-<<<<<<< HEAD
         uavs[data[i].Id].marker.setMap(map);
         marker.set('flightPath', flightPath);
         marker.set('flightToggle', false);
@@ -213,53 +212,45 @@ function uavMarkers(data, textStatus, jqXHR) {
             else {
                 this.flightPath.setMap(null);
             }
-            $(window).keydown(function (evt) {
-           
-            });
-            if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, add the drone to the list
-                //console.log("hit if");
-=======
-        uavs[data[i].Id].flightPath.setMap(map);
 
-        google.maps.event.addListener(marker, 'click', (function (marker, key, event) {
-        $(window).keydown(function (evt) {
-            if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, ignore immediate key repeats and proceed
->>>>>>> 4bb8cc4ab3718c5eb8c645864a43774018b0e82c
-                ctrlDown = false;
-                selectedUAV = marker.uav;
-                selectedDrones.push(selectedUAV);
-            }
-            else {//otherwise, empty the selectedDrones list and add the drone to the empty list
-                //console.log("hit else");
-                while (selectedDrones.length > 0) {//clear the selected drone list
-                    selectedDrones.pop();
+            $(window).keydown(function (evt) { });
+                if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, ignore immediate key repeats and proceed
+                    ctrlDown = false;
+                    selectedUAV = marker.uav;
+                    selectedDrones.push(selectedUAV);
                 }
-                selectedUAV = marker.uav;
-                selectedDrones.push(selectedUAV);
-            }
-        //selectedUAV = marker.uav;
-        //selectedDrones.push(selectedUAV);
-        //console.log("UAV selected: " + selectedUAV);
-        console.log("Number of drones selected: " + selectedDrones.length);
-        
+                else {//otherwise, empty the selectedDrones list and add the drone to the empty list
+                    //console.log("hit else");
+                    while (selectedDrones.length > 0) {//clear the selected drone list
+                        selectedDrones.pop();
+                    }
+                    selectedUAV = marker.uav;
+                    selectedDrones.push(selectedUAV);
+                }
+                //selectedUAV = marker.uav;
+                //selectedDrones.push(selectedUAV);
+                //console.log("UAV selected: " + selectedUAV);
+                console.log("Number of drones selected: " + selectedDrones.length);
 
-            ////add trail to the map
-            ////still working on it
-            //if (selectedUAV) {
-            //    selectedUav.id.uavTrails[trailArray.length - 2].setMap(map);
-            //}
 
-            // enable waypoint buttons
-            $("#goBtn").removeClass("disabled");
-            $("#clickToGoBtn").removeClass("disabled");
+                ////add trail to the map
+                ////still working on it
+                //if (selectedUAV) {
+                //    selectedUav.id.uavTrails[trailArray.length - 2].setMap(map);
+                //}
 
-            return function () {
-                /****Unused infowindow set ****/
-                //infowindow.setContent('<div style="line-height: 1.35; overflow: hidden; white-space: nowrap;"><b>ID: </b>' + key + '</div>');
-                //infowindow.open(map, marker);
+                // enable waypoint buttons
+                $("#goBtn").removeClass("disabled");
+                $("#clickToGoBtn").removeClass("disabled");
 
-                console.log("Number of selected drones: " + selectedDrones.length);
-            }
+                return function () {
+                    /****Unused infowindow set ****/
+                    //infowindow.setContent('<div style="line-height: 1.35; overflow: hidden; white-space: nowrap;"><b>ID: </b>' + key + '</div>');
+                    //infowindow.open(map, marker);
+
+                    console.log("Number of selected drones: " + selectedDrones.length);
+                }
+            
         }));
     }
 }
