@@ -23,14 +23,20 @@
             $http({
                 method: 'POST',
                 url: '/api/users',
-                data: $scope.newUser
+                data: $scope.newUser,
+                success: function (data) {
+                    $scope.allUsers.push(data);
+                }
             });
         };
         $scope.createVehicle = function () {
             $http({
                 method: 'POST',
                 url: '/api/users',
-                data: $scope.newVehicle
+                data: $scope.newVehicle,
+                success: function (data) {
+                    $scope.allVehicles.push(data);
+                }
             });
         };
     };
