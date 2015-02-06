@@ -57,11 +57,11 @@
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="JavaScriptEngineSwitcher.Core">
       <HintPath>..\packages\JavaScriptEngineSwitcher.Core.1.1.0\lib\net40\JavaScriptEngineSwitcher.Core.dll</HintPath>
@@ -266,6 +266,7 @@
     <Compile Include="Controllers\ScheduleViewController.cs" />
     <Compile Include="Controllers\SimController.cs" />
     <Compile Include="Controllers\UAVsController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="DAL\NestDatabaseInitializer.cs" />
     <Compile Include="DAL\NestDbContext.cs" />
     <Compile Include="DAL\NestDbInitializer.cs" />
