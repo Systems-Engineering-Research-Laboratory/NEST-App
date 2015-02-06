@@ -549,15 +549,6 @@ $(document).ready(function () {
     google.maps.event.addDomListener(document.getElementById('delete-all-button'), 'click', deleteAllShape);
     buildColorPalette();
 
-    //hide the trail, might be redundent may need to conbine with other functions -David
-    google.maps.event.addListener(mapListeners, 'click', function (e) {
-        for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
-            selectedTrail[i].setMap(null);
-        }
-        selectedUAV = null;
-    });
-
-
     /* Vehicle movement */
     var emitHub = $.connection.eventLogHub;
     $.connection.hub.start().done(function () {
@@ -663,6 +654,14 @@ $(document).ready(function () {
 
     var mouseDownPos, gridBoundingBox = null, mouseIsDown = 0;
     var mapListeners = map;
+
+    //hide the trail, might be redundent may need to conbine with other functions -David
+    google.maps.event.addListener(mapListeners, 'click', function (e) {
+        for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
+            selectedTrail[i].setMap(null);
+        }
+        selectedUAV = null;
+    });
 
     google.maps.event.addListener(mapListeners, 'mousemove', function (e) {
         console.log("move mouse down, shift down", mouseIsDown, shiftPressed);
