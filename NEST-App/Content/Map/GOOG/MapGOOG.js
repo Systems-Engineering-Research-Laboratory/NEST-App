@@ -605,6 +605,8 @@ $(document).ready(function () {
                     operator_screen_name: "Test Operator",
                     UAVId: uavs[vehicle.Id].Id
                 };
+                emitHub.server.emit(eventLog);
+
                 $.ajax({
                     type: "POST",
                     url: "/api/uavs/postuavevent",
