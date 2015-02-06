@@ -27,10 +27,10 @@ namespace NEST_App.Hubs
         }
         public override System.Threading.Tasks.Task OnDisconnected(bool stopCalled)
         {
-            foreach (var id in _mapping[Context.ConnectionId])
-            {
-                UnlockHelper(id);
-            }
+            //foreach (var id in _mapping[Context.ConnectionId])
+            //{
+            //    UnlockHelper(id);
+            //}
             var list = new List<int>();
             _mapping.TryRemove(Context.ConnectionId, out list);
             Clients.All.removeConnection(Context.ConnectionId);
@@ -39,8 +39,9 @@ namespace NEST_App.Hubs
         public void Emit(JObject eventLog)
         {
             EventLog evt = eventLog.ToObject<EventLog>();
-                evt.create_date = DateTime.Now;
-                evt.modified_date = DateTime.Now;
+            //EventLog evt = eventLog;
+            evt.create_date = DateTime.Now;
+            evt.modified_date = DateTime.Now;
             Clients.All.newEvent(evt);
         }
         public void Hello()

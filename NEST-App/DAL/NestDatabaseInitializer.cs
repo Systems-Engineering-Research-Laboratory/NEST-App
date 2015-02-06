@@ -68,7 +68,7 @@ namespace NEST_App.DAL
 
                     var FlightStates = new List<FlightState>
             {
-                new FlightState{ Position = DbGeography.FromText("POINT(-118.529 34.2417 400)"), VelocityX = 0, VelocityY = 0, VelocityZ = 0, Yaw = 0, Roll = 0, Pitch = 0, YawRate = 0, RollRate = 0, PitchRate = 0, BatteryLevel = .94, UAVId = 0 },
+                new FlightState{ Position = DbGeography.FromText("POINT(-118.529 34.2417 400)"), VelocityX = 0, VelocityY = 0, VelocityZ = 0, Yaw = 0, Roll = 0, Pitch = 0, YawRate = 0, RollRate = 0, PitchRate = 0, BatteryLevel = .19, UAVId = 0 },
                 //new FlightState{ Position = DbGeography.FromText("POINT(-118.5002736 34.2365205 400)"), VelocityX = 0, VelocityY = 0, VelocityZ = 0, Yaw = 0, Roll = 0, Pitch = 0, YawRate = 0, RollRate = 0, PitchRate = 0, BatteryLevel = .84, UAVId = 1 },
                 //new FlightState{ Position = DbGeography.FromText("POINT(-118.5002736 34.2365205 400)"), VelocityX = 0, VelocityY = 0, VelocityZ = 0, Yaw = 0, Roll = 0, Pitch = 0, YawRate = 0, RollRate = 0, PitchRate = 0, BatteryLevel = .82, UAVId = 2 },
                 //new FlightState{ Position = DbGeography.FromText("POINT(-118.5002736 34.2365205 400)"), VelocityX = 0, VelocityY = 0, VelocityZ = 0, Yaw = 0, Roll = 0, Pitch = 0, YawRate = 0, RollRate = 0, PitchRate = 0, BatteryLevel = .74, UAVId = 3 }
@@ -152,6 +152,7 @@ namespace NEST_App.DAL
                         //context.Missions.Add(missions.First());
                         //context.Maintenances.Add(maintenances.First());
                         context.Schedules.Add(schedules.First());
+                        context.MapRestrictedSet.AddRange(RestrictedArea);
                         context.SaveChanges();
                     }
                     catch (DbEntityValidationException e)

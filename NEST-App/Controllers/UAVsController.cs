@@ -21,9 +21,11 @@ namespace NEST_App.Controllers.Api
         private NestContainer db = new NestContainer();
 
         //GET: api/uavs/getuavinfo
+        [System.Web.Mvc.HttpGet]
+        [System.Web.Mvc.Route("api/uavs/getuavinfo")]
         public HttpResponseMessage GetUAVInfo()
         {
-            var uavs = from u in db.UAVs.Include(u => u.FlightStates).Include(u => u.Schedules)
+            var uavs = from u in db.UAVs.Include(u => u.FlightStates).Include(u => u.Schedules).Include(u => u.EventLogs)
                        let s = u.Schedules.OrderBy(s => s.create_date).FirstOrDefault()
                        let m = s.Missions.OrderBy(m => m.create_date).FirstOrDefault()
                        select new
@@ -64,9 +66,20 @@ namespace NEST_App.Controllers.Api
                                modified_date = m.modified_date,
                            },
                            FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
+                           EventLog = u.EventLogs,
                        };
             return Request.CreateResponse(HttpStatusCode.OK, uavs);
         }
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.Route("api/uavs/postuavevent")]
+        public void PostUavEvent(EventLog evnt)
+        {
+            evnt.create_date = DateTime.Now;
+            evnt.modified_date = DateTime.Now;
+            db.EventLogs.Add(evnt);
+            db.SaveChanges();
+        }
+
 
         // GET: api/UAVs
         public IQueryable<UAV> GetUAVs()
