@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 02/07/2015 00:24:55
+-- Date Created: 02/07/2015 10:35:10
 -- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
@@ -61,6 +61,9 @@ IF OBJECT_ID(N'[dbo].[FK_WaypointMission]', 'F') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[FK_UAVEventLog]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[EventLogs] DROP CONSTRAINT [FK_UAVEventLog];
+GO
+IF OBJECT_ID(N'[dbo].[FK_UserUAV]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[UAVs] DROP CONSTRAINT [FK_UserUAV];
 GO
 IF OBJECT_ID(N'[dbo].[FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover] DROP CONSTRAINT [FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint];
@@ -303,7 +306,7 @@ CREATE TABLE [dbo].[Missions] (
     [DestinationCoordinates] geography  NOT NULL,
     [ScheduledCompletionTime] datetime  NOT NULL,
     [EstimatedCompletionTime] datetime  NOT NULL,
-    [id] int  NOT NULL,
+    [id] int IDENTITY(1,1) NOT NULL,
     [ScheduleId] int  NOT NULL,
     [create_date] datetime  NOT NULL,
     [modified_date] datetime  NOT NULL

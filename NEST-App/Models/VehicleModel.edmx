@@ -248,7 +248,7 @@
     <Property Name="DestinationCoordinates" Type="geography" Nullable="false" SRID="4326" />
     <Property Name="ScheduledCompletionTime" Type="datetime" Nullable="false" />
     <Property Name="EstimatedCompletionTime" Type="datetime" Nullable="false" />
-    <Property Name="id" Type="int" Nullable="false" />
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="ScheduleId" Type="int" Nullable="false" />
     <Property Name="create_date" Type="datetime" Nullable="false" />
     <Property Name="modified_date" Type="datetime" Nullable="false" />
@@ -1018,7 +1018,7 @@
           <Property Name="DestinationCoordinates" Type="Geography" Nullable="false" />
           <Property Name="ScheduledCompletionTime" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="EstimatedCompletionTime" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="id" Type="Int32" Nullable="false" />
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <NavigationProperty Name="Orders" Relationship="VehicleModel.MissionOrder" FromRole="Mission" ToRole="Order" />
           <NavigationProperty Name="Schedule" Relationship="VehicleModel.MissionSchedule" FromRole="Mission" ToRole="Schedule" />
           <Property Name="ScheduleId" Type="Int32" Nullable="false" />
