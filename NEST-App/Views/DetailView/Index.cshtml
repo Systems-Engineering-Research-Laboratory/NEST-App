@@ -1,4 +1,5 @@
 ﻿@using NEST_App.Models
+
 @model dynamic
 
 @{
@@ -17,7 +18,7 @@
         .outside {
             border: none;
             padding: 10px;
-            height: 600px;
+            height: 700px;
             width: 100%;
         }
 
@@ -80,7 +81,7 @@
             border-radius: 8px;
             width: 62%;
             float: right;
-            background-color: #dafaf3;
+            background-color: #e9e9ea;
         }
 
         .detial_title {
@@ -88,7 +89,7 @@
             font-weight: bold;
             line-height: 90%;
             font-family: Verdana;
-            color: #531403
+            color: #0b0769
         }
 
         .detail_statue_metrics_div {
@@ -135,25 +136,76 @@
             background-color: #fafbeb
         }
 
+        .detail_acitivity {
+            border: 1px solid #2477f8;
+            margin-top: 6px;
+            border-radius: 8px;
+            padding: 5px;
+            padding-left: 8px;
+            background-color: #fafbeb;
+        }
+
+        .UAV_time_tr {
+            line-height: 100%;
+        }
+
+        .UAV_time_td {
+            font-size: 15px;
+            font-family: Verdana;
+        }
+
+        .UAV_time_td_2nd {
+            font-size: 15px;
+            font-family: Verdana;
+            padding-left: 15px;
+        }
+
         .map {
             border: none;
             width: 59%;
             margin: 2px;
             margin-left: 0;
             float: right;
-            height: 409px;   
+            height: 100%;   
         }
 
         #map-canvas {
             width: auto;
-            height: 100%;
+            height: 350px;
             margin: auto;
             padding: 0px;
             border: 1px solid #2477f8;
             border-radius: 8px;            
         }
 
+        .detail_package {
+            border: 1px solid #2477f8;
+            margin-top: 6px;
+            border-radius: 8px;
+            padding: 5px;
+            padding-left: 8px;
+            background-color: #fafbeb;
+            width: auto;
+            height: auto;
+        }
 
+        .content_tr {
+            line-height: 100%;
+        }
+
+        .content_td1 {
+            font-size: 15px;
+            font-family: Verdana;
+            padding-left: 35px;
+            text-align: center;
+        }
+
+        .content_td2 {
+            font-size: 15px;
+            font-family: Verdana;
+            padding-left: 15px;
+            text-align: center;
+        }
 
     </style>
 
@@ -161,7 +213,6 @@
 <body>
     <br />
     <div class="outside">
-
         <table class="UAV_table">
             <tr>
                 <th>Callsign</th>
@@ -212,20 +263,36 @@
                         {
                             <p class="details">
                                 Current Coord: <br />
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.VelocityX), <br />
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;@Html.DisplayFor(modelItem => uav_coor.VelocityY),<br />
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.VelocityZ)<br />
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Latitude), <br />
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Longitude),<br />
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Elevation)<br />
                             </p>
                         }
+
+                        @*foreach (Schedule sched in Model.Schedules)
+                        {
+                            foreach (Mission dest_coor in sched.Missions)
+                            {
+                                <p class="details">
+                                    Destination Coord: <br />
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => dest_coor.DestinationCoordinates.Latitude), <br />
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;@Html.DisplayFor(modelItem => dest_coor.DestinationCoordinates.Longitude),<br />
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => dest_coor.DestinationCoordinates.Elevation)<br />
+                                </p>
+                            }
+                        }*@
+
+                        @* CAN'T GET THE DESTINATION COORDINATES.... T.T*@
                         @foreach (FlightState uav_coor in Model.FlightStates)
                         {
                             <p class="details">
                                 Destination Coord: <br />
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.VelocityX), <br />
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;@Html.DisplayFor(modelItem => uav_coor.VelocityY),<br />
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.VelocityZ)<br />
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Latitude), <br />
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Longitude),<br />
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Elevation)<br />
                             </p>
                         }
+
 
                 </div>
                 <div class="detail_metrics">
@@ -240,16 +307,104 @@
                             </p>
                         }
                 </div>
+
+                <div class="detail_acitivity">
+                    <p class="title">Activity Log</p>
+                    <p class="details">
+                        <table>
+                            <tr class="UAV_time_tr">
+                                <td class="UAV_time_td">
+                                    UAV Take off
+                                </td>
+                                <td class="UAV_time_td_2nd">
+                                    9:00 AM
+                                </td>
+                            </tr>
+                            <tr class="UAV_time_tr">
+                                <td class="UAV_time_td">
+                                    UAV Re-routed
+                                </td>
+                                <td class="UAV_time_td_2nd">
+                                    9:20 AM
+                                </td>
+                            </tr>
+                            <tr class="UAV_time_tr">
+                                <td class="UAV_time_td">
+                                    UAV Force Land
+                                </td>
+                                <td class="UAV_time_td_2nd">
+                                    9:21 AM
+                                </td>
+                            </tr>
+                            <tr class="UAV_time_tr">
+                                <td class="UAV_time_td">
+                                    UAV Take off
+                                </td>
+                                <td class="UAV_time_td_2nd">
+                                    9:22 AM
+                                </td>
+                            </tr>
+                            <tr class="UAV_time_tr">
+                                @foreach (UAV uav in Model.UAVs)
+                                {
+                                    <td class="UAV_time_td">
+                                        Delivered #@Html.DisplayFor(modelItem => uav.NumDeliveries)
+                                    </td>
+                                }
+                                <td class="UAV_time_td_2nd">
+                                    9:25 AM
+                                </td>
+                            </tr>
+                            <tr class="UAV_time_tr">
+                                <td class="UAV_time_td">
+                                    Begin Returning
+                                </td>
+                                <td class="UAV_time_td_2nd">
+                                    9:26 AM
+                                </td>
+                            </tr>
+                        </table>
+
+
+                    </p>
+                </div>
             </div>
+
 
             <div class="map">
                 <div id="map-canvas"></div>
+                <div class="detail_package">
+                    <p class="title">Package</p>
+                    <p class="details">
+                        Dest. Addr: 3550 Nordhoff St, <br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Northridge, CA 91330 <br /><br />
+                        Package Contents:
+                        <table>
+                            <tr class="content_tr">
+                                <td class="content_td1">
+                                    Red Robin Seasoning
+                                </td>
+                                <td class="content_td2">
+                                    Shrimp
+                                </td>
+                            </tr>
+                            <tr class="content_tr">
+                                <td class="content_td1">
+                                    Fries
+                                </td>
+                                <td class="content_td2">
+                                    Celery
+                                </td>
+                            </tr>
+                        </table>
+                    </p>
+                    <p class="details">
+                        Total Cost of Package: $999 <br /><br />
+                        Customer Notes: Please do not leave package by front door.
+                    </p>
+                </div>
             </div>
-
-
         </div>
-
-
      </div>
 </body>
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=drawing"></script>
@@ -263,7 +418,9 @@
             center: new google.maps.LatLng(34.2417, -118.529),
             disableDefaultUI: true,
             zoomControl: true,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            mapTypeId: google.maps.MapTypeId.HYBRID,
+            mapTypeControl: true,
+            mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU},
             disableDoubleClickZoom: true,
         }
         map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
