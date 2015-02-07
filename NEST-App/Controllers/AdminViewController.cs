@@ -34,6 +34,10 @@ namespace NEST_App.Controllers
             var UAVs = (from uav in db.UAVs select uav).ToList();
             return View(UAVs);
         }
+        public ActionResult CreateUAV()
+        {
+            return View();
+        }
         // GET: AdminView/ManageUAVs/{id}
         public ActionResult EditUAV()
         {
