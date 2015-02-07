@@ -10,6 +10,7 @@ using NEST_App.DAL;
 using AutoMapper;
 
 using NEST_App.Models;
+using System.Data.Entity;
 
 namespace NEST_App
 {
@@ -17,6 +18,13 @@ namespace NEST_App
     {
         protected void Application_Start()
         {
+            //initializing database the correct CMD_NAV_Waypoint -- varatep 
+#if DEBUG
+            Database.SetInitializer<NestContainer>(new NestDatabaseInitializer());
+#endif
+            //NestDatabaseInitializer dbInit = new NestDatabaseInitializer();
+            //dbInit.InitializeDatabase();
+
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
@@ -25,11 +33,7 @@ namespace NEST_App
 
             //Remove XML
             GlobalConfiguration.Configuration.Formatters.Remove(GlobalConfiguration.Configuration.Formatters.XmlFormatter);
-
-            //initializing database the correct CMD_NAV_Waypoint -- varatep 
-            NestDatabaseInitializer dbInit = new NestDatabaseInitializer();
-            dbInit.InitializeDatabase();
-
+            
             //Inserted by Jeff to configure automapper
             Mapper.CreateMap<FlightState, FlightStateDTO>()
                 .ForMember(dest => dest.Latitude, opt => opt.ResolveUsing<FlightStateLatResolver>())

@@ -2,13 +2,13 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 02/03/2015 23:16:14
+-- Date Created: 02/07/2015 00:24:55
 -- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
 GO
-USE [NEST_DB];
+USE [NEST_DB_c58405a0b8114963ab1df6d33ffb8e23]
 GO
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 GO
@@ -58,6 +58,9 @@ IF OBJECT_ID(N'[dbo].[FK_WaypointWaypoint]', 'F') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[FK_WaypointMission]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Waypoints] DROP CONSTRAINT [FK_WaypointMission];
+GO
+IF OBJECT_ID(N'[dbo].[FK_UAVEventLog]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[EventLogs] DROP CONSTRAINT [FK_UAVEventLog];
 GO
 IF OBJECT_ID(N'[dbo].[FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover] DROP CONSTRAINT [FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint];
@@ -185,6 +188,7 @@ CREATE TABLE [dbo].[UAVs] (
     [UpdateRate] float  NOT NULL,
     [CruiseAltitude] float  NOT NULL,
     [MinDeliveryAlt] float  NOT NULL,
+    [User_user_id] int  NULL,
     [Configurations_Id] int  NOT NULL
 );
 GO
@@ -453,7 +457,8 @@ CREATE TABLE [dbo].[EventLogs] (
     [message] nvarchar(max)  NOT NULL,
     [criticality] nvarchar(max)  NOT NULL,
     [uav_callsign] nvarchar(max)  NOT NULL,
-    [operator_screen_name] nvarchar(max)  NOT NULL
+    [operator_screen_name] nvarchar(max)  NOT NULL,
+    [UAVId] int  NOT NULL
 );
 GO
 
@@ -940,6 +945,36 @@ GO
 CREATE INDEX [IX_FK_WaypointMission]
 ON [dbo].[Waypoints]
     ([MissionId]);
+GO
+
+-- Creating foreign key on [UAVId] in table 'EventLogs'
+ALTER TABLE [dbo].[EventLogs]
+ADD CONSTRAINT [FK_UAVEventLog]
+    FOREIGN KEY ([UAVId])
+    REFERENCES [dbo].[UAVs]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_UAVEventLog'
+CREATE INDEX [IX_FK_UAVEventLog]
+ON [dbo].[EventLogs]
+    ([UAVId]);
+GO
+
+-- Creating foreign key on [User_user_id] in table 'UAVs'
+ALTER TABLE [dbo].[UAVs]
+ADD CONSTRAINT [FK_UserUAV]
+    FOREIGN KEY ([User_user_id])
+    REFERENCES [dbo].[Users]
+        ([user_id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_UserUAV'
+CREATE INDEX [IX_FK_UserUAV]
+ON [dbo].[UAVs]
+    ([User_user_id]);
 GO
 
 -- Creating foreign key on [Id] in table 'CMD_NAV_Waypoint_CMD_NAV_Hover'
