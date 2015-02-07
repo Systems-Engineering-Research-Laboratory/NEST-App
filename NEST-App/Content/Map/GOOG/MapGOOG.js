@@ -1,5 +1,6 @@
 ﻿var map;
 var mapListeners = map; //use this to add listeners to the map
+var counter = 0;
 //var vehicleHub = $.connection.vehicleHub;
 var pointText;
 var results;
@@ -60,13 +61,10 @@ var uavSymbolGreen = {
     anchor: new google.maps.Point(355, 295)
 };
 
-var mapClickIcon = new google.maps.MarkerImage(
-        '../Content/img/markerBLUE.png',
-        null,
-        null,
-        null,
-        new google.maps.Size(35, 60)
-    );
+var mapClickIcon = {
+    url: '../Content/img/markerBLUE.png',
+    scaledSize: new google.maps.Size(35, 60)
+};
 
 var goldStarBase = {
     path: 'M 125,5 155,90 245,90 175,145 200,230 125,180 50,230 75,145 5,90 95,90 z',
@@ -226,11 +224,17 @@ function uavMarkers(data, textStatus, jqXHR) {
                 selectedDrones.push(selectedUAV);
             }
 
+            // set selected trail
             selectedUAV = marker.uav;
             for (var i = 0; i < uavTrails.length; i++) {
                 if (uavTrails[i].id == selectedUAV.Id) {
                     selectedTrail = uavTrails[i].trail;
                 }
+            }
+
+            // draw entire trail when clicked
+            for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
+                selectedTrail[i].setMap(map);
             }
 
             console.log("Number of drones selected: " + selectedDrones.length);
@@ -331,19 +335,31 @@ function buildColorPalette() {
 //store uav trails
 //still working on it
 function storeTrail(uavID, location) {
-    console.log(uavID);
     var notCreated;
+    //if (!notCreated) {
+    //    //update trail
+    //    for (var j = 0; j < uavTrails[uavID].trail.length; j++) {
+    //        o -= 0.04;
+    //        s -= 0.04;
+    //        uavTrail = {
+    //            url: '../Content/img/blue.jpg',
+    //            fillOpacity: o,
+    //            scale: s,
+    //            anchor: new google.maps.Point(46 * s, 44 * s)
+    //        };
+    //        console.log(uavTrail);
+    //    }
+    //}
+    
     var trailMarker = new google.maps.Marker({
         position: location,
         icon: uavTrail
     });
 
     for (var i = 0; i < uavTrails.length; i++) {
-        console.log("in for");
         if (uavTrails[i].id == uavID) {
             //set trail
-            console.log("setting trail");
-            if (uavTrails[i].trail.length <= 30) {
+            if (uavTrails[i].trail.length < 25) {
                 uavTrails[i].trail.push(trailMarker);
             }
             else {
@@ -361,7 +377,6 @@ function storeTrail(uavID, location) {
 
     if (notCreated) {
         //push new uavTrails
-        console.log("push new uavTrail");
         uavTrails.push({
             id: uavID,
             trail: []
@@ -458,13 +473,13 @@ $(document).ready(function () {
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
     //setting trail style
-    uavTrail = new google.maps.MarkerImage(
-        '../Content/img/blue.jpg',
-        null,
-        null,
-        new google.maps.Point(4, 50),
-        new google.maps.Size(5, 5)
-    );
+    uavTrail = {
+        url: '../Content/img/blue.jpg',
+        fillOpacity: 0.7,
+        size: new google.maps.Size(46, 44),
+        scaledSize: new google.maps.Size(5, 5),
+        anchor: new google.maps.Point(5, 5)
+    };
 
     var homeControlDiv = document.createElement('div');
     var homeControl = new BaseControl(homeControlDiv, map);
@@ -559,13 +574,20 @@ $(document).ready(function () {
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         console.log(vehicle);
         var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
-        storeTrail(vehicle.Id, LatLng);
 
-        // draw the one before last recorded trail (so it won't overlap with the uav) when uav is selected
-        if (selectedUAV) {
-            for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
-                selectedTrail[i].setMap(map);
+        //seperate trail dots a little bit
+        counter++;
+        if (counter % 30 == 0) {
+            storeTrail(vehicle.Id, LatLng);
+
+            if (counter == 30) {
+                counter = 0;
             }
+        }
+
+        // draw trail
+        if (selectedUAV) {
+            selectedTrail[selectedTrail.length - 1].setMap(map);
         }
 
         uavs[vehicle.Id].marker.setPosition(LatLng);
