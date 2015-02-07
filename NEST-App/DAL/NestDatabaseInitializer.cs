@@ -90,7 +90,7 @@ namespace NEST_App.DAL
                     dateValue = DateTime.Now;
                     var missions = new List<Mission>
             {
-                new Mission{Phase = "enroute", FlightPattern = "abstract", Payload = "cheetos", Priority = 1, FinancialCost = 40, TimeAssigned = dateValue, TimeCompleted = dateValue.AddHours(0.0833), DestinationCoordinates = DbGeography.FromText("POINT(-118.4902736 34.2365205 400)"),  ScheduledCompletionTime = dateValue.AddHours(0.0899), EstimatedCompletionTime = dateValue.AddHours(0.09), create_date = dateValue.AddHours(0.01), modified_date = dateValue.AddHours(0.02) },
+                new Mission{Phase = "enroute", FlightPattern = "abstract", Payload = "cheetos", Priority = 1, FinancialCost = 40, TimeAssigned = dateValue, TimeCompleted = dateValue.AddHours(0.0833), DestinationCoordinates = DbGeography.FromText("POINT(-118.52529 34.241670 400)"),  ScheduledCompletionTime = dateValue.AddHours(0.0899), EstimatedCompletionTime = dateValue.AddHours(0.09), create_date = dateValue.AddHours(0.01), modified_date = dateValue.AddHours(0.02) },
                 //new Mission{Phase = "enroute", FlightPattern = "abstract", Payload = "cheetos", Priority = 1, FinancialCost = 40, TimeAssigned = DateTime.Now, TimeCompleted = dateValue.AddHours(0.0833), DestinationCoordinates = DbGeography.FromText("POINT(-118.4502736 34.2965205 400)"),  ScheduledCompletionTime = dateValue.AddHours(0.0899), EstimatedCompletionTime = dateValue.AddHours(0.09)  }
 
             };
@@ -113,7 +113,7 @@ namespace NEST_App.DAL
             {
                 new Waypoint{ WaypointName = "Jeff's Next Next Waypoint", IsActive = true, WasSkipped = false, GeneratedBy = "Jeff", Action = "Fly Through", Position = DbGeography.FromText("POINT(-118.4902736 34.2365205 400)"), Missions = missions[0]},
                 new Waypoint{ WaypointName = "Jeff's Waypoint", IsActive = true, WasSkipped = false, GeneratedBy = "Jeff", Action = "Fly Through", Position = DbGeography.FromText("POINT(-118.529 34.2417 400)"), Missions = missions[0] },
-                new Waypoint{ WaypointName = "Jeff's Next Waypoint", IsActive = true, WasSkipped = false, GeneratedBy = "Jeff", Action = "Fly Through", Position = DbGeography.FromText("POINT(-118.4992736 34.2365205 400)"), Missions = missions[0]}
+                new Waypoint{ WaypointName = "Jeff's Next Waypoint", IsActive = true, WasSkipped = false, GeneratedBy = "Jeff", Action = "Fly Through", Position = DbGeography.FromText("POINT(-118.52962736 34.2415205 400)"), Missions = missions[0]}
             };
                     wps[1].NextWaypoint = wps[2];
                     wps[2].NextWaypoint = wps[0];

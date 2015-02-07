@@ -46,7 +46,6 @@ function pushFlightUpdates(map, hub) {
     for (i = 0; i < ids.length; i++) {
         var id = ids[i];
         vehicles[id].FlightState.Timestamp = new Date(Date.now()).toISOString();
-        console.log(vehicles[id]);
         hub.server.pushFlightStateUpdate(vehicles[id].FlightState);
     }
 }
@@ -235,9 +234,9 @@ function setCommandOnVehicle(cmd, map) {
 // This function sets all the callbacks that will be called with SignalR. Please put all callbacks here.
 function setSignalrCallbacks(map) {
     var vehicleHub = $.connection.vehicleHub
-    vehicleHub.client.flightStateUpdate = function (vehicle) {
-        console.log(vehicle);
-    }
+    //vehicleHub.client.flightStateUpdate = function (vehicle) {
+    //    console.log(vehicle);
+    //}
     //This is the listener for getting target commands from signalr
     vehicleHub.client.sendTargetCommand = function (target, connId) {
         receivedCommand(map, target, "CMD_NAV_Target", { connId: connId });
@@ -248,9 +247,5 @@ function setSignalrCallbacks(map) {
     }
     vehicleHub.client.broadcastAcceptedCommand = function (ack) {
         console.log(ack);
-    }
-
-    vehicleHub.client.flightStateUpdate = function (fs) {
-        console.log(fs);
     }
 }

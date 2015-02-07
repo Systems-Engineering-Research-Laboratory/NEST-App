@@ -18,6 +18,11 @@ function Vehicle(vehicleInfo, reporter) {
     //Storing other entities related to UAV
     this.FlightState = vehicleInfo.FlightState;
     this.Schedule = vehicleInfo.Schedule;
+    for (var i = 0; i < this.Schedule.Missions.length; i++) {
+        var m = this.Schedule.Missions[i];
+        m.Schedule = null;
+        m.Waypoints = null;
+    }
     //This is the current mission the vehicle is on.
     this.Mission = vehicleInfo.Schedule.Missions[0];
     this.Schedule = vehicleInfo.Schedule;
@@ -145,7 +150,6 @@ function Vehicle(vehicleInfo, reporter) {
         //Update the vehicle's yaw.
         //Put the heading into the flight state for when it gets pushed to the server.
         this.FlightState.Yaw = heading * rad2deg;
-        console.log(this.FlightState.Yaw);
         this.approachSpeed(this.MaxVelocity, heading, dt);
         var distanceX = X - this.FlightState.X;
         var distanceY = Y - this.FlightState.Y;
@@ -282,35 +286,44 @@ function Vehicle(vehicleInfo, reporter) {
 
     this.performMission = function (dt, mission) {
         var mis = mission;
-
+        var wpComplete = false;
+        var update = false;
         //TODO: Report mission progress
         switch (mis.Phase) {
             case "takeoff":
                 if (this.takeOff(dt)) {
                     mis.Phase = "enroute";
-                    return false;
+                    wpComplete = false;
+                    update = true;
                 }
                 break;
             case "enroute":
                 if (this.deadReckon(dt, mis.X, mis.Y)) {
                     mis.Phase = "delivering";
-                    return false;
+                    wpComplete = false;
+                    update = true;
                 }
                 break;
             case "delivering":
                 if (this.deliver(dt, 200, 400, this.MaxVelocity)) {
                     mis.Phase = "back to base";
-                    return true;
+                    wpComplete =  true;
                     //TODO: Assign the path back to the base.
+                    update = true;
                 }
                 break;
             case "back to base":
                 if (this.backToBase(dt, base.X, base.Y)) {
                     mis.Phase = "done";
-                    return true;
+                    wpComplete = true;
+                    update = true;
                 }
                 break;
         }
+        if (update) {
+            this.reporter.updateMission(mis);
+        }
+        return wpComplete;
     }
 
     this.setCommand = function (target) {
@@ -397,15 +410,42 @@ function Reporter() {
     this.pendingResult = false;
 
     this.updateMission = function (mission, opts) {
-        this.putToServer('api/missions/' + mission.Id, mission);
+        var jqXHR = this.putToServer(
+            '/api/missions/' + mission.id,
+            {
+                Phase: mission.Phase,
+                FlightPattern: mission.FlightPattern,
+                Payload: mission.Payload,
+                Priority: mission.Priority,
+                FinancialCost: mission.FinancialCost,
+                TimeAssigned: mission.TimeAssigned,
+                TimeComplete: mission.TimeCompleted,
+                DestinationCoordinates: mission.DestinationCoordinates.Geography.WellKnownText,
+                ScheduledCompletionTime: mission.ScheduledCompletionTime,
+                EstimatedCompletionTime: mission.EstimatedCompletionTime,
+                id: mission.id,
+                ScheduleId: mission.ScheduleId,
+                create_date: mission.create_date,
+                modified_date: mission.modified_date,
+            },
+            {});
+
     }
 
     this.updateFlightState = function (fs, opts) {
         this.hub.server.pushFlightStateUpdate(fs);
     }
 
-    this.putToServer = function (url, success) {
-        $.ajax({ url: url, sucess: success, type: 'PUT' });
+    this.putToServer = function (url, data, opts, success) {
+        
+        return $.ajax({
+            url: url,
+            data: JSON.stringify(data),
+            dataType: 'json',
+            success: success, 
+            type: 'PUT',
+            contentType: "application/json",
+        });
     }
 
     this.ackCommand = function (cmd, type, reason) {

@@ -9,7 +9,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using System.Web.Mvc;
 using System.Web;
 using NEST_App.DAL;
 using NEST_App.Models;
@@ -21,8 +20,8 @@ namespace NEST_App.Controllers.Api
         private NestContainer db = new NestContainer();
 
         //GET: api/uavs/getuavinfo
-        [System.Web.Mvc.HttpGet]
-        [System.Web.Mvc.Route("api/uavs/getuavinfo")]
+        [HttpGet]
+        [Route("api/uavs/getuavinfo")]
         public HttpResponseMessage GetUAVInfo()
         {
             var uavs = from u in db.UAVs.Include(u => u.FlightStates).Include(u => u.Schedules).Include(u => u.EventLogs)
@@ -70,8 +69,8 @@ namespace NEST_App.Controllers.Api
                        };
             return Request.CreateResponse(HttpStatusCode.OK, uavs);
         }
-        [System.Web.Mvc.HttpPost]
-        [System.Web.Mvc.Route("api/uavs/postuavevent")]
+        [HttpPost]
+        [Route("api/uavs/postuavevent")]
         public void PostUavEvent(EventLog evnt)
         {
             evnt.create_date = DateTime.Now;
