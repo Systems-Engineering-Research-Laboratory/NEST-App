@@ -1373,9 +1373,14 @@
     <Content Include="Views\EventLog\Index.cshtml" />
     <Content Include="Views\AdminView\ManageUsers.cshtml" />
     <Content Include="Views\AdminView\ManageUAVs.cshtml" />
-    <Content Include="Views\AdminView\Assignments.cshtml" />
     <Content Include="Views\AdminView\ManageAssignments.cshtml" />
     <Content Include="Views\AdminView\Index.cshtml" />
+    <Content Include="Views\AdminView\CreateUAV.cshtml" />
+    <Content Include="Views\UAVs1\Create.cshtml" />
+    <Content Include="Views\UAVs1\Delete.cshtml" />
+    <Content Include="Views\UAVs1\Details.cshtml" />
+    <Content Include="Views\UAVs1\Edit.cshtml" />
+    <Content Include="Views\UAVs1\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
