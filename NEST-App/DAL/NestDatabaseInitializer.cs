@@ -22,7 +22,7 @@ namespace NEST_App.DAL
             //}
             context.Database.CreateIfNotExists();
 
-            if (context.UAVs.Count() > 0)
+            if (context.UAVs.Count() == 0)
             {
                 // We can initialize everything here and store it into the database    
                 string line;
