@@ -1375,6 +1375,7 @@
     <Content Include="Views\AdminView\ManageUAVs.cshtml" />
     <Content Include="Views\AdminView\Assignments.cshtml" />
     <Content Include="Views\AdminView\ManageAssignments.cshtml" />
+    <Content Include="Views\AdminView\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
