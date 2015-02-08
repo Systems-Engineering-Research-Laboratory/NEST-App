@@ -139,6 +139,100 @@ namespace NEST_App.Controllers.Api
             var line = lines[randomLineNumber] + lines[randomLineNumber] + lines[randomLineNumber];
             return line;
         }
+        
+        [HttpPost]
+        [Route("api/uavs/generateuavs")]
+        public void generateUAVs(int number)
+        {
+            Random num = new Random();
+            for (int i = 0; i < number; i++)
+            {
+                UAV uav = new UAV 
+                { 
+                        Callsign = getName() + num.Next(1, 99),
+                        NumDeliveries = num.Next(1, 2000), 
+                        Mileage = num.Next(1, 100),
+                        Id = i, 
+                        create_date = DateTime.Now, 
+                        modified_date = DateTime.Now, 
+                        MaxAcceleration = 20, 
+                        MaxVelocity = 20, 
+                        MaxVerticalVelocity = 20, 
+                        MinDeliveryAlt = 100, 
+                        UpdateRate = 1000, 
+                        CruiseAltitude = 400
+               };
+              
+               Configuration config = new Configuration
+               {
+                        Classification = "Predator",
+                        create_date = DateTime.Now,
+                        modified_date = DateTime.Now,
+                        Name = "Default",
+                        NumberOfMotors = 4
+               };
+               var flights = new List<FlightState>
+               {
+                   new FlightState { 
+                       Position = DbGeography.FromText("POINT(-118.529 34.2417 400)"), 
+                       VelocityX = 0, 
+                       VelocityY = 0, 
+                       VelocityZ = 0, 
+                       Yaw = 0, 
+                       Roll = 0, 
+                       Pitch = 0, 
+                       YawRate = 0, 
+                       RollRate = 0, 
+                       PitchRate = 0, 
+                       BatteryLevel = .19, 
+                       UAVId = i
+                   },    
+              };
+
+               DateTime dateValue = new DateTime();
+               dateValue = DateTime.Now;
+
+               var mission = new List<Mission> 
+               { 
+                   new Mission {
+                       Phase = "enroute", 
+                       FlightPattern = "abstract", 
+                       Payload = getPackage(), 
+                       Priority = 1, 
+                       FinancialCost = num.Next(1, 99), 
+                       TimeAssigned = dateValue, 
+                       TimeCompleted = dateValue.AddHours(0.0833),  
+                       DestinationCoordinates = getDistance(),
+                       ScheduledCompletionTime = dateValue.AddHours(0.0899),
+                       EstimatedCompletionTime = dateValue.AddHours(0.09), 
+                       create_date = dateValue.AddHours(0.01),
+                       modified_date = dateValue.AddHours(0.02) 
+                  }
+              };
+
+               var sched = new List<Schedule>
+               { 
+                   new Schedule {
+                       UAV = uav,
+                       //Maintenances = maintenances,
+                       Missions = mission,
+                       create_date = DateTime.Now,
+                       modified_date = DateTime.Now
+                   }
+               };
+
+               uav.Configurations = config;
+               uav.FlightStates = flights;
+               uav.Schedules = sched;
+               
+               db.UAVs.Add(uav);
+               db.Missions.Add(mission.First());
+               db.Configurations.Add(config);
+               db.Schedules.Add(sched.First());
+
+               db.SaveChanges();
+           }
+        }
 
         [HttpPost]
         [Route("api/uavs/postuavevent")]
