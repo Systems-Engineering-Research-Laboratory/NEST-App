@@ -20,6 +20,8 @@ namespace NEST_App.Controllers.Api
     public class UAVsController : ApiController
     {
         private NestContainer db = new NestContainer();
+        private String[] lines = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content\\Names.txt"));
+        private String[] lines2 = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content\\Flowers.txt"));
 
         //GET: api/uavs/getuavinfo
         [HttpGet]
@@ -120,9 +122,9 @@ namespace NEST_App.Controllers.Api
 
         private string getName()
         {
-            string userPath = AppDomain.CurrentDomain.BaseDirectory;
-            string filePath = Path.Combine(userPath, "Content\\Names.txt");
-            var lines = File.ReadAllLines(filePath);
+            //string userPath = AppDomain.CurrentDomain.BaseDirectory;
+            //string filePath = Path.Combine(userPath, "Content\\Names.txt");
+            //var lines = File.ReadAllLines(filePath);
             var rand = new Random();
             var randomLineNumber = rand.Next(0, lines.Length - 1);
             var line = lines[randomLineNumber];
@@ -131,12 +133,12 @@ namespace NEST_App.Controllers.Api
 
         private string getPackage()
         {
-            string userPath = AppDomain.CurrentDomain.BaseDirectory;
-            string filePath = Path.Combine(userPath, "Content\\Flowers.txt");
-            var lines = File.ReadAllLines(filePath);
+            //string userPath = AppDomain.CurrentDomain.BaseDirectory;
+            //string filePath = Path.Combine(userPath, "Content\\Flowers.txt");
+            //var lines = File.ReadAllLines(filePath);
             var rand = new Random();
             var randomLineNumber = rand.Next(0, lines.Length - 1);
-            var line = lines[randomLineNumber] + lines[randomLineNumber] + lines[randomLineNumber];
+            var line = lines2[randomLineNumber] + lines2[randomLineNumber] + lines2[randomLineNumber];
             return line;
         }
         
