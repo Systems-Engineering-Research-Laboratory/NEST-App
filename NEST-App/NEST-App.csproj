@@ -427,6 +427,7 @@
     <Content Include="Content\Map\OL\MapOL.css" />
     <Content Include="Content\Map\OL\MapOL.js" />
     <Content Include="Content\Map\GOOG\MapGOOG.css" />
+    <Content Include="Content\Names.txt" />
     <Content Include="Content\nest_style.css" />
     <Content Include="Controllers\app\js\admin_page\admin_page.app.js" />
     <Content Include="Controllers\app\js\admin_page\controllers\admin.ctrl.js" />
