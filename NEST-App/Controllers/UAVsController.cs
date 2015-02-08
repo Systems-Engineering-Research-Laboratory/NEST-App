@@ -69,6 +69,29 @@ namespace NEST_App.Controllers.Api
                        };
             return Request.CreateResponse(HttpStatusCode.OK, uavs);
         }
+        [HttpGet]
+        [Route("api/uavs/getgenerateduavs")]
+        public HttpResponseMessage getGeneratedUavs()
+        {
+            var drones = from u in db.UAVs.Include(u => u.FlightStates)
+                         select new
+                         {
+                             Id = u.Id,
+                             Mileage = u.Mileage,
+                             NumDeliveries = u.NumDeliveries,
+                             Callsign = u.Callsign,
+                             create_date = u.create_date,
+                             modified_date = u.modified_date,
+                             MaxVelocity = u.MaxVelocity,
+                             MaxAcceleration = u.MaxAcceleration,
+                             MaxVerticalVelocity = u.MaxVerticalVelocity,
+                             UpdateRate = u.UpdateRate,
+                             FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
+                             EventLog = u.EventLogs
+                         };
+            return Request.CreateResponse(HttpStatusCode.OK, drones);
+        }
+
         [HttpPost]
         [Route("api/uavs/postuavevent")]
         public void PostUavEvent(EventLog evnt)
