@@ -20,6 +20,8 @@ namespace NEST_App.Controllers
             dynamic uavDetailList = new System.Dynamic.ExpandoObject();
             uavDetailList.UAVs = db.UAVs.ToList();
             uavDetailList.FlightStates = db.FlightStates.ToList();
+            uavDetailList.missions = db.Missions.ToList();
+            uavDetailList.Configurations = db.Configurations.ToList();
             
             return View(uavDetailList);
         }

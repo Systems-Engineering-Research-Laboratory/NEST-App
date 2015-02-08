@@ -82,7 +82,7 @@
             width: 62%;
             float: right;
             background-color: #e9e9ea;
-            display: none;
+            /*display: none;*/
         }
 
         .detial_title {
@@ -234,7 +234,7 @@
                         @Html.DisplayFor(modelItem => uav.Mileage)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().BatteryLevel)
+                        @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().BatteryLevel) %
                     </td>
                 </tr>
             }
@@ -253,13 +253,23 @@
                     <p class="title">Statue</p>
                     <p class="details">
                         Delivering package <br />
-                        ETA: 9:02 PM <br />
-                        STA: 9:00 PM <br />
-                        Route: abstract <br />
-                        Threats: none <br />
-                        Availability: en route <br />
-                        Configureation: fastest delivery <br />
-                    </p>
+                        @foreach (Mission miss in Model.missions)
+                        {
+                            <p class="details">
+                                ETA: @Html.DisplayFor(modelItem => miss.EstimatedCompletionTime) <br />
+                                STA: @Html.DisplayFor(modelItem => miss.ScheduledCompletionTime) <br />
+                                Route: @Html.DisplayFor(modelItem => miss.Phase) <br />
+                                Availability: @Html.DisplayFor(modelItem => miss.FlightPattern)
+                            </p>
+                            
+                            foreach (Configuration conf in Model.Configurations)
+                            {
+                                <p class="details">
+                                    Configureation: @Html.DisplayFor(modelItem => conf.Classification) <br />
+                                </p>
+                            }
+                        }
+
                     @foreach (FlightState uav_coor in Model.FlightStates)
                     {
                         <p class="details">
@@ -270,7 +280,7 @@
                         </p>
                     }
 
-                    @*@foreach (Mission dest_coor in Model.missions)
+                    @foreach (Mission dest_coor in Model.missions)
                     {
                         <p class="details">
                             Destination Coord: <br />
@@ -278,19 +288,7 @@
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;@Html.DisplayFor(modelItem => dest_coor.DestinationCoordinates.Longitude),<br />
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => dest_coor.DestinationCoordinates.Elevation)<br />
                         </p>
-                    }*@
-
-                    @* CAN'T GET THE DESTINATION COORDINATES.... T.T*@
-                    @foreach (FlightState uav_coor in Model.FlightStates)
-                    {
-                        <p class="details">
-                            Destination Coord: <br />
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Latitude), <br />
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Longitude),<br />
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Elevation)<br />
-                        </p>
                     }
-
 
                 </div>
                 <div class="detail_metrics">
@@ -298,7 +296,7 @@
                     @foreach (UAV uav in Model.UAVs)
                     {
                         <p class="details">
-                            Battery: @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().BatteryLevel) % <br />
+                            Battery: @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().BatteryLevel) %<br />
                             Total Miles: @Html.DisplayFor(modelItem => uav.Mileage) miles<br />
                             Current Delivery: @Html.DisplayFor(modelItem => uav.NumDeliveries)<br />
                             Total Deliveries: @Html.DisplayFor(modelItem => uav.NumDeliveries)
@@ -417,8 +415,8 @@
             disableDefaultUI: true,
             zoomControl: true,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
-            mapTypeControl: true,
-            mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU},
+            //mapTypeControl: true,
+            //mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU},
             disableDoubleClickZoom: true,
         }
         map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
@@ -426,7 +424,9 @@
     });
 
     function click_row() {
-        document.getElementById("outer_detail_div").style.display = "block"
+        document.getElementById("outer_detail_div").style.display = "block";
     }
+    
+
 
 </script>
