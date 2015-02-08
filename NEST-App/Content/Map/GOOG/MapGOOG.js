@@ -110,6 +110,7 @@ function BaseControl(controlDiv, map) {
     });
 }
 
+
 /******************* Emergency Info Box *********************/
 var message = $("#infobox").attr("msg");
 infobox = new InfoBox({
@@ -473,6 +474,16 @@ $(document).ready(function () {
         disableDoubleClickZoom: true,
     }
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+    var distanceCircle = new google.maps.Circle({
+        map: map,
+        radius: 8046.72,      //distance in meters (5 miles)
+        fillColor: '#3399FF',
+        center: homeBase,
+        strokeWeight: 0,
+        fillOpacity: 0.1,
+        zIndex: -1
+    })
 
     //setting trail style
     uavTrail = {
