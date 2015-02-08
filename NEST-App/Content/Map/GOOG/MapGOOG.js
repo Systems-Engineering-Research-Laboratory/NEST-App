@@ -233,8 +233,10 @@ function uavMarkers(data, textStatus, jqXHR) {
             }
 
             // draw entire trail when clicked
-            for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
-                selectedTrail[i].setMap(map);
+            if (selectedTrail != undefined) {
+                for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
+                    selectedTrail[i].setMap(map);
+                }
             }
 
             console.log("Number of drones selected: " + selectedDrones.length);
@@ -572,22 +574,24 @@ $(document).ready(function () {
     var warningMessageCounter = 0;
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
-        console.log(vehicle);
+        //console.log(vehicle); //move it down so it updates with the trail at a slower rate
         var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
 
         //seperate trail dots a little bit
-        counter++;
-        if (counter % 30 == 0) {
+        if (counter == 0 || counter == 20) {
+            console.log(vehicle);
             storeTrail(vehicle.Id, LatLng);
-
-            if (counter == 30) {
+            if (counter == 20) {
                 counter = 0;
             }
-        }
+        }counter++;
 
         // draw trail
-        if (selectedUAV) {
-            selectedTrail[selectedTrail.length - 1].setMap(map);
+        if (selectedUAV && selectedTrail != undefined) {
+            if (selectedTrail.length < 2)
+                selectedTrail[selectedTrail.length - 1].setMap(map);
+            else
+                selectedTrail[selectedTrail.length - 2].setMap(map);
         }
 
         uavs[vehicle.Id].marker.setPosition(LatLng);
@@ -605,7 +609,7 @@ $(document).ready(function () {
             labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + vehicle.Altitude + '<br/><b>Bat: </b>' + parse + '</div>',
             icon: uavs[vehicle.Id].marker.icon
         });
-        console.log(parse);
+        //console.log(parse);
         if (parse < .2) {
 
             //console.log(eventLog);
@@ -679,14 +683,16 @@ $(document).ready(function () {
 
     //hide the trail, might be redundent may need to conbine with other functions -David
     google.maps.event.addListener(mapListeners, 'click', function (e) {
-        for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
-            selectedTrail[i].setMap(null);
+        if (selectedTrail != undefined) {
+            for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
+                selectedTrail[i].setMap(null);
+            }
+            selectedUAV = null;
         }
-        selectedUAV = null;
     });
 
     google.maps.event.addListener(mapListeners, 'mousemove', function (e) {
-        console.log("move mouse down, shift down", mouseIsDown, shiftPressed);
+        //console.log("move mouse down, shift down", mouseIsDown, shiftPressed);
         if (mouseIsDown && (shiftPressed || gridBoundingBox != null)) {
             if (gridBoundingBox !== null) {
                 var newbounds = new google.maps.LatLngBounds(mouseDownPos, null);
@@ -694,7 +700,7 @@ $(document).ready(function () {
                 gridBoundingBox.setBounds(newbounds);
 
             } else {
-                console.log("first mouse move");
+                //console.log("first mouse move");
                 gridBoundingBox = new google.maps.Rectangle({
                     map: mapListeners,
                     bounds: null,
