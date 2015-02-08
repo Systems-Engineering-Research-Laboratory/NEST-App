@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Spatial;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
@@ -12,6 +13,7 @@ using System.Web.Http.Description;
 using System.Web;
 using NEST_App.DAL;
 using NEST_App.Models;
+using System.IO;
 
 namespace NEST_App.Controllers.Api
 {
@@ -90,6 +92,52 @@ namespace NEST_App.Controllers.Api
                              EventLog = u.EventLogs
                          };
             return Request.CreateResponse(HttpStatusCode.OK, drones);
+        }
+
+        private DbGeography getDistance()
+        {
+            int alt = 400;                                  //altitude of UAV with 400 ft default
+            double homeLat = 34.2417;                       //default home latitude
+            double homeLon = -118.529;                      //default home longitude
+            double radius = 8050;                           //meters (5 miles)
+            Random rand = new Random();                     //random number generator
+            double radiusDegrees = radius / 111300f;        //convert meters to degrees, from the equator, 111300 meters in 1 degree
+            double lat2 = rand.NextDouble();                //random double latitude
+            double lon2 = rand.NextDouble();                //random double longitude
+            double w = radiusDegrees * Math.Sqrt(lat2);
+            double t = 2 * Math.PI * lon2;
+            double x = w * Math.Cos(t);
+            double y = w * Math.Sin(t);
+
+            double newX = x / Math.Cos(homeLat);
+
+            double newLon = newX + homeLon;
+            double newLat = y + homeLat;
+
+            string point = "POINT(" + newLon.ToString() + " " + newLat.ToString() + " " + alt.ToString() + ")";
+            return DbGeography.FromText(point);
+        }
+
+        private string getName()
+        {
+            string userPath = AppDomain.CurrentDomain.BaseDirectory;
+            string filePath = Path.Combine(userPath, "Content\\Names.txt");
+            var lines = File.ReadAllLines(filePath);
+            var rand = new Random();
+            var randomLineNumber = rand.Next(0, lines.Length - 1);
+            var line = lines[randomLineNumber];
+            return line;
+        }
+
+        private string getPackage()
+        {
+            string userPath = AppDomain.CurrentDomain.BaseDirectory;
+            string filePath = Path.Combine(userPath, "Content\\Flowers.txt");
+            var lines = File.ReadAllLines(filePath);
+            var rand = new Random();
+            var randomLineNumber = rand.Next(0, lines.Length - 1);
+            var line = lines[randomLineNumber] + lines[randomLineNumber] + lines[randomLineNumber];
+            return line;
         }
 
         [HttpPost]
