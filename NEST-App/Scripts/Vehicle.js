@@ -4,7 +4,7 @@
 * The vehicle doesn't need to have more than that to run the simulation (for now at least). It comes with the
 * functins that allow it to behave kind of autonomously. It just goes straight to it's destination.
 */
-function Vehicle(vehicleInfo, reporter) {
+function Vehicle(vehicleInfo, reporter, pathGen) {
     //Model stuff
     this.Id = vehicleInfo.Id;
     this.Callsign = vehicleInfo.Callsign;
@@ -38,7 +38,6 @@ function Vehicle(vehicleInfo, reporter) {
     this.Command = null;
     this.descending = true;
     this.reporter = reporter;
-    
     //Allows for us to use this in the callback. Closures yo
     var that = this;
     //Used as callback to retrieve waypoints from the server.
@@ -70,7 +69,7 @@ function Vehicle(vehicleInfo, reporter) {
     this.setPathGen = function (gen) {
         this.pathGen = gen;
     }
-
+    this.setPathGen(pathGen);
     
     this.appendLonLat = function (obj, point) {
         var pointText = point.Geography.WellKnownText
@@ -91,6 +90,9 @@ function Vehicle(vehicleInfo, reporter) {
         //If the current waypoint is null but the reporter is pending, just return.
         if (this.currentWaypoint && this.reporter.pendingResult) {
             return;
+        }
+        if (pathGen.gotNewRestrictedArea()) {
+            this.pathGen(this.waypoints, this);
         }
         //Process this waypoint if we have one
         if (this.currentWaypoint) {
@@ -473,6 +475,8 @@ function Reporter() {
 function VehicleContainer (){
     this.ids = [];
     this.vehicles = [];
+    this.restrictedAreas = [];
+    this.newRestrictedArea = false;
 
     this.hasVehicleById = function (id) {
         return this.ids.indexOf(id) != -1;
@@ -491,19 +495,38 @@ function VehicleContainer (){
         this.ids.push(veh.id);
         this.vehicles.push(veh);
     }
+
+    this.addRestrcitedArea = function (area) {
+        this.restrictedAreas.push(area);
+        this.newRestrictedArea = true;
+    }
+
+    this.makeStale = function () {
+        this.newRestrictedArea = false;
+    }
 }
 
 // The waypoint creation logic container so that there isn't logic all over the vehicle code
 function PathGenerator(areaContainer, reporter) {
     this.areaContainer = areaContainer;
-    this.mission = mission;
-    this.waypoints = waypoints;
     this.reporter = reporter;
+
+    this.gotNewRestrictedArea = function () {
+        return this.areaContainer.newRestrictedArea;
+    }
+
+    this.generatePath = function(wps, veh) {
+        if(this.gotNewRestrictedArea()) {
+            var newWps = this.resolvePath(wps);
+            return newWps;
+        }
+        return wps;
+    }
 
     this.resolvePath = function(mission, wps, veh) {
         //For now, we are just going to get the direct waypoints.
         if (wps  && wps.length < 2) {
-            var wps = this.withEndPoints(mission, wps, veh);
+            var is = this.withEndPoints(mission, wps, veh);
         }
         return wps;
     }

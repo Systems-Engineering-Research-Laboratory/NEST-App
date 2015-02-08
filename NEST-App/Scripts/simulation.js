@@ -139,6 +139,11 @@ $(document).ready(function () {
         success: function(data, textStatus, jqXHR) { unassignedMissionsCb (availableMissions, data, textStatus, jqXHR);}
     })
 
+    $.ajax({
+        url: '/api/maprestricteds',
+        success: function(data, textStatus, jqXHR) { restrictedAreasCb(map, data, textStatus, jqXHR);},
+    })
+
     $("#start").click(start);
     $("#stop").click(stopSim);
     
@@ -156,7 +161,8 @@ function flightStateCb (map, hub, data, textStatus, jqXHR) {
  
     for (var i = 0; i < data.length; i++) {
         reporter = new Reporter();
-        map.vehicles[data[i].Id] = new Vehicle(data[i], reporter);
+        var veh = new Vehicle(data[i], reporter, new PathGenerator(map, reporter));
+        map.vehicles[data[i].Id] = veh;
         map.ids.push(data[i].Id);
         console.log(data[i].Id + " " + data[i].Callsign);
         $("#dropdown-UAVIds").append('<li role="presentation"><a class="UAVId" role="menuitem" tabindex="-1" href="#">' + data[i].Id + '</a></li>');
@@ -184,6 +190,10 @@ function unassignedMissionsCb(container, data, textStatus, jqXHR) {
     missionsRecvd = true;
 }
 
+function restrictedAreasCb(map, data, textStatus, jqXHR) {
+    map.restrictedAreas = data;
+}
+
 function updateSimulation(vehicleHub, map) {
     //TODO: Add scheduler here
     //Do dead reckoning on each of the aircraft
@@ -193,6 +203,7 @@ function updateSimulation(vehicleHub, map) {
         id = ids[i];
         vehicles[id].process(dt / 1000);
     }
+    map.makeStale();
     //Pushes the flight state updates
     //pushFlightUpdates(map, vehicleHub);
     
