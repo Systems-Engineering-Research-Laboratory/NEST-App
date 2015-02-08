@@ -14,17 +14,37 @@ namespace NEST_App.DAL
 {
     public class NestDatabaseInitializer : IDatabaseInitializer<NestContainer>
     {
+        //Calculates a random point within a 5 mile radius of homeLat/homeLon
+        public DbGeography distance()
+        {
+            int alt = 400;                                  //altitude of UAV with 400 ft default
+            double homeLat = 34.2417;                       //default home latitude
+            double homeLon = -118.529;                      //default home longitude
+            double radius = 8050;                           //meters (5 miles)
+            Random rand = new Random();
+            double radiusDegrees = radius / 111300f;        //convert meters to degrees, from the equator, 111300 meters in 1 degree
+            double lat2 = rand.NextDouble();                //random double latitude
+            double lon2 = rand.NextDouble();                //random double longitude
+            double w = radiusDegrees * Math.Sqrt(lat2);
+            double t = 2 * Math.PI * lon2;
+            double x = w * Math.Cos(t);
+            double y = w * Math.Sin(t);
+
+            double newX = x / Math.Cos(homeLat);
+
+            double newLon = newX + homeLon;
+            double newLat = y + homeLat;
+
+            string point = "POINT(" + newLat.ToString() + " " + newLon.ToString() + " " + alt.ToString() + ")";
+            return DbGeography.FromText(point);
+        }
+
         void IDatabaseInitializer<NestContainer>.InitializeDatabase(NestContainer context)
         {
-            //if (context.Database.Exists())
-            //{
-            //    context.Database.Delete();
-            //}
             context.Database.CreateIfNotExists();
 
             if (context.UAVs.Count() == 0)
             {
-                // We can initialize everything here and store it into the database    
                 string line;
                 string userPath = AppDomain.CurrentDomain.BaseDirectory;
 
