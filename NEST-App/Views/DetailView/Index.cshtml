@@ -41,7 +41,7 @@
         }
 
         .UAV_table tr:hover {
-            background-color: #cdf6f8
+            background-color: #e9e9ea
         }
 
         .UAV_table th {
@@ -82,6 +82,7 @@
             width: 62%;
             float: right;
             background-color: #e9e9ea;
+            display: none;
         }
 
         .detial_title {
@@ -89,7 +90,7 @@
             font-weight: bold;
             line-height: 90%;
             font-family: Verdana;
-            color: #0b0769
+            color: #0b0769;
         }
 
         .detail_statue_metrics_div {
@@ -119,7 +120,7 @@
         }
 
         .detail_statue {
-            border: 1px solid #2477f8;
+            border: 1px solid #0b0769;
             margin-bottom: 6px;
             border-radius: 8px;
             padding: 5px;
@@ -128,7 +129,7 @@
         }
 
         .detail_metrics {
-            border: 1px solid #2477f8;
+            border: 1px solid #0b0769;
             margin-top: 6px;
             border-radius: 8px;
             padding: 5px;
@@ -137,7 +138,7 @@
         }
 
         .detail_acitivity {
-            border: 1px solid #2477f8;
+            border: 1px solid #0b0769;
             margin-top: 6px;
             border-radius: 8px;
             padding: 5px;
@@ -174,12 +175,12 @@
             height: 350px;
             margin: auto;
             padding: 0px;
-            border: 1px solid #2477f8;
+            border: 1px solid #0b0769;
             border-radius: 8px;            
         }
 
         .detail_package {
-            border: 1px solid #2477f8;
+            border: 1px solid #0b0769;
             margin-top: 6px;
             border-radius: 8px;
             padding: 5px;
@@ -222,7 +223,7 @@
             </tr>
             @foreach (UAV uav in Model.UAVs)
             {
-                <tr>
+                <tr onclick="click_row()">
                     <td>
                         @Html.DisplayFor(modelItem => uav.Callsign)
                     </td>
@@ -239,7 +240,7 @@
             }
         </table>
 
-        <div class="outer_detail_div">
+        <div class="outer_detail_div" id="outer_detail_div">
             @foreach (UAV uavid in Model.UAVs)
             {
                 <p class="detial_title">
@@ -259,53 +260,50 @@
                         Availability: en route <br />
                         Configureation: fastest delivery <br />
                     </p>
-                        @foreach(FlightState uav_coor in Model.FlightStates)
-                        {
-                            <p class="details">
-                                Current Coord: <br />
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Latitude), <br />
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Longitude),<br />
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Elevation)<br />
-                            </p>
-                        }
+                    @foreach (FlightState uav_coor in Model.FlightStates)
+                    {
+                        <p class="details">
+                            Current Coord: <br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Latitude), <br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Longitude),<br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Elevation)<br />
+                        </p>
+                    }
 
-                        @*foreach (Schedule sched in Model.Schedules)
-                        {
-                            foreach (Mission dest_coor in sched.Missions)
-                            {
-                                <p class="details">
-                                    Destination Coord: <br />
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => dest_coor.DestinationCoordinates.Latitude), <br />
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;@Html.DisplayFor(modelItem => dest_coor.DestinationCoordinates.Longitude),<br />
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => dest_coor.DestinationCoordinates.Elevation)<br />
-                                </p>
-                            }
-                        }*@
+                    @*@foreach (Mission dest_coor in Model.missions)
+                    {
+                        <p class="details">
+                            Destination Coord: <br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => dest_coor.DestinationCoordinates.Latitude), <br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;@Html.DisplayFor(modelItem => dest_coor.DestinationCoordinates.Longitude),<br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => dest_coor.DestinationCoordinates.Elevation)<br />
+                        </p>
+                    }*@
 
-                        @* CAN'T GET THE DESTINATION COORDINATES.... T.T*@
-                        @foreach (FlightState uav_coor in Model.FlightStates)
-                        {
-                            <p class="details">
-                                Destination Coord: <br />
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Latitude), <br />
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Longitude),<br />
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Elevation)<br />
-                            </p>
-                        }
+                    @* CAN'T GET THE DESTINATION COORDINATES.... T.T*@
+                    @foreach (FlightState uav_coor in Model.FlightStates)
+                    {
+                        <p class="details">
+                            Destination Coord: <br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Latitude), <br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Longitude),<br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.Position.Elevation)<br />
+                        </p>
+                    }
 
 
                 </div>
                 <div class="detail_metrics">
                     <p class="title">Metrics</p>
-                        @foreach (UAV uav in Model.UAVs)
-                        {
-                            <p class="details">
-                                Battery: @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().BatteryLevel) % <br />
-                                Total Miles: @Html.DisplayFor(modelItem => uav.Mileage) miles<br />
-                                Current Delivery: @Html.DisplayFor(modelItem => uav.NumDeliveries)<br />
-                                Total Deliveries: @Html.DisplayFor(modelItem => uav.NumDeliveries)
-                            </p>
-                        }
+                    @foreach (UAV uav in Model.UAVs)
+                    {
+                        <p class="details">
+                            Battery: @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().BatteryLevel) % <br />
+                            Total Miles: @Html.DisplayFor(modelItem => uav.Mileage) miles<br />
+                            Current Delivery: @Html.DisplayFor(modelItem => uav.NumDeliveries)<br />
+                            Total Deliveries: @Html.DisplayFor(modelItem => uav.NumDeliveries)
+                        </p>
+                    }
                 </div>
 
                 <div class="detail_acitivity">
@@ -414,17 +412,21 @@
 <script type="text/javascript">
     $(document).ready(function () {
         var mapOptions = {
-            zoom: 16,
+            zoom: 17,
             center: new google.maps.LatLng(34.2417, -118.529),
             disableDefaultUI: true,
             zoomControl: true,
-            mapTypeId: google.maps.MapTypeId.HYBRID,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
             mapTypeControl: true,
             mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU},
             disableDoubleClickZoom: true,
         }
         map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
     });
 
+    function click_row() {
+        document.getElementById("outer_detail_div").style.display = "block"
+    }
 
 </script>
