@@ -23,6 +23,7 @@ namespace NEST_App.Controllers
         [Route("api/missions/waypoints/{id}")]
         public async Task<IEnumerable<object>> Waypoints(int id)
         {
+            Console.Write("This call has been deprecated! Use  **api/waypoints/{id}**");
             Mission mission = await db.Missions.FindAsync(id);
 
             var wps = mission.Waypoints;

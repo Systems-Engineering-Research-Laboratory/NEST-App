@@ -266,6 +266,7 @@
     <Compile Include="Controllers\ScheduleViewController.cs" />
     <Compile Include="Controllers\SimController.cs" />
     <Compile Include="Controllers\UAVsController.cs" />
+    <Compile Include="Controllers\WaypointsController.cs" />
     <Compile Include="DAL\NestDatabaseInitializer.cs" />
     <Compile Include="DAL\NestDbContext.cs" />
     <Compile Include="DAL\NestDbInitializer.cs" />
@@ -1369,6 +1370,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Waypoint\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

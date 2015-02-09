@@ -418,13 +418,21 @@ function Reporter() {
 
     this.retrieveWaypointsByMissionId = function(id, caller, success) {
         this.pendingResult = false;
-        var url = '/api/missions/waypoints/' + id;
+        var url = '/api/waypoints/' + id;
         return $.ajax({
             url: url,
-            success: function(data, textStatus, jqXHR) {success(data, textStatus, jqXHR);}
+            success: function (data, textStatus, jqXHR) {success(data, textStatus, jqXHR);}
         });
     }
 
+    this.insertWaypoint = function (id, lat, lng, wp, caller, success) {
+        this.pendingResult = false;
+        var url = '/api/waypoints/' + id, lat, lng, wp;
+        return $.ajax({
+            url: url,
+            success: function (data, textStatus, jqXHR) { success(data, textStatus, jqXHR); }
+        });
+    }
     
 }
 
@@ -490,7 +498,10 @@ function PathGenerator(areaContainer, reporter) {
         return pts;
     }
 
-    this.addWaypointInbetween = function(before, newPoint, wps, veh) {
+    this.addWaypointInbetween = function (before, newPoint, wps, veh) {
+        //"before" is the waypoint before the new position click
+        //"newPoint" is a lat/long pair
+        //"wps" is the list of waypoints
         if (!this.validatePoint(newPoint)) {
             return false;
         }
@@ -505,13 +516,21 @@ function PathGenerator(areaContainer, reporter) {
             NextWaypointId: after ? after.Id : undefined,
             NextWaypoint: after? after : undefined,
         });
-        
         //Insert the new waypoint into the array
         wps.splice(idx + 1, 0, newWp);
         before.NextWaypoint = newWp;
         //TODO: Add reporter inserting waypoint.
         return true;
     }
+
+    this.insertWaypoint = function (before, newPoint) {
+        this.reporter.insertWaypoint(this.mission.id, newPoint.Latitude, newPoint.Longitude, before, this, this.gotNewWaypoints);
+        //"before" is the waypoint before the new position click, that will link to the new position
+        //"newPoint" is a lat/long pair
+        //"wps" is the list of waypoints
+
+    }
+
 
     this.validatePoint = function (testPoint) {
         return true;

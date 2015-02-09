@@ -6,6 +6,7 @@ var results;
 var parse;
 var uavs = {};
 var overlays = []; //Array for the polygon shapes as overlays
+var flightLines = []
 var drawingManager;
 var selectedShape;
 var uavMarker;
@@ -164,13 +165,13 @@ function uavMarkers(data, textStatus, jqXHR) {
         var destAlt = res[2];
         uavs[data[i].Id].Destination = new google.maps.LatLng(res[1], res[0]);
 
-        //Creates the flightpath line from start to destination
+        //Creates the flightpath line from uav position to destination
         var flightPlanCoords = [
             uavs[data[i].Id].Position,
             uavs[data[i].Id].Destination
         ];
 
-        var flightPath = new google.maps.Polyline({
+        flightLines[data[i].Id] = new google.maps.Polyline({
             path: flightPlanCoords,
             geodesic: true,
             strokeColor: 'blue',
@@ -198,7 +199,7 @@ function uavMarkers(data, textStatus, jqXHR) {
         var key = data[i].Id.toString();
         uavs[data[i].Id].marker = marker;
         uavs[data[i].Id].markerCircle = markerCircle;
-        uavs[data[i].Id].flightPath = flightPath;
+        uavs[data[i].Id].flightPath = flightLines[data[i].Id];
         uavs[data[i].Id].markerCircle.setMap(map);
         uavs[data[i].Id].marker.setMap(map);
         marker.set('flightPath', flightPath);
@@ -207,10 +208,10 @@ function uavMarkers(data, textStatus, jqXHR) {
         google.maps.event.addListener(marker, 'click', (function () {
             this.setIcon(uavSymbolGreen);
             if (this.flightToggle == false) {
-                this.flightPath.setMap(map);
+                flightLines[this.uav.Id].setMap(map);
             }
             else {
-                this.flightPath.setMap(null);
+                flightLines[this.uav.Id].setMap(null);
             }
 
             $(window).keydown(function (evt) { });
@@ -559,7 +560,8 @@ $(document).ready(function () {
     google.maps.event.addDomListener(document.getElementById('delete-all-button'), 'click', deleteAllShape);
     buildColorPalette();
 
-    
+    var polyLines = []
+
     /* Vehicle movement */
     var emitHub = $.connection.eventLogHub;
     $.connection.hub.start().done(function () {
@@ -578,10 +580,28 @@ $(document).ready(function () {
         uavSymbolBlack.rotation = vehicle.Yaw;
         uavSymbolGreen.rotation = vehicle.Yaw;
         
-        if (selected == false)
+        if (selected == false) {
             uavs[vehicle.Id].marker.setIcon(uavSymbolBlack);
-        else
+            flightLines[vehicle.Id].setMap(null);
+        }
+        else {
+            //Creates the flightpath line from uav position to destination
+            var flightPlanCoords = [
+                LatLng,
+                uavs[vehicle.Id].Destination
+            ];
+
+            flightLines[vehicle.Id] = new google.maps.Polyline({
+                path: flightPlanCoords,
+                geodesic: true,
+                strokeColor: 'blue',
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+            });
+            uavs[vehicle.Id].flightPath = flightLines[vehicle.Id];
+            flightLines[vehicle.Id].setMap(map);
             uavs[vehicle.Id].marker.setIcon(uavSymbolGreen);
+        }
            
         uavs[vehicle.Id].marker.setOptions({
             labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + vehicle.Altitude + '<br/><b>Bat: </b>' + parse + '</div>',
