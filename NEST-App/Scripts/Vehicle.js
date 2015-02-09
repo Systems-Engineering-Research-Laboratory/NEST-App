@@ -312,6 +312,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                     wpComplete =  true;
                     //TODO: Assign the path back to the base.
                     update = true;
+                    this.pathGen.generateBackToBaseWaypoints(this.FlightState, this.Base);
                 }
                 break;
             case "back to base":
@@ -548,13 +549,9 @@ function PathGenerator(areaContainer, reporter) {
     }
 
     //Immediately return the beginning and end of the waypoints.
-    this.getBeginningAndEnd = function (mission, wps, veh) {
-        var fs = veh.FlightState;
-        //If the mission is completed, just go back to base.
-        var objective = mission.TimeCompleted? veh.Base : mission;
-        var pts = [Waypoint({Latitude: fs.Latitude, Longitude: fs.Longitude}),
-            Waypoint({Latitude: objective.Latitude, objective: mission.Longitude})];
-        pts[1].obj = mission.TimeCompleted? null : mission;
+    this.getBeginningAndEnd = function (begin, end, wps, veh) {
+        var pts = [Waypoint({Latitude: begin.Latitude, Longitude: end.Longitude}),
+            Waypoint({Latitude: end.Latitude, objective: end.Longitude})];
         if(pt[1].obj) {
             pt[1].objType = "mission";
         }
@@ -597,6 +594,16 @@ function PathGenerator(areaContainer, reporter) {
 
     this.validatePoint = function (testPoint) {
         return true;
+    }
+
+    this.generateBackToBaseWaypoints = function (currentLoc, baseLocation, wps) {
+        newWps = this.getBeginningAndEnd(currentLoc, baseLocation);
+        var lastIndex = wps.length - 1;
+        this.insertWaypoint(wps[lastIndex], newWps[0]);
+        this.insertWaypoint(newWps[0], newWps[1]);
+        wps.push(newWps[0]);
+        wps.push(newWps[1]);
+        return wps;
     }
 }
 
