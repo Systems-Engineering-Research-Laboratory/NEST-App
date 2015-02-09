@@ -74,29 +74,6 @@ namespace NEST_App.Controllers.Api
                        };
             return Request.CreateResponse(HttpStatusCode.OK, uavs);
         }
-        [HttpGet]
-        [Route("api/uavs/getgenerateduavs")]
-        public IHttpActionResult getGeneratedUavs()
-        {
-            var drones = from u in db.UAVs.Include(u => u.FlightStates)
-                         select new
-                         {
-                             Id = u.Id,
-                             Mileage = u.Mileage,
-                             NumDeliveries = u.NumDeliveries,
-                             Callsign = u.Callsign,
-                             create_date = u.create_date,
-                             modified_date = u.modified_date,
-                             MaxVelocity = u.MaxVelocity,
-                             MaxAcceleration = u.MaxAcceleration,
-                             MaxVerticalVelocity = u.MaxVerticalVelocity,
-                             UpdateRate = u.UpdateRate,
-                             FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
-                             EventLog = u.EventLogs
-                         };
-            //return Request.CreateResponse(HttpStatusCode.OK, drones);
-            return Ok(drones);
-        }
 
         private DbGeography getDistance()
         {
@@ -139,21 +116,21 @@ namespace NEST_App.Controllers.Api
             //string filePath = Path.Combine(userPath, "Content\\Flowers.txt");
             //var lines = File.ReadAllLines(filePath);
             var rand = new Random();
-            var randomLineNumber = rand.Next(0, lines.Length - 1);
+            var randomLineNumber = rand.Next(0, lines2.Length - 1);
             var line = lines2[randomLineNumber] + lines2[randomLineNumber] + lines2[randomLineNumber];
             return line;
         }
         
         [HttpGet]
         [Route("api/uavs/generateuavs/{number}")]
-        public void generateUAVs(int number)
+        public IHttpActionResult generateUAVs(int number)
         {
             Random num = new Random();
             for (int i = 0; i < number; i++)
             {
                 UAV uav = new UAV
                 {
-                    Callsign = getName() + num.Next(1, 99),
+                    Callsign = getName().ToUpper() + num.Next(1, 99),
                     NumDeliveries = num.Next(1, 2000),
                     Mileage = num.Next(1, 100),
                     Id = i,
@@ -176,7 +153,7 @@ namespace NEST_App.Controllers.Api
                     NumberOfMotors = 4
                 };
                 var flights = new List<FlightState>
-               {
+                {
                    new FlightState { 
                        Position = DbGeography.FromText("POINT(-118.529 34.2417 400)"), 
                        VelocityX = 0, 
@@ -188,16 +165,22 @@ namespace NEST_App.Controllers.Api
                        YawRate = 0, 
                        RollRate = 0, 
                        PitchRate = 0, 
-                       BatteryLevel = .19, 
+                       BatteryLevel = (num.Next(1,99) / 100), 
                        UAVId = i
                    },    
-              };
+               };
+                flights.ForEach(f =>
+                {
+                    f.Timestamp = DateTime.Now;
+                    f.create_date = DateTime.Now;
+                    f.modified_date = DateTime.Now;
+                });
 
                 DateTime dateValue = new DateTime();
                 dateValue = DateTime.Now;
 
                 var mission = new List<Mission> 
-               { 
+                { 
                    new Mission {
                        Phase = "enroute", 
                        FlightPattern = "abstract", 
@@ -212,10 +195,10 @@ namespace NEST_App.Controllers.Api
                        create_date = dateValue.AddHours(0.01),
                        modified_date = dateValue.AddHours(0.02) 
                   }
-              };
+               };
 
                 var sched = new List<Schedule>
-               { 
+                { 
                    new Schedule {
                        UAV = uav,
                        //Maintenances = maintenances,
@@ -223,7 +206,7 @@ namespace NEST_App.Controllers.Api
                        create_date = DateTime.Now,
                        modified_date = DateTime.Now
                    }
-               };
+                };
 
                 uav.Configurations = config;
                 uav.FlightStates = flights;
@@ -234,8 +217,32 @@ namespace NEST_App.Controllers.Api
                 db.Configurations.Add(config);
                 db.Schedules.Add(sched.First());
 
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();    
+                }
+                catch (DbUpdateException e)
+                {
+                    Console.Write(e.Entries);
+                }
             }
+            var drones = from u in db.UAVs.Include(u => u.FlightStates)
+                         select new
+                         {
+                             Id = u.Id,
+                             Mileage = u.Mileage,
+                             NumDeliveries = u.NumDeliveries,
+                             Callsign = u.Callsign,
+                             create_date = u.create_date,
+                             modified_date = u.modified_date,
+                             MaxVelocity = u.MaxVelocity,
+                             MaxAcceleration = u.MaxAcceleration,
+                             MaxVerticalVelocity = u.MaxVerticalVelocity,
+                             UpdateRate = u.UpdateRate,
+                             FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
+                             EventLog = u.EventLogs
+                         };
+            return Ok(drones);
         }
 
         [HttpPost]
