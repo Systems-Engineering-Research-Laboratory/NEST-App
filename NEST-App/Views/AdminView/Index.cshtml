@@ -5,7 +5,7 @@
 <h2>Index</h2>
 <div ng-app="adminApp" ng-controller="AdminCtrl">
     <input type="number" value="0" id="desiredUAVCount"/>
-    <button ng-click="generateUAVs($(desiredUAVCount).value())">Generate UAVs</button>
+    <button ng-click="generateUAVs($('#desiredUAVCount').val())">Generate UAVs</button>
     <button ng-click="getGeneratedUAVs()">Get Generated UAVs</button>
     <table class="table">
         <tr>

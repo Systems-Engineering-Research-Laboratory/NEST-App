@@ -51,7 +51,7 @@
             //        alert(err);
             //    }
             //});
-            $http.post('/api/uavs/generateuavs', { number: $("#desiredUAVCount").val() })
+            $http.get('/api/uavs/generateuavs/' + $("#desiredUAVCount").val() )
             .success(function (data, status, headers, config) {
 
             })

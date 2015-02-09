@@ -14,6 +14,7 @@ using System.Web;
 using NEST_App.DAL;
 using NEST_App.Models;
 using System.IO;
+using Newtonsoft.Json.Linq;
 
 namespace NEST_App.Controllers.Api
 {
@@ -143,38 +144,38 @@ namespace NEST_App.Controllers.Api
             return line;
         }
         
-        [HttpPost]
-        [Route("api/uavs/generateuavs")]
+        [HttpGet]
+        [Route("api/uavs/generateuavs/{number}")]
         public void generateUAVs(int number)
         {
             Random num = new Random();
             for (int i = 0; i < number; i++)
             {
-                UAV uav = new UAV 
-                { 
-                        Callsign = getName() + num.Next(1, 99),
-                        NumDeliveries = num.Next(1, 2000), 
-                        Mileage = num.Next(1, 100),
-                        Id = i, 
-                        create_date = DateTime.Now, 
-                        modified_date = DateTime.Now, 
-                        MaxAcceleration = 20, 
-                        MaxVelocity = 20, 
-                        MaxVerticalVelocity = 20, 
-                        MinDeliveryAlt = 100, 
-                        UpdateRate = 1000, 
-                        CruiseAltitude = 400
-               };
-              
-               Configuration config = new Configuration
-               {
-                        Classification = "Predator",
-                        create_date = DateTime.Now,
-                        modified_date = DateTime.Now,
-                        Name = "Default",
-                        NumberOfMotors = 4
-               };
-               var flights = new List<FlightState>
+                UAV uav = new UAV
+                {
+                    Callsign = getName() + num.Next(1, 99),
+                    NumDeliveries = num.Next(1, 2000),
+                    Mileage = num.Next(1, 100),
+                    Id = i,
+                    create_date = DateTime.Now,
+                    modified_date = DateTime.Now,
+                    MaxAcceleration = 20,
+                    MaxVelocity = 20,
+                    MaxVerticalVelocity = 20,
+                    MinDeliveryAlt = 100,
+                    UpdateRate = 1000,
+                    CruiseAltitude = 400
+                };
+
+                Configuration config = new Configuration
+                {
+                    Classification = "Predator",
+                    create_date = DateTime.Now,
+                    modified_date = DateTime.Now,
+                    Name = "Default",
+                    NumberOfMotors = 4
+                };
+                var flights = new List<FlightState>
                {
                    new FlightState { 
                        Position = DbGeography.FromText("POINT(-118.529 34.2417 400)"), 
@@ -192,10 +193,10 @@ namespace NEST_App.Controllers.Api
                    },    
               };
 
-               DateTime dateValue = new DateTime();
-               dateValue = DateTime.Now;
+                DateTime dateValue = new DateTime();
+                dateValue = DateTime.Now;
 
-               var mission = new List<Mission> 
+                var mission = new List<Mission> 
                { 
                    new Mission {
                        Phase = "enroute", 
@@ -213,7 +214,7 @@ namespace NEST_App.Controllers.Api
                   }
               };
 
-               var sched = new List<Schedule>
+                var sched = new List<Schedule>
                { 
                    new Schedule {
                        UAV = uav,
@@ -224,17 +225,17 @@ namespace NEST_App.Controllers.Api
                    }
                };
 
-               uav.Configurations = config;
-               uav.FlightStates = flights;
-               uav.Schedules = sched;
-               
-               db.UAVs.Add(uav);
-               db.Missions.Add(mission.First());
-               db.Configurations.Add(config);
-               db.Schedules.Add(sched.First());
+                uav.Configurations = config;
+                uav.FlightStates = flights;
+                uav.Schedules = sched;
 
-               db.SaveChanges();
-           }
+                db.UAVs.Add(uav);
+                db.Missions.Add(mission.First());
+                db.Configurations.Add(config);
+                db.Schedules.Add(sched.First());
+
+                db.SaveChanges();
+            }
         }
 
         [HttpPost]
