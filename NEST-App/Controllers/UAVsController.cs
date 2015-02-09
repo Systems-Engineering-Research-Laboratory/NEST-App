@@ -75,7 +75,7 @@ namespace NEST_App.Controllers.Api
         }
         [HttpGet]
         [Route("api/uavs/getgenerateduavs")]
-        public HttpResponseMessage getGeneratedUavs()
+        public IHttpActionResult getGeneratedUavs()
         {
             var drones = from u in db.UAVs.Include(u => u.FlightStates)
                          select new
@@ -93,7 +93,8 @@ namespace NEST_App.Controllers.Api
                              FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
                              EventLog = u.EventLogs
                          };
-            return Request.CreateResponse(HttpStatusCode.OK, drones);
+            //return Request.CreateResponse(HttpStatusCode.OK, drones);
+            return Ok(drones);
         }
 
         private DbGeography getDistance()
