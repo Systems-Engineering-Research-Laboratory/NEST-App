@@ -7,9 +7,10 @@
 }
 
 <div>
-    <h2>Schedule</h2>
+    <h2><u>Schedule</u></h2>
     <dl class="dl-horizontal"></dl>
     </div>
+    <h3>Missions:</h3>
 @foreach (var sched in Model)
 {
     <table class= "table">
@@ -34,7 +35,6 @@
             </th>
         </tr>
         <tr>
-             Missions:
              @foreach (var mission in sched.Missions)
              {
                <td>  @(mission.id) </td>
@@ -44,17 +44,22 @@
                <td>  @(mission.Phase)</td>
                <td>  @(mission.Payload)</td>
              }
-        </tr>
-        <tr>
-            Maintenances:
-            @foreach (var maint in sched.Maintenances)
-            {
-                <td> @("UAV id: " + maint.id.ToString()) </td>
-                <td> @("Last Maintenance: " + maint.last_maintenance.ToString()) </td>
-                <td> @("Next Maintenance: " + maint.next_maintenance.ToString()) </td>
-            }
-        </tr>
-    </table>
+            </tr>
+        </table>
+}
+<h3>Maintenances:</h3>
+@foreach (var sched in Model)
+{ 
+       <table class="table">
+           <tr>
+               @foreach (var maint in sched.Maintenances)
+                {
+                    <td> @(maint.id.ToString()) </td>
+                    <td> @(maint.last_maintenance.ToString()) </td>
+                    <td> @(maint.next_maintenance.ToString()) </td>
+                }
+            </tr>
+       </table>
 }
 
 
