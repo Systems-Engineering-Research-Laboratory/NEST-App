@@ -1370,7 +1370,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Waypoint\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
