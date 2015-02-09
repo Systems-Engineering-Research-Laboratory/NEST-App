@@ -199,7 +199,7 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].Id].flightPath = flightLines[data[i].Id];
         uavs[data[i].Id].markerCircle.setMap(map);
         uavs[data[i].Id].marker.setMap(map);
-        marker.set('flightPath', flightPath);
+        marker.set('flightPath', flightLines[data[i].Id]);
         marker.set('flightToggle', false);
         var flightToggle = false;
         google.maps.event.addListener(marker, 'click', (function () {
@@ -359,7 +359,7 @@ function storeTrail(uavID, location) {
         if (uavTrails[i].id === uavID) {
             //set trail
             if (uavTrails[i].trail.length <= 30) {
-                uavTrails[i].trail.push(marker);
+                uavTrails[i].trail.push(trailMarker);
             }
             else {
                 uavTrails[i].trail[0].setMap(null);
