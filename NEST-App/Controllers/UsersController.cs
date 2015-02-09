@@ -73,6 +73,13 @@ namespace NEST_App.Controllers
         [ResponseType(typeof(User))]
         public IHttpActionResult PostUser(User user)
         {
+            user.create_date = DateTime.Now;
+            user.modified_date = DateTime.Now;
+            user.UserRole = new UserRole
+            {
+                access_level = "admin",
+                role_type = "admin"
+            };
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

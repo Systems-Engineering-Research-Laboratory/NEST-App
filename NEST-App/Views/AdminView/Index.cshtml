@@ -6,7 +6,7 @@
 <div ng-app="adminApp" ng-controller="AdminCtrl">
     <input type="number" value="0" id="desiredUAVCount"/>
     <button ng-click="generateUAVs($('#desiredUAVCount').val())">Generate UAVs</button>
-    <button ng-click="getGeneratedUAVs()">Get Generated UAVs</button>
+    <button ng-click="getGeneratedUAVs()">Get UAV List</button>
     <table class="table">
         <tr>
             <th>
@@ -59,9 +59,12 @@
     </table>
     <input type="text" id="operatorName"/>
     <button ng-click="addOperator()">Add Operator</button>
-    <table>
+    <table class="table">
         <tr>
-
+            <th>Operator Username</th>
+        </tr>
+        <tr ng-repeat="operator in allUsers">
+            <td>{{operator.username}}</td>
         </tr>
     </table>
 </div>
