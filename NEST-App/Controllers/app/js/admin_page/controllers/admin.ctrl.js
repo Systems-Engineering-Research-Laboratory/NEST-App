@@ -6,6 +6,7 @@
         $scope.allVehicles = [];
         $scope.currentAdmin = {};
         $scope.uavs = [];
+        $scope.allUsers = [];
         $scope.desiredUAVCount = '';
         var User = function (user) {
             //insert user model here
@@ -51,7 +52,7 @@
             //        alert(err);
             //    }
             //});
-            $http.get('/api/uavs/generateuavs/' + $("#desiredUAVCount").val() )
+            $http.get('/api/uavs/generateuavs/' + $("#desiredUAVCount").val())
             .success(function (data, status, headers, config) {
                 $scope.uavs = data;
             })
@@ -60,7 +61,7 @@
             });
         };
         $scope.getGeneratedUAVs = function () {
-            $http.get('/api/uavs/getgenerateduavs')
+            $http.get('/api/uavs')
             .success(function (data, status, headers, config) {
                 $scope.uavs = data;
                 //console.log(data);
@@ -68,6 +69,31 @@
             .error(function (data, status, headers, config) {
                 alert(data);
             });
+        };
+        $scope.addOperator = function () {
+            var user = {
+                username: $("#operatorName").val(),
+                password: "test",
+                phone_number: "555-555-5555"
+            };
+            console.log(user);
+            $http.post('/api/users',JSON.stringify(user))
+            .success(function (data, status, headers, config) {
+                //$scope.allUsers.push(data);
+                $scope.getOperators();
+            })
+            .error(function (data, status, headers, config) {
+                alert(data);
+            });
+        };
+        $scope.getOperators = function () {
+            $http.get('/api/users')
+                .success(function (data, status, headers, config) {
+                    $scope.allUsers = data;
+                })
+                .error(function (data, status, headers, config) {
+                    alert(data);
+                });
         };
     };
     $scope.init();
