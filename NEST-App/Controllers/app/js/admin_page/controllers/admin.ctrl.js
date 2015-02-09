@@ -53,10 +53,10 @@
             //});
             $http.get('/api/uavs/generateuavs/' + $("#desiredUAVCount").val() )
             .success(function (data, status, headers, config) {
-
+                $scope.uavs = data;
             })
             .error(function (data, status, headers, config) {
-
+                alert(data);
             });
         };
         $scope.getGeneratedUAVs = function () {
