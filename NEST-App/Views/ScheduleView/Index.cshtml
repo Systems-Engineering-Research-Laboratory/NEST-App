@@ -1,41 +1,52 @@
 ﻿@model IEnumerable<NEST_App.Models.Schedule>
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    //Layout = null;
 }
 @{
     ViewBag.Title = "Index";
 }
 
 <div>
-    <h4>Schedule</h4>
-    <hr />
+    <h2>Schedule</h2>
     <dl class="dl-horizontal"></dl>
     </div>
 @foreach (var sched in Model)
 {
-    <table cellspacing="10">
+    <table class= "table">
         <tr>
-            <td>
-                ScheduleID:
-                @Html.DisplayFor(modelItem => sched.Id)
-            </td>
-                Missions:
-                @*@Html.DisplayFor(modelItem => sched.Missions)*@
-                @foreach (var mission in sched.Missions)
-                {
-                  <td>  @("MissionID: " + mission.id.ToString()) </td>
-                  <td>  @("Estimated Completion Time: " + mission.EstimatedCompletionTime.ToString()) </td>
-                  <td>  @("Scheduled Completion Time: " + mission.ScheduledCompletionTime.ToString()) </td>
-                  <td>  @("Destination Coordinates: " + mission.DestinationCoordinates.ToString()) </td>
-                  <td>  @("Phase:" + mission.Phase.ToString())</td>
-
-                }
-            </tr>
+            <th>
+                UAV Callsign
+            </th>
+            <th>
+                Estimated Delivery Time
+            </th>
+            <th>
+                Scheduled Delivery Time
+            </th>
+            <th>
+                Destination Coordinates
+            </th>
+            <th>
+                Mission Phase
+            </th>
+            <th>
+                Delivery Package
+            </th>
+        </tr>
         <tr>
-            <td>
-                Maintenances:
-            </td>
+             Missions:
+             @foreach (var mission in sched.Missions)
+             {
+               <td>  @(mission.id) </td>
+               <td>  @(mission.EstimatedCompletionTime) </td>
+               <td>  @(mission.ScheduledCompletionTime) </td>
+               <td>  @(mission.DestinationCoordinates) </td>
+               <td>  @(mission.Phase)</td>
+               <td>  @(mission.Payload)</td>
+             }
+        </tr>
+        <tr>
+            Maintenances:
             @foreach (var maint in sched.Maintenances)
             {
                 <td> @("UAV id: " + maint.id.ToString()) </td>
