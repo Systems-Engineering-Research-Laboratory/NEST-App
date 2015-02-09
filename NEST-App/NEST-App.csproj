@@ -57,11 +57,11 @@
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="JavaScriptEngineSwitcher.Core">
       <HintPath>..\packages\JavaScriptEngineSwitcher.Core.1.1.0\lib\net40\JavaScriptEngineSwitcher.Core.dll</HintPath>
@@ -254,6 +254,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminViewController.cs" />
     <Compile Include="Controllers\DetailViewController.cs" />
     <Compile Include="Controllers\EventLogController.cs" />
     <Compile Include="Controllers\FlightStateController.cs" />
@@ -266,7 +267,7 @@
     <Compile Include="Controllers\ScheduleViewController.cs" />
     <Compile Include="Controllers\SimController.cs" />
     <Compile Include="Controllers\UAVsController.cs" />
-    <Compile Include="Controllers\WaypointsController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="DAL\NestDatabaseInitializer.cs" />
     <Compile Include="DAL\NestDbContext.cs" />
     <Compile Include="DAL\NestDbInitializer.cs" />
@@ -276,6 +277,7 @@
     <Compile Include="Hubs\EventLogHub.cs" />
     <Compile Include="Hubs\VehicleHub.cs" />
     <Compile Include="Hubs\VehicleRouteHub.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CMD_ACK.cs">
       <DependentUpon>VehicleModel.tt</DependentUpon>
@@ -397,6 +399,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
+    <Content Include="Content\Flowers.txt" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Content\img\blue.jpg" />
     <Content Include="Content\img\close_btn.png" />
@@ -425,7 +428,10 @@
     <Content Include="Content\Map\OL\MapOL.css" />
     <Content Include="Content\Map\OL\MapOL.js" />
     <Content Include="Content\Map\GOOG\MapGOOG.css" />
+    <Content Include="Content\Names.txt" />
     <Content Include="Content\nest_style.css" />
+    <Content Include="Controllers\app\js\admin_page\admin_page.app.js" />
+    <Content Include="Controllers\app\js\admin_page\controllers\admin.ctrl.js" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -1367,9 +1373,21 @@
     <Content Include="Views\DetailView\Index.cshtml" />
     <Content Include="Scripts\version.json" />
     <Content Include="Views\EventLog\Index.cshtml" />
+    <Content Include="Views\AdminView\ManageUsers.cshtml" />
+    <Content Include="Views\AdminView\ManageUAVs.cshtml" />
+    <Content Include="Views\AdminView\ManageAssignments.cshtml" />
+    <Content Include="Views\AdminView\Index.cshtml" />
+    <Content Include="Views\AdminView\CreateUAV.cshtml" />
+    <Content Include="Views\UAVs1\Create.cshtml" />
+    <Content Include="Views\UAVs1\Delete.cshtml" />
+    <Content Include="Views\UAVs1\Details.cshtml" />
+    <Content Include="Views\UAVs1\Edit.cshtml" />
+    <Content Include="Views\UAVs1\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Controllers\app\js\admin_page\directives\" />
+    <Folder Include="Controllers\app\js\admin_page\factories\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -1395,7 +1413,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>53130</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

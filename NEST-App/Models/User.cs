@@ -14,6 +14,11 @@ namespace NEST_App.Models
     
     public partial class User
     {
+        public User()
+        {
+            this.UAVs = new HashSet<UAV>();
+        }
+    
         public int user_id { get; set; }
         public string username { get; set; }
         public string password { get; set; }
@@ -22,5 +27,6 @@ namespace NEST_App.Models
         public string phone_number { get; set; }
     
         public virtual UserRole UserRole { get; set; }
+        public virtual ICollection<UAV> UAVs { get; set; }
     }
 }

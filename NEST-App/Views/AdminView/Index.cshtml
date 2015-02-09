@@ -1,0 +1,71 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+<div ng-app="adminApp" ng-controller="AdminCtrl">
+    <input type="number" value="0" id="desiredUAVCount"/>
+    <button ng-click="generateUAVs($('#desiredUAVCount').val())">Generate UAVs</button>
+    <button ng-click="getGeneratedUAVs()">Get Generated UAVs</button>
+    <table class="table">
+        <tr>
+            <th>
+                UAV Callsign
+            </th>
+            <th>
+                # Deliveries
+            </th>
+            <th>
+                Mileage
+            </th>
+            <th>
+                Create Date
+            </th>
+            <th>
+                Modified Date
+            </th>
+            <th>
+                Max Velocity
+            </th>
+            <th>
+                Max Acceleration
+            </th>
+            <th>
+                Max Vert Velocity
+            </th>
+            <th>
+                Update Rate
+            </th>
+            <th>
+                Cruise Altitude
+            </th>
+            <th>
+                Min Delivery Alt
+            </th>
+        </tr>
+        <tr ng-repeat="uav in uavs">
+            <td>{{uav.Callsign}}</td>
+            <td>{{uav.NumDeliveries}}</td>
+            <td>{{uav.Mileage}}</td>
+            <td>{{uav.create_date}}</td>
+            <td>{{uav.modified_date}}</td>
+            <td>{{uav.MaxVelocity}}</td>
+            <td>{{uav.MaxAcceleration}}</td>
+            <td>{{uav.MaxVerticalVelocity}}</td>
+            <td>{{uav.UpdateRate}}</td>
+            <td>{{uav.CruiseAltitude}}</td>
+            <td>{{uav.MinDeliveryAlt}}</td>
+        </tr>
+    </table>
+    <input type="text" id="operatorName"/>
+    <button ng-click="addOperator()">Add Operator</button>
+    <table>
+        <tr>
+
+        </tr>
+    </table>
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/angular")
+}

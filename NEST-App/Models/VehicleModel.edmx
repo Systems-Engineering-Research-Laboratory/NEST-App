@@ -96,6 +96,10 @@
       <End Role="UAV" EntitySet="UAVs" />
       <End Role="EventLog" EntitySet="EventLogs" />
     </AssociationSet>
+    <AssociationSet Name="UserUAV" Association="VehicleModel.Store.UserUAV">
+      <End Role="User" EntitySet="Users" />
+      <End Role="UAV" EntitySet="UAVs" />
+    </AssociationSet>
     <AssociationSet Name="FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint" Association="VehicleModel.Store.FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint">
       <End Role="CMD_NAV_Waypoint" EntitySet="CMD_NAV_Waypoint" />
       <End Role="CMD_NAV_Hover" EntitySet="CMD_NAV_Waypoint_CMD_NAV_Hover" />
@@ -129,6 +133,7 @@
     <Property Name="UpdateRate" Type="float" Nullable="false" />
     <Property Name="CruiseAltitude" Type="float" Nullable="false" />
     <Property Name="MinDeliveryAlt" Type="float" Nullable="false" />
+    <Property Name="User_user_id" Type="int" Nullable="true" />
     <Property Name="Configurations_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="FlightStates">
@@ -243,7 +248,7 @@
     <Property Name="DestinationCoordinates" Type="geography" Nullable="false" SRID="4326" />
     <Property Name="ScheduledCompletionTime" Type="datetime" Nullable="false" />
     <Property Name="EstimatedCompletionTime" Type="datetime" Nullable="false" />
-    <Property Name="id" Type="int" Nullable="false" />
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="ScheduleId" Type="int" Nullable="false" />
     <Property Name="create_date" Type="datetime" Nullable="false" />
     <Property Name="modified_date" Type="datetime" Nullable="false" />
@@ -667,6 +672,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="UserUAV">
+    <End Role="User" Type="VehicleModel.Store.Users" Multiplicity="0..1" />
+    <End Role="UAV" Type="VehicleModel.Store.UAVs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="user_id" />
+      </Principal>
+      <Dependent Role="UAV">
+        <PropertyRef Name="User_user_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_CMD_NAV_Hover_inherits_CMD_NAV_Waypoint">
     <End Role="CMD_NAV_Waypoint" Type="VehicleModel.Store.CMD_NAV_Waypoint" Multiplicity="1">
       <OnDelete Action="Cascade" />
@@ -814,6 +831,10 @@
             <End Role="UAV" EntitySet="UAVs" />
             <End Role="EventLog" EntitySet="EventLogs" />
           </AssociationSet>
+          <AssociationSet Name="UserUAV" Association="VehicleModel.UserUAV">
+            <End Role="User" EntitySet="Users" />
+            <End Role="UAV" EntitySet="UAVs" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="UAV">
           <Key>
@@ -836,6 +857,8 @@
           <Property Name="CruiseAltitude" Type="Double" Nullable="false" />
           <Property Name="MinDeliveryAlt" Type="Double" Nullable="false" />
           <NavigationProperty Name="EventLogs" Relationship="VehicleModel.UAVEventLog" FromRole="UAV" ToRole="EventLog" />
+          <NavigationProperty Name="User" Relationship="VehicleModel.UserUAV" FromRole="UAV" ToRole="User" />
+          <Property Name="User_user_id" Type="Int32" Nullable="true" />
           </EntityType>
         <EntityType Name="FlightState">
           <Key>
@@ -995,7 +1018,7 @@
           <Property Name="DestinationCoordinates" Type="Geography" Nullable="false" />
           <Property Name="ScheduledCompletionTime" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="EstimatedCompletionTime" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="id" Type="Int32" Nullable="false" />
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <NavigationProperty Name="Orders" Relationship="VehicleModel.MissionOrder" FromRole="Mission" ToRole="Order" />
           <NavigationProperty Name="Schedule" Relationship="VehicleModel.MissionSchedule" FromRole="Mission" ToRole="Schedule" />
           <Property Name="ScheduleId" Type="Int32" Nullable="false" />
@@ -1113,6 +1136,7 @@
           <Property Name="modified_date" Type="DateTime" Nullable="false" />
           <Property Name="phone_number" Type="String" Nullable="false" />
           <NavigationProperty Name="UserRole" Relationship="VehicleModel.UserUserRole" FromRole="User" ToRole="UserRole" />
+          <NavigationProperty Name="UAVs" Relationship="VehicleModel.UserUAV" FromRole="User" ToRole="UAV" />
         </EntityType>
         <EntityType Name="UserRole">
           <Key>
@@ -1337,6 +1361,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="UserUAV">
+          <End Type="VehicleModel.User" Role="User" Multiplicity="0..1" />
+          <End Type="VehicleModel.UAV" Role="UAV" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="user_id" />
+            </Principal>
+            <Dependent Role="UAV">
+              <PropertyRef Name="User_user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1358,6 +1394,7 @@
           <ScalarProperty Name="UpdateRate" ColumnName="UpdateRate" />
           <ScalarProperty Name="CruiseAltitude" ColumnName="CruiseAltitude" />
           <ScalarProperty Name="MinDeliveryAlt" ColumnName="MinDeliveryAlt" />
+          <ScalarProperty Name="User_user_id" ColumnName="User_user_id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

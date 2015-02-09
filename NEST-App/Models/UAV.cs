@@ -34,11 +34,13 @@ namespace NEST_App.Models
         public double UpdateRate { get; set; }
         public double CruiseAltitude { get; set; }
         public double MinDeliveryAlt { get; set; }
+        public Nullable<int> User_user_id { get; set; }
     
         public virtual Configuration Configurations { get; set; }
         public virtual ICollection<EquipmentHealth> EuipmentHealths { get; set; }
         public virtual ICollection<FlightState> FlightStates { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<EventLog> EventLogs { get; set; }
+        public virtual User User { get; set; }
     }
 }

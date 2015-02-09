@@ -46,7 +46,6 @@ function pushFlightUpdates(map, hub) {
     for (i = 0; i < ids.length; i++) {
         var id = ids[i];
         vehicles[id].FlightState.Timestamp = new Date(Date.now()).toISOString();
-        console.log(vehicles[id]);
         hub.server.pushFlightStateUpdate(vehicles[id].FlightState);
     }
 }
@@ -140,6 +139,11 @@ $(document).ready(function () {
         success: function(data, textStatus, jqXHR) { unassignedMissionsCb (availableMissions, data, textStatus, jqXHR);}
     })
 
+    $.ajax({
+        url: '/api/maprestricteds',
+        success: function(data, textStatus, jqXHR) { restrictedAreasCb(map, data, textStatus, jqXHR);},
+    })
+
     $("#start").click(start);
     $("#stop").click(stopSim);
     
@@ -157,7 +161,8 @@ function flightStateCb (map, hub, data, textStatus, jqXHR) {
  
     for (var i = 0; i < data.length; i++) {
         reporter = new Reporter();
-        map.vehicles[data[i].Id] = new Vehicle(data[i], reporter);
+        var veh = new Vehicle(data[i], reporter, new PathGenerator(map, reporter));
+        map.vehicles[data[i].Id] = veh;
         map.ids.push(data[i].Id);
         console.log(data[i].Id + " " + data[i].Callsign);
         $("#dropdown-UAVIds").append('<li role="presentation"><a class="UAVId" role="menuitem" tabindex="-1" href="#">' + data[i].Id + '</a></li>');
@@ -185,6 +190,10 @@ function unassignedMissionsCb(container, data, textStatus, jqXHR) {
     missionsRecvd = true;
 }
 
+function restrictedAreasCb(map, data, textStatus, jqXHR) {
+    map.restrictedAreas = data;
+}
+
 function updateSimulation(vehicleHub, map) {
     //TODO: Add scheduler here
     //Do dead reckoning on each of the aircraft
@@ -194,6 +203,7 @@ function updateSimulation(vehicleHub, map) {
         id = ids[i];
         vehicles[id].process(dt / 1000);
     }
+    map.makeStale();
     //Pushes the flight state updates
     //pushFlightUpdates(map, vehicleHub);
     
@@ -235,9 +245,9 @@ function setCommandOnVehicle(cmd, map) {
 // This function sets all the callbacks that will be called with SignalR. Please put all callbacks here.
 function setSignalrCallbacks(map) {
     var vehicleHub = $.connection.vehicleHub
-    vehicleHub.client.flightStateUpdate = function (vehicle) {
-        console.log(vehicle);
-    }
+    //vehicleHub.client.flightStateUpdate = function (vehicle) {
+    //    console.log(vehicle);
+    //}
     //This is the listener for getting target commands from signalr
     vehicleHub.client.sendTargetCommand = function (target, connId) {
         receivedCommand(map, target, "CMD_NAV_Target", { connId: connId });
@@ -248,9 +258,5 @@ function setSignalrCallbacks(map) {
     }
     vehicleHub.client.broadcastAcceptedCommand = function (ack) {
         console.log(ack);
-    }
-
-    vehicleHub.client.flightStateUpdate = function (fs) {
-        console.log(fs);
     }
 }

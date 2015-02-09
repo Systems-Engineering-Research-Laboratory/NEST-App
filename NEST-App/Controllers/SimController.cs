@@ -47,7 +47,7 @@ namespace NEST_App.Controllers.Api
                            MaxAcceleration = u.MaxAcceleration,
                            MaxVerticalVelocity = u.MaxVerticalVelocity,
                            UpdateRate = u.UpdateRate,
-                           Schedule = new 
+                           Schedule = new
                            {
                                Id = s.Id,
                                UAVId = s.UAVId,
@@ -57,8 +57,8 @@ namespace NEST_App.Controllers.Api
                            },
                            FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
                        };
-                return Request.CreateResponse(HttpStatusCode.OK, uavs);
-            
+            return Request.CreateResponse(HttpStatusCode.OK, uavs);
+
         }
     }
 }

@@ -1,0 +1,93 @@
+﻿@model IEnumerable<NEST_App.Models.UAV>
+
+@{
+    ViewBag.Title = "ManageUAVs";
+}
+
+<h2>ManageUAVs</h2>
+
+<p>
+    @Html.ActionLink("Create New", "CreateUAV")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Callsign)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NumDeliveries)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Mileage)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.create_date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.modified_date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MaxVelocity)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MaxAcceleration)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MaxVerticalVelocity)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UpdateRate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CruiseAltitude)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MinDeliveryAlt)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Callsign)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NumDeliveries)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Mileage)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.create_date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.modified_date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MaxVelocity)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MaxAcceleration)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MaxVerticalVelocity)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UpdateRate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CruiseAltitude)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MinDeliveryAlt)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>

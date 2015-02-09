@@ -4,7 +4,7 @@
 * The vehicle doesn't need to have more than that to run the simulation (for now at least). It comes with the
 * functins that allow it to behave kind of autonomously. It just goes straight to it's destination.
 */
-function Vehicle(vehicleInfo, reporter) {
+function Vehicle(vehicleInfo, reporter, pathGen) {
     //Model stuff
     this.Id = vehicleInfo.Id;
     this.Callsign = vehicleInfo.Callsign;
@@ -18,6 +18,11 @@ function Vehicle(vehicleInfo, reporter) {
     //Storing other entities related to UAV
     this.FlightState = vehicleInfo.FlightState;
     this.Schedule = vehicleInfo.Schedule;
+    for (var i = 0; i < this.Schedule.Missions.length; i++) {
+        var m = this.Schedule.Missions[i];
+        m.Schedule = null;
+        m.Waypoints = null;
+    }
     //This is the current mission the vehicle is on.
     this.Mission = vehicleInfo.Schedule.Missions[0];
     this.Schedule = vehicleInfo.Schedule;
@@ -33,7 +38,6 @@ function Vehicle(vehicleInfo, reporter) {
     this.Command = null;
     this.descending = true;
     this.reporter = reporter;
-    
     //Allows for us to use this in the callback. Closures yo
     var that = this;
     //Used as callback to retrieve waypoints from the server.
@@ -65,7 +69,7 @@ function Vehicle(vehicleInfo, reporter) {
     this.setPathGen = function (gen) {
         this.pathGen = gen;
     }
-
+    this.setPathGen(pathGen);
     
     this.appendLonLat = function (obj, point) {
         var pointText = point.Geography.WellKnownText
@@ -86,6 +90,9 @@ function Vehicle(vehicleInfo, reporter) {
         //If the current waypoint is null but the reporter is pending, just return.
         if (this.currentWaypoint && this.reporter.pendingResult) {
             return;
+        }
+        if (pathGen.gotNewRestrictedArea()) {
+            this.pathGen(this.waypoints, this);
         }
         //Process this waypoint if we have one
         if (this.currentWaypoint) {
@@ -145,7 +152,6 @@ function Vehicle(vehicleInfo, reporter) {
         //Update the vehicle's yaw.
         //Put the heading into the flight state for when it gets pushed to the server.
         this.FlightState.Yaw = heading * rad2deg;
-        console.log(this.FlightState.Yaw);
         this.approachSpeed(this.MaxVelocity, heading, dt);
         var distanceX = X - this.FlightState.X;
         var distanceY = Y - this.FlightState.Y;
@@ -282,35 +288,44 @@ function Vehicle(vehicleInfo, reporter) {
 
     this.performMission = function (dt, mission) {
         var mis = mission;
-
+        var wpComplete = false;
+        var update = false;
         //TODO: Report mission progress
         switch (mis.Phase) {
             case "takeoff":
                 if (this.takeOff(dt)) {
                     mis.Phase = "enroute";
-                    return false;
+                    wpComplete = false;
+                    update = true;
                 }
                 break;
             case "enroute":
                 if (this.deadReckon(dt, mis.X, mis.Y)) {
                     mis.Phase = "delivering";
-                    return false;
+                    wpComplete = false;
+                    update = true;
                 }
                 break;
             case "delivering":
                 if (this.deliver(dt, 200, 400, this.MaxVelocity)) {
                     mis.Phase = "back to base";
-                    return true;
+                    wpComplete =  true;
                     //TODO: Assign the path back to the base.
+                    update = true;
                 }
                 break;
             case "back to base":
                 if (this.backToBase(dt, base.X, base.Y)) {
                     mis.Phase = "done";
-                    return true;
+                    wpComplete = true;
+                    update = true;
                 }
                 break;
         }
+        if (update) {
+            this.reporter.updateMission(mis);
+        }
+        return wpComplete;
     }
 
     this.setCommand = function (target) {
@@ -397,15 +412,42 @@ function Reporter() {
     this.pendingResult = false;
 
     this.updateMission = function (mission, opts) {
-        this.putToServer('api/missions/' + mission.Id, mission);
+        var jqXHR = this.putToServer(
+            '/api/missions/' + mission.id,
+            {
+                Phase: mission.Phase,
+                FlightPattern: mission.FlightPattern,
+                Payload: mission.Payload,
+                Priority: mission.Priority,
+                FinancialCost: mission.FinancialCost,
+                TimeAssigned: mission.TimeAssigned,
+                TimeComplete: mission.TimeCompleted,
+                DestinationCoordinates: mission.DestinationCoordinates.Geography.WellKnownText,
+                ScheduledCompletionTime: mission.ScheduledCompletionTime,
+                EstimatedCompletionTime: mission.EstimatedCompletionTime,
+                id: mission.id,
+                ScheduleId: mission.ScheduleId,
+                create_date: mission.create_date,
+                modified_date: mission.modified_date,
+            },
+            {});
+
     }
 
     this.updateFlightState = function (fs, opts) {
         this.hub.server.pushFlightStateUpdate(fs);
     }
 
-    this.putToServer = function (url, success) {
-        $.ajax({ url: url, sucess: success, type: 'PUT' });
+    this.putToServer = function (url, data, opts, success) {
+        
+        return $.ajax({
+            url: url,
+            data: JSON.stringify(data),
+            dataType: 'json',
+            success: success, 
+            type: 'PUT',
+            contentType: "application/json",
+        });
     }
 
     this.ackCommand = function (cmd, type, reason) {
@@ -441,6 +483,8 @@ function Reporter() {
 function VehicleContainer (){
     this.ids = [];
     this.vehicles = [];
+    this.restrictedAreas = [];
+    this.newRestrictedArea = false;
 
     this.hasVehicleById = function (id) {
         return this.ids.indexOf(id) != -1;
@@ -459,19 +503,38 @@ function VehicleContainer (){
         this.ids.push(veh.id);
         this.vehicles.push(veh);
     }
+
+    this.addRestrcitedArea = function (area) {
+        this.restrictedAreas.push(area);
+        this.newRestrictedArea = true;
+    }
+
+    this.makeStale = function () {
+        this.newRestrictedArea = false;
+    }
 }
 
 // The waypoint creation logic container so that there isn't logic all over the vehicle code
 function PathGenerator(areaContainer, reporter) {
     this.areaContainer = areaContainer;
-    this.mission = mission;
-    this.waypoints = waypoints;
     this.reporter = reporter;
+
+    this.gotNewRestrictedArea = function () {
+        return this.areaContainer.newRestrictedArea;
+    }
+
+    this.generatePath = function(wps, veh) {
+        if(this.gotNewRestrictedArea()) {
+            var newWps = this.resolvePath(wps);
+            return newWps;
+        }
+        return wps;
+    }
 
     this.resolvePath = function(mission, wps, veh) {
         //For now, we are just going to get the direct waypoints.
         if (wps  && wps.length < 2) {
-            var wps = this.withEndPoints(mission, wps, veh);
+            var is = this.withEndPoints(mission, wps, veh);
         }
         return wps;
     }

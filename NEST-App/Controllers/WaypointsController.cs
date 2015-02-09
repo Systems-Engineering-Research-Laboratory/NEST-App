@@ -91,6 +91,7 @@ namespace NEST_App.Controllers
                 NextWaypoint = nextWaypoint,
                 Missions = wp.Missions
             };
+            
 
             return wps; //this list includes the new, inserted waypoint
 
