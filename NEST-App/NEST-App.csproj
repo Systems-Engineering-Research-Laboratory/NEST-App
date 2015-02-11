@@ -268,6 +268,7 @@
     <Compile Include="Controllers\SimController.cs" />
     <Compile Include="Controllers\UAVsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Controllers\WaypointsController.cs" />
     <Compile Include="DAL\NestDatabaseInitializer.cs" />
     <Compile Include="DAL\NestDbContext.cs" />
     <Compile Include="DAL\NestDbInitializer.cs" />
@@ -424,7 +425,12 @@
     <Content Include="Content\img\white.jpg" />
     <Content Include="Content\img\yellow.jpg" />
     <Content Include="Content\img\yun_kim.png" />
+    <Content Include="Content\Map\GOOG\DroneSelection.js" />
+    <Content Include="Content\Map\GOOG\DroneTrails.js" />
+    <Content Include="Content\Map\GOOG\MapDraw.js" />
     <Content Include="Content\Map\GOOG\MapGOOG.js" />
+    <Content Include="Content\Map\GOOG\MapListeners.js" />
+    <Content Include="Content\Map\GOOG\MapStyles.js" />
     <Content Include="Content\Map\OL\MapOL.css" />
     <Content Include="Content\Map\OL\MapOL.js" />
     <Content Include="Content\Map\GOOG\MapGOOG.css" />
