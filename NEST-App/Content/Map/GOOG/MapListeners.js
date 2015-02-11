@@ -1,4 +1,4 @@
-﻿google.maps.event.addListener(map, "rightclick", function (event) {
+﻿/*google.maps.event.addListener(map, "rightclick", function (event) {
     var lat = event.latLng.lat();
     var lng = event.latLng.lng();
     var point = new google.maps.LatLng(lat, lng);
@@ -134,4 +134,4 @@ google.maps.event.addListener(mapListeners, 'mouseup', function (e) {
     mapListeners.setOptions({
         draggable: true
     });
-});
+});*/

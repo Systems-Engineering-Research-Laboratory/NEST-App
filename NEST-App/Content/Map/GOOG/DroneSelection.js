@@ -35,40 +35,26 @@ function CtrlSelect(marker, selectedDrones) {
 }
 
 
-/*KEYBINDING*/
-var shiftPressed = false;
-$(window).keydown(function (evt) {
-    if (evt.which === 16) {
-        shiftPressed = true;
-        //console.log("Shift key down");
-    }
-    if (evt.ctrlKey) {
-        ctrlDown = true;
-    }
-    //if shift + (0 through 9) is pressed, all selected drones will be bound to that number
-    if (evt.shiftKey && ((evt.which >= 48) && (evt.which <= 57))) {
-        storedGroups[evt.which] = selectedDrones;
-        //console.log("Number of selected drones: " + selectedDrones.length);
-    }
-    //if 0 through 9 is pressed, it restores that list of selected drones and turns them green
-    if ((evt.which >= 48) && (evt.which <= 57)) {
-        while (selectedDrones.length > 0) {//clear the selected drone list
-            selectedDrones.pop();
+    function KeyBinding(selectedDrones, storedGroups, evt){
+        //if shift + (0 through 9) is pressed, all selected drones will be bound to that number
+        if (evt.shiftKey && ((evt.which >= 48) && (evt.which <= 57))) {
+            storedGroups[evt.which] = selectedDrones;
+            //console.log("Number of selected drones: " + selectedDrones.length);
         }
-        if (storedGroups[evt.which] != null) {
-            selectedDrones.push(storedGroups[evt.which]);
-            if (selectedDrones.length != 0) {
-                var i;
-                for (i = 0; i < selectedDrones.length; i++) {
-                    //selectedDrones[i].marker.setIcon(uavIconGreen);
+        //if 0 through 9 is pressed, it restores that list of selected drones and turns them green
+        if ((evt.which >= 48) && (evt.which <= 57)) {
+            while (selectedDrones.length > 0) {//clear the selected drone list
+                selectedDrones.pop();
+            }
+            if (storedGroups[evt.which] != null) {
+                selectedDrones.push(storedGroups[evt.which]);
+                if (selectedDrones.length != 0) {
+                    var i;
+                    for (i = 0; i < selectedDrones.length; i++) {
+                        //selectedDrones[i].marker.setIcon(uavIconGreen);
+                    }
                 }
             }
+            console.log("Number of selected drones: " + selectedDrones.length);
         }
-        console.log("Number of selected drones: " + selectedDrones.length);
     }
-}).keyup(function (evt) {
-    if (evt.which === 16) {
-        shiftPressed = false;
-        //console.log("Shift key up");
-    }
-});
