@@ -2,30 +2,30 @@
     /*CTRL-SELECT*/
     CtrlSelect: function (marker, selectedDrones) {
         if (marker.icon.fillColor == 'green') {
-            //marker.setIcon(mapStyles.uavSymbolBlack);
-            //marker.setMap(marker.map);
+            marker.setIcon(mapStyles.uavSymbolBlack);
+            marker.setMap(marker.map);
             //TODO: deselect and remove from selectedDrone (tricky because it's an array)
         }
-
-        marker.setIcon(mapStyles.uavSymbolGreen);//other drone-selection-related events should trigger off this!
-        marker.flightToggle = true;
-        selectedUAV = marker.uav;
-        if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, ignore immediate key repeats and proceed
-            ctrlDown = false
-            selectedDrones.push(selectedUAV);
-        }
-        else {//otherwise, empty the selectedDrones list and add the drone to the empty list
-            //console.log("hit else");
-            while (selectedDrones.length > 0) {//clear the selected drone list
-                selectedDrones.pop();
+        else {
+            marker.setIcon(mapStyles.uavSymbolGreen);//other drone-selection-related events should trigger off this!
+            selectedUAV = marker.uav;
+            if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, ignore immediate key repeats and proceed
+                ctrlDown = false
+                selectedDrones.push(selectedUAV);
             }
-            selectedDrones.push(selectedUAV);
-        }
-        console.log("Number of drones selected: " + selectedDrones.length);
+            else {//otherwise, empty the selectedDrones list and add the drone to the empty list
+                //console.log("hit else");
+                while (selectedDrones.length > 0) {//clear the selected drone list
+                    selectedDrones.pop();
+                }
+                selectedDrones.push(selectedUAV);
+            }
+            console.log("Number of drones selected: " + selectedDrones.length);
 
-        // enable waypoint buttons
-        $("#goBtn").removeClass("disabled");
-        $("#clickToGoBtn").removeClass("disabled");
+            // enable waypoint buttons
+            $("#goBtn").removeClass("disabled");
+            $("#clickToGoBtn").removeClass("disabled");
+        }
     },
 
     //This fires when a drone turns green or black, ie it has either been selected or de-selected

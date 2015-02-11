@@ -1,44 +1,22 @@
-﻿//GLOBALS//
-var map;
-var flightLines = []
+﻿var map;
+var homeBase = new google.maps.LatLng(34.2417, -118.529);
+var uavs = {};
+
+//DroneSelection
 var selectedDrones = []; //store drones selected from any method here
 var storedGroups = []; //keep track of different stored groupings of UAVs
 var ctrlDown = false;
-var uavTrails = [{
-    id: 0,
-    trail: []
-}];
-
-
-//DOCUMENT ONLY//
-var overlays = []; //Array for the polygon shapes as overlays
-
-
-
-var mapListeners = map; //use this to add listeners to the map
-var counter = 0;
-//var vehicleHub = $.connection.vehicleHub;
-var pointText;
-var results;
-var parse;
-var uavs = {};
-var drawingManager;
-var selectedShape;
-
-//var uavMarker;
-var dropMarkerListener;
-var trailArray = [];
-var waypointMarker = null;
+var flightLines = [];
 var selectedUAV; //the uav that's been selected
+
+//DroneTrails
 var selectedTrail; //the trail that the selected uav has
-//var infobox;
-//var infoboxAlert;
-var selected = false;
-var homeBase = new google.maps.LatLng(34.2417, -118.529);
-var selectedColor;
-var colorButtons = {};
+
+//TODO: Do we need this? Are we changing this to "var theMap = map;" ?
+var mapListeners = map; //use this to add listeners to the map
 
 function uavMarkers(data, textStatus, jqXHR) {
+    var pointText, results;
     console.log("Pulling Flightstates...", textStatus);
     for (var i = 0; i < data.length; i++) {
         uavs[data[i].Id] = {};
@@ -92,7 +70,7 @@ function uavMarkers(data, textStatus, jqXHR) {
         //When fired, the UAV is marked as 'selected'
         google.maps.event.addListener(marker, 'click', (function () {droneSelection.CtrlSelect(this, selectedDrones, selectedUAV)}));
         //Events to ccur when a UAV's marker icon has changed (ie the marker's been clicked)
-        google.maps.event.addListener(marker, "icon_changed", function () { droneSelection.SelectionStateChanged(this, selectedDrones, selectedUAV, flightLines, uavTrails, selectedTrail) });
+        google.maps.event.addListener(marker, "icon_changed", function () { droneSelection.SelectionStateChanged(this, selectedDrones, selectedUAV, flightLines, droneTrails.uavTrails, selectedTrail) });
     }
 }
 
@@ -110,6 +88,8 @@ function clear() {
 }
 
 $(document).ready(function () {
+    var counter = 0, parse;
+    
     map = new google.maps.Map(document.getElementById('map-canvas'), mapStyles.mapOptions);
 
     var distanceCircle = new google.maps.Circle(mapStyles.distanceCircleOptions);
@@ -130,7 +110,7 @@ $(document).ready(function () {
 
     // add event listener
     if (document.getElementById("go_lat") != isNaN && document.getElementById("go_long") != isNaN) {
-        document.getElementById("goWaypoint").addEventListener("click", goWaypoint(document.getElementById("go_lat"), document.getElementById("go_long")));
+        document.getElementById("goWaypoint").addEventListener("click", droneTrails.goWaypoint(document.getElementById("go_lat"), document.getElementById("go_long")));
     }
 
     $.ajax({
@@ -151,41 +131,33 @@ $(document).ready(function () {
     //Right click for infowindow coordinates on map
     google.maps.event.addListener(map, "rightclick", function (event) { mapFunctions.GetLatLong(this, event) });
 
-    //Drawing manager top left, allows user to draw shapes and lines on the map
-    drawingManager = new google.maps.drawing.DrawingManager({
-        drawingMode: google.maps.drawing.OverlayType.POLYGON,
-        markerOptions: {
-            draggable: true
-        },
-        polylineOptions: {
-            editable: true
-        },
-        rectangleOptions: mapStyles.polyOptions,
-        circleOptions: mapStyles.polyOptions,
-        polygonOptions: mapStyles.polyOptions,
-        map: map
-    });
-    drawingManager.setMap(map);
-    drawingManager.setDrawingMode(null);
-    google.maps.event.addListener(drawingManager, 'overlaycomplete', function (e) {OverlayComplete(overlays, e)});
+
+
+    mapDraw.InitDrawingManager();
+    mapDraw.drawingManager.setMap(map);
+    mapDraw.drawingManager.setDrawingMode(null);
+    google.maps.event.addListener(mapDraw.drawingManager, 'overlaycomplete', function (e) { mapDraw.OverlayComplete(e) });
 
     //Delete shapes and clear selection
-    google.maps.event.addListener(drawingManager, 'drawingmode_changed', clearSelection);
-    google.maps.event.addListener(map, 'click', clearSelection);
-    google.maps.event.addDomListener(document.getElementById('delete-button'), 'click', deleteSelectedShape);
-    google.maps.event.addDomListener(document.getElementById('delete-all-button'), 'click', deleteAllShape(overlays));
-    buildColorPalette(drawingManager);
+    google.maps.event.addListener(mapDraw.drawingManager, 'drawingmode_changed', mapDraw.clearSelection);
+    google.maps.event.addListener(map, 'click', mapDraw.clearSelection);
+    google.maps.event.addDomListener(document.getElementById('delete-button'), 'click', mapDraw.deleteSelectedShape);
+    google.maps.event.addDomListener(document.getElementById('delete-all-button'), 'click', mapDraw.deleteAllShape());
+    mapDraw.buildColorPalette(mapDraw.drawingManager);
 
-    /* Event Log */
-    var emitHub = $.connection.eventLogHub;
-    $.connection.hub.start().done(function () {
-        console.log("connection started for evt log");
-    });
-    var warningMessageCounter = 0;
-
+  
     /* Vehicle Movement */
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
+        /* Event Log */
+        var emitHub = $.connection.eventLogHub;
+        $.connection.hub.start().done(function () {
+            console.log("connection started for evt log");
+        });
+        var warningMessageCounter = 0;
+
+        mapFunctions.vehicleHubUpdate(vehicle, uavs, selected)
+        
         //console.log(vehicle); //move it down so it updates with the trail at a slower rate
         var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
         //seperate trail dots a little bit
