@@ -16,7 +16,6 @@ namespace NEST_App.Models
     {
         public int Id { get; set; }
         public System.DateTime Timestamp { get; set; }
-        public System.Data.Entity.Spatial.DbGeography Position { get; set; }
         public double VelocityX { get; set; }
         public double VelocityY { get; set; }
         public double VelocityZ { get; set; }
@@ -30,6 +29,9 @@ namespace NEST_App.Models
         public int UAVId { get; set; }
         public System.DateTime create_date { get; set; }
         public System.DateTime modified_date { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public double Altitude { get; set; }
     
         public virtual UAV UAV { get; set; }
     }

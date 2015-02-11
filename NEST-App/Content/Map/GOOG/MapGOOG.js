@@ -25,22 +25,14 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].Id].FlightState = data[i].FlightState;
         uavs[data[i].Id].Schedule = data[i].Schedule;
         uavs[data[i].Id].Missions = data[i].Schedule.Missions;
-        pointText = uavs[data[i].Id].FlightState.Position.Geography.WellKnownText;
-        results = pointText.match(/-?\d+(\.\d+)?/g);
-        uavs[data[i].Id].Lat = results[1];
-        uavs[data[i].Id].Lon = results[0];
-        uavs[data[i].Id].Alt = results[2];
+        var fs = uavs[data[i].Id].FlightState;
         uavs[data[i].Id].Callsign = data[i].Callsign;
         uavs[data[i].Id].Battery = data[i].FlightState.BatteryLevel;
-        uavs[data[i].Id].Position = new google.maps.LatLng(results[1], results[0]);
+        uavs[data[i].Id].Position = new google.maps.LatLng(fs.Latitude, fs.Longitude);
         uavs[data[i].Id].Mission = data[i].Mission;
 
-        destText = uavs[data[i].Id].Mission.DestinationCoordinates.Geography.WellKnownText;
-        res = destText.match(/-?\d+(\.\d+)?/g);
-        var destLat = res[1];
-        var destLon = res[0];
-        var destAlt = res[2];
-        uavs[data[i].Id].Destination = new google.maps.LatLng(res[1], res[0]);
+        var mission = uavs[data[i].Id].Mission;
+        uavs[data[i].Id].Destination = new google.maps.LatLng(mission.Latitude, mission.Longitude);
 
         //Creates the flightpath line from uav position to destination
         flightLines[data[i].Id] = new google.maps.Polyline(mapStyles.flightPathOptions);
@@ -151,12 +143,10 @@ $(document).ready(function () {
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         /* Event Log */
         var emitHub = $.connection.eventLogHub;
-        $.connection.hub.start().done(function () {
-            console.log("connection started for evt log");
-        });
+        
         var warningMessageCounter = 0;
 
-        mapFunctions.vehicleHubUpdate(vehicle, uavs, selected)
+        //mapFunctions.vehicleHubUpdate(vehicle, uavs, selected)
         
         //console.log(vehicle); //move it down so it updates with the trail at a slower rate
         var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
@@ -213,7 +203,11 @@ $(document).ready(function () {
                 });
             }
         }
+
     }
+    $.connection.hub.start().done(function () {
+        console.log("connection started for evt log");
+    });
 
     /*Click-drag-select*/
     var shiftPressed = false;

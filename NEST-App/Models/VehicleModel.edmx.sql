@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 02/10/2015 21:26:53
+-- Date Created: 02/11/2015 11:01:58
 -- Generated from EDMX file: C:\Users\Jeffrey\Documents\Programming\NEST\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
@@ -200,7 +200,6 @@ GO
 CREATE TABLE [dbo].[FlightStates] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [Timestamp] datetime  NOT NULL,
-    [Position] geography  NOT NULL,
     [VelocityX] float  NOT NULL,
     [VelocityY] float  NOT NULL,
     [VelocityZ] float  NOT NULL,
@@ -213,7 +212,10 @@ CREATE TABLE [dbo].[FlightStates] (
     [BatteryLevel] float  NOT NULL,
     [UAVId] int  NOT NULL,
     [create_date] datetime  NOT NULL,
-    [modified_date] datetime  NOT NULL
+    [modified_date] datetime  NOT NULL,
+    [Latitude] float  NOT NULL,
+    [Longitude] float  NOT NULL,
+    [Altitude] float  NOT NULL
 );
 GO
 

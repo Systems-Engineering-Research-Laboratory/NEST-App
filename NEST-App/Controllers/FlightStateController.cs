@@ -27,9 +27,9 @@ namespace NEST_App.Controllers
                                select new FlightStateDTO
                                {
                                    Id = fs.Id,
-                                   Latitude = fs.Position.Latitude ?? 0,
-                                   Longitude = fs.Position.Longitude ?? 0,
-                                   Altitude = fs.Position.Elevation ?? 0,
+                                   Latitude = fs.Latitude,
+                                   Longitude = fs.Longitude,
+                                   Altitude = fs.Altitude,
                                    VelocityX = fs.VelocityX,
                                    VelocityY = fs.VelocityY,
                                    VelocityZ = fs.VelocityZ,
