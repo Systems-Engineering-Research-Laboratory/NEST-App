@@ -103,9 +103,13 @@ function uavMarkers(data, textStatus, jqXHR) {
         marker.set('flightPath', flightLines[data[i].Id]);
         marker.set('flightToggle', false);
         var flightToggle = false;
+        //When fired, the UAV is marked as 'selected'
         google.maps.event.addListener(marker, 'click', (function () {
             CtrlSelect(this, selectedDrones, selectedUAV)
         }));
+        //Events to ccur when a UAV's marker icon has changed (ie the marker's been clicked)
+        google.maps.event.addListener(marker, "icon_changed", function () { SelectionStateChanged(this, selectedDrones, selectedUAV, flightLines, uavTrails, selectedTrail) });
+
     }
 }
 
@@ -160,6 +164,7 @@ $(document).ready(function () {
         }
     });
 
+    
     /**** Currently in progress 
     google.maps.event.addListener(map, 'click', function () {
         if (infobox) {
@@ -329,33 +334,5 @@ $(document).ready(function () {
         }
     });
 
-    google.maps.event.addListener(map, 'mouseup', function (e) {
-        console.log("mouseup hit");
-        if (mouseIsDown && (shiftPressed || gridBoundingBox != null)) {
-            mouseIsDown = 0;
-            if (gridBoundingBox !== null) {
-                while (selectedDrones.length > 0) {//clear the selected drone list
-                    selectedDrones.pop();
-                }
-                var boundsSelectionArea = new google.maps.LatLngBounds(gridBoundingBox.getBounds().getSouthWest(), gridBoundingBox.getBounds().getNorthEast());
-                for (var key in uavs) {
-                    if (gridBoundingBox.getBounds().contains(uavs[key].marker.getPosition())) {
-                        selected = true;
-                        uavs[key].marker.setIcon(mapStyles.uavSymbolGreen);
-                        selectedDrones.push(uavs[key]);//push the selected markers to an array
-                        console.log("Number of selected drones: " + selectedDrones.length);
-                    } else {
-                        selected = false;
-                        uavs[key].marker.setIcon(mapStyles.uavSymbolBlack);
-                        console.log("Number of selected drones: " + selectedDrones.length);
-                    }
-                }
-                gridBoundingBox.setMap(null);
-            }
-            gridBoundingBox = null;
-        }
-        mapListeners.setOptions({
-            draggable: true
-        });
-    });
+    google.maps.event.addListener(map, 'mouseup', function (e) {AreaSelect(this, e, mouseIsDown, shiftPressed, gridBoundingBox, selectedDrones, uavs)});
 });

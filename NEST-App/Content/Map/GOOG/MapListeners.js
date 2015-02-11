@@ -25,63 +25,6 @@ function GetLatLong(map, event){
     infowindow.open(map);
 }
 /*
-google.maps.event.addListener(drawingManager, 'overlaycomplete', function (e) {
-    overlays.push(e);
-    if (e.type != google.maps.drawing.OverlayType.MARKER) {
-        //Switch to non-drawing after a shape is drawn
-        drawingManager.setDrawingMode(null);
-        //Select the shape when user clicks on it
-        var newShape = e.overlay;
-        newShape.type = e.type;
-        google.maps.event.addListener(newShape, 'click', function () {
-            setSelection(newShape);
-        });
-        setSelection(newShape);
-    }
-});
-
-google.maps.event.addListener(marker, 'click', (function () {
-    this.setIcon(uavSymbolGreen);
-    if (this.flightToggle == false) {
-        flightLines[this.uav.Id].setMap(map);
-    }
-    else {
-        flightLines[this.uav.Id].setMap(null);
-    }
-
-    if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, ignore immediate key repeats and proceed
-        ctrlDown = false;
-
-        selectedDrones.push(selectedUAV);
-    }
-    else {//otherwise, empty the selectedDrones list and add the drone to the empty list
-        //console.log("hit else");
-        while (selectedDrones.length > 0) {//clear the selected drone list
-            selectedDrones.pop();
-        }
-
-        selectedDrones.push(selectedUAV);
-    }
-    // set selected trail
-    selectedUAV = marker.uav;
-    for (var i = 0; i < uavTrails.length; i++) {
-        if (uavTrails[i].id == selectedUAV.Id) {
-            selectedTrail = uavTrails[i].trail;
-        }
-    }
-    // draw entire trail when clicked
-    if (selectedTrail != undefined) {
-        for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
-            selectedTrail[i].setMap(map);
-        }
-    }
-    console.log("Number of drones selected: " + selectedDrones.length);
-
-    // enable waypoint buttons
-    $("#goBtn").removeClass("disabled");
-    $("#clickToGoBtn").removeClass("disabled");
-
-}));
 
 google.maps.event.addListener(mapListeners, 'click', function (e) {
     if (selectedTrail != undefined) {
