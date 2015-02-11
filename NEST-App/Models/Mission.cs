@@ -28,13 +28,14 @@ namespace NEST_App.Models
         public Nullable<decimal> FinancialCost { get; set; }
         public System.DateTime TimeAssigned { get; set; }
         public Nullable<System.DateTime> TimeCompleted { get; set; }
-        public System.Data.Entity.Spatial.DbGeography DestinationCoordinates { get; set; }
         public System.DateTime ScheduledCompletionTime { get; set; }
         public System.DateTime EstimatedCompletionTime { get; set; }
         public int id { get; set; }
         public int ScheduleId { get; set; }
         public System.DateTime create_date { get; set; }
         public System.DateTime modified_date { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     
         public virtual ICollection<Order> Orders { get; set; }
         public virtual Schedule Schedule { get; set; }
