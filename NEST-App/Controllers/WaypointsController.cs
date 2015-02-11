@@ -38,6 +38,8 @@ namespace NEST_App.Controllers
         [Route("api/waypoints/insert/{id}")]
         public async Task<IHttpActionResult> Waypoints(int id, Waypoint newWp)
         {
+            //Use a transaction because we have to make possibly 2 commits to the database. If
+            //either fails, we need to roll back
             using (var trans = db.Database.BeginTransaction())
             {
                 try
@@ -64,15 +66,18 @@ namespace NEST_App.Controllers
                         if (prevWp != null)
                         {
                             prevWp.NextWaypoint = newWp;
+                            //This waypoint is now modified. Let the context know.
                             db.Entry(prevWp).State = System.Data.Entity.EntityState.Modified;
+                            await db.SaveChangesAsync();
                         }
                     }
-                    await db.SaveChangesAsync();
+                    //We finished with the transactions, make sure to commit them.
                     trans.Commit();
                     return Ok();
                 }
                 catch (DbUpdateException e)
                 {
+                    //Something went wrong. Rollback any changes, if any.
                     trans.Rollback();
                     return BadRequest();
                 }
