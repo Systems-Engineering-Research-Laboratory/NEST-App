@@ -19,9 +19,9 @@ function uavMarkers(data, textStatus, jqXHR) {
     var pointText, results;
     console.log("Pulling Flightstates...", textStatus);
     for (var i = 0; i < data.length; i++) {
+        //TODO Make a copier fuction for this:
         uavs[data[i].Id] = {};
         uavs[data[i].Id].Id = data[i].Id;
-
         uavs[data[i].Id].FlightState = data[i].FlightState;
         uavs[data[i].Id].Schedule = data[i].Schedule;
         uavs[data[i].Id].Missions = data[i].Schedule.Missions;
@@ -138,25 +138,24 @@ $(document).ready(function () {
     google.maps.event.addDomListener(document.getElementById('delete-all-button'), 'click', mapDraw.deleteAllShape());
     mapDraw.buildColorPalette(mapDraw.drawingManager);
 
+    /* Event Log */
+    var emitHub = $.connection.eventLogHub;
+    $.connection.hub.start().done(function () {
+        console.log("connection started for evt log");
+    });
+    var warningMessageCounter = 0;
   
     /* Vehicle Movement */
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
-        /* Event Log */
-        var emitHub = $.connection.eventLogHub;
-        $.connection.hub.start().done(function () {
-            console.log("connection started for evt log");
-        });
-        var warningMessageCounter = 0;
-
-        mapFunctions.vehicleHubUpdate(vehicle, uavs, selected)
+        mapFunctions.vehicleHubUpdate(vehicle, uavs, selected);
         
         //console.log(vehicle); //move it down so it updates with the trail at a slower rate
         var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
         //seperate trail dots a little bit
         if (counter == 0 || counter == 20) {
             console.log(vehicle);
-            storeTrail(vehicle.Id, LatLng);
+            droneTrails.storeTrail(vehicle.Id, LatLng);
             if (counter == 20) {
                 counter = 0;
             }

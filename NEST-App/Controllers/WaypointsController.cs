@@ -60,11 +60,12 @@ namespace NEST_App.Controllers
                     //If nextPointId is not null, fix the reference of the former previous waypoint
                     if (nextPointId != null)
                     {
+                        //Find previous waypoint
                         Waypoint prevWp = (from wp in mission.Waypoints
                                            //Make sure we don't accidentally get the wp we just inserted
-                                           where wp.NextWaypointId == nextPointId && wp.Id != newWp.Id
+                                           where wp.NextWaypointId == nextPointId && wp.Id != newWp.Id && wp.IsActive
                                            select wp).First();
-                        if (prevWp != null)
+                        if (prevWp != null) //If this new WP is not at the beginning of the list
                         {
                             prevWp.NextWaypointId = newWp.Id;
                             //This waypoint is now modified. Let the context know.
