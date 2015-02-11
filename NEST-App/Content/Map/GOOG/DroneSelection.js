@@ -28,7 +28,8 @@ function CtrlSelect(marker, selectedDrones) {
 
 //This fires when a drone turns green or black, ie it has either been selected or de-selected
 function SelectionStateChanged(marker, selectedDrones, selectedUAV, flightLines, uavTrails, selectedTrail) {
-        //console.log("Selection change event fired");
+    //console.log("Selection change event fired");
+
         //*******************SELECTED*********************//
     if (marker.icon.fillColor == 'green') {
         //console.log("UAV Selected");

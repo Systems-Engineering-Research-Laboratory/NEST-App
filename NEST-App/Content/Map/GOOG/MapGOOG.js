@@ -64,18 +64,9 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].Id].Destination = new google.maps.LatLng(res[1], res[0]);
 
         //Creates the flightpath line from uav position to destination
-        var flightPlanCoords = [
-            uavs[data[i].Id].Position,
-            uavs[data[i].Id].Destination
-        ];
-
-        flightLines[data[i].Id] = new google.maps.Polyline({
-            path: flightPlanCoords,
-            geodesic: true,
-            strokeColor: 'blue',
-            strokeOpacity: 1.0,
-            strokeWeight: 2
-        });
+        flightLines[data[i].Id] = new google.maps.Polyline(mapsStyles.flightPathOptions);
+        flightLines[data[i].Id].setPath([uavs[data[i].Id].Position,uavs[data[i].Id].Destination]);
+        
 
         var markerCircle = new google.maps.Marker({
             position: uavs[data[i].Id].Position,
@@ -93,23 +84,16 @@ function uavMarkers(data, textStatus, jqXHR) {
             uav: uavs[data[i].Id]
         });
 
-
-        var key = data[i].Id.toString();
         uavs[data[i].Id].marker = marker;
         uavs[data[i].Id].markerCircle = markerCircle;
         uavs[data[i].Id].flightPath = flightLines[data[i].Id];
         uavs[data[i].Id].markerCircle.setMap(map);
         uavs[data[i].Id].marker.setMap(map);
         marker.set('flightPath', flightLines[data[i].Id]);
-        marker.set('flightToggle', false);
-        var flightToggle = false;
         //When fired, the UAV is marked as 'selected'
-        google.maps.event.addListener(marker, 'click', (function () {
-            CtrlSelect(this, selectedDrones, selectedUAV)
-        }));
+        google.maps.event.addListener(marker, 'click', (function () {CtrlSelect(this, selectedDrones, selectedUAV)}));
         //Events to ccur when a UAV's marker icon has changed (ie the marker's been clicked)
         google.maps.event.addListener(marker, "icon_changed", function () { SelectionStateChanged(this, selectedDrones, selectedUAV, flightLines, uavTrails, selectedTrail) });
-
     }
 }
 
@@ -163,7 +147,6 @@ $(document).ready(function () {
             uavMarkers(data, textStatus, jqXHR);
         }
     });
-
     
     /**** Currently in progress 
     google.maps.event.addListener(map, 'click', function () {
@@ -172,6 +155,7 @@ $(document).ready(function () {
         }
     });
    */
+
     //Right click for infowindow coordinates on map
     google.maps.event.addListener(map, "rightclick", function (event) { GetLatLong(this, event) });
 
@@ -189,10 +173,8 @@ $(document).ready(function () {
         polygonOptions: mapStyles.polyOptions,
         map: map
     });
-
     drawingManager.setMap(map);
     drawingManager.setDrawingMode(null);
-
     google.maps.event.addListener(drawingManager, 'overlaycomplete', function (e) {OverlayComplete(overlay, e)});
 
     //Delete shapes and clear selection
@@ -202,12 +184,14 @@ $(document).ready(function () {
     google.maps.event.addDomListener(document.getElementById('delete-all-button'), 'click', deleteAllShape);
     buildColorPalette();
 
-    /* Vehicle movement */
+    /* Event Log */
     var emitHub = $.connection.eventLogHub;
     $.connection.hub.start().done(function () {
         console.log("connection started for evt log");
     });
     var warningMessageCounter = 0;
+
+    /* Vehicle Movement */
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         //console.log(vehicle); //move it down so it updates with the trail at a slower rate
@@ -219,7 +203,8 @@ $(document).ready(function () {
             if (counter == 20) {
                 counter = 0;
             }
-        }counter++;
+        } counter++;
+
         // draw trail
         if (selectedUAV && selectedTrail != undefined) {
             if (selectedTrail.length < 2)
@@ -227,29 +212,25 @@ $(document).ready(function () {
             else
                 selectedTrail[selectedTrail.length - 2].setMap(map);
         }
+
         uavs[vehicle.Id].marker.setPosition(LatLng);
         uavs[vehicle.Id].markerCircle.setPosition(LatLng);
         parse = parseFloat(Math.round(vehicle.BatteryLevel * 100) / 100).toFixed(2);
         mapStyles.uavSymbolBlack.rotation = vehicle.Yaw;
         mapStyles.uavSymbolGreen.rotation = vehicle.Yaw;
-        if (selectedUAV) {
-            uavs[vehicle.Id].marker.setIcon(mapStyles.uavSymbolGreen);
-        }
-        else
-            uavs[vehicle.Id].marker.setIcon(mapStyles.uavSymbolBlack);
         uavs[vehicle.Id].marker.setOptions({
             labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + vehicle.Altitude + '<br/><b>Bat: </b>' + parse + '</div>',
-            icon: uavs[vehicle.Id].marker.icon
+            icon: uavs[vehicle.Id].marker.icon /// <-----------------TODO:  Isn't this redundant?
         });
+
         //console.log(parse);
         if (parse < .2) {
-         
             //console.log(eventLog);
             //emitHub.server.emit(eventLog);
             if (warningMessageCounter == 0) {
                 warningMessageCounter++;
-                infobox.open(map, uavs[vehicle.Id].marker);
-                infoboxAlert.open(map, uavs[vehicle.Id].marker);
+                mapStyles.infobox.open(map, uavs[vehicle.Id].marker);
+                mapStyles.infoboxAlert.open(map, uavs[vehicle.Id].marker);
 
                 var eventLog = {
                     uav_id: uavs[vehicle.Id].Id,
@@ -265,7 +246,6 @@ $(document).ready(function () {
                     url: "/api/uavs/postuavevent",
                     success: function () { },
                     data: eventLog
-
                 });
             }
         }
@@ -281,9 +261,6 @@ $(document).ready(function () {
         if (evt.ctrlKey) {
             ctrlDown = true;
         }
-        if (evt.which === 69) {
-            console.log(selectedDrones.length);
-        }
         KeyBinding(selectedDrones, storedGroups, evt);
     }).keyup(function (evt) {
         if (evt.which === 16) {
@@ -293,46 +270,9 @@ $(document).ready(function () {
     });
 
     var mouseDownPos, gridBoundingBox = null, mouseIsDown = 0;
-    var mapListeners = map;
-    //hide the trail, might be redundent may need to conbine with other functions -David
-   /* google.maps.event.addListener(mapListeners, 'click', function (e) {
-        if (selectedTrail != undefined) {
-            for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
-                selectedTrail[i].setMap(null);
-            }
-            selectedUAV = null;
-        }
-    });*/
-    google.maps.event.addListener(mapListeners, 'mousemove', function (e) {
-        //console.log("move mouse down, shift down", mouseIsDown, shiftPressed);
-        if (mouseIsDown && (shiftPressed || gridBoundingBox != null)) {
-            if (gridBoundingBox !== null) {
-                var newbounds = new google.maps.LatLngBounds(mouseDownPos, null);
-                newbounds.extend(e.latLng);
-                gridBoundingBox.setBounds(newbounds);
+    var mapListeners = map;/// <-----------------------------TODO: Redundant?
 
-            } else {
-                //console.log("first mouse move");
-                gridBoundingBox = new google.maps.Rectangle({
-                    map: mapListeners,
-                    bounds: null,
-                    fillOpacity: 0.15,
-                    strokeWeight: 0.9,
-                    clickable: false
-                });
-            }
-        }
-    });
-
-    google.maps.event.addListener(mapListeners, 'mousedown', function (e) {
-        if (shiftPressed) {
-            mouseIsDown = 1;
-            mouseDownPos = e.latLng;
-            mapListeners.setOptions({
-                draggable: false
-            });
-        }
-    });
-
+    google.maps.event.addListener(mapListeners, 'mousemove', function (e) { DrawBoundingBox(this, e, shiftPressed, gridBoundingBox, mouseDownPos) });
+    google.maps.event.addListener(mapListeners, 'mousedown', function (e) { StopMapDrag(this, e, shiftPressed, mouseIsDown, mouseDownPos) });
     google.maps.event.addListener(map, 'mouseup', function (e) {AreaSelect(this, e, mouseIsDown, shiftPressed, gridBoundingBox, selectedDrones, uavs)});
 });

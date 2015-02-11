@@ -67,11 +67,17 @@ uavSymbolGreen : {
     strokeColor: 'gold',
     strokeWeight: 4,
     anchor: new google.maps.Point(90, 140)
-},
+ },
+
+ flightPathOptions: {
+     geodesic: true,
+     strokeColor: 'blue',
+     strokeOpacity: 1.0,
+     strokeWeight: 2
+ },
 
  BaseControl: function(controlDiv, map) {
     controlDiv.style.padding = '6px';
-
     //CSS for control button exterior
     var controlUI = document.createElement('div');
     controlUI.style.backgroundColor = 'white';

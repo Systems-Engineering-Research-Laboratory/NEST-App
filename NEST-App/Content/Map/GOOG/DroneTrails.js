@@ -50,6 +50,17 @@ function storeTrail(uavID, location) {
     }
 }
 
+//This function needs to be updated before it's reimplemented, if it even needs to;
+//I think this function's function can be accomplished in the DroneSelection.SelectionStateChanged(args) call
+/*google.maps.event.addListener(mapListeners, 'click', function (e) {
+    if (selectedTrail != undefined) {
+        for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
+            selectedTrail[i].setMap(null);
+        }
+        selectedUAV = null;
+    }
+});*/
+
 // click on map to set a waypoint
 // todo: make a cancel button
 // still working on it
