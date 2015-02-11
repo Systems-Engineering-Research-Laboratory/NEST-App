@@ -47,8 +47,10 @@ namespace NEST_App.Controllers
                         TimeAssigned = DateTime.Now.AddHours(-0.1f),
                         TimeCompleted = DateTime.Now,
                         Phase = (string)@"En route",
-                        DestinationCoordinates = System.Data.Entity.Spatial.DbGeography.FromText("POINT(-117.861328 34.089061)"),   }},
-                
+                        Longitude = -117.861328,
+                        Latitude = 34.089061
+                    }
+                },
             };
             try
             {

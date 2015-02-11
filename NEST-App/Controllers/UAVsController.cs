@@ -61,7 +61,8 @@ namespace NEST_App.Controllers.Api
                                FinancialCost = m.FinancialCost,
                                TimeAssigned = m.TimeAssigned,
                                TimeCompleted = m.TimeCompleted,
-                               DestinationCoordinates = m.DestinationCoordinates,
+                               Latitude = m.Latitude,
+                               Longitude = m.Longitude,
                                ScheduledCompletionTime = m.ScheduledCompletionTime,
                                EstimatedCompletionTime = m.EstimatedCompletionTime,
                                Id = m.id,
@@ -178,7 +179,7 @@ namespace NEST_App.Controllers.Api
 
                 DateTime dateValue = new DateTime();
                 dateValue = DateTime.Now;
-
+                var randPoint = getDistance();
                 var mission = new List<Mission> 
                 { 
                    new Mission {
@@ -189,7 +190,8 @@ namespace NEST_App.Controllers.Api
                        FinancialCost = num.Next(1, 99), 
                        TimeAssigned = dateValue, 
                        TimeCompleted = dateValue.AddHours(0.0833),  
-                       DestinationCoordinates = getDistance(),
+                       Latitude = randPoint.Latitude?? 34.2417,
+                       Longitude = randPoint.Longitude?? -118.529,
                        ScheduledCompletionTime = dateValue.AddHours(0.0899),
                        EstimatedCompletionTime = dateValue.AddHours(0.09), 
                        create_date = dateValue.AddHours(0.01),

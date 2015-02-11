@@ -72,17 +72,8 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     this.setPathGen(pathGen);
     
     this.appendLonLat = function (obj, point) {
-        var pointText = point.Geography.WellKnownText
-        var results = pointText.match(/-?\d+(\.\d+)?/g);
-        obj.Longitude = parseFloat(results[0]);
-        obj.Latitude = parseFloat(results[1]);
-        obj.Altitude = parseFloat(results[2]);
+        var pointText = point.Geography.WellKnownText;
         LatLongToXY(obj);
-    }
-
-    appendLonLatFromDbPoint(this.FlightState, this.FlightState.Position);
-    if (this.Mission) {
-        appendLonLatFromDbPoint(this.Mission, this.Mission.DestinationCoordinates);
     }
 
     //Functions. Careful not to add global helper functions here.
@@ -621,8 +612,8 @@ function Waypoint(info) {
         this.Position = info.Position;
     }
     else if(info.Latitude && info.Longitude) {
-        this.Latitude = Latitude;
-        this.Longitude = Longitude;
+        this.Latitude = info.Latitude;
+        this.Longitude = info.Longitude;
         LatLongToXY(this);
     }
     if(info.NextWaypointId) {

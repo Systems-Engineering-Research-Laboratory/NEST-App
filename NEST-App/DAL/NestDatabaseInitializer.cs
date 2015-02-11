@@ -101,6 +101,8 @@ namespace NEST_App.DAL
                         DateTime dateValue = new DateTime();
                         dateValue = DateTime.Now;
 
+                        var randPoint = this.distance();
+
                         var missions = new List<Mission>
                         {
                             new Mission { 
@@ -112,7 +114,8 @@ namespace NEST_App.DAL
                                 TimeAssigned = dateValue, 
                                 TimeCompleted = dateValue.AddHours(0.0833), 
                                 //DestinationCoordinates = DbGeography.FromText("POINT(-118.52529 34.241670 400)"),  
-                                DestinationCoordinates = distance(),
+                                Latitude = randPoint.Latitude?? 34.2417,
+                                Longitude = randPoint.Longitude?? -118.529,
                                 ScheduledCompletionTime = dateValue.AddHours(0.0899),
                                 EstimatedCompletionTime = dateValue.AddHours(0.09), 
                                 create_date = dateValue.AddHours(0.01),
@@ -141,7 +144,9 @@ namespace NEST_App.DAL
                                 WasSkipped = false, 
                                 GeneratedBy = "Jeff", 
                                 Action = "Fly Through", 
-                                Position = DbGeography.FromText("POINT(-118.4902736 34.2365205 400)"), 
+                                Latitude = 34.2365205,
+                                Longitude = -118.4902736,
+                                Altitude = 400,
                                 Missions = missions[0]
                             },
                             new Waypoint { 
@@ -149,7 +154,9 @@ namespace NEST_App.DAL
                                 IsActive = true, WasSkipped = false, 
                                 GeneratedBy = "Jeff", 
                                 Action = "Fly Through", 
-                                Position = DbGeography.FromText("POINT(-118.529 34.2417 400)"), 
+                                Latitude = 34.2417,
+                                Longitude = -118.529,
+                                Altitude = 400,
                                 Missions = missions[0] 
                             },
                             new Waypoint { 
@@ -158,7 +165,7 @@ namespace NEST_App.DAL
                                 WasSkipped = false, 
                                 GeneratedBy = "Jeff", 
                                 Action = "Fly Through", 
-                                Position = DbGeography.FromText("POINT(-118.52962736 34.2415205 400)"), 
+                                Altitude = 400,
                                 Missions = missions[0]}
                             };
                         

@@ -20,36 +20,65 @@ namespace NEST_App.Controllers
     {
         private NestContainer db = new NestContainer();
 
+        [HttpGet]
+        [Route("api/waypoints/{id}")]
+        [ResponseType(typeof(Waypoint))]
+        public async Task<IHttpActionResult> GetWaypoint(int id)
+        {
+            var wp = await db.Waypoints.FindAsync(id);
+            if (wp == null)
+            {
+                return NotFound();
+            }
+            return Ok(wp);
+        }
 
         //for inserting a waypoint
-        [HttpGet]
-        [Route("api/waypoints/{id}/{lat}/{lng}/{wp}")]
-        public async Task<IEnumerable<object>> Waypoints(int id, double lat, double lng, Waypoint wp)
+        [HttpPost]
+        [Route("api/waypoints/insert/{id}")]
+        public async Task<IHttpActionResult> Waypoints(int id, Waypoint newWp)
         {
-            Mission mission = await db.Missions.FindAsync(id);
-            var wps = mission.Waypoints;
-
-            var nextWaypoint = wp.NextWaypoint;
-
-            wp.NextWaypoint = new Waypoint
+            using (var trans = db.Database.BeginTransaction())
             {
-                MissionId = wp.MissionId,
-                //NextWaypointId = wp.NextWaypointId,  how are wps assigned an ID?
-                Position = DbGeography.FromText("POINT(" + lat + " " + lng + ")"),
-                IsActive = wp.IsActive,
-                WasSkipped = wp.WasSkipped,
-                //GeneratedBy = operator that created it
-                //Id = wp.Id,    what is the new id? related to how wps are assigned an ID
-                Action = wp.Action, //This is temporary; it may be possible that we set a waypoint at which the drone should hold
-                WaypointName = "Inserted Waypoint",
-                NextWaypoint = nextWaypoint,
-                Missions = wp.Missions
-            };
-            
+                try
+                {
+                    Mission mission = await db.Missions.FindAsync(id);
+                    //If the mission doesn't exist, or the input parameter doesn't match the stored mission id, then return bad request
+                    //The auto-generated WebApi2 
+                    if (mission == null && newWp.MissionId != id)
+                    {
+                        return BadRequest("The Mission was not found and the waypoint was null");
+                    }
 
-            return wps; //this list includes the new, inserted waypoint
+                    newWp = db.Waypoints.Add(newWp);
+                    await db.SaveChangesAsync();
+                    var wps = mission.Waypoints;
+                    //Try to get the nextWaypoint id
+                    var nextPointId = newWp.NextWaypointId;
+                    //If nextPointId is not null, fix the reference of the former previous waypoint
+                    if (nextPointId != null)
+                    {
+                        Waypoint prevWp = (from wp in mission.Waypoints
+                                           where wp.NextWaypointId == nextPointId
+                                           select wp).First();
+                        if (prevWp != null)
+                        {
+                            prevWp.NextWaypoint = newWp;
+                            db.Entry(prevWp).State = System.Data.Entity.EntityState.Modified;
+                        }
+                    }
+                    await db.SaveChangesAsync();
+                    trans.Commit();
+                    return Ok();
+                }
+                catch (DbUpdateException e)
+                {
+                    trans.Rollback();
+                    return BadRequest();
+                }
 
+            }
         }
-        
+
     }
 }
