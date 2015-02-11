@@ -1,4 +1,20 @@
-﻿/*google.maps.event.addListener(map, "rightclick", function (event) {
+﻿function OverlayComplete(overlay, e) {
+    overlays.push(e);
+    if (e.type != google.maps.drawing.OverlayType.MARKER) {
+        //Switch to non-drawing after a shape is drawn
+        drawingManager.setDrawingMode(null);
+        //Select the shape when user clicks on it
+        var newShape = e.overlay;
+        newShape.type = e.type;
+        google.maps.event.addListener(newShape, 'click', function () {
+            setSelection(newShape);
+        });
+        setSelection(newShape);
+    }
+}
+
+
+function GetLatLong(map, event){
     var lat = event.latLng.lat();
     var lng = event.latLng.lng();
     var point = new google.maps.LatLng(lat, lng);
@@ -7,8 +23,8 @@
         position: point
     });
     infowindow.open(map);
-});
-
+}
+/*
 google.maps.event.addListener(drawingManager, 'overlaycomplete', function (e) {
     overlays.push(e);
     if (e.type != google.maps.drawing.OverlayType.MARKER) {

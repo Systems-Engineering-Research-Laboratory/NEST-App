@@ -1,4 +1,15 @@
-﻿var map;
+﻿//GLOBALS//
+var map;
+var flightLines = []
+var selectedDrones = []; //store drones selected from any method here
+var storedGroups = []; //keep track of different stored groupings of UAVs
+var ctrlDown = false;
+
+//DOCUMENT ONLY//
+var overlays = []; //Array for the polygon shapes as overlays
+
+
+
 var mapListeners = map; //use this to add listeners to the map
 var counter = 0;
 //var vehicleHub = $.connection.vehicleHub;
@@ -6,24 +17,18 @@ var pointText;
 var results;
 var parse;
 var uavs = {};
-var overlays = []; //Array for the polygon shapes as overlays
-var flightLines = []
 var drawingManager;
 var selectedShape;
-var uavMarker;
+//var uavMarker;
 var dropMarkerListener;
 var trailArray = [];
 var waypointMarker = null;
 var selectedUAV; //the uav that's been selected
 var selectedTrail; //the trail that the selected uav has
-var selectedDrones = []; //store drones selected from any method here
-var storedGroups = []; //keep track of different stored groupings of UAVs
-var ctrlDown = false;
-var infobox;
-var infoboxAlert;
+//var infobox;
+//var infoboxAlert;
 var selected = false;
 var homeBase = new google.maps.LatLng(34.2417, -118.529);
-var colors = ['#1E90FF', '#FF1493', '#32CD32', '#FF8C00', '#4B0082'];
 var selectedColor;
 var colorButtons = {};
 
@@ -99,119 +104,6 @@ function uavMarkers(data, textStatus, jqXHR) {
     }
 }
 
-
-//store uav trails
-//still working on it
-function storeTrail(uavID, location) {
-    var notCreated;
-    //if (!notCreated) {
-    // //update trail
-    // for (var j = 0; j < uavTrails[uavID].trail.length; j++) {
-    // o -= 0.04;
-    // s -= 0.04;
-    // uavTrail = {
-    // url: '../Content/img/blue.jpg',
-    // fillOpacity: o,
-    // scale: s,
-    // anchor: new google.maps.Point(46 * s, 44 * s)
-    // };
-    // console.log(uavTrail);
-    // }
-    //}
-    var trailMarker = new google.maps.Marker({
-        position: location,
-        icon: uavTrail
-    });
-
-    for (var i = 0; i < uavTrails.length; i++) {
-        if (uavTrails[i].id === uavID) {
-            //set trail
-            if (uavTrails[i].trail.length <= 30) {
-                uavTrails[i].trail.push(trailMarker);
-            }
-            else {
-                uavTrails[i].trail[0].setMap(null);
-                uavTrails[i].trail.shift();
-                uavTrails[i].trail.push(trailMarker);
-            }
-            notCreated = false;
-            break;
-        }
-        else {
-            notCreated = true;
-        }
-    }
-
-    if (notCreated) {
-        //push new uavTrails
-        uavTrails.push({
-            id: uavID,
-            trail: []
-        });
-        storeTrail(uavID, location);
-    }
-}
-
-// click on map to set a waypoint
-// todo: make a cancel button
-// still working on it
-function clickToGo() {
-    if (selectedUAV != null) {
-        goTo_hide();
-
-        //setting dropMarkerListener
-        dropMarkerListener = google.maps.event.addListener(mapListeners, 'click', dropWaypoint(event));
-
-        //actually adding the listener to the map
-        google.maps.event.addListener(mapListeners, 'click', dropWaypoint(event));
-    }
-}
-//still working on it -David
-function dropWaypoint(event) {
-    if (dropMarkerListener != null) {
-        //call function to create marker
-        if (waypointMarker) {
-            waypointMarker.setMap(null);
-            waypointMarker = null;
-        }
-        waypointMarker = createMarker(event.latLng, "name", "<b>Location</b><br>" + event.latLng);
-
-        // make uav fly to the dropped pin
-        goWaypoint(event.latLng.lat(), event.latLng.lng());
-
-        // remove listener so the marker can only be placed once
-        google.maps.event.removeListener(dropMarkerListener);
-        dropMarkerListener = null;
-    }
-
-        // reset selected uav if there's no waypoint
-    else if (waypointMarker) {
-        uavInfoWindow.close();
-        otherInfoWindow.close();
-    }
-    else {
-        for (i = 0; i < trailArray.length; i++) {
-            trailArray[i].setMap(null);
-        }
-        selectedUAV = null;
-        //uavInfoWindow.close();
-    }
-    $("#UAVId").html("Select an UAV first");
-    $("#goBtn").addClass("disabled");
-    $("#clickToGoBtn").addClass("disabled");
-}
-//still working on it -David
-function goWaypoint(lat, long) {
-    //vehicleHub.server.sendCommand({
-    //    Id: 123,
-    //    Latitude: lat,
-    //    Longitude: long,
-    //    Altitude: 400,
-    //    UAVId: selectedUAV
-    //});
-}
-
-
 function goTo_show() {
     document.getElementById("CommPopPlaceHolder").style.display = "block";
 }
@@ -226,15 +118,8 @@ function clear() {
 }
 
 $(document).ready(function () {
-    var mapOptions = {
-        zoom: 18,
-        center: new google.maps.LatLng(34.2417, -118.529),
-        disableDefaultUI: true,
-        zoomControl: true,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        disableDoubleClickZoom: true,
-    }
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
     var distanceCircle = new google.maps.Circle({
         map: map,
         radius: 8046.72, //distance in meters (5 miles)
@@ -244,14 +129,8 @@ $(document).ready(function () {
         fillOpacity: 0.1,
         zIndex: -1
     })
-    //setting trail style
-    uavTrail = {
-        url: '../Content/img/blue.jpg',
-        fillOpacity: 0.7,
-        size: new google.maps.Size(46, 44),
-        scaledSize: new google.maps.Size(5, 5),
-        anchor: new google.maps.Point(5, 5)
-    };
+
+
     var homeControlDiv = document.createElement('div');
     var homeControl = new BaseControl(homeControlDiv, map);
 
@@ -284,16 +163,7 @@ $(document).ready(function () {
     });
    */
     //Right click for infowindow coordinates on map
-    google.maps.event.addListener(map, "rightclick", function (event) {
-        var lat = event.latLng.lat();
-        var lng = event.latLng.lng();
-        var point = new google.maps.LatLng(lat, lng);
-        var infowindow = new google.maps.InfoWindow({
-            content: '<div style="line-height: 1.35; overflow: hidden; white-space: nowrap;"><b>Lat: </b>' + lat + '<br/><b>Lng: </b>' + lng + '</div>',
-            position: point
-        });
-        infowindow.open(map);
-    });
+    google.maps.event.addListener(map, "rightclick", function (event) { GetLatLong(this, event) });
 
     //Drawing manager top left, allows user to draw shapes and lines on the map
     drawingManager = new google.maps.drawing.DrawingManager({
@@ -313,20 +183,7 @@ $(document).ready(function () {
     drawingManager.setMap(map);
     drawingManager.setDrawingMode(null);
 
-    google.maps.event.addListener(drawingManager, 'overlaycomplete', function (e) {
-        overlays.push(e);
-        if (e.type != google.maps.drawing.OverlayType.MARKER) {
-            //Switch to non-drawing after a shape is drawn
-            drawingManager.setDrawingMode(null);
-            //Select the shape when user clicks on it
-            var newShape = e.overlay;
-            newShape.type = e.type;
-            google.maps.event.addListener(newShape, 'click', function () {
-                setSelection(newShape);
-            });
-            setSelection(newShape);
-        }
-    });
+    google.maps.event.addListener(drawingManager, 'overlaycomplete', function (e) {OverlayComplete(overlay, e)});
 
     //Delete shapes and clear selection
     google.maps.event.addListener(drawingManager, 'drawingmode_changed', clearSelection);
@@ -366,7 +223,6 @@ $(document).ready(function () {
         uavSymbolBlack.rotation = vehicle.Yaw;
         uavSymbolGreen.rotation = vehicle.Yaw;
         if (selectedUAV) {
-            uavs[vehicle.Id].marker.setIcon(uavSymbolGreen);
             uavs[vehicle.Id].marker.setIcon(uavSymbolGreen);
         }
         else
@@ -410,7 +266,7 @@ $(document).ready(function () {
     $(window).keydown(function (evt) {
         if (evt.which === 16) {
             shiftPressed = true;
-            //console.log("Shift key down");
+            console.log("Shift key down");
         }
         if (evt.ctrlKey) {
             ctrlDown = true;
@@ -426,14 +282,14 @@ $(document).ready(function () {
     var mouseDownPos, gridBoundingBox = null, mouseIsDown = 0;
     var mapListeners = map;
     //hide the trail, might be redundent may need to conbine with other functions -David
-    google.maps.event.addListener(mapListeners, 'click', function (e) {
+   /* google.maps.event.addListener(mapListeners, 'click', function (e) {
         if (selectedTrail != undefined) {
             for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
                 selectedTrail[i].setMap(null);
             }
             selectedUAV = null;
         }
-    });
+    });*/
     google.maps.event.addListener(mapListeners, 'mousemove', function (e) {
         //console.log("move mouse down, shift down", mouseIsDown, shiftPressed);
         if (mouseIsDown && (shiftPressed || gridBoundingBox != null)) {
@@ -465,7 +321,8 @@ $(document).ready(function () {
         }
     });
 
-    google.maps.event.addListener(mapListeners, 'mouseup', function (e) {
+    google.maps.event.addListener(map, 'mouseup', function (e) {
+        console.log("mouseup hit");
         if (mouseIsDown && (shiftPressed || gridBoundingBox != null)) {
             mouseIsDown = 0;
             if (gridBoundingBox !== null) {

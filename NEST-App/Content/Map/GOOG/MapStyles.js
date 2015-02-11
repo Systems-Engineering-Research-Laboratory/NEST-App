@@ -1,5 +1,25 @@
 ﻿var colors = ['#1E90FF', '#FF1493', '#32CD32', '#FF8C00', '#4B0082'];
 
+var noPOIs = [
+    {
+        featureType: "poi",
+        elementType: "labels",
+        stylers: [
+              { visibility: "off" }
+        ]
+    }
+];
+
+var mapOptions = {
+    zoom: 18,
+    center: new google.maps.LatLng(34.2417, -118.529),
+    disableDefaultUI: true,
+    zoomControl: true,
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    disableDoubleClickZoom: true,
+    styles: noPOIs,
+}
+
 var polyOptions = { //Options set for the polygon shapes and drawing manager
     strokeWeight: 0,
     fillOpacity: 0.45,
@@ -82,7 +102,7 @@ function BaseControl(controlDiv, map) {
 }
 
 var message = $("#infobox").attr("msg");
-infobox = new InfoBox({
+var infobox = new InfoBox({
     content: document.getElementById("infobox"),
     disableAutoPan: false,
     maxWidth: 100,
@@ -95,7 +115,7 @@ infobox = new InfoBox({
     closeBoxMargin: "9px 1px 2px 2px"
 });
 
-infoboxAlert = new InfoBox({
+var infoboxAlert = new InfoBox({
     content: document.getElementById("infoboxAlert"),
     disableAutoPan: false,
     maxWidth: 20,
@@ -107,3 +127,11 @@ infoboxAlert = new InfoBox({
     },
 });
 
+//setting trail style
+var uavTrail = {
+    url: '../Content/img/blue.jpg',
+    fillOpacity: 0.7,
+    size: new google.maps.Size(46, 44),
+    scaledSize: new google.maps.Size(5, 5),
+    anchor: new google.maps.Point(5, 5)
+};
