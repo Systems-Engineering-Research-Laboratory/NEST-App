@@ -88,23 +88,18 @@ function clear() {
 }
 
 $(document).ready(function () {
-    var counter = 0, parse;
-    
     map = new google.maps.Map(document.getElementById('map-canvas'), mapStyles.mapOptions);
-
+    var counter = 0, parse;
     var distanceCircle = new google.maps.Circle(mapStyles.distanceCircleOptions);
     distanceCircle.setCenter(homeBase);
     distanceCircle.setMap(map);
-    
     var homeControlDiv = document.createElement('div');
     var homeControl = new mapStyles.BaseControl(homeControlDiv, map, homeBase);
-
     var marker = new google.maps.Marker({
         position: homeBase,
         icon: mapStyles.goldStarBase,
         map: map
     });
-
     homeControlDiv.index = 1;
     map.controls[google.maps.ControlPosition.RIGHT].push(homeControlDiv);
 
@@ -130,8 +125,6 @@ $(document).ready(function () {
 
     //Right click for infowindow coordinates on map
     google.maps.event.addListener(map, "rightclick", function (event) { mapFunctions.GetLatLong(this, event) });
-
-
 
     mapDraw.InitDrawingManager();
     mapDraw.drawingManager.setMap(map);
@@ -215,7 +208,6 @@ $(document).ready(function () {
         }
     }
 
-    /*Click-drag-select*/
     var shiftPressed = false;
     $(window).keydown(function (evt) {
         if (evt.which === 16) {
@@ -232,7 +224,6 @@ $(document).ready(function () {
             //console.log("Shift key up");
         }
     });
-
     var mouseDownPos, gridBoundingBox = null, mouseIsDown = 0;
     var mapListeners = map;/// <-----------------------------TODO: Redundant?
 
