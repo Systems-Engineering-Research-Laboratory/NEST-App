@@ -20,52 +20,6 @@ namespace NEST_App.Controllers
     {
         private NestContainer db = new NestContainer();
 
-        //For adding a waypoint to the end of the list
-        [HttpGet]
-        [Route("api/waypoints/{id}")]
-        public async Task<IEnumerable<object>> Waypoints(int id)
-        {
-            Mission mission = await db.Missions.FindAsync(id);
-
-            var wps = mission.Waypoints;
-            List<Waypoint> wpsInOrder = new List<Waypoint>();
-            var tail = wps.First(wp => wp.NextWaypoint == null);
-            wps.Add(tail);
-            foreach (var wp in wps)
-            {
-                if (wp.Id == tail.Id)
-                {
-                    //This is already in the list we don't want to insert it.
-                    continue;
-                }
-                var next = wp.NextWaypoint;
-                int index = wpsInOrder.FindIndex(n => n.Id == next.Id);
-                if (index == -1)
-                {
-                    //The next waypoint of this waypoint is not in this list, just insert it behind the last waypoint.
-                    int len = wpsInOrder.Count;
-                    wpsInOrder.Insert(len - 1, wp);
-                }
-                else
-                {
-                    //Insert the waypoint behind its next waypoint.
-                    wpsInOrder.Insert(index, wp);
-                }
-            }
-            var diffType = from wp in wpsInOrder.AsQueryable()
-                           select new
-                           {
-                               MissionId = wp.MissionId,
-                               NextWaypointId = wp.NextWaypointId,
-                               Position = wp.Position,
-                               IsActive = wp.IsActive,
-                               Id = wp.Id,
-                               TimeCompleted = wp.TimeCompleted,
-                               WaypointName = wp.WaypointName
-                           };
-            return diffType;
-        }
-
 
         //for inserting a waypoint
         [HttpGet]
