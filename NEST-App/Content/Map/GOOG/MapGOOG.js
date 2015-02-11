@@ -64,15 +64,13 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].Id].Destination = new google.maps.LatLng(res[1], res[0]);
 
         //Creates the flightpath line from uav position to destination
-        flightLines[data[i].Id] = new google.maps.Polyline(mapsStyles.flightPathOptions);
-        flightLines[data[i].Id].setPath([uavs[data[i].Id].Position,uavs[data[i].Id].Destination]);
-        
+        flightLines[data[i].Id] = new google.maps.Polyline(mapStyles.flightPathOptions);
+        flightLines[data[i].Id].setPath([uavs[data[i].Id].Position, uavs[data[i].Id].Destination]);
 
         var markerCircle = new google.maps.Marker({
             position: uavs[data[i].Id].Position,
             icon: mapStyles.uavCircleBlack
         });
-
         var marker = new MarkerWithLabel({
             position: uavs[data[i].Id].Position,
             icon: mapStyles.uavSymbolBlack,
@@ -91,9 +89,9 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].Id].marker.setMap(map);
         marker.set('flightPath', flightLines[data[i].Id]);
         //When fired, the UAV is marked as 'selected'
-        google.maps.event.addListener(marker, 'click', (function () {CtrlSelect(this, selectedDrones, selectedUAV)}));
+        google.maps.event.addListener(marker, 'click', (function () {droneSelection.CtrlSelect(this, selectedDrones, selectedUAV)}));
         //Events to ccur when a UAV's marker icon has changed (ie the marker's been clicked)
-        google.maps.event.addListener(marker, "icon_changed", function () { SelectionStateChanged(this, selectedDrones, selectedUAV, flightLines, uavTrails, selectedTrail) });
+        google.maps.event.addListener(marker, "icon_changed", function () { droneSelection.SelectionStateChanged(this, selectedDrones, selectedUAV, flightLines, uavTrails, selectedTrail) });
     }
 }
 
@@ -261,7 +259,7 @@ $(document).ready(function () {
         if (evt.ctrlKey) {
             ctrlDown = true;
         }
-        KeyBinding(selectedDrones, storedGroups, evt);
+        droneSelection.KeyBinding(selectedDrones, storedGroups, evt);
     }).keyup(function (evt) {
         if (evt.which === 16) {
             shiftPressed = false;
@@ -272,7 +270,7 @@ $(document).ready(function () {
     var mouseDownPos, gridBoundingBox = null, mouseIsDown = 0;
     var mapListeners = map;/// <-----------------------------TODO: Redundant?
 
-    google.maps.event.addListener(mapListeners, 'mousemove', function (e) { DrawBoundingBox(this, e, shiftPressed, gridBoundingBox, mouseDownPos) });
+    google.maps.event.addListener(mapListeners, 'mousemove', function (e) { DrawBoundingBox(this, e, shiftPressed, gridBoundingBox, mouseIsDown, mouseDownPos) });
     google.maps.event.addListener(mapListeners, 'mousedown', function (e) { StopMapDrag(this, e, shiftPressed, mouseIsDown, mouseDownPos) });
-    google.maps.event.addListener(map, 'mouseup', function (e) {AreaSelect(this, e, mouseIsDown, shiftPressed, gridBoundingBox, selectedDrones, uavs)});
+    google.maps.event.addListener(map, 'mouseup', function (e) {droneSelection.AreaSelect(this, e, mouseIsDown, shiftPressed, gridBoundingBox, selectedDrones, uavs)});
 });

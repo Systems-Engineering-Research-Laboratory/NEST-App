@@ -429,7 +429,7 @@
     <Content Include="Content\Map\GOOG\DroneTrails.js" />
     <Content Include="Content\Map\GOOG\MapDraw.js" />
     <Content Include="Content\Map\GOOG\MapGOOG.js" />
-    <Content Include="Content\Map\GOOG\MapListeners.js" />
+    <Content Include="Content\Map\GOOG\MapFunctions.js" />
     <Content Include="Content\Map\GOOG\MapStyles.js" />
     <Content Include="Content\Map\OL\MapOL.css" />
     <Content Include="Content\Map\OL\MapOL.js" />

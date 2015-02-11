@@ -25,7 +25,7 @@ function GetLatLong(theMap, event){
     infowindow.open(theMap);
 }
 
-function DrawBoundingBox(theMap, e, shiftPressed, gridBoundingBox, mouseDownPos) {
+function DrawBoundingBox(theMap, e, shiftPressed, gridBoundingBox, mouseIsDown, mouseDownPos) {
     //console.log("move mouse down, shift down", mouseIsDown, shiftPressed);
     if (mouseIsDown && (shiftPressed || gridBoundingBox != null)) {
         if (gridBoundingBox !== null) {
