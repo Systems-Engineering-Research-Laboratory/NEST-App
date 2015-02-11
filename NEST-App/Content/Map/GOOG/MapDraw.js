@@ -82,3 +82,18 @@ function buildColorPalette() {
     }
     selectColor(mapStyles.colors[0]);
 }
+
+function OverlayComplete(overlays, e) {
+    overlays.push(e);
+    if (e.type != google.maps.drawing.OverlayType.MARKER) {
+        //Switch to non-drawing after a shape is drawn
+        drawingManager.setDrawingMode(null);
+        //Select the shape when user clicks on it
+        var newShape = e.overlay;
+        newShape.type = e.type;
+        google.maps.event.addListener(newShape, 'click', function () {
+            setSelection(newShape);
+        });
+        setSelection(newShape);
+    }
+}

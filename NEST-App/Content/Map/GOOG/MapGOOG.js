@@ -24,6 +24,7 @@ var parse;
 var uavs = {};
 var drawingManager;
 var selectedShape;
+
 //var uavMarker;
 var dropMarkerListener;
 var trailArray = [];
@@ -111,19 +112,12 @@ function clear() {
 $(document).ready(function () {
     map = new google.maps.Map(document.getElementById('map-canvas'), mapStyles.mapOptions);
 
-    var distanceCircle = new google.maps.Circle({
-        map: map,
-        radius: 8046.72, //distance in meters (5 miles)
-        fillColor: '#3399FF',
-        center: homeBase,
-        strokeWeight: 0,
-        fillOpacity: 0.1,
-        zIndex: -1
-    })
-
+    var distanceCircle = new google.maps.Circle(mapStyles.distanceCircleOptions);
+    distanceCircle.setCenter(homeBase);
+    distanceCircle.setMap(map);
     
     var homeControlDiv = document.createElement('div');
-    var homeControl = new mapStyles.BaseControl(homeControlDiv, map);
+    var homeControl = new mapStyles.BaseControl(homeControlDiv, map, homeBase);
 
     var marker = new google.maps.Marker({
         position: homeBase,
@@ -155,7 +149,7 @@ $(document).ready(function () {
    */
 
     //Right click for infowindow coordinates on map
-    google.maps.event.addListener(map, "rightclick", function (event) { GetLatLong(this, event) });
+    google.maps.event.addListener(map, "rightclick", function (event) { mapFunctions.GetLatLong(this, event) });
 
     //Drawing manager top left, allows user to draw shapes and lines on the map
     drawingManager = new google.maps.drawing.DrawingManager({
@@ -173,14 +167,14 @@ $(document).ready(function () {
     });
     drawingManager.setMap(map);
     drawingManager.setDrawingMode(null);
-    google.maps.event.addListener(drawingManager, 'overlaycomplete', function (e) {OverlayComplete(overlay, e)});
+    google.maps.event.addListener(drawingManager, 'overlaycomplete', function (e) {OverlayComplete(overlays, e)});
 
     //Delete shapes and clear selection
     google.maps.event.addListener(drawingManager, 'drawingmode_changed', clearSelection);
     google.maps.event.addListener(map, 'click', clearSelection);
     google.maps.event.addDomListener(document.getElementById('delete-button'), 'click', deleteSelectedShape);
-    google.maps.event.addDomListener(document.getElementById('delete-all-button'), 'click', deleteAllShape);
-    buildColorPalette();
+    google.maps.event.addDomListener(document.getElementById('delete-all-button'), 'click', deleteAllShape(overlays));
+    buildColorPalette(drawingManager);
 
     /* Event Log */
     var emitHub = $.connection.eventLogHub;
@@ -270,7 +264,7 @@ $(document).ready(function () {
     var mouseDownPos, gridBoundingBox = null, mouseIsDown = 0;
     var mapListeners = map;/// <-----------------------------TODO: Redundant?
 
-    google.maps.event.addListener(mapListeners, 'mousemove', function (e) { DrawBoundingBox(this, e, shiftPressed, gridBoundingBox, mouseIsDown, mouseDownPos) });
-    google.maps.event.addListener(mapListeners, 'mousedown', function (e) { StopMapDrag(this, e, shiftPressed, mouseIsDown, mouseDownPos) });
+    google.maps.event.addListener(mapListeners, 'mousemove', function (e) { mapFunctions.DrawBoundingBox(this, e, shiftPressed, gridBoundingBox, mouseIsDown, mouseDownPos) });
+    google.maps.event.addListener(mapListeners, 'mousedown', function (e) { mapFunctions.StopMapDrag(this, e, shiftPressed, mouseIsDown, mouseDownPos) });
     google.maps.event.addListener(map, 'mouseup', function (e) {droneSelection.AreaSelect(this, e, mouseIsDown, shiftPressed, gridBoundingBox, selectedDrones, uavs)});
 });

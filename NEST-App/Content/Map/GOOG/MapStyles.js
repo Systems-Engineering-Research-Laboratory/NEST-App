@@ -69,6 +69,14 @@ uavSymbolGreen : {
     anchor: new google.maps.Point(90, 140)
  },
 
+ distanceCircleOptions : {
+     radius: 8046.72, //distance in meters (5 miles)
+     fillColor: '#3399FF',
+     strokeWeight: 0,
+     fillOpacity: 0.1,
+     zIndex: -1
+ },
+
  flightPathOptions: {
      geodesic: true,
      strokeColor: 'blue',
@@ -76,7 +84,7 @@ uavSymbolGreen : {
      strokeWeight: 2
  },
 
- BaseControl: function(controlDiv, map) {
+ BaseControl: function(controlDiv, map, homeBase) {
     controlDiv.style.padding = '6px';
     //CSS for control button exterior
     var controlUI = document.createElement('div');
