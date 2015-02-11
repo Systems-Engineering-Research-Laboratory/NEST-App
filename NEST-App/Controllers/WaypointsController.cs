@@ -61,11 +61,12 @@ namespace NEST_App.Controllers
                     if (nextPointId != null)
                     {
                         Waypoint prevWp = (from wp in mission.Waypoints
-                                           where wp.NextWaypointId == nextPointId
+                                           //Make sure we don't accidentally get the wp we just inserted
+                                           where wp.NextWaypointId == nextPointId && wp.Id != newWp.Id
                                            select wp).First();
                         if (prevWp != null)
                         {
-                            prevWp.NextWaypoint = newWp;
+                            prevWp.NextWaypointId = newWp.Id;
                             //This waypoint is now modified. Let the context know.
                             db.Entry(prevWp).State = System.Data.Entity.EntityState.Modified;
                             await db.SaveChangesAsync();
