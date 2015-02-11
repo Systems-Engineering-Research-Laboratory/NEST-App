@@ -11,55 +11,73 @@
     <dl class="dl-horizontal"></dl>
     </div>
     <h3>Missions:</h3>
-@foreach (var sched in Model)
-{
-    <table class= "table">
+
+ <table class= "table">
         <tr>
             <th>
-                UAV Callsign
+                UAV Callsign:
             </th>
             <th>
-                Estimated Delivery Time
+                Estimated Delivery Time:
             </th>
             <th>
-                Scheduled Delivery Time
+                Scheduled Delivery Time:
+            </th>
+          @*<th>
+                Destination Coordinates:
+            </th>*@
+            <th>
+                Mission Phase:
             </th>
             <th>
-                Destination Coordinates
-            </th>
-            <th>
-                Mission Phase
-            </th>
-            <th>
-                Delivery Package
+                Delivery Package:
             </th>
         </tr>
+ @foreach (var sched in Model)
+ {
         <tr>
              @foreach (var mission in sched.Missions)
              {
                <td>  @(mission.id) </td>
                <td>  @(mission.EstimatedCompletionTime) </td>
                <td>  @(mission.ScheduledCompletionTime) </td>
-               <td>  @(mission.DestinationCoordinates) </td>
+               //<td>  @(mission.Latitude +","+ mission.Longitude) </td>
                <td>  @(mission.Phase)</td>
                <td>  @(mission.Payload)</td>
              }
             </tr>
-        </table>
-}
+  }
+ </table>
 <h3>Maintenances:</h3>
-@foreach (var sched in Model)
-{ 
-       <table class="table">
+
+ <table class="table">
+           <tr>
+               <th>
+                   UAV Callsign
+               </th>
+               <th>
+                   Last Maintenance:
+               </th>
+               <th>
+                   Next Maintenance:
+               </th>
+               <th>
+                   Time Remaining:
+               </th>
+           </tr>
+ @foreach (var sched in Model)
+ {
            <tr>
                @foreach (var maint in sched.Maintenances)
                 {
-                    <td> @(maint.id.ToString()) </td>
-                    <td> @(maint.last_maintenance.ToString()) </td>
-                    <td> @(maint.next_maintenance.ToString()) </td>
+                   <td> @(maint.id) </td>
+                   <td> @(maint.last_maintenance) </td>
+                   <td> @(maint.next_maintenance) </td>
+                   <td> @(maint.time_remaining)</td>
                 }
             </tr>
-       </table>
-}
+ }
+ </table>
+
 
 
