@@ -76,7 +76,9 @@ namespace NEST_App.DAL
                         var FlightStates = new List<FlightState>
                         {
                             new FlightState { 
-                                Position = DbGeography.FromText("POINT(-118.529 34.2417 400)"), 
+                                Latitude = 34.2417,
+                                Longitude = -118.529,
+                                Altitude = 400,
                                 VelocityX = 0, 
                                 VelocityY = 0, 
                                 VelocityZ = 0, 
@@ -165,6 +167,8 @@ namespace NEST_App.DAL
                                 WasSkipped = false, 
                                 GeneratedBy = "Jeff", 
                                 Action = "Fly Through", 
+                                Latitude = 34.217,
+                                Longitude = -118.529,
                                 Altitude = 400,
                                 Missions = missions[0]}
                             };

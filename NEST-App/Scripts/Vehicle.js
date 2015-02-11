@@ -17,6 +17,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     //Storing other entities related to UAV
     this.FlightState = vehicleInfo.FlightState;
+    LatLongToXY(this.FlightState);
     this.Schedule = vehicleInfo.Schedule;
     for (var i = 0; i < this.Schedule.Missions.length; i++) {
         var m = this.Schedule.Missions[i];
@@ -611,11 +612,10 @@ function Waypoint(info) {
         LatLongToXY(this);
         this.Position = info.Position;
     }
-    else if(info.Latitude && info.Longitude) {
-        this.Latitude = info.Latitude;
-        this.Longitude = info.Longitude;
-        LatLongToXY(this);
-    }
+    
+    this.Latitude = info.Latitude;
+    this.Longitude = info.Longitude;
+    LatLongToXY(this);
     if(info.NextWaypointId) {
         this.NextWaypointId = info.NextWaypointId;
     }

@@ -142,7 +142,6 @@
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Timestamp" Type="datetime" Nullable="false" />
-    <Property Name="Position" Type="geography" Nullable="false" SRID="4326" />
     <Property Name="VelocityX" Type="float" Nullable="false" />
     <Property Name="VelocityY" Type="float" Nullable="false" />
     <Property Name="VelocityZ" Type="float" Nullable="false" />
@@ -156,6 +155,9 @@
     <Property Name="UAVId" Type="int" Nullable="false" />
     <Property Name="create_date" Type="datetime" Nullable="false" />
     <Property Name="modified_date" Type="datetime" Nullable="false" />
+    <Property Name="Latitude" Type="float" Nullable="false" />
+    <Property Name="Longitude" Type="float" Nullable="false" />
+    <Property Name="Altitude" Type="float" Nullable="false" />
   </EntityType>
   <EntityType Name="Configurations">
     <Key>
@@ -869,7 +871,6 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Timestamp" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" />
-          <Property Name="Position" Type="GeographyPoint" Nullable="false" />
           <Property Name="VelocityX" Type="Double" Nullable="false" />
           <Property Name="VelocityY" Type="Double" Nullable="false" />
           <Property Name="VelocityZ" Type="Double" Nullable="false" />
@@ -884,6 +885,9 @@
           <NavigationProperty Name="UAV" Relationship="VehicleModel.UAVFlightState" FromRole="FlightState" ToRole="UAV" />
           <Property Name="create_date" Type="DateTime" Nullable="false" />
           <Property Name="modified_date" Type="DateTime" Nullable="false" />
+          <Property Name="Latitude" Type="Double" Nullable="false" />
+          <Property Name="Longitude" Type="Double" Nullable="false" />
+          <Property Name="Altitude" Type="Double" Nullable="false" />
         </EntityType>
         <EntityType Name="Configuration">
           <Key>
@@ -1409,7 +1413,6 @@
         <MappingFragment StoreEntitySet="FlightStates">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Timestamp" ColumnName="Timestamp" />
-          <ScalarProperty Name="Position" ColumnName="Position" />
           <ScalarProperty Name="VelocityX" ColumnName="VelocityX" />
           <ScalarProperty Name="VelocityY" ColumnName="VelocityY" />
           <ScalarProperty Name="VelocityZ" ColumnName="VelocityZ" />
@@ -1423,6 +1426,9 @@
           <ScalarProperty Name="UAVId" ColumnName="UAVId" />
           <ScalarProperty Name="create_date" ColumnName="create_date" />
           <ScalarProperty Name="modified_date" ColumnName="modified_date" />
+          <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+          <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="Altitude" ColumnName="Altitude" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

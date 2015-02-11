@@ -19,28 +19,20 @@ function uavMarkers(data, textStatus, jqXHR) {
     var pointText, results;
     console.log("Pulling Flightstates...", textStatus);
     for (var i = 0; i < data.length; i++) {
+        //TODO Make a copier fuction for this:
         uavs[data[i].Id] = {};
         uavs[data[i].Id].Id = data[i].Id;
-
         uavs[data[i].Id].FlightState = data[i].FlightState;
         uavs[data[i].Id].Schedule = data[i].Schedule;
         uavs[data[i].Id].Missions = data[i].Schedule.Missions;
-        pointText = uavs[data[i].Id].FlightState.Position.Geography.WellKnownText;
-        results = pointText.match(/-?\d+(\.\d+)?/g);
-        uavs[data[i].Id].Lat = results[1];
-        uavs[data[i].Id].Lon = results[0];
-        uavs[data[i].Id].Alt = results[2];
+        var fs = uavs[data[i].Id].FlightState;
         uavs[data[i].Id].Callsign = data[i].Callsign;
         uavs[data[i].Id].Battery = data[i].FlightState.BatteryLevel;
-        uavs[data[i].Id].Position = new google.maps.LatLng(results[1], results[0]);
+        uavs[data[i].Id].Position = new google.maps.LatLng(fs.Latitude, fs.Longitude);
         uavs[data[i].Id].Mission = data[i].Mission;
 
-        destText = uavs[data[i].Id].Mission.DestinationCoordinates.Geography.WellKnownText;
-        res = destText.match(/-?\d+(\.\d+)?/g);
-        var destLat = res[1];
-        var destLon = res[0];
-        var destAlt = res[2];
-        uavs[data[i].Id].Destination = new google.maps.LatLng(res[1], res[0]);
+        var mis = uavs[data[i].Id].Mission;
+        uavs[data[i].Id].Destination = new google.maps.LatLng(mis.Latitude, mis.Longitude);
 
         //Creates the flightpath line from uav position to destination
         flightLines[data[i].Id] = new google.maps.Polyline(mapStyles.flightPathOptions);
@@ -88,23 +80,18 @@ function clear() {
 }
 
 $(document).ready(function () {
-    var counter = 0, parse;
-    
     map = new google.maps.Map(document.getElementById('map-canvas'), mapStyles.mapOptions);
-
+    var counter = 0, parse;
     var distanceCircle = new google.maps.Circle(mapStyles.distanceCircleOptions);
     distanceCircle.setCenter(homeBase);
     distanceCircle.setMap(map);
-    
     var homeControlDiv = document.createElement('div');
     var homeControl = new mapStyles.BaseControl(homeControlDiv, map, homeBase);
-
     var marker = new google.maps.Marker({
         position: homeBase,
         icon: mapStyles.goldStarBase,
         map: map
     });
-
     homeControlDiv.index = 1;
     map.controls[google.maps.ControlPosition.RIGHT].push(homeControlDiv);
 
@@ -131,8 +118,6 @@ $(document).ready(function () {
     //Right click for infowindow coordinates on map
     google.maps.event.addListener(map, "rightclick", function (event) { mapFunctions.GetLatLong(this, event) });
 
-
-
     mapDraw.InitDrawingManager();
     mapDraw.drawingManager.setMap(map);
     mapDraw.drawingManager.setDrawingMode(null);
@@ -145,25 +130,24 @@ $(document).ready(function () {
     google.maps.event.addDomListener(document.getElementById('delete-all-button'), 'click', mapDraw.deleteAllShape());
     mapDraw.buildColorPalette(mapDraw.drawingManager);
 
+    /* Event Log */
+    var emitHub = $.connection.eventLogHub;
+    $.connection.hub.start().done(function () {
+        console.log("connection started for evt log");
+    });
+    var warningMessageCounter = 0;
   
     /* Vehicle Movement */
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
-        /* Event Log */
-        var emitHub = $.connection.eventLogHub;
-        $.connection.hub.start().done(function () {
-            console.log("connection started for evt log");
-        });
-        var warningMessageCounter = 0;
-
-        mapFunctions.vehicleHubUpdate(vehicle, uavs, selected)
+        //mapFunctions.vehicleHubUpdate(vehicle, uavs, selected);
         
         //console.log(vehicle); //move it down so it updates with the trail at a slower rate
         var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
         //seperate trail dots a little bit
         if (counter == 0 || counter == 20) {
             console.log(vehicle);
-            storeTrail(vehicle.Id, LatLng);
+            droneTrails.storeTrail(vehicle.Id, LatLng);
             if (counter == 20) {
                 counter = 0;
             }
@@ -214,8 +198,9 @@ $(document).ready(function () {
             }
         }
     }
+    
+    vehicleHub.connection.start();
 
-    /*Click-drag-select*/
     var shiftPressed = false;
     $(window).keydown(function (evt) {
         if (evt.which === 16) {
@@ -232,7 +217,6 @@ $(document).ready(function () {
             //console.log("Shift key up");
         }
     });
-
     var mouseDownPos, gridBoundingBox = null, mouseIsDown = 0;
     var mapListeners = map;/// <-----------------------------TODO: Redundant?
 

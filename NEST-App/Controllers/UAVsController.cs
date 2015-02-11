@@ -156,7 +156,9 @@ namespace NEST_App.Controllers.Api
                 var flights = new List<FlightState>
                 {
                    new FlightState { 
-                       Position = DbGeography.FromText("POINT(-118.529 34.2417 400)"), 
+                       Longitude = -118.529,
+                       Latitude = 34.2417,
+                       Altitude = 400,
                        VelocityX = 0, 
                        VelocityY = 0, 
                        VelocityZ = 0, 

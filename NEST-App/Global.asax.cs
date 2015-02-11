@@ -39,8 +39,6 @@ namespace NEST_App
                 .ForMember(dest => dest.Latitude, opt => opt.ResolveUsing<FlightStateLatResolver>())
                 .ForMember(dest => dest.Longitude, opt => opt.ResolveUsing<FlightStateLonResolver>())
                 .ForMember(dest => dest.Altitude, opt => opt.ResolveUsing<FlightStateAltResolver>());
-            Mapper.CreateMap<FlightStateDTO, FlightState>()
-                .ForMember(dest => dest.Position, opt => opt.ResolveUsing<FlightStatePosResolver>());
         }
     }
 }
