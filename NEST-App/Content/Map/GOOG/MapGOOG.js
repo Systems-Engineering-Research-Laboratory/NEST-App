@@ -4,6 +4,11 @@ var flightLines = []
 var selectedDrones = []; //store drones selected from any method here
 var storedGroups = []; //keep track of different stored groupings of UAVs
 var ctrlDown = false;
+var uavTrails = [{
+    id: 0,
+    trail: []
+}];
+
 
 //DOCUMENT ONLY//
 var overlays = []; //Array for the polygon shapes as overlays
@@ -74,12 +79,12 @@ function uavMarkers(data, textStatus, jqXHR) {
 
         var markerCircle = new google.maps.Marker({
             position: uavs[data[i].Id].Position,
-            icon: uavCircleBlack
+            icon: mapStyles.uavCircleBlack
         });
 
         var marker = new MarkerWithLabel({
             position: uavs[data[i].Id].Position,
-            icon: uavSymbolBlack,
+            icon: mapStyles.uavSymbolBlack,
             labelContent: uavs[data[i].Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uavs[data[i].Id].Alt + '<br/><b>Bat: </b>' + uavs[data[i].Id].Battery + '</div>',
             labelAnchor: new google.maps.Point(95, 20),
             labelClass: "labels",
@@ -118,7 +123,7 @@ function clear() {
 }
 
 $(document).ready(function () {
-    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    map = new google.maps.Map(document.getElementById('map-canvas'), mapStyles.mapOptions);
 
     var distanceCircle = new google.maps.Circle({
         map: map,
@@ -130,13 +135,13 @@ $(document).ready(function () {
         zIndex: -1
     })
 
-
+    
     var homeControlDiv = document.createElement('div');
-    var homeControl = new BaseControl(homeControlDiv, map);
+    var homeControl = new mapStyles.BaseControl(homeControlDiv, map);
 
     var marker = new google.maps.Marker({
         position: homeBase,
-        icon: goldStarBase,
+        icon: mapStyles.goldStarBase,
         map: map
     });
 
@@ -174,9 +179,9 @@ $(document).ready(function () {
         polylineOptions: {
             editable: true
         },
-        rectangleOptions: polyOptions,
-        circleOptions: polyOptions,
-        polygonOptions: polyOptions,
+        rectangleOptions: mapStyles.polyOptions,
+        circleOptions: mapStyles.polyOptions,
+        polygonOptions: mapStyles.polyOptions,
         map: map
     });
 
@@ -220,13 +225,13 @@ $(document).ready(function () {
         uavs[vehicle.Id].marker.setPosition(LatLng);
         uavs[vehicle.Id].markerCircle.setPosition(LatLng);
         parse = parseFloat(Math.round(vehicle.BatteryLevel * 100) / 100).toFixed(2);
-        uavSymbolBlack.rotation = vehicle.Yaw;
-        uavSymbolGreen.rotation = vehicle.Yaw;
+        mapStyles.uavSymbolBlack.rotation = vehicle.Yaw;
+        mapStyles.uavSymbolGreen.rotation = vehicle.Yaw;
         if (selectedUAV) {
-            uavs[vehicle.Id].marker.setIcon(uavSymbolGreen);
+            uavs[vehicle.Id].marker.setIcon(mapStyles.uavSymbolGreen);
         }
         else
-            uavs[vehicle.Id].marker.setIcon(uavSymbolBlack);
+            uavs[vehicle.Id].marker.setIcon(mapStyles.uavSymbolBlack);
         uavs[vehicle.Id].marker.setOptions({
             labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + vehicle.Altitude + '<br/><b>Bat: </b>' + parse + '</div>',
             icon: uavs[vehicle.Id].marker.icon
@@ -243,7 +248,7 @@ $(document).ready(function () {
 
                 var eventLog = {
                     uav_id: uavs[vehicle.Id].Id,
-                    message: message,
+                    message: mapStyles.message,
                     criticality: "critical",
                     uav_callsign: uavs[vehicle.Id].Callsign,
                     operator_screen_name: "Test Operator",
@@ -266,10 +271,13 @@ $(document).ready(function () {
     $(window).keydown(function (evt) {
         if (evt.which === 16) {
             shiftPressed = true;
-            console.log("Shift key down");
+            //console.log("Shift key down");
         }
         if (evt.ctrlKey) {
             ctrlDown = true;
+        }
+        if (evt.which === 69) {
+            console.log(selectedDrones.length);
         }
         KeyBinding(selectedDrones, storedGroups, evt);
     }).keyup(function (evt) {
@@ -333,12 +341,12 @@ $(document).ready(function () {
                 for (var key in uavs) {
                     if (gridBoundingBox.getBounds().contains(uavs[key].marker.getPosition())) {
                         selected = true;
-                        uavs[key].marker.setIcon(uavSymbolGreen);
+                        uavs[key].marker.setIcon(mapStyles.uavSymbolGreen);
                         selectedDrones.push(uavs[key]);//push the selected markers to an array
                         console.log("Number of selected drones: " + selectedDrones.length);
                     } else {
                         selected = false;
-                        uavs[key].marker.setIcon(uavSymbolBlack);
+                        uavs[key].marker.setIcon(mapStyles.uavSymbolBlack);
                         console.log("Number of selected drones: " + selectedDrones.length);
                     }
                 }

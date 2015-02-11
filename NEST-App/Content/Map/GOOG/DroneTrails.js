@@ -18,7 +18,7 @@ function storeTrail(uavID, location) {
     //}
     var trailMarker = new google.maps.Marker({
         position: location,
-        icon: uavTrail
+        icon: mapStyles.uavTrail
     });
 
     for (var i = 0; i < uavTrails.length; i++) {

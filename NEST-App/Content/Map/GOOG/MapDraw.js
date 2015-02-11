@@ -27,8 +27,8 @@ function deleteAllShape() {
 
 function selectColor(color) {
     selectedColor = color;
-    for (var i = 0; i < colors.length; ++i) {
-        var currentColor = colors[i];
+    for (var i = 0; i < mapStyles.colors.length; ++i) {
+        var currentColor = mapStyles.colors[i];
         colorButtons[currentColor].style.border = currentColor == color ? '2px solid #789' : '2px solid #fff';
     }
 
@@ -74,11 +74,11 @@ function makeColorButton(color) {
 
 function buildColorPalette() {
     var colorPalette = document.getElementById('color-palette');
-    for (var i = 0; i < colors.length; ++i) {
-        var currentColor = colors[i];
+    for (var i = 0; i < mapStyles.colors.length; ++i) {
+        var currentColor = mapStyles.colors[i];
         var colorButton = makeColorButton(currentColor);
         colorPalette.appendChild(colorButton);
         colorButtons[currentColor] = colorButton;
     }
-    selectColor(colors[0]);
+    selectColor(mapStyles.colors[0]);
 }

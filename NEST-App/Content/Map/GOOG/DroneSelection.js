@@ -1,6 +1,6 @@
 ﻿/*CTRL-SELECT*/
 function CtrlSelect(marker, selectedDrones) {
-    marker.setIcon(uavSymbolGreen);
+    marker.setIcon(mapStyles.uavSymbolGreen);
     marker.flightToggle = true;
     selectedUAV = marker.uav;
     if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, ignore immediate key repeats and proceed
