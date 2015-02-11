@@ -461,7 +461,7 @@ function Reporter() {
 
     this.retrieveWaypointsByMissionId = function(id, caller, success) {
         this.pendingResult = false;
-        var url = '/api/waypoints/' + id;
+        var url = '/api/missions/waypoints/' + id;
         return $.ajax({
             url: url,
             success: function (data, textStatus, jqXHR) {success(data, textStatus, jqXHR);}
