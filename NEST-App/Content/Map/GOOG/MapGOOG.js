@@ -26,6 +26,7 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].Id].Schedule = data[i].Schedule;
         uavs[data[i].Id].Missions = data[i].Schedule.Missions;
         var fs = uavs[data[i].Id].FlightState;
+        uavs[data[i].Id].Alt = data[i].FlightState.Altitude;
         uavs[data[i].Id].Callsign = data[i].Callsign;
         uavs[data[i].Id].Battery = data[i].FlightState.BatteryLevel;
         uavs[data[i].Id].Position = new google.maps.LatLng(fs.Latitude, fs.Longitude);

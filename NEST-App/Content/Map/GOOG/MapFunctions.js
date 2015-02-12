@@ -5,7 +5,8 @@
         var point = new google.maps.LatLng(lat, lng);
         var infowindow = new google.maps.InfoWindow({
             content: '<div style="line-height: 1.35; overflow: hidden; white-space: nowrap;"><b>Lat: </b>' + lat + '<br/><b>Lng: </b>' + lng + '</div>',
-            position: point
+            position: point,
+            zIndex: 2
         });
         infowindow.open(theMap);
     },
