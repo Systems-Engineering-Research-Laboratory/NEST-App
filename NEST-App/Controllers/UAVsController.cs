@@ -118,7 +118,7 @@ namespace NEST_App.Controllers.Api
             //var lines = File.ReadAllLines(filePath);
             var rand = new Random();
             var randomLineNumber = rand.Next(0, lines2.Length - 1);
-            var line = lines2[randomLineNumber] + lines2[randomLineNumber] + lines2[randomLineNumber];
+            var line = lines2[randomLineNumber];
             return line;
         }
         
@@ -186,7 +186,7 @@ namespace NEST_App.Controllers.Api
                 { 
                    new Mission {
                        Phase = "enroute", 
-                       FlightPattern = "abstract", 
+                       FlightPattern = "abstract",
                        Payload = getPackage(), 
                        Priority = 1, 
                        FinancialCost = num.Next(1, 99), 
