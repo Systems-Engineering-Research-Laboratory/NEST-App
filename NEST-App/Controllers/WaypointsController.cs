@@ -36,6 +36,7 @@ namespace NEST_App.Controllers
         //for inserting a waypoint
         [HttpPost]
         [Route("api/waypoints/insert/{id}")]
+        [ResponseType(typeof(Waypoint))]
         public async Task<IHttpActionResult> Waypoints(int id, Waypoint newWp)
         {
             //Use a transaction because we have to make possibly 2 commits to the database. If
@@ -75,7 +76,7 @@ namespace NEST_App.Controllers
                     }
                     //We finished with the transactions, make sure to commit them.
                     trans.Commit();
-                    return Ok();
+                    return Ok(newWp);
                 }
                 catch (DbUpdateException e)
                 {
@@ -86,6 +87,5 @@ namespace NEST_App.Controllers
 
             }
         }
-
     }
 }

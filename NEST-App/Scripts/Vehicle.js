@@ -322,6 +322,26 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     }
 
     this.setCommand = function (target) {
+        if (!this.handleNonNavigationalCommand(target)) {
+            if (this.currentWaypoint) {
+                target.NextWaypointId = this.currentWaypoint.Id;
+            }
+            var promise = this.pathGen.insertWaypoint(this.Mission, target, this.waypoints);
+            promise.done(function (data, textStatus, jqXHR) {
+                that.reporter.ackCommand(target, target.type, "OK", true);
+                data.obj = target;
+                data.objType = "command";
+                that.currentWaypoint = data;
+            });
+            promise.done(function (data, textStatus, jqXHR) {
+                that.reporter.ackCommand(target, target.type, "Waypoint creation failed", false);
+                
+            });
+        }
+    }
+
+    this.handleNonNavigationalCommand = function (target) {
+        var handled = true;
         switch (target.CommandType) {
             case "CMD_DO_Change_Speed":
                 this.MaxVelocity = this.target.HorizontalVelocity || this.MaxVelocity;
@@ -334,9 +354,10 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                 LatLongToXY(this.Base);
                 break;
             default:
+                handled = false;
                 this.Command = target;
         }
-        this.reporter.ackCommand(target, target.type, "OK");
+        return handled;
     }
 
     //Makes the vehicle go back to base
@@ -371,10 +392,10 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     this.generateWaypoints = function() {
         if(this.Command) {
-            this.resolvePath(this.Command, [], this);
+            this.pathGen.resolvePath(this.Command, [], this);
         }
         else if(this.Mission) {
-            this.resolvePath(this.Mission, [], this);
+            this.pathGen.resolvePath(this.Mission, [], this);
         }
     }
 
@@ -443,11 +464,12 @@ function Reporter() {
         });
     }
 
-    this.ackCommand = function (cmd, type, reason) {
+    this.ackCommand = function (cmd, type, reason, accepted) {
         this.hub.server.ackCommand({
             CommandId: cmd.Id,
             CommandType: type,
-            Reason: reason
+            Reason: reason,
+            Accepted: accepted
         }, cmd.connId);
     }
 
@@ -460,12 +482,13 @@ function Reporter() {
         });
     }
 
-    this.insertWaypoint = function (id, lat, lng, wp, caller, success) {
+    this.insertWaypoint = function (id, newWp) {
         this.pendingResult = false;
-        var url = '/api/waypoints/' + id, lat, lng, wp;
+        var url = '/api/waypoints/insert/' + id;
         return $.ajax({
+            type: "POST",
             url: url,
-            success: function (data, textStatus, jqXHR) { success(data, textStatus, jqXHR); }
+            data: newWp,
         });
     }
     
@@ -511,6 +534,7 @@ function VehicleContainer (){
 function PathGenerator(areaContainer, reporter) {
     this.areaContainer = areaContainer;
     this.reporter = reporter;
+    var that = this;
 
     this.gotNewRestrictedArea = function () {
         return this.areaContainer.newRestrictedArea;
@@ -535,18 +559,17 @@ function PathGenerator(areaContainer, reporter) {
     this.withEndPoints = function (mission, wps, veh) {
         //If the wps is less than 2, then we are missing the end points of the waypoints.
         if(wps && wps.length < 2) {
-            wps = this.getBeginningAndEnd(mission, wps, veh);
+            wps = this.getBeginningAndEnd(veh.FlightState, mission, wps, veh);
         }
         return wps;
     }
 
     //Immediately return the beginning and end of the waypoints.
     this.getBeginningAndEnd = function (begin, end, wps, veh) {
+
         var pts = [Waypoint({Latitude: begin.Latitude, Longitude: end.Longitude}),
             Waypoint({Latitude: end.Latitude, objective: end.Longitude})];
-        if(pt[1].obj) {
-            pt[1].objType = "mission";
-        }
+        
         return pts;
     }
 
@@ -575,12 +598,33 @@ function PathGenerator(areaContainer, reporter) {
         return true;
     }
 
-    this.insertWaypoint = function (before, newPoint) {
-        this.reporter.insertWaypoint(this.mission.id, newPoint.Latitude, newPoint.Longitude, before, this, this.gotNewWaypoints);
-        //"before" is the waypoint before the new position click, that will link to the new position
-        //"newPoint" is a lat/long pair
-        //"wps" is the list of waypoints
+    this.insertWaypoint = function (mission, newPoint, wps) {
+        var promise = this.reporter.insertWaypoint(mission.id, {
+            Latitude: newPoint.Latitude,
+            Longitude: newPoint.Longitude,
+            Altitude: newPoint.Altitude || -1,
+            WaypointName: newPoint.WaypointName || "name",
+            NextWaypointId: newPoint.NextWaypointId,
+            IsActive: newPoint.isActive || true,
+            WasSkipped: newPoint.WasSkipped || false,
+            GeneratedBy: newPoint.GeneratedBy || "vehicle",
+            Action: newPoint.Action || "fly through",
+            MissionId: mission.id,
+        });
+        var cb = function (data, textStatus, jqXHR) {
+            that.insertWpIntoList(data, wps);
+        }
+        promise.done(cb);
+        return promise;
+    }
 
+    this.insertWpIntoList = function (newWp, wps) {
+        for (var i = 0; i < wps.length; i++) {
+            if (wps[i].NextWaypointId == newWp.NextWaypointId) {
+                wps[i].NextWaypointId = newWp.Id;
+                wps.splice(i, 0, newWp);
+            }
+        }
     }
 
 

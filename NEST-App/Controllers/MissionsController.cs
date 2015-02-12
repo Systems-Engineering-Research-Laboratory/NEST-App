@@ -31,6 +31,10 @@ namespace NEST_App.Controllers
             }
             var wps = mission.Waypoints;
             List<Waypoint> wpsInOrder = new List<Waypoint>();
+            if(wps.Count == 0)
+            {
+                return Ok(wpsInOrder.AsQueryable());
+            }
             var tail = wps.First(wp => wp.NextWaypoint == null);
             wpsInOrder.Add(tail);
             foreach (var wp in wps)
