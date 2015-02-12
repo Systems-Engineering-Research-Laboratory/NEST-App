@@ -378,6 +378,7 @@
     <Property Name="CommandId" Type="int" Nullable="false" />
     <Property Name="Reason" Type="nvarchar(max)" Nullable="false" />
     <Property Name="CommandType" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Accepted" Type="bit" Nullable="false" />
   </EntityType>
   <EntityType Name="Waypoints">
     <Key>
@@ -1239,6 +1240,7 @@
           <Property Name="CommandId" Type="Int32" Nullable="false" />
           <Property Name="Reason" Type="String" Nullable="false" />
           <Property Name="CommandType" Type="String" Nullable="false" />
+          <Property Name="Accepted" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Waypoint">
           <Key>
@@ -1683,6 +1685,7 @@
           <ScalarProperty Name="CommandId" ColumnName="CommandId" />
           <ScalarProperty Name="Reason" ColumnName="Reason" />
           <ScalarProperty Name="CommandType" ColumnName="CommandType" />
+          <ScalarProperty Name="Accepted" ColumnName="Accepted" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

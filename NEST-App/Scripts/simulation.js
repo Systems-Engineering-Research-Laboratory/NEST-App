@@ -170,14 +170,14 @@ function flightStateCb (map, hub, data, textStatus, jqXHR) {
     //I think this is in the wrong spot. It probably needs to be in connection.hub.start()
     $('.UAVId').click(function (eventObject) {
         var vehicleHub = $.connection.vehicleHub
-        var newId = vehicleHub.server.sendCommand({
+        var cmd = {
             Id: 123,
             Latitude: 34.242034,
             Longitude: -118.528763,
             Altitude: 400,
-            UAVId: id
-        });
-        console.log(newId);
+            UAVId: parseInt(this.innerText),
+        };
+        var newId = vehicleHub.server.sendCommand(cmd);
     });
 
     updateButtons();
