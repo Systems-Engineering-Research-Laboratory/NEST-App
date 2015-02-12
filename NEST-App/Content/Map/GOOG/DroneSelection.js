@@ -34,8 +34,9 @@
 
         //*******************SELECTED*********************//
         if (marker.icon.fillColor == 'green') {
-            //console.log("UAV Selected");
+            
             selectedUAV = marker.uav;
+            console.log(selectedUAV);
             //Refresh current flightpath and display it
             flightLines[marker.uav.Id] = new google.maps.Polyline({
                 path: [marker.uav.Position, marker.uav.Destination],
@@ -54,6 +55,7 @@
                     selectedTrail = uavTrails[i].trail;
                 }
             }
+
             // draw entire trail when clicked
             if (selectedTrail != undefined) {
                 for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
@@ -64,13 +66,12 @@
             //******************DE-SELECTED*******************//
         else if (marker.icon.fillColor == 'black') {
             console.log("UAV De-selected");
-            selectedUAV = null;//<---------------------------TODO: this doesn't really do anything, it's just here for symmetry
+
             //Turn off drone's flightpath
             flightLines[marker.uav.Id].setMap(null);
 
-            //TODO: TURN OFF TRAIL 
-            //code goes here
-
+            //TURN OFF TRAIL 
+            droneTrails.deleteTrails(selectedUAV.Id);
         }
             //**************DANGER****************//
         else if (marker.icon.fillColor == 'red') {//"RED FOR DANGER"......placeholder in case we decide to do this

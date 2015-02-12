@@ -142,17 +142,11 @@ $(document).ready(function () {
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         //mapFunctions.vehicleHubUpdate(vehicle, uavs, selected);
-        
-        //console.log(vehicle); //move it down so it updates with the trail at a slower rate
+
+        console.log(vehicle);
+
         var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
-        //seperate trail dots a little bit
-        if (counter == 0 || counter == 20) {
-            console.log(vehicle);
-            droneTrails.storeTrail(vehicle.Id, LatLng);
-            if (counter == 20) {
-                counter = 0;
-            }
-        } counter++;
+        droneTrails.storeTrail(vehicle.Id, LatLng);
 
         // draw trail
         if (selectedUAV && selectedTrail != undefined) {

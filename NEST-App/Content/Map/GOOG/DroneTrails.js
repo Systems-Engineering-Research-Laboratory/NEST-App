@@ -4,27 +4,15 @@
     trailArray: [],
     uavTrails : [{
         id: 0,
+        counter: 0,
         trail: []
     }],
 
     //store uav trails
     //still working on it
+    //todo: make the counter responsive to the actual update rate
     storeTrail: function (uavID, location) {
         var notCreated;
-        //if (!notCreated) {
-        // //update trail
-        // for (var j = 0; j < uavTrails[uavID].trail.length; j++) {
-        // o -= 0.04;
-        // s -= 0.04;
-        // uavTrail = {
-        // url: '../Content/img/blue.jpg',
-        // fillOpacity: o,
-        // scale: s,
-        // anchor: new google.maps.Point(46 * s, 44 * s)
-        // };
-        // console.log(uavTrail);
-        // }
-        //}
         var trailMarker = new google.maps.Marker({
             position: location,
             icon: mapStyles.uavTrail
@@ -33,15 +21,30 @@
         for (var i = 0; i < this.uavTrails.length; i++) {
             if (this.uavTrails[i].id === uavID) {
                 //set trail
-                if (this.uavTrails[i].trail.length <= 30) {
-                    this.uavTrails[i].trail.push(trailMarker);
+                if (this.uavTrails[i].trail.length < 100) {
+                    if (this.uavTrails[i].counter == 0 || this.uavTrails[i].counter == 100) {
+                        this.uavTrails[i].trail.push(trailMarker);
+
+                        if (this.uavTrails[i].counter == 100)
+                            this.uavTrails[i].counter = 0
+                    }
+
+                    this.uavTrails[i].counter++;
                 }
                 else {
-                    this.uavTrails[i].trail[0].setMap(null);
-                    this.uavTrails[i].trail.shift();
-                    this.uavTrails[i].trail.push(trailMarker);
+                    if (this.uavTrails[i].counter == 0 || this.uavTrails[i].counter == 100) {
+                        this.uavTrails[i].trail[0].setMap(null);
+                        this.uavTrails[i].trail.shift();
+                        this.uavTrails[i].trail.push(trailMarker);
+
+                        if (this.uavTrails[i].counter == 100)
+                            this.uavTrails[i].counter = 0;
+                    }
+
+                    this.uavTrails[i].counter++;
                 }
                 notCreated = false;
+
                 break;
             }
             else {
@@ -53,6 +56,7 @@
             //push new uavTrails
             this.uavTrails.push({
                 id: uavID,
+                counter: 0,
                 trail: []
             });
             this.storeTrail(uavID, location);
@@ -61,14 +65,20 @@
 
     //This function needs to be updated before it's reimplemented, if it even needs to;
     //I think this function's function can be accomplished in the DroneSelection.SelectionStateChanged(args) call
-    /*google.maps.event.addListener(mapListeners, 'click', function (e) {
-        if (selectedTrail != undefined) {
-            for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
-                selectedTrail[i].setMap(null);
+    deleteTrails: function (uavID) {
+        for (var i = 0; i < this.uavTrails.length; i++) {
+            if (this.uavTrails[i].id == uavID) {
+                if (this.uavTrails[i].trail != undefined) {
+                    for (var j = 0; j < (this.uavTrails[i].trail.length - 1) ; j++) {
+                        this.uavTrails[i].trail[j].setMap(null);
+                    }
+                }
+
+                break;
             }
-            selectedUAV = null;
         }
-    });*/
+        
+    },
 
     // click on map to set a waypoint
     // todo: make a cancel button
