@@ -74,7 +74,7 @@ uavSymbolGreen : {
      fillColor: '#3399FF',
      strokeWeight: 0,
      fillOpacity: 0.1,
-     zIndex: -1
+     clickable: false
  },
 
  flightPathOptions: {

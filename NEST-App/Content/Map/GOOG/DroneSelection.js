@@ -125,7 +125,8 @@
             }
             gridBoundingBox = null;
         }
-        mapListeners.setOptions({
+        //mapListeners -> map
+        map.setOptions({
             draggable: true
         });
     }
