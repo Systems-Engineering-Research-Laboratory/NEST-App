@@ -23,7 +23,6 @@ namespace NEST_App.Controllers.Api
         private NestContainer db = new NestContainer();
         private String[] lines = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content\\Names.txt"));
         private String[] lines2 = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content\\Flowers.txt"));
-        private String[] lines3 = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content\\Phase.txt"));
 
         //GET: api/uavs/getuavinfo
         [HttpGet]
@@ -122,13 +121,6 @@ namespace NEST_App.Controllers.Api
             var line = lines2[randomLineNumber];
             return line;
         }
-        private string getPhase()
-        {
-            var rand = new Random();
-            var randomLineNumber = rand.Next(0, lines3.Length - 1);
-            var line = lines3[randomLineNumber];
-            return line;
-        }
         
         [HttpGet]
         [Route("api/uavs/generateuavs/{number}")]
@@ -193,7 +185,7 @@ namespace NEST_App.Controllers.Api
                 var mission = new List<Mission> 
                 { 
                    new Mission {
-                       Phase = getPhase(), 
+                       Phase = "enroute", 
                        FlightPattern = "abstract",
                        Payload = getPackage(), 
                        Priority = 1, 
