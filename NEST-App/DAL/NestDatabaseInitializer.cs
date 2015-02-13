@@ -127,14 +127,16 @@ namespace NEST_App.DAL
                         var RestrictedArea = new List<MapRestricted>
                         {
                             new MapRestricted {
-                                Ellipse_center_coordinates = DbGeography.FromText("POINT(-118.529 34.2417 400)"), 
-                                Ellipse_NorthAxis = 10, 
-                                Ellipse_EastAxis = 5, 
-                                PopulationDensity = 6080, 
-                                SeaLevel = 246, 
-                                Creator_created = "NEST", 
-                                Time_created = DateTime.Now, 
-                                Reason_created = "Test", 
+                                //Northridge fashion center is off limits
+                                Corner1Latitude = 34.242644, //Plummer and Corbin
+                                Corner1Longitude = -118.562114,
+                                Corner2Latitude = 34.235583, //Tampa and Nordhoff
+                                Corner2Longitude = -118.553660,
+                                Creator = "NEST",
+                                Ceiling = 9999,
+                                TimeCreated = DateTime.Now,
+                                TimeEnds = DateTime.Now.AddDays(1),
+                                ReasonCreated = "Test", 
                                 Warning = true}
                             };
 

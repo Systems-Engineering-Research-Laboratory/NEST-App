@@ -15,14 +15,15 @@ namespace NEST_App.Models
     public partial class MapRestricted
     {
         public int Id { get; set; }
-        public System.Data.Entity.Spatial.DbGeography Ellipse_center_coordinates { get; set; }
-        public double Ellipse_NorthAxis { get; set; }
-        public double Ellipse_EastAxis { get; set; }
-        public double PopulationDensity { get; set; }
-        public double SeaLevel { get; set; }
-        public string Creator_created { get; set; }
-        public System.DateTime Time_created { get; set; }
-        public string Reason_created { get; set; }
+        public double Corner1Latitude { get; set; }
+        public double Corner1Longitude { get; set; }
+        public double Corner2Latitude { get; set; }
+        public double Corner2Longitude { get; set; }
+        public double Ceiling { get; set; }
+        public string Creator { get; set; }
+        public System.DateTime TimeCreated { get; set; }
+        public System.DateTime TimeEnds { get; set; }
+        public string ReasonCreated { get; set; }
         public bool Warning { get; set; }
     }
 }
