@@ -13,9 +13,8 @@
 
     ConsNotifier: function (theMap, lat, lng, notifier, message) {
         var location = new google.maps.LatLng(lat, lng);
-
         var noteMarker = new google.maps.Marker({
-            map: map,
+            map: theMap,
             position: location,
             icon: mapStyles.mapClickIcon,
             draggable: false,
@@ -34,6 +33,7 @@
             });
 
             infowindow.open(map, noteMarker);
+            document.getElementById("message").value = "";
         }
     },
 
