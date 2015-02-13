@@ -92,6 +92,18 @@ namespace NEST_App
             olMapJS.Transforms.Add(jsTransformer);
             olMapJS.Orderer = nullOrderer;
             bundles.Add(olMapJS);
+
+            //Angular Scripts Bundle
+            var angularJS = new CustomScriptBundle("~/bundles/angular");
+            angularJS.Include("~/Scripts/angular-route.js");
+            angularJS.Include("~/Scripts/angular-resource.js");
+            angularJS.Include("~/Scripts/angular-animate.js");
+            angularJS.Include("~/Scripts/angular.js");
+            angularJS.Include("~/Controllers/app/js/admin_page/admin_page.app.js");
+            angularJS.Include("~/Controllers/app/js/admin_page/controllers/admin.ctrl.js");
+            angularJS.Transforms.Add(jsTransformer);
+            angularJS.Orderer = nullOrderer;
+            bundles.Add(angularJS);
         }
     }
 }

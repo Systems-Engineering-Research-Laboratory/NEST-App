@@ -37,9 +37,9 @@ namespace NEST_App.Models
             {
                 this.Id = fs.Id;
                 this.Timestamp = fs.Timestamp;
-                this.Latitude = fs.Position.Latitude.GetValueOrDefault();
-                this.Longitude = fs.Position.Longitude.GetValueOrDefault();
-                this.Altitude = fs.Position.Elevation.GetValueOrDefault();
+                this.Latitude = fs.Latitude;
+                this.Longitude = fs.Longitude;
+                this.Altitude = fs.Altitude;
                 this.VelocityX = fs.VelocityX;
                 this.VelocityY = fs.VelocityY;
                 this.VelocityZ = fs.VelocityZ;
@@ -58,7 +58,7 @@ namespace NEST_App.Models
     {
         protected override double ResolveCore(FlightState fs)
         {
-            return fs.Position.Latitude.GetValueOrDefault();
+            return fs.Latitude;
         }
     }
 
@@ -66,7 +66,7 @@ namespace NEST_App.Models
     {
         protected override double ResolveCore(FlightState fs)
         {
-            return fs.Position.Longitude.GetValueOrDefault();
+            return fs.Longitude;
         }
     }
 
@@ -74,7 +74,7 @@ namespace NEST_App.Models
     {
         protected override double ResolveCore(FlightState fs)
         {
-            return fs.Position.Elevation.GetValueOrDefault();
+            return fs.Altitude;
         }
     }
 

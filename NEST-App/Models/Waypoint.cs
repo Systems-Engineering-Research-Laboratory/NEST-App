@@ -19,11 +19,13 @@ namespace NEST_App.Models
         public Nullable<int> NextWaypointId { get; set; }
         public bool WasSkipped { get; set; }
         public Nullable<System.DateTime> TimeCompleted { get; set; }
-        public System.Data.Entity.Spatial.DbGeography Position { get; set; }
         public string Action { get; set; }
         public string GeneratedBy { get; set; }
         public Nullable<int> MissionId { get; set; }
         public bool IsActive { get; set; }
+        public double Longitude { get; set; }
+        public double Latitude { get; set; }
+        public double Altitude { get; set; }
     
         public virtual Waypoint NextWaypoint { get; set; }
         public virtual Mission Missions { get; set; }

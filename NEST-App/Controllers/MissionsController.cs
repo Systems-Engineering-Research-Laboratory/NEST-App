@@ -21,12 +21,20 @@ namespace NEST_App.Controllers
 
         [HttpGet]
         [Route("api/missions/waypoints/{id}")]
-        public async Task<IEnumerable<object>> Waypoints(int id)
+        [ResponseType(typeof(IQueryable<object>))]
+        public async Task<IHttpActionResult> Waypoints(int id)
         {
             Mission mission = await db.Missions.FindAsync(id);
-
+            if(mission == null)
+            {
+                return BadRequest();
+            }
             var wps = mission.Waypoints;
             List<Waypoint> wpsInOrder = new List<Waypoint>();
+            if(wps.Count == 0)
+            {
+                return Ok(wpsInOrder.AsQueryable());
+            }
             var tail = wps.First(wp => wp.NextWaypoint == null);
             wpsInOrder.Add(tail);
             foreach (var wp in wps)
@@ -37,7 +45,7 @@ namespace NEST_App.Controllers
                     continue;
                 }
                 var next = wp.NextWaypoint;
-                int index = wpsInOrder.FindIndex(n => n.Id == next.Id);
+                int index =  next != null ? wpsInOrder.FindIndex(n => n.Id == next.Id) : -1;
                 if(index == -1)
                 {
                     //The next waypoint of this waypoint is not in this list, just insert it behind the last waypoint.
@@ -57,7 +65,9 @@ namespace NEST_App.Controllers
                       {
                           MissionId = wp.MissionId,
                           NextWaypointId = wp.NextWaypointId,
-                          Position = wp.Position,
+                          Latitude = wp.Latitude,
+                          Longitude = wp.Longitude,
+                          Altitude = wp.Altitude,
                           isActive = wp.IsActive,
                           Id = wp.Id,
                           TimeCompleted = wp.TimeCompleted,
@@ -65,7 +75,7 @@ namespace NEST_App.Controllers
                       };
                 
             
-            return diffType;
+            return Ok(diffType);
         }
 
         // GET: api/Missions
@@ -83,9 +93,8 @@ namespace NEST_App.Controllers
                                   UAVId = mis.Schedule.UAVId ?? -1,
                                   TimeAssigned = mis.TimeAssigned,
                                   TimeCompleted = mis.TimeCompleted,
-                                  Latitude = mis.DestinationCoordinates.Latitude ?? 0,
-                                  Longitude = mis.DestinationCoordinates.Longitude ?? 0,
-                                  Altitude = mis.DestinationCoordinates.Elevation ?? 0,
+                                  Latitude = mis.Latitude,
+                                  Longitude = mis.Longitude,
                                   ScheduledCompletionTime = mis.ScheduledCompletionTime,
                                   EstimatedCompletionTime = mis.EstimatedCompletionTime
                               };

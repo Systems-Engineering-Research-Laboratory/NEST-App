@@ -2,13 +2,13 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 02/07/2015 10:35:10
--- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
+-- Date Created: 02/11/2015 11:01:58
+-- Generated from EDMX file: C:\Users\Jeffrey\Documents\Programming\NEST\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
 GO
-USE [NEST_DB_c58405a0b8114963ab1df6d33ffb8e23]
+USE [NEST_DB];
 GO
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 GO
@@ -200,7 +200,6 @@ GO
 CREATE TABLE [dbo].[FlightStates] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [Timestamp] datetime  NOT NULL,
-    [Position] geography  NOT NULL,
     [VelocityX] float  NOT NULL,
     [VelocityY] float  NOT NULL,
     [VelocityZ] float  NOT NULL,
@@ -213,7 +212,10 @@ CREATE TABLE [dbo].[FlightStates] (
     [BatteryLevel] float  NOT NULL,
     [UAVId] int  NOT NULL,
     [create_date] datetime  NOT NULL,
-    [modified_date] datetime  NOT NULL
+    [modified_date] datetime  NOT NULL,
+    [Latitude] float  NOT NULL,
+    [Longitude] float  NOT NULL,
+    [Altitude] float  NOT NULL
 );
 GO
 
@@ -303,13 +305,14 @@ CREATE TABLE [dbo].[Missions] (
     [FinancialCost] decimal(19,4)  NULL,
     [TimeAssigned] datetime  NOT NULL,
     [TimeCompleted] datetime  NULL,
-    [DestinationCoordinates] geography  NOT NULL,
     [ScheduledCompletionTime] datetime  NOT NULL,
     [EstimatedCompletionTime] datetime  NOT NULL,
     [id] int IDENTITY(1,1) NOT NULL,
     [ScheduleId] int  NOT NULL,
     [create_date] datetime  NOT NULL,
-    [modified_date] datetime  NOT NULL
+    [modified_date] datetime  NOT NULL,
+    [Latitude] float  NOT NULL,
+    [Longitude] float  NOT NULL
 );
 GO
 
@@ -443,11 +446,13 @@ CREATE TABLE [dbo].[Waypoints] (
     [NextWaypointId] int  NULL,
     [WasSkipped] bit  NOT NULL,
     [TimeCompleted] datetime  NULL,
-    [Position] geography  NOT NULL,
     [Action] nvarchar(max)  NOT NULL,
     [GeneratedBy] nvarchar(max)  NOT NULL,
     [MissionId] int  NULL,
-    [IsActive] bit  NOT NULL
+    [IsActive] bit  NOT NULL,
+    [Longitude] float  NOT NULL,
+    [Latitude] float  NOT NULL,
+    [Altitude] float  NOT NULL
 );
 GO
 

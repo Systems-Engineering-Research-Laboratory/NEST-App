@@ -14,6 +14,7 @@ using System.Web;
 using NEST_App.DAL;
 using NEST_App.Models;
 using System.IO;
+using Newtonsoft.Json.Linq;
 
 namespace NEST_App.Controllers.Api
 {
@@ -60,7 +61,8 @@ namespace NEST_App.Controllers.Api
                                FinancialCost = m.FinancialCost,
                                TimeAssigned = m.TimeAssigned,
                                TimeCompleted = m.TimeCompleted,
-                               DestinationCoordinates = m.DestinationCoordinates,
+                               Latitude = m.Latitude,
+                               Longitude = m.Longitude,
                                ScheduledCompletionTime = m.ScheduledCompletionTime,
                                EstimatedCompletionTime = m.EstimatedCompletionTime,
                                Id = m.id,
@@ -72,28 +74,6 @@ namespace NEST_App.Controllers.Api
                            EventLog = u.EventLogs,
                        };
             return Request.CreateResponse(HttpStatusCode.OK, uavs);
-        }
-        [HttpGet]
-        [Route("api/uavs/getgenerateduavs")]
-        public HttpResponseMessage getGeneratedUavs()
-        {
-            var drones = from u in db.UAVs.Include(u => u.FlightStates)
-                         select new
-                         {
-                             Id = u.Id,
-                             Mileage = u.Mileage,
-                             NumDeliveries = u.NumDeliveries,
-                             Callsign = u.Callsign,
-                             create_date = u.create_date,
-                             modified_date = u.modified_date,
-                             MaxVelocity = u.MaxVelocity,
-                             MaxAcceleration = u.MaxAcceleration,
-                             MaxVerticalVelocity = u.MaxVerticalVelocity,
-                             UpdateRate = u.UpdateRate,
-                             FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
-                             EventLog = u.EventLogs
-                         };
-            return Request.CreateResponse(HttpStatusCode.OK, drones);
         }
 
         private DbGeography getDistance()
@@ -137,46 +117,48 @@ namespace NEST_App.Controllers.Api
             //string filePath = Path.Combine(userPath, "Content\\Flowers.txt");
             //var lines = File.ReadAllLines(filePath);
             var rand = new Random();
-            var randomLineNumber = rand.Next(0, lines.Length - 1);
-            var line = lines2[randomLineNumber] + lines2[randomLineNumber] + lines2[randomLineNumber];
+            var randomLineNumber = rand.Next(0, lines2.Length - 1);
+            var line = lines2[randomLineNumber];
             return line;
         }
         
-        [HttpPost]
-        [Route("api/uavs/generateuavs")]
-        public void generateUAVs(int number)
+        [HttpGet]
+        [Route("api/uavs/generateuavs/{number}")]
+        public IHttpActionResult generateUAVs(int number)
         {
             Random num = new Random();
             for (int i = 0; i < number; i++)
             {
-                UAV uav = new UAV 
-                { 
-                        Callsign = getName() + num.Next(1, 99),
-                        NumDeliveries = num.Next(1, 2000), 
-                        Mileage = num.Next(1, 100),
-                        Id = i, 
-                        create_date = DateTime.Now, 
-                        modified_date = DateTime.Now, 
-                        MaxAcceleration = 20, 
-                        MaxVelocity = 20, 
-                        MaxVerticalVelocity = 20, 
-                        MinDeliveryAlt = 100, 
-                        UpdateRate = 1000, 
-                        CruiseAltitude = 400
-               };
-              
-               Configuration config = new Configuration
-               {
-                        Classification = "Predator",
-                        create_date = DateTime.Now,
-                        modified_date = DateTime.Now,
-                        Name = "Default",
-                        NumberOfMotors = 4
-               };
-               var flights = new List<FlightState>
-               {
+                UAV uav = new UAV
+                {
+                    Callsign = getName().ToUpper() + num.Next(1, 99),
+                    NumDeliveries = num.Next(1, 2000),
+                    Mileage = num.Next(1, 100),
+                    Id = i,
+                    create_date = DateTime.Now,
+                    modified_date = DateTime.Now,
+                    MaxAcceleration = 20,
+                    MaxVelocity = 20,
+                    MaxVerticalVelocity = 20,
+                    MinDeliveryAlt = 100,
+                    UpdateRate = 1000,
+                    CruiseAltitude = 400
+                };
+
+                Configuration config = new Configuration
+                {
+                    Classification = "Predator",
+                    create_date = DateTime.Now,
+                    modified_date = DateTime.Now,
+                    Name = "Default",
+                    NumberOfMotors = 4
+                };
+                var flights = new List<FlightState>
+                {
                    new FlightState { 
-                       Position = DbGeography.FromText("POINT(-118.529 34.2417 400)"), 
+                       Longitude = -118.529,
+                       Latitude = 34.2417,
+                       Altitude = 400,
                        VelocityX = 0, 
                        VelocityY = 0, 
                        VelocityZ = 0, 
@@ -186,34 +168,41 @@ namespace NEST_App.Controllers.Api
                        YawRate = 0, 
                        RollRate = 0, 
                        PitchRate = 0, 
-                       BatteryLevel = .19, 
+                       BatteryLevel = (num.Next(1,99) / 100), 
                        UAVId = i
                    },    
-              };
+               };
+                flights.ForEach(f =>
+                {
+                    f.Timestamp = DateTime.Now;
+                    f.create_date = DateTime.Now;
+                    f.modified_date = DateTime.Now;
+                });
 
-               DateTime dateValue = new DateTime();
-               dateValue = DateTime.Now;
-
-               var mission = new List<Mission> 
-               { 
+                DateTime dateValue = new DateTime();
+                dateValue = DateTime.Now;
+                var randPoint = getDistance();
+                var mission = new List<Mission> 
+                { 
                    new Mission {
                        Phase = "enroute", 
-                       FlightPattern = "abstract", 
+                       FlightPattern = "abstract",
                        Payload = getPackage(), 
                        Priority = 1, 
                        FinancialCost = num.Next(1, 99), 
                        TimeAssigned = dateValue, 
                        TimeCompleted = dateValue.AddHours(0.0833),  
-                       DestinationCoordinates = getDistance(),
+                       Latitude = randPoint.Latitude?? 34.2417,
+                       Longitude = randPoint.Longitude?? -118.529,
                        ScheduledCompletionTime = dateValue.AddHours(0.0899),
                        EstimatedCompletionTime = dateValue.AddHours(0.09), 
                        create_date = dateValue.AddHours(0.01),
                        modified_date = dateValue.AddHours(0.02) 
                   }
-              };
+               };
 
-               var sched = new List<Schedule>
-               { 
+                var sched = new List<Schedule>
+                { 
                    new Schedule {
                        UAV = uav,
                        //Maintenances = maintenances,
@@ -221,19 +210,43 @@ namespace NEST_App.Controllers.Api
                        create_date = DateTime.Now,
                        modified_date = DateTime.Now
                    }
-               };
+                };
 
-               uav.Configurations = config;
-               uav.FlightStates = flights;
-               uav.Schedules = sched;
-               
-               db.UAVs.Add(uav);
-               db.Missions.Add(mission.First());
-               db.Configurations.Add(config);
-               db.Schedules.Add(sched.First());
+                uav.Configurations = config;
+                uav.FlightStates = flights;
+                uav.Schedules = sched;
 
-               db.SaveChanges();
-           }
+                db.UAVs.Add(uav);
+                db.Missions.Add(mission.First());
+                db.Configurations.Add(config);
+                db.Schedules.Add(sched.First());
+
+                try
+                {
+                    db.SaveChanges();    
+                }
+                catch (DbUpdateException e)
+                {
+                    Console.Write(e.Entries);
+                }
+            }
+            var drones = from u in db.UAVs.Include(u => u.FlightStates)
+                         select new
+                         {
+                             Id = u.Id,
+                             Mileage = u.Mileage,
+                             NumDeliveries = u.NumDeliveries,
+                             Callsign = u.Callsign,
+                             create_date = u.create_date,
+                             modified_date = u.modified_date,
+                             MaxVelocity = u.MaxVelocity,
+                             MaxAcceleration = u.MaxAcceleration,
+                             MaxVerticalVelocity = u.MaxVerticalVelocity,
+                             UpdateRate = u.UpdateRate,
+                             FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
+                             EventLog = u.EventLogs
+                         };
+            return Ok(drones);
         }
 
         [HttpPost]
