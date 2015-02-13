@@ -69,10 +69,22 @@ function uavMarkers(data, textStatus, jqXHR) {
 
 function goTo_show() {
     document.getElementById("CommPopPlaceHolder").style.display = "block";
+    document.getElementById("CommPop").style.display = "block";
+}
+
+function note_show() {
+    document.getElementById("CommPopPlaceHolder").style.display = "block";
+    document.getElementById("notification").style.display = "block";
 }
 
 function goTo_hide() {
     document.getElementById("CommPopPlaceHolder").style.display = "none";
+    document.getElementById("CommPop").style.display = "none";
+}
+
+function note_hide() {
+    document.getElementById("CommPopPlaceHolder").style.display = "none";
+    document.getElementById("notification").style.display = "none";
 }
 
 function clear() {
@@ -117,7 +129,7 @@ $(document).ready(function () {
    */
 
     //Right click for infowindow coordinates on map
-    google.maps.event.addListener(map, "rightclick", function (event) { mapFunctions.GetLatLong(this, event) });
+    //google.maps.event.addListener(map, "rightclick", function (event) { mapFunctions.GetLatLong(this, event) });
 
     mapDraw.InitDrawingManager();
     mapDraw.drawingManager.setMap(map);
@@ -133,8 +145,29 @@ $(document).ready(function () {
 
     /* Event Log */
     var emitHub = $.connection.eventLogHub;
+
+    //show the notification for every one
+    emitHub.client.showNote = function (lat, lng, notifier, message) {
+        var contentString = '<div id="content">' +
+            '<h4>' + notifier + '</h4>' +
+            '<p>' + message + '</p>' +
+            '</div>';
+
+        mapFunctions.ConsNotifier(map, lat, lng, contentString);
+    }
+
     $.connection.hub.start().done(function () {
         console.log("connection started for evt log");
+
+        google.maps.event.addListener(map, "rightclick", function (event) {
+            note_show();
+            document.getElementById("send").addEventListener("click", function () {
+                var notifier = document.getElementById("notifier").value;
+                var message = document.getElementById("message").value
+                emitHub.server.sendNote(event.latLng.lat(), event.latLng.lng(), notifier, message);
+                note_hide();
+            });
+        });
     });
     var warningMessageCounter = 0;
   

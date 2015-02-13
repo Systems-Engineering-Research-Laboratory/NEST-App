@@ -166,6 +166,11 @@ html, body, #map-canvas {
     left: 50%;
     top: 17%;
     margin-left: -248px;
+    display: none;	
+}
+
+#notification {
+    display: none;
 }
 
 #waypoint_popup {

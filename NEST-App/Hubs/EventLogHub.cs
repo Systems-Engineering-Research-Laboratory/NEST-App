@@ -66,6 +66,9 @@ namespace NEST_App.Hubs
             
         }
 
-        
+        public void SendNote(double lat, double lng, string notifier, string message)
+        {
+            Clients.All.showNote(lat, lng, notifier, message);
+        }
     }
 }

@@ -11,6 +11,24 @@
         infowindow.open(theMap);
     },
 
+    ConsNotifier: function (theMap, lat, lng, message) {
+        var location = new google.maps.LatLng(lat, lng);
+        var noteMarker = new google.maps.Marker({
+            map: map,
+            position: location,
+            icon: mapStyles.mapClickIcon,
+            draggable: false,
+            animation: google.maps.Animation.DROP
+        });
+        theMap.setCenter(location);
+
+        var infowindow = new google.maps.InfoWindow({
+            content: message
+        });
+
+        infowindow.open(map, noteMarker);
+    },
+
     DrawBoundingBox: function (theMap, e, shiftPressed, gridBoundingBox, mouseIsDown, mouseDownPos) {
         //console.log("move mouse down, shift down", mouseIsDown, shiftPressed);
         if (mouseIsDown && (shiftPressed || gridBoundingBox != null)) {
