@@ -11,8 +11,9 @@
         infowindow.open(theMap);
     },
 
-    ConsNotifier: function (theMap, lat, lng, message) {
+    ConsNotifier: function (theMap, lat, lng, notifier, message) {
         var location = new google.maps.LatLng(lat, lng);
+
         var noteMarker = new google.maps.Marker({
             map: map,
             position: location,
@@ -20,13 +21,20 @@
             draggable: false,
             animation: google.maps.Animation.DROP
         });
-        theMap.setCenter(location);
+        theMap.panTo(location);
 
-        var infowindow = new google.maps.InfoWindow({
-            content: message
-        });
+        if (message != "") {
+            var contentString = '<div id="content">' +
+            '<h4>' + notifier + '</h4>' +
+            '<p>' + message + '</p>' +
+            '</div>';
 
-        infowindow.open(map, noteMarker);
+            var infowindow = new google.maps.InfoWindow({
+                content: contentString
+            });
+
+            infowindow.open(map, noteMarker);
+        }
     },
 
     DrawBoundingBox: function (theMap, e, shiftPressed, gridBoundingBox, mouseIsDown, mouseDownPos) {
@@ -58,5 +66,30 @@
                 draggable: false
             });
         }
+    },
+
+    goTo_show: function () {
+        document.getElementById("CommPopPlaceHolder").style.display = "block";
+        document.getElementById("waypoint_popup").style.display = "block";
+    },
+
+    note_show: function () {
+        document.getElementById("CommPopPlaceHolder").style.display = "block";
+        document.getElementById("notification").style.display = "block";
+    },
+
+    goTo_hide: function () {
+        document.getElementById("CommPopPlaceHolder").style.display = "none";
+        document.getElementById("waypoint_popup").style.display = "none";
+    },
+
+    note_hide: function () {
+        document.getElementById("CommPopPlaceHolder").style.display = "none";
+        document.getElementById("notification").style.display = "none";
+    },
+
+    clear: function () {
+        document.getElementById("go_lat").value = "";
+        document.getElementById("go_long").value = "";
     }
 };

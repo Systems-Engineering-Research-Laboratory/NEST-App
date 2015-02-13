@@ -67,31 +67,6 @@ function uavMarkers(data, textStatus, jqXHR) {
     }
 }
 
-function goTo_show() {
-    document.getElementById("CommPopPlaceHolder").style.display = "block";
-    document.getElementById("CommPop").style.display = "block";
-}
-
-function note_show() {
-    document.getElementById("CommPopPlaceHolder").style.display = "block";
-    document.getElementById("notification").style.display = "block";
-}
-
-function goTo_hide() {
-    document.getElementById("CommPopPlaceHolder").style.display = "none";
-    document.getElementById("CommPop").style.display = "none";
-}
-
-function note_hide() {
-    document.getElementById("CommPopPlaceHolder").style.display = "none";
-    document.getElementById("notification").style.display = "none";
-}
-
-function clear() {
-    document.getElementById("go_lat").value = "";
-    document.getElementById("go_long").value = "";
-}
-
 $(document).ready(function () {
     map = new google.maps.Map(document.getElementById('map-canvas'), mapStyles.mapOptions);
     var counter = 0, parse;
@@ -148,24 +123,18 @@ $(document).ready(function () {
 
     //show the notification for every one
     emitHub.client.showNote = function (lat, lng, notifier, message) {
-        var contentString = '<div id="content">' +
-            '<h4>' + notifier + '</h4>' +
-            '<p>' + message + '</p>' +
-            '</div>';
-
-        mapFunctions.ConsNotifier(map, lat, lng, contentString);
+        mapFunctions.ConsNotifier(map, lat, lng, notifier, message);
+        
     }
 
     $.connection.hub.start().done(function () {
         console.log("connection started for evt log");
 
         google.maps.event.addListener(map, "rightclick", function (event) {
-            note_show();
+            mapFunctions.note_show();
             document.getElementById("send").addEventListener("click", function () {
-                var notifier = document.getElementById("notifier").value;
-                var message = document.getElementById("message").value
-                emitHub.server.sendNote(event.latLng.lat(), event.latLng.lng(), notifier, message);
-                note_hide();
+                emitHub.server.sendNote(event.latLng.lat(), event.latLng.lng(), document.getElementById("notifier").value, document.getElementById("message").value);
+                mapFunctions.note_hide();
             });
         });
     });

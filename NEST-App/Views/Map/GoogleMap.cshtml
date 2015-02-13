@@ -10,10 +10,12 @@
 <script src="~/Scripts/MarkerWithLabel.js"></script>
 <script src="~/Scripts/InfoBox.js"></script>
 <script src="~/Scripts/jquery-2.1.2.js"></script>
+<script src="~/Content/Map/GOOG/MapFunctions.js" type="text/javascript"></script>
+
 <div id="map-canvas"></div>
 <div class="right-buttons">
    
-    <button type="button" id="goWaypoint" onclick="goTo_show()">Go...</button>
+    <button type="button" id="goWaypoint" onclick="mapFunctions.goTo_show()">Go...</button>
 </div>
 <div class="left-buttons">
     <div id="panel">
@@ -41,36 +43,35 @@
 
 <!-- command pop up placeholder -->
 <div id="CommPopPlaceHolder">
-
-    <!-- command pop up starts here -->
-    <div id="CommPop">
-        <div id="waypoint_popup">
-            <span class="glyphicon glyphicon-remove" id="close_button" onclick="goTo_hide()"></span>
-            <h3 id="UAVId">Select an UAV first</h3>
-            <h3>New Waypoint</h3>
-            <p>
-                (
-                <input type="text" name="go_latitude" id="go_lat" placeholder="Latitude" />
-                ,
-                <input type="text" name="go_longitude" id="go_long" placeholder="Longitude" />
-                )<button class="btn btn-default disabled" id="clickToGoBtn" onclick="clickToGo()"><span class="glyphicon glyphicon-hand-down"></span></button>
-            </p>
-            <button class="btn btn-default disabled" id="goBtn">GO</button>
-            <button class="btn btn-default" id="clearBtn">CLEAR</button>
-        </div>
+    <!-- drop waypoint window -->
+    <div id="waypoint_popup">
+        <div class="closeBtn"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.goTo_hide()"></span></div>
+        <h3 id="UAVId">Select an UAV first</h3>
+        <h3>New Waypoint</h3>
+        <p>
+            (
+            <input type="text" name="go_latitude" id="go_lat" placeholder="Latitude" />
+            ,
+            <input type="text" name="go_longitude" id="go_long" placeholder="Longitude" />
+            )<button class="btn btn-default disabled" id="clickToGoBtn" onclick="clickToGo()"><span class="glyphicon glyphicon-hand-down"></span></button>
+        </p>
+        <button class="btn btn-default disabled sendBtn" id="goBtn">GO</button>
+        <button class="btn btn-default clear" id="clearBtn">CLEAR</button>
     </div>
 
-    <!-- send notification windows starts here -->
+    <!-- send notification window -->
     <div id="notification">
-        <span class="glyphicon glyphicon-remove" id="close_button" onclick="note_hide()"></span>
+        <div class="closeBtn"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.note_hide()"></span></div>
         <h3>Send Notificatoin</h3>
         <p>
             <input type="text" name="notifier" id="notifier" placeholder="Name" />
             <input type="text" name="message" id="message" placeholder="Message" />
         </p>
-        <button class="btn btn-default" id="send">SEND</button>
-        <button class="btn btn-default" id="clearBtn">CLEAR</button>
+        <button class="btn btn-default sendBtn" id="send">SEND</button>
+        <button class="btn btn-default clear">CLEAR</button>
     </div>
+
+    
 </div>         <!-- end of placeholder -->
 
 
