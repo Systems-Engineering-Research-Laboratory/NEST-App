@@ -118,6 +118,7 @@ $(document).ready(function () {
     google.maps.event.addDomListener(document.getElementById('delete-all-button'), 'click', mapDraw.deleteAllShape());
     mapDraw.buildColorPalette(mapDraw.drawingManager);
 
+    new RestrictedAreasContainer(map, mapDraw.drawingManager)
     /* Event Log */
     var emitHub = $.connection.eventLogHub;
 
