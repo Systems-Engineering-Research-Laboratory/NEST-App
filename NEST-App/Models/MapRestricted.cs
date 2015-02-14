@@ -15,10 +15,10 @@ namespace NEST_App.Models
     public partial class MapRestricted
     {
         public int Id { get; set; }
-        public double Corner1Latitude { get; set; }
-        public double Corner1Longitude { get; set; }
-        public double Corner2Latitude { get; set; }
-        public double Corner2Longitude { get; set; }
+        public double NorthEastLatitude { get; set; }
+        public double NorthEastLongitude { get; set; }
+        public double SouthWestLatitude { get; set; }
+        public double SouthWestLongitude { get; set; }
         public double Ceiling { get; set; }
         public string Creator { get; set; }
         public System.DateTime TimeCreated { get; set; }

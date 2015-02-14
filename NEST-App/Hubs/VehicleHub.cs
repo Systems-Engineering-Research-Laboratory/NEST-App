@@ -62,6 +62,11 @@ namespace NEST_App.Hubs
             Clients.All.AssignMission(UAVId, MissionId);
         }
 
+        public void newRestrictedArea(MapRestricted res)
+        {
+            Clients.All.newRestrictedArea(res);
+        }
+
         public async Task BroadcastAcceptedCommand(CMD_ACK ack)
         {
             using (var context = new NestDbContext())

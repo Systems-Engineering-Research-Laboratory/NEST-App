@@ -8,7 +8,10 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
 using NEST_App.Models;
+using NEST_App.Hubs;
 
 namespace NEST_App.Controllers
 {
@@ -81,6 +84,9 @@ namespace NEST_App.Controllers
 
             db.MapRestrictedSet.Add(mapRestricted);
             db.SaveChanges();
+
+            var context = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
+            context.Clients.All.newRestrictedArea(mapRestricted);
 
             return CreatedAtRoute("DefaultApi", new { id = mapRestricted.Id }, mapRestricted);
         }

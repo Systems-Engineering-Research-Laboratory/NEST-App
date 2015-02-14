@@ -124,6 +124,8 @@ $(document).ready(function () {
     mapDraw.drawingManager.setDrawingMode(null);
     google.maps.event.addListener(mapDraw.drawingManager, 'overlaycomplete', function (e) { mapDraw.OverlayComplete(e) });
 
+    new RestrictedAreasContainer(map, mapDraw.drawingManager)
+
     //Delete shapes and clear selection
     google.maps.event.addListener(mapDraw.drawingManager, 'drawingmode_changed', mapDraw.clearSelection);
     google.maps.event.addListener(map, 'click', mapDraw.clearSelection);
@@ -133,9 +135,7 @@ $(document).ready(function () {
 
     /* Event Log */
     var emitHub = $.connection.eventLogHub;
-    $.connection.hub.start().done(function () {
-        console.log("connection started for evt log");
-    });
+    
     var warningMessageCounter = 0;
   
     /* Vehicle Movement */
@@ -217,5 +217,11 @@ $(document).ready(function () {
 
     google.maps.event.addListener(mapListeners, 'mousemove', function (e) { mapFunctions.DrawBoundingBox(this, e, shiftPressed, gridBoundingBox, mouseIsDown, mouseDownPos) });
     google.maps.event.addListener(mapListeners, 'mousedown', function (e) { mapFunctions.StopMapDrag(this, e, shiftPressed, mouseIsDown, mouseDownPos) });
-    google.maps.event.addListener(map, 'mouseup', function (e) {droneSelection.AreaSelect(this, e, mouseIsDown, shiftPressed, gridBoundingBox, selectedDrones, uavs)});
+    google.maps.event.addListener(map, 'mouseup', function (e) { droneSelection.AreaSelect(this, e, mouseIsDown, shiftPressed, gridBoundingBox, selectedDrones, uavs) });
+
+    
+
+    $.connection.hub.start().done(function () {
+        console.log("connection started for evt log");
+    });
 });

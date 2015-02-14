@@ -128,10 +128,10 @@ namespace NEST_App.DAL
                         {
                             new MapRestricted {
                                 //Northridge fashion center is off limits
-                                Corner1Latitude = 34.242644, //Plummer and Corbin
-                                Corner1Longitude = -118.562114,
-                                Corner2Latitude = 34.235583, //Tampa and Nordhoff
-                                Corner2Longitude = -118.553660,
+                                NorthEastLatitude = 34.242679, //Plummer and Tampa
+                                NorthEastLongitude = -118.553445,
+                                SouthWestLatitude = 34.235456, //Corbin and Nordhoff
+                                SouthWestLongitude = -118.562361,
                                 Creator = "NEST",
                                 Ceiling = 9999,
                                 TimeCreated = DateTime.Now,

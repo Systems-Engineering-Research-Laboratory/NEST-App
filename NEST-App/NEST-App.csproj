@@ -431,6 +431,7 @@
     <Content Include="Content\Map\GOOG\MapGOOG.js" />
     <Content Include="Content\Map\GOOG\MapFunctions.js" />
     <Content Include="Content\Map\GOOG\MapStyles.js" />
+    <Content Include="Content\Map\GOOG\RestrictedAreas.js" />
     <Content Include="Content\Map\OL\MapOL.css" />
     <Content Include="Content\Map\OL\MapOL.js" />
     <Content Include="Content\Map\GOOG\MapGOOG.css" />

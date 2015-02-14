@@ -431,10 +431,10 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Corner1Latitude" Type="float" Nullable="false" />
-    <Property Name="Corner1Longitude" Type="float" Nullable="false" />
-    <Property Name="Corner2Latitude" Type="float" Nullable="false" />
-    <Property Name="Corner2Longitude" Type="float" Nullable="false" />
+    <Property Name="NorthEastLatitude" Type="float" Nullable="false" />
+    <Property Name="NorthEastLongitude" Type="float" Nullable="false" />
+    <Property Name="SouthWestLatitude" Type="float" Nullable="false" />
+    <Property Name="SouthWestLongitude" Type="float" Nullable="false" />
     <Property Name="Ceiling" Type="float" Nullable="false" />
     <Property Name="Creator" Type="nvarchar(max)" Nullable="false" />
     <Property Name="TimeCreated" Type="datetime" Nullable="false" />
@@ -1321,10 +1321,10 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Corner1Latitude" Type="Double" Nullable="false" />
-          <Property Name="Corner1Longitude" Type="Double" Nullable="false" />
-          <Property Name="Corner2Latitude" Type="Double" Nullable="false" />
-          <Property Name="Corner2Longitude" Type="Double" Nullable="false" />
+          <Property Name="NorthEastLatitude" Type="Double" Nullable="false" />
+          <Property Name="NorthEastLongitude" Type="Double" Nullable="false" />
+          <Property Name="SouthWestLatitude" Type="Double" Nullable="false" />
+          <Property Name="SouthWestLongitude" Type="Double" Nullable="false" />
           <Property Name="Ceiling" Type="Double" Nullable="false" />
           <Property Name="Creator" Type="String" Nullable="false" />
           <Property Name="TimeCreated" Type="DateTime" Nullable="false" />
@@ -1744,10 +1744,10 @@
       <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.MapRestricted)">
         <MappingFragment StoreEntitySet="MapRestrictedSet">
           <ScalarProperty Name="Id" ColumnName="Id" />
-          <ScalarProperty Name="Corner1Latitude" ColumnName="Corner1Latitude" />
-          <ScalarProperty Name="Corner1Longitude" ColumnName="Corner1Longitude" />
-          <ScalarProperty Name="Corner2Latitude" ColumnName="Corner2Latitude" />
-          <ScalarProperty Name="Corner2Longitude" ColumnName="Corner2Longitude" />
+          <ScalarProperty Name="NorthEastLatitude" ColumnName="NorthEastLatitude" />
+          <ScalarProperty Name="NorthEastLongitude" ColumnName="NorthEastLongitude" />
+          <ScalarProperty Name="SouthWestLatitude" ColumnName="SouthWestLatitude" />
+          <ScalarProperty Name="SouthWestLongitude" ColumnName="SouthWestLongitude" />
           <ScalarProperty Name="Ceiling" ColumnName="Ceiling" />
           <ScalarProperty Name="Creator" ColumnName="Creator" />
           <ScalarProperty Name="TimeCreated" ColumnName="TimeCreated" />

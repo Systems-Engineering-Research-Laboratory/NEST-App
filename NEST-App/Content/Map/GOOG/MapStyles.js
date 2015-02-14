@@ -152,4 +152,14 @@
         zIndex: 10,
         clickable: false
     },
+
+    restrictedArea: {
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: '#FF0000',
+        fillOpacity: 0.35,
+        visible: true,
+        editable: false
+    }
 };
