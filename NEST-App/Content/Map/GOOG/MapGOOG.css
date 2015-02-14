@@ -161,14 +161,11 @@ html, body, #map-canvas {
     overflow: auto;
 }
 
-#CommPop {
-    position: absolute; 
+#notification {
+    position: fixed;
+    top: 50%;
     left: 50%;
-    top: 17%;
-    margin-left: -248px;
-}
-
-#waypoint_popup {
+    transform: translate(-50%, -50%);
     max-width: 600px;
     min-width: 250px;
     padding: 10px 50px;
@@ -176,17 +173,32 @@ html, body, #map-canvas {
     border-radius: 10px;
     background-color: white;
     overflow: hidden;
+    display: none;
 }
 
-#goBtn {
+#waypoint_popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 600px;
+    min-width: 250px;
+    padding: 10px 50px;
+    border: 2px solid gray;
+    border-radius: 10px;
+    background-color: white;
+    overflow: hidden;
+    display: none;
+}
+
+.sendBtn {
     position: relative;
     float: left;
-    margin-left: 37%;
     border-radius: 5px;
     cursor: pointer;
 }
 
-#clearBtn {
+.clear {
     position: relative;
     float: left;
     margin-left: 10px;
@@ -194,12 +206,11 @@ html, body, #map-canvas {
     cursor: pointer;
 }
 
-#close_button {
+.closeBtn {
     position: absolute;
-    font-size: 2em;
-    color: red;
-    right: -11px;
-    top: -10px;
+    font-size: 1.5em;
+    right: 11px;
+    top: 10px;
     cursor: pointer;
 }
 

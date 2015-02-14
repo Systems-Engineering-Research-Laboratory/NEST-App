@@ -67,19 +67,6 @@ function uavMarkers(data, textStatus, jqXHR) {
     }
 }
 
-function goTo_show() {
-    document.getElementById("CommPopPlaceHolder").style.display = "block";
-}
-
-function goTo_hide() {
-    document.getElementById("CommPopPlaceHolder").style.display = "none";
-}
-
-function clear() {
-    document.getElementById("go_lat").value = "";
-    document.getElementById("go_long").value = "";
-}
-
 $(document).ready(function () {
     map = new google.maps.Map(document.getElementById('map-canvas'), mapStyles.mapOptions);
     var counter = 0, parse;
@@ -117,14 +104,12 @@ $(document).ready(function () {
    */
 
     //Right click for infowindow coordinates on map
-    google.maps.event.addListener(map, "rightclick", function (event) { mapFunctions.GetLatLong(this, event) });
+    //google.maps.event.addListener(map, "rightclick", function (event) { mapFunctions.GetLatLong(this, event) });
 
     mapDraw.InitDrawingManager();
     mapDraw.drawingManager.setMap(map);
     mapDraw.drawingManager.setDrawingMode(null);
     google.maps.event.addListener(mapDraw.drawingManager, 'overlaycomplete', function (e) { mapDraw.OverlayComplete(e) });
-
-    new RestrictedAreasContainer(map, mapDraw.drawingManager)
 
     //Delete shapes and clear selection
     google.maps.event.addListener(mapDraw.drawingManager, 'drawingmode_changed', mapDraw.clearSelection);
@@ -135,7 +120,24 @@ $(document).ready(function () {
 
     /* Event Log */
     var emitHub = $.connection.eventLogHub;
-    
+
+    //show the notification for every one
+    emitHub.client.showNote = function (lat, lng, notifier, message) {
+        mapFunctions.ConsNotifier(map, lat, lng, notifier, message);
+        
+    }
+
+    $.connection.hub.start().done(function () {
+        console.log("connection started for evt log");
+
+        google.maps.event.addListener(map, "rightclick", function (event) {
+            mapFunctions.note_show();
+            document.getElementById("send").addEventListener("click", function () {
+                emitHub.server.sendNote(event.latLng.lat(), event.latLng.lng(), document.getElementById("notifier").value, document.getElementById("message").value);
+                mapFunctions.note_hide();
+            });
+        });
+    });
     var warningMessageCounter = 0;
   
     /* Vehicle Movement */
@@ -217,11 +219,5 @@ $(document).ready(function () {
 
     google.maps.event.addListener(mapListeners, 'mousemove', function (e) { mapFunctions.DrawBoundingBox(this, e, shiftPressed, gridBoundingBox, mouseIsDown, mouseDownPos) });
     google.maps.event.addListener(mapListeners, 'mousedown', function (e) { mapFunctions.StopMapDrag(this, e, shiftPressed, mouseIsDown, mouseDownPos) });
-    google.maps.event.addListener(map, 'mouseup', function (e) { droneSelection.AreaSelect(this, e, mouseIsDown, shiftPressed, gridBoundingBox, selectedDrones, uavs) });
-
-    
-
-    $.connection.hub.start().done(function () {
-        console.log("connection started for evt log");
-    });
+    google.maps.event.addListener(map, 'mouseup', function (e) {droneSelection.AreaSelect(this, e, mouseIsDown, shiftPressed, gridBoundingBox, selectedDrones, uavs)});
 });
