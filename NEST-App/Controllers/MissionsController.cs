@@ -71,7 +71,9 @@ namespace NEST_App.Controllers
                           isActive = wp.IsActive,
                           Id = wp.Id,
                           TimeCompleted = wp.TimeCompleted,
-                          WaypointName = wp.WaypointName
+                          WaypointName = wp.WaypointName,
+                          Action = wp.Action,
+                          GeneratedBy = wp.GeneratedBy,
                       };
                 
             

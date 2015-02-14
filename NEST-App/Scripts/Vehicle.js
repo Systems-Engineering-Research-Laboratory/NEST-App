@@ -90,6 +90,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         if (this.currentWaypoint) {
             if (this.performWaypoint(dt)) {
                 console.log("Finished with waypoint " + this.currentWaypoint.WaypointName);
+                this.updateCurrentWaypoint();
                 this.getNextWaypoint();
             }
         }
@@ -416,6 +417,13 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         }
         //TODO: Report that we finished this wp
     }
+
+    this.updateCurrentWaypoint = function () {
+        var wp = this.currentWaypoint;
+        var curTime = new Date();
+        wp.TimeCompleted = curTime.toISOString();
+        this.reporter.updateWaypoint(wp);
+    }
 }
 
 //Wrapper object that wraps up communications to the server. A pretty leaky abstraction though.
@@ -492,6 +500,14 @@ function Reporter() {
         });
     }
     
+    this.updateWaypoint = function(wp) {
+        var url = '/api/waypoints/' + wp.Id;
+        return $.ajax({
+            type: 'PUT',
+            url: url,
+            data: wp
+        });
+    }
 }
 
 
@@ -651,6 +667,7 @@ function Waypoint(info) {
     this.TimeCompleted = info.TimeCompleted ? info.TimeCompleted : null;
     this.Action = info.Action ? info.Action : "fly through";
     this.GeneratedBy = info.GeneratedBy ? info.GeneratedBy : "vehicle";
+    this.Altitude = info.Altitude || 400;
     if (info.Position) {
         appendLonLatFromDbPoint(this, info.Position);
         LatLongToXY(this);
@@ -662,6 +679,9 @@ function Waypoint(info) {
     LatLongToXY(this);
     if(info.NextWaypointId) {
         this.NextWaypointId = info.NextWaypointId;
+    }
+    if (info.MissionId) {
+        this.MissionId = info.MissionId;
     }
     this.Id = info.Id;
 }

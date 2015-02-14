@@ -13,6 +13,7 @@ using System.Web.Http.Description;
 using NEST_App.DAL;
 using NEST_App.Models;
 using NEST_App.Models.DTOs;
+using System.Data.Entity.Validation;
 
 namespace NEST_App.Controllers
 {
@@ -37,7 +38,7 @@ namespace NEST_App.Controllers
         [HttpPost]
         [Route("api/waypoints/insert/{id}")]
         [ResponseType(typeof(Waypoint))]
-        public async Task<IHttpActionResult> Waypoints(int id, Waypoint newWp)
+        public async Task<IHttpActionResult> InsertWaypoints(int id, Waypoint newWp)
         {
             //Use a transaction because we have to make possibly 2 commits to the database. If
             //either fails, we need to roll back
@@ -86,6 +87,49 @@ namespace NEST_App.Controllers
                 }
 
             }
+        }
+
+        [HttpPut]
+        [Route("api/waypoints/{id}")]
+        [ResponseType(typeof(void))]
+        public async Task<IHttpActionResult> Put(int id, Waypoint wp)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != wp.Id)
+            {
+                return BadRequest();
+            }
+
+            db.Entry(wp).State = System.Data.Entity.EntityState.Modified;
+
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                bool exists = WaypointExists(id);
+                if (!exists)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        private bool WaypointExists(int id)
+        {
+            int count = db.Waypoints.Count(wp => wp.Id == id);
+            return count > 0;
         }
     }
 }
