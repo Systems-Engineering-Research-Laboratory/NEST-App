@@ -347,6 +347,32 @@ namespace NEST_App.Controllers.Api
         }
 
         [ResponseType(typeof(UAV))]
+        [HttpPost]
+        [Route("api/uavs/assignuser?uav_id={uav_id}&user_id={user_id}")]
+        public async Task<IHttpActionResult> assignUser(int uav_id, int user_id)
+        {
+            UAV uav = await db.UAVs.FindAsync(uav_id);
+            User user = await db.Users.FindAsync(user_id);
+            if (uav == null || user == null)
+            {
+                return NotFound();
+            }
+            uav.User = user;
+            user.UAVs.Add(uav);
+            db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
+            db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            return Ok(uav);
+        }
+
+        [ResponseType(typeof(UAV))]
         [HttpPut]
         [Route("api/uavs/disableuav/{id}")]
         public async Task<IHttpActionResult> disableUAV(int id)
