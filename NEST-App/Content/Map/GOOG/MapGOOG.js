@@ -14,7 +14,7 @@ var selectedTrail; //the trail that the selected uav has
 
 //TODO: Do we need this? Are we changing this to "var theMap = map;" ?
 var mapListeners = map; //use this to add listeners to the map
-
+var wpm;
 function uavMarkers(data, textStatus, jqXHR) {
     var pointText, results;
     console.log("Pulling Flightstates...", textStatus);
@@ -53,7 +53,7 @@ function uavMarkers(data, textStatus, jqXHR) {
             zIndex: 999999,
             uav: uavs[data[i].Id]
         });
-
+        wpm.addMarker(marker);
         uavs[data[i].Id].marker = marker;
         uavs[data[i].Id].markerCircle = markerCircle;
         uavs[data[i].Id].flightPath = flightLines[data[i].Id];
@@ -68,6 +68,7 @@ function uavMarkers(data, textStatus, jqXHR) {
 }
 
 $(document).ready(function () {
+    wpm = new WaypointManager(map);
     map = new google.maps.Map(document.getElementById('map-canvas'), mapStyles.mapOptions);
     var counter = 0, parse;
     var distanceCircle = new google.maps.Circle(mapStyles.distanceCircleOptions);

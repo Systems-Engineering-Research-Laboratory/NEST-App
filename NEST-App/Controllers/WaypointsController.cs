@@ -10,9 +10,11 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Microsoft.AspNet.SignalR;
 using NEST_App.DAL;
 using NEST_App.Models;
 using NEST_App.Models.DTOs;
+using NEST_App.Hubs;
 using System.Data.Entity.Validation;
 
 namespace NEST_App.Controllers
@@ -122,7 +124,8 @@ namespace NEST_App.Controllers
                     throw;
                 }
             }
-
+            var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
+            hub.Clients.All.WaypointUpdate(wp);
             return StatusCode(HttpStatusCode.NoContent);
         }
 

@@ -68,7 +68,7 @@ namespace NEST_App.Controllers
                           Latitude = wp.Latitude,
                           Longitude = wp.Longitude,
                           Altitude = wp.Altitude,
-                          isActive = wp.IsActive,
+                          IsActive = wp.IsActive,
                           Id = wp.Id,
                           TimeCompleted = wp.TimeCompleted,
                           WaypointName = wp.WaypointName,

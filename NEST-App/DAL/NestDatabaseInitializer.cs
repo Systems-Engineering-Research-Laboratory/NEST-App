@@ -205,6 +205,7 @@ namespace NEST_App.DAL
                         try
                         {
                             missions.First().Schedule = schedules.First();
+                            
                             maintenances.First().Schedule = schedules.First();
                             UAVs.First().Schedules = schedules;
                             //context.FlightStates.Add(FlightStates.First());
@@ -213,6 +214,9 @@ namespace NEST_App.DAL
                             //context.Maintenances.Add(maintenances.First());
                             context.Schedules.Add(schedules.First());
                             context.MapRestrictedSet.AddRange(RestrictedArea);
+                            context.SaveChanges();
+                            schedules.First().CurrentMission = missions.First().id;
+                            context.Entry(schedules.First()).State = System.Data.Entity.EntityState.Modified;
                             context.SaveChanges();
                         }
                         catch (DbEntityValidationException e)
