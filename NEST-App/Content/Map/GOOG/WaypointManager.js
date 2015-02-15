@@ -43,7 +43,26 @@ function WaypointManager() {
             }
             else {
                 //TODO: implement this function
-                //this.hideWaypointsPerMission(sched.CurrentMission);
+                this.hideWaypointsPerMission(miss);
+            }
+        }
+    }
+
+    this.hideWaypointsPerMission = function (mission){
+        if(mission.flightPath) {
+            mission.flightPath.setVisible(false);
+        }
+        var wps = mission.Waypoints;
+        if (wps) {
+            this.hideWaypointMarkers(wps);
+        }
+    }
+    
+    this.hideWaypointMarkers = function (wps) {
+        for(var i = 0; i < wps.length; i++){
+            var wp = wps[i];
+            if (wp.circle) {
+                wp.circle.setVisible(false);
             }
         }
     }
@@ -67,31 +86,49 @@ function WaypointManager() {
                 that.displayWaypointsPerMission(mission);
             });
             return;
+        } else {
+            this.createWaypointMarkers(mission);
         }
+        if (mission.flightPath) {
+            mission.flightPath.setVisible(true)
+        }
+        else {
+            this.createFlightPath(mission);
+        }
+    }
+
+    this.createWaypointMarkers = function (mission) {
         var wps = mission.Waypoints;
         for (var i = 0; i < wps.length; i++) {
             var wp = wps[i];
-            if (wp.circle) {
-                wp.circle.setMap(map);
+            if (!wp.circle) {
+                this.createWaypointMarker(wp)
             }
-            else {
-                var ll = new google.maps.LatLng(wp.Latitude, wp.Longitude);
-                var wpOptions = {
-                    center: ll,
-                    map: map,
-                    strokeColor: '#0000FF', //blue
-                    strokeOpacity: 0.8,
-                    fillColor: '#0000FF',
-                    fillOpacity: 0.5,
-                    radius: 10,
-                }
-                wp.circle = new google.maps.Circle(wpOptions);
+            else if (wp.IsActive) {
+                wp.circle.setVisible(true);
             }
         }
-        if (mission.flightPath) {
-            mission.flightPath.setMap(map)
+    }
+
+    this.createWaypointMarker = function (wp) {
+        var ll = new google.maps.LatLng(wp.Latitude, wp.Longitude);
+        var wpOptions = {
+            center: ll,
+            map: map,
+            strokeColor: '#0000FF', //blue
+            strokeOpacity: 0.8,
+            fillColor: '#0000FF',
+            fillOpacity: 0.5,
+            radius: 10,
+            zIndex: 2,
+            visible: wp.IsActive,
         }
-        else if (wps.length > 1) {
+        wp.circle = new google.maps.Circle(wpOptions);
+    }
+
+    this.createFlightPath = function (mission) {
+        var wps = mission.Waypoints;
+        if(wps.length > 1) {
             var curWp = wps[0];
             var points = [new google.maps.LatLng(curWp.Latitude, curWp.Longitude)]
             while (curWp.NextWaypointId) {
@@ -108,12 +145,13 @@ function WaypointManager() {
             }
             var flightPath = new google.maps.Polyline({
                 path: points,
-                strokeColor: '#FF0000',
+                strokeColor: '#0000FF',
                 strokeOpacity: 1.0,
-                strokeWeight: 2
+                strokeWeight: 2,
+                zIndex: 1,
             });
             flightPath.setMap(map);
-            mission.flightPaht = flightPath;
+            mission.flightPath = flightPath;
         }
     }
 
