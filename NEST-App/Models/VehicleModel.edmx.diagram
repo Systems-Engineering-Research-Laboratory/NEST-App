@@ -4,8 +4,8 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="6dda4366b636406bba8d239b12c2e082" Name="Diagram1" ZoomLevel="89" >
-        <EntityTypeShape EntityType="VehicleModel.UAV" Width="1.5" PointX="7.75" PointY="2" IsExpanded="true" />
+      <Diagram DiagramId="6dda4366b636406bba8d239b12c2e082" Name="Diagram1" ZoomLevel="83" >
+        <EntityTypeShape EntityType="VehicleModel.UAV" Width="1.5" PointX="9" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="VehicleModel.FlightState" Width="1.5" PointX="4.5" PointY="0.5" IsExpanded="true" />
         <EntityTypeShape EntityType="VehicleModel.Configuration" Width="1.5" PointX="5.5" PointY="8" />
         <AssociationConnector Association="VehicleModel.VehicleConfiguration" />

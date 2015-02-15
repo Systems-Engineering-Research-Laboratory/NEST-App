@@ -2,16 +2,10 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 02/11/2015 11:01:58
--- Generated from EDMX file: C:\Users\Jeffrey\Documents\Programming\NEST\NEST-App\Models\VehicleModel.edmx
+-- Date Created: 02/15/2015 14:36:03
+-- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
-SET QUOTED_IDENTIFIER OFF;
-GO
-USE [NEST_DB];
-GO
-IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
-GO
 
 -- --------------------------------------------------
 -- Dropping existing FOREIGN KEY constraints
@@ -192,6 +186,7 @@ CREATE TABLE [dbo].[UAVs] (
     [CruiseAltitude] float  NOT NULL,
     [MinDeliveryAlt] float  NOT NULL,
     [User_user_id] int  NULL,
+    [isActive] bit  NOT NULL,
     [Configurations_Id] int  NOT NULL
 );
 GO
@@ -435,7 +430,8 @@ CREATE TABLE [dbo].[CMD_ACK] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [CommandId] int  NOT NULL,
     [Reason] nvarchar(max)  NOT NULL,
-    [CommandType] nvarchar(max)  NOT NULL
+    [CommandType] nvarchar(max)  NOT NULL,
+    [Accepted] bit  NOT NULL
 );
 GO
 
@@ -488,14 +484,15 @@ GO
 -- Creating table 'MapRestrictedSet'
 CREATE TABLE [dbo].[MapRestrictedSet] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [Ellipse_center_coordinates] geography  NOT NULL,
-    [Ellipse_NorthAxis] float  NOT NULL,
-    [Ellipse_EastAxis] float  NOT NULL,
-    [PopulationDensity] float  NOT NULL,
-    [SeaLevel] float  NOT NULL,
-    [Creator_created] nvarchar(max)  NOT NULL,
-    [Time_created] datetime  NOT NULL,
-    [Reason_created] nvarchar(max)  NOT NULL,
+    [NorthEastLatitude] float  NOT NULL,
+    [NorthEastLongitude] float  NOT NULL,
+    [SouthWestLatitude] float  NOT NULL,
+    [SouthWestLongitude] float  NOT NULL,
+    [Ceiling] float  NOT NULL,
+    [Creator] nvarchar(max)  NOT NULL,
+    [TimeCreated] datetime  NOT NULL,
+    [TimeEnds] datetime  NOT NULL,
+    [ReasonCreated] nvarchar(max)  NOT NULL,
     [Warning] bit  NOT NULL
 );
 GO

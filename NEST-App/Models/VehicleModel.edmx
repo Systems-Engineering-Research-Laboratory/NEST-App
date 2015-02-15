@@ -134,6 +134,7 @@
     <Property Name="CruiseAltitude" Type="float" Nullable="false" />
     <Property Name="MinDeliveryAlt" Type="float" Nullable="false" />
     <Property Name="User_user_id" Type="int" Nullable="true" />
+    <Property Name="isActive" Type="bit" Nullable="false" />
     <Property Name="Configurations_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="FlightStates">
@@ -866,6 +867,7 @@
           <NavigationProperty Name="EventLogs" Relationship="VehicleModel.UAVEventLog" FromRole="UAV" ToRole="EventLog" />
           <NavigationProperty Name="User" Relationship="VehicleModel.UserUAV" FromRole="UAV" ToRole="User" />
           <Property Name="User_user_id" Type="Int32" Nullable="true" />
+          <Property Name="isActive" Type="Boolean" Nullable="false" />
           </EntityType>
         <EntityType Name="FlightState">
           <Key>
@@ -1409,6 +1411,7 @@
           <ScalarProperty Name="CruiseAltitude" ColumnName="CruiseAltitude" />
           <ScalarProperty Name="MinDeliveryAlt" ColumnName="MinDeliveryAlt" />
           <ScalarProperty Name="User_user_id" ColumnName="User_user_id" />
+          <ScalarProperty Name="isActive" ColumnName="isActive" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

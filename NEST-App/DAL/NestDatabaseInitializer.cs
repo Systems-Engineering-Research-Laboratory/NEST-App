@@ -61,7 +61,8 @@ namespace NEST_App.DAL
                             MaxVerticalVelocity = 20, 
                             MinDeliveryAlt = 100, 
                             UpdateRate = 1000, 
-                            CruiseAltitude = 400
+                            CruiseAltitude = 400,
+                            isActive = true
                         }
                     };
                         UAVs[0].Configurations = new Configuration

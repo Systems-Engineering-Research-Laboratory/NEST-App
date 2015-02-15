@@ -64,9 +64,10 @@
             $http.get('/api/uavs')
             .success(function (data, status, headers, config) {
                 $scope.uavs = data;
-                //console.log(data);
+                console.log(data);
             })
             .error(function (data, status, headers, config) {
+                console.log(data);
                 alert(data);
             });
         };
@@ -95,6 +96,21 @@
                     alert(data);
                 });
         };
+        $scope.deleteUAV = function (uav_id) {
+            $http.put('/api/uavs/disableuav/' + uav_id)
+            .success(function (data, status, headers, config) {
+                $scope.uavs = $scope.uavs.filter(function (obj) {
+                    return obj.Id != uav_id;
+                });
+            })
+            .error(function (data, status, headers, config) {
+                alert(data);
+                console.log(data);
+            });
+        };
     };
+
+
+
     $scope.init();
 }])

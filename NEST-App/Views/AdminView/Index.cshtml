@@ -2,6 +2,12 @@
     ViewBag.Title = "Index";
 }
 
+<style>
+    .glyphicon-remove {
+        cursor: pointer;
+    }
+</style>
+
 <h2>Index</h2>
 <div ng-app="adminApp" ng-controller="AdminCtrl">
     <input type="number" value="0" id="desiredUAVCount"/>
@@ -42,6 +48,9 @@
             <th>
                 Min Delivery Alt
             </th>
+            <th>
+
+            </th>
         </tr>
         <tr ng-repeat="uav in uavs">
             <td>{{uav.Callsign}}</td>
@@ -55,6 +64,7 @@
             <td>{{uav.UpdateRate}}</td>
             <td>{{uav.CruiseAltitude}}</td>
             <td>{{uav.MinDeliveryAlt}}</td>
+            <td><div class="glyphicon glyphicon-remove" ng-click='deleteUAV(uav.Id)'></div></td>
         </tr>
     </table>
     <input type="text" id="operatorName"/>

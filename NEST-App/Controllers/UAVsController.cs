@@ -142,7 +142,8 @@ namespace NEST_App.Controllers.Api
                     MaxVerticalVelocity = 20,
                     MinDeliveryAlt = 100,
                     UpdateRate = 1000,
-                    CruiseAltitude = 400
+                    CruiseAltitude = 400,
+                    isActive = true
                 };
 
                 Configuration config = new Configuration
@@ -263,7 +264,7 @@ namespace NEST_App.Controllers.Api
         // GET: api/UAVs
         public IQueryable<UAV> GetUAVs()
         {
-            return db.UAVs;
+            return db.UAVs.Where(u => u.isActive == true);
         }
 
         // GET: api/UAVs/5
@@ -343,6 +344,41 @@ namespace NEST_App.Controllers.Api
             await db.SaveChangesAsync();
 
             return Ok(uAV);
+        }
+
+        [ResponseType(typeof(UAV))]
+        [HttpPut]
+        [Route("api/uavs/disableuav/{id}")]
+        public async Task<IHttpActionResult> disableUAV(int id)
+        {
+            UAV uav = await db.UAVs.FindAsync(id);
+            if (uav == null)
+            {
+                return NotFound();
+            }
+            uav.isActive = false;
+
+
+            db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
+
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UAVExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok(uav);
+            
         }
 
         protected override void Dispose(bool disposing)
