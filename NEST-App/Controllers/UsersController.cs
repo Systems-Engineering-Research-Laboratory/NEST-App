@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using NEST_App.Models;
+using System.Threading.Tasks;
 
 namespace NEST_App.Controllers
 {
@@ -32,6 +33,17 @@ namespace NEST_App.Controllers
             }
 
             return Ok(user);
+        }
+        [ResponseType(typeof(IEnumerable<UAV>))]
+        [HttpGet]
+        [Route("api/users/getassigneduavs/{id}")]
+        public async Task<IHttpActionResult> getAssignedUavs(int id)
+        {
+            User user = await db.Users.FindAsync(id);
+            IEnumerable<UAV> uavs = user.UAVs;
+
+
+            return Ok(uavs);
         }
 
         // PUT: api/Users/5
