@@ -34,7 +34,7 @@
 
         //*******************SELECTED*********************//
         if (marker.icon.fillColor == 'green') {
-            
+
             selectedUAV = marker.uav;
             console.log(selectedUAV);
             //Refresh current flightpath and display it
@@ -102,9 +102,13 @@
         }
     },
 
-    AreaSelect: function (map, e, mouseIsDown, shiftPressed, gridBoundingBox, selectedDrones, uavs) {
+    AreaSelect: function (theMap, e, mouseIsDown, shiftPressed, gridBoundingBox, selectedDrones, uavs) {
+        console.log("mouseIsDown: " + mouseIsDown);
+        console.log("shiftPressed: " + shiftPressed);
+        console.log("gridBoundingBox: " + gridBoundingBox);
         if (mouseIsDown && (shiftPressed || gridBoundingBox != null)) {
-            mouseIsDown = 0;
+            //console.log("AreaSelect check fired");
+            mouseIsDown = false;
             if (gridBoundingBox !== null) {
                 while (selectedDrones.length > 0) {//clear the selected drone list
                     selectedDrones.pop();
@@ -124,10 +128,12 @@
                 }
                 gridBoundingBox.setMap(null);
             }
-            gridBoundingBox = null;
+            //console.log("BOunding box set to null");
+            mapFunctions.ResetBoundingBox();
         }
+        //mapFunctions.shiftPressed = false;
         //mapListeners -> map
-        map.setOptions({
+        theMap.setOptions({
             draggable: true
         });
     }

@@ -199,10 +199,10 @@ $(document).ready(function () {
     
     vehicleHub.connection.start();
 
-    var shiftPressed = false;
+
     $(window).keydown(function (evt) {
         if (evt.which === 16) {
-            shiftPressed = true;
+            mapFunctions.shiftPressed = true;
             //console.log("Shift key down");
         }
         if (evt.ctrlKey) {
@@ -211,14 +211,14 @@ $(document).ready(function () {
         droneSelection.KeyBinding(selectedDrones, storedGroups, evt);
     }).keyup(function (evt) {
         if (evt.which === 16) {
-            shiftPressed = false;
+            mapFunctions.shiftPressed = false;
             //console.log("Shift key up");
         }
     });
-    var mouseDownPos, gridBoundingBox = null, mouseIsDown = 0;
+
     var mapListeners = map;/// <-----------------------------TODO: Redundant?
 
-    google.maps.event.addListener(mapListeners, 'mousemove', function (e) { mapFunctions.DrawBoundingBox(this, e, shiftPressed, gridBoundingBox, mouseIsDown, mouseDownPos) });
-    google.maps.event.addListener(mapListeners, 'mousedown', function (e) { mapFunctions.StopMapDrag(this, e, shiftPressed, mouseIsDown, mouseDownPos) });
-    google.maps.event.addListener(map, 'mouseup', function (e) {droneSelection.AreaSelect(this, e, mouseIsDown, shiftPressed, gridBoundingBox, selectedDrones, uavs)});
+    google.maps.event.addListener(mapListeners, 'mousemove', function (e) { mapFunctions.DrawBoundingBox(this, e) });
+    google.maps.event.addListener(mapListeners, 'mousedown', function (e) { mapFunctions.StopMapDrag(this, e); console.log("GOOG mouseIsDown: " + mapFunctions.mouseIsDown); });
+    google.maps.event.addListener(mapListeners, 'mouseup', function (e) { droneSelection.AreaSelect(this, e, mapFunctions.mouseIsDown, mapFunctions.shiftPressed, mapFunctions.gridBoundingBox, selectedDrones, uavs) });
 });

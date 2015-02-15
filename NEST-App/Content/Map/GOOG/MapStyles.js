@@ -74,7 +74,8 @@
         fillColor: '#3399FF',
         strokeWeight: 0,
         fillOpacity: 0.1,
-        clickable: false
+        clickable: false,
+        zindex: -99999,
     },
 
     flightPathOptions: {

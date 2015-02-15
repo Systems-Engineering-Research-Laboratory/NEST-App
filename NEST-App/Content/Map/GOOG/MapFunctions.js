@@ -1,4 +1,9 @@
-﻿var mapFunctions = {
+﻿var mapFunctions = {   
+    shiftPressed : false,
+    mouseDownPos: null,
+    gridBoundingBox : null,
+    mouseIsDown : false,
+
     GetLatLong: function (theMap, event) {
         var lat = event.latLng.lat();
         var lng = event.latLng.lng();
@@ -37,17 +42,19 @@
         }
     },
 
-    DrawBoundingBox: function (theMap, e, shiftPressed, gridBoundingBox, mouseIsDown, mouseDownPos) {
-        //console.log("move mouse down, shift down", mouseIsDown, shiftPressed);
-        if (mouseIsDown && (shiftPressed || gridBoundingBox != null)) {
-            if (gridBoundingBox !== null) {
-                var newbounds = new google.maps.LatLngBounds(mouseDownPos, null);
+    DrawBoundingBox: function (theMap, e) {
+        //console.log("move mouse down, shift down", this.mouseIsDown, this.shiftPressed);
+        if (this.mouseIsDown && (this.shiftPressed || this.gridBoundingBox != null)) {
+            if (this.gridBoundingBox != null) {
+                //console.log("fire first if");
+                //console.log("Bounding box: " + this.gridBoundingBox);
+                var newbounds = new google.maps.LatLngBounds(this.mouseDownPos, null);
                 newbounds.extend(e.latLng);
-                gridBoundingBox.setBounds(newbounds);
+                this.gridBoundingBox.setBounds(newbounds);
 
             } else {
-                //console.log("first mouse move");
-                gridBoundingBox = new google.maps.Rectangle({
+                //console.log("box created");
+                this.gridBoundingBox = new google.maps.Rectangle({
                     map: theMap,
                     bounds: null,
                     fillOpacity: 0.15,
@@ -58,10 +65,17 @@
         }
     },
 
-    StopMapDrag: function (theMap, e, shiftPressed, mouseIsDown, mouseDownPos) {
-        if (shiftPressed) {
-            mouseIsDown = 1;
-            mouseDownPos = e.latLng;
+    ResetBoundingBox : function (){
+        this.gridBoundingBox = null;
+    },
+
+
+    StopMapDrag: function (theMap, e) {
+        console.log("StopMapDrag fired");
+        if (this.shiftPressed) {
+            console.log("MouseDown true");
+            this.mouseIsDown = true;
+            this.mouseDownPos = e.latLng;
             theMap.setOptions({
                 draggable: false
             });
