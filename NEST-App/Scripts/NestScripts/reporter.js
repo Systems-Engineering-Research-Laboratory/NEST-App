@@ -80,4 +80,18 @@ function Reporter() {
             data: wp
         });
     }
+
+    this.getMissionById = function (id) {
+        return $.ajax({
+            url: 'api/missions/' + id,
+            type: 'GET'
+        });
+    }
+
+    this.getMissions = function () {
+        return $.ajax({
+            url: 'api/missions',
+            type: 'GET',
+        })
+    }
 }

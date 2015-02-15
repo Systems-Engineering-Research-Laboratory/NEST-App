@@ -1,13 +1,22 @@
 ﻿
 function WaypointManager() {
     this.schedules = [];
+    this.missions = [];
     this.markers = [];
-    var that; //that's the stuff
+
+    var that = this; //that's the stuff
     $.ajax({
         url: '/api/schedule',
         type: 'GET'
     }).success(function (data, textStatus, jqXHR) {
-        this.schedules = data;
+        that.schedules = data;
+    });
+
+    $.ajax({
+        url: '/api/missions',
+        type: 'GET'
+    }).success(function (data, textStatus, jqXHR) {
+        that.missions = data;
     });
 
     this.addMarker = function (marker) {
@@ -27,55 +36,68 @@ function WaypointManager() {
         if (sched == null || !sched.CurrentMission) {
             return;
         }
-        if (marker.icons.fillColor === "green") {
-            this.displayWaypointsPerMission(sched.CurrentMission)
-        }
-        else {
-            //TODO: implement this function
-            //this.hideWaypointsPerMission(sched.CurrentMission);
+        var miss = this.getMissionByMissionId(sched.CurrentMission);
+        if (miss) {
+            if (marker.icon.fillColor === "green") {
+                this.displayWaypointsPerMission(miss)
+            }
+            else {
+                //TODO: implement this function
+                //this.hideWaypointsPerMission(sched.CurrentMission);
+            }
         }
     }
 
-    this.getScheduleById = function (id) {
+    this.getScheduleByUavId = function (id) {
         for (var i = 0; i < this.schedules.length; i++) {
-            if (schedules[i].UAVId == id) {
-                return schdules[i].UAVId
+            if (this.schedules[i].UAVId == id) {
+                return this.schedules[i];
             }
         }
         return null;
     }
 
     this.displayWaypointsPerMission = function (mission) {
+        if (!mission.Waypoints) {
+            $.ajax({
+                url: '/api/missions/waypoints/' + mission.Id,
+                type: 'GET'
+            }).success(function (data, textStatus, jqXHR) {
+                mission.Waypoints = data;
+                that.displayWaypointsPerMission(mission);
+            });
+            return;
+        }
         var wps = mission.Waypoints;
         for (var i = 0; i < wps.length; i++) {
             var wp = wps[i];
             if (wp.circle) {
-                wp.circle.setMap(this.map);
+                wp.circle.setMap(map);
             }
             else {
                 var ll = new google.maps.LatLng(wp.Latitude, wp.Longitude);
                 var wpOptions = {
                     center: ll,
-                    map: this.map,
+                    map: map,
                     strokeColor: '#0000FF', //blue
                     strokeOpacity: 0.8,
                     fillColor: '#0000FF',
                     fillOpacity: 0.5,
                     radius: 10,
                 }
-                mission.point = new google.maps.Circle(wpOptions);
+                wp.circle = new google.maps.Circle(wpOptions);
             }
         }
         if (mission.flightPath) {
-            mission.flightPath.setMap(this.map)
+            mission.flightPath.setMap(map)
         }
         else if (wps.length > 1) {
             var curWp = wps[0];
             var points = [new google.maps.LatLng(curWp.Latitude, curWp.Longitude)]
             while (curWp.NextWaypointId) {
-                var nextWp = findWaypointById(id, wps);
+                var nextWp = this.getWaypointById(curWp.NextWaypointId, wps);
                 if (nextWp) {
-                    var next = new googlemaps.LatLng(nextWp.Latitude, nextWp.Longitude);
+                    var next = new google.maps.LatLng(nextWp.Latitude, nextWp.Longitude);
                     points.push(next);
                     curWp = nextWp;
                 }
@@ -90,16 +112,28 @@ function WaypointManager() {
                 strokeOpacity: 1.0,
                 strokeWeight: 2
             });
-            flightPath.setMap(flightPath);
+            flightPath.setMap(map);
+            mission.flightPaht = flightPath;
         }
+    }
+
+    this.getMissionByMissionId = function(id) {
+        return findElemInArrayById(id, this.missions);
+    }
+
+    this.getWaypointById = function(id, wps){
+        return findElemInArrayById(id, wps);
     }
 }
 
-function findWaypointById(id, wps) {
-    for (var i = 0; i < wps.length; i++) {
-        if (wps[i].Id == id) {
-            return wps[i];
+function findElemInArrayById(id, array) {
+    for (var i = 0; i < array.length; i++) {
+        var elem = array[i];
+        if (elem.id && elem.id == id) {
+            return elem;
+        }
+        else if (elem.Id && elem.Id == id) {
+            return elem;
         }
     }
-    return null;
 }
