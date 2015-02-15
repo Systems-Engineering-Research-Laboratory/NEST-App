@@ -108,6 +108,15 @@
                 console.log(data);
             });
         };
+        $scope.assignUser = function (uav_id, user_id) {
+            $http.post('/api/uavs/assignuser?uav_id=' + uav_id + '&user_id=' + user_id)
+            .success(function (data, status, headers, config) {
+
+            })
+            .error(function (data, status, headers, config) {
+
+            });
+        };
     };
 
 
