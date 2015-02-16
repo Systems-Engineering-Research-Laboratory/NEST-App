@@ -43,7 +43,7 @@
     },
 
     DrawBoundingBox: function (theMap, e) {
-        //console.log("move mouse down, shift down", this.mouseIsDown, this.shiftPressed);
+        console.log("move mouse down, shift down", this.mouseIsDown, this.shiftPressed);
         if (this.mouseIsDown && (this.shiftPressed || this.gridBoundingBox != null)) {
             if (this.gridBoundingBox != null) {
                 //console.log("fire first if");
@@ -67,6 +67,10 @@
 
     ResetBoundingBox : function (){
         this.gridBoundingBox = null;
+    },
+
+    ResetMouseDown : function (){
+        this.mouseDownPos = null;
     },
 
 
