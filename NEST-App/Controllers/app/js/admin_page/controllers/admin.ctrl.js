@@ -98,7 +98,7 @@
         };
 
         $scope.createEmergencyEvent = function () {
-            var number = Math.floor((Math.random() * ($scope.uavs.length)) + 0);
+            var number = Math.floor((Math.random() * ($scope.uavs.length - 1)) + 0);
             var number2 = Math.floor((Math.random() * ($scope.emergencySituations.length)) + 0);
             var pickedUav = $scope.uavs[number];
             var eEvent = {
@@ -109,14 +109,13 @@
                 operator_screen_name: "Test Operator",
                 UAVId: pickedUav.Id
             }
-            console.log(eEvent);
-            $http({
-                method: 'POST',
-                url: '/api/uavs/postuavevent',
-                data: eEvent,
-                success: function (data) {
-                    $scope.emergencyEvents.push(data);
-                }
+            $http.post('/api/uavs/postuavevent', eEvent)
+            .success(function (data, status, headers, config) {
+                $scope.emergencyEvents.push(data);
+                var emitHub = $.connection.eventLogHub;
+                emitHub.connection.start().done(function () {
+                    emitHub.server.emit(eEvent);
+                });
             });
         };
 
