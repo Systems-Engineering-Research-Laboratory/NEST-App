@@ -345,6 +345,14 @@ namespace NEST_App.Controllers.Api
 
             return Ok(uAV);
         }
+        [ResponseType(typeof(IEnumerable<UAV>))]
+        [HttpGet]
+        [Route("api/uavs/getunassigned")]
+        public IHttpActionResult getUnassigned()
+        {
+            IEnumerable<UAV> uavs = db.UAVs.Where(u => u.User == null && u.isActive);
+            return Ok(uavs);
+        }
 
         [ResponseType(typeof(UAV))]
         [HttpPost]
