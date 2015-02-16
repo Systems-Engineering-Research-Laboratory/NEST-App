@@ -10,6 +10,7 @@
         $scope.desiredUAVCount = '';
         $scope.selectedUser = null;
         $scope.unassignedUavs = [];
+        $scope.emergencyEvents = [];
         var User = function (user) {
             //insert user model here
             var User = {
@@ -89,6 +90,29 @@
                 alert(data);
             });
         };
+
+        $scope.createEmergencyEvent = function () {
+            var number = Math.floor((Math.random() * ($scope.uavs.length - 1)) + 0);
+            var pickedUav = $scope.uavs[number];
+            var eEvent = {
+                uav_id: pickedUav.Id,
+                message: "Warning: Strong crosswinds detected",
+                criticality: "critical",
+                uav_callsign: pickedUav.Callsign,
+                operator_screen_name: "Test Operator",
+                UAVId: pickedUav.Id
+            }
+            console.log(eEvent);
+            $http({
+                method: 'POST',
+                url: '/api/uavs/postuavevent',
+                data: eEvent,
+                success: function (data) {
+                    $scope.emergencyEvents.push(data);
+                }
+            });
+        };
+
         $scope.getOperators = function () {
             $http.get('/api/users')
                 .success(function (data, status, headers, config) {
@@ -139,6 +163,7 @@
 
         });
         $scope.getGeneratedUAVs();
+
     };
 
 
