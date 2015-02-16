@@ -142,12 +142,16 @@ $(document).ready(function () {
 
 
     });
-
     emitHub.client.newEvent = function (evt) {
         console.log(evt);
-        mapStyles.infobox.setContent(evt.message);
-        mapStyles.infobox.open(map, evt.UAVId.marker);
-        mapStyles.infoboxAlert.open(map, evt.UAVId.marker);
+        //console.log(document.getElementById("infobox"));
+        console.log(document.getElementById("warn"));
+        document.getElementById("infobox").innerHTML = "<p id='warn'>Warning:</p>"+evt.message;
+        document.getElementById("warn").style.color = "red";
+        document.getElementById("warn").style.fontWeight = "bold";
+        document.getElementById("warn").style.margin = 0;
+        mapStyles.infobox.open(map, uavs[evt.UAVId].marker);
+        mapStyles.infoboxAlert.open(map, uavs[evt.UAVId].marker);
     }
 
     var warningMessageCounter = 0;

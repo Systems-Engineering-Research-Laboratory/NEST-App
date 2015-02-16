@@ -12,10 +12,10 @@
         $scope.unassignedUavs = [];
         $scope.emergencyEvents = [];
         $scope.emergencySituations = [
-            "Warning: Strong crosswinds detected",
-            "Warning: Detected damage to rotary blades",
-            "Warning: Weak GPS link",
-            "Warning: Payload in danger of detachment",
+            " Strong crosswinds detected",
+            " Detected damage to rotary blades",
+            " Weak GPS link",
+            " Payload in danger of detachment",
         ]
         var User = function (user) {
             //insert user model here
@@ -117,6 +117,7 @@
                     emitHub.server.emit(eEvent);
                 });
             });
+            console.log(eEvent);
         };
 
         $scope.getOperators = function () {
