@@ -19,16 +19,14 @@
             border: none;
             padding: 10px;
             height: 700px;
-            width: 100%;
-        }
+            width: 100%;}
 
         .UAV_table {
             width: 36%;
             border: none;
             float: left;
             padding: 10px;
-            margin: 5px;
-        }
+            margin: 5px;}
 
         .UAV_table tr {
             background-color: #ffffff;
@@ -37,12 +35,9 @@
             padding-top: 3px;
             padding-bottom: 3px;
             padding-left: 6px;
-            padding-right: 6px;
-        }
+            padding-right: 6px;}
 
-        .UAV_table tr:hover {
-            background-color: #e9e9ea
-        }
+        .UAV_table tr:hover {background-color: #e9e9ea;}
 
         .UAV_table th {
             background-color: #0a074a;
@@ -54,8 +49,7 @@
             padding-left: 6px;
             padding-right: 6px;
             color: white;
-            font-size: 15px;
-        }
+            font-size: 15px;}
 
         .UAV_table td {
             border: 1px solid white;
@@ -64,12 +58,15 @@
             padding-bottom: 3px;
             padding-left: 6px;
             padding-right: 6px;
-            border-radius: 5px;
-        }
+            border-radius: 5px;}
 
-        .UAV_table td:hover {
-            cursor: pointer;
-        }
+        .UAV_table td:hover {cursor: pointer;}
+
+        .mission_table th {text-align: center;}
+
+        .mission_table td {
+            text-align: center;
+            padding: 5px;}
 
         .outer_detail_div {
             margin: 5px;
@@ -81,35 +78,30 @@
             border-radius: 8px;
             width: 62%;
             float: right;
-            background-color: #e9e9ea;
-            /*display: none;*/
-        }
+            background-color: #e9e9ea;}
 
-        .detial_title {
+        .detail_title {
             font-size: 25px;
             font-weight: bold;
             line-height: 90%;
             font-family: Verdana;
-            color: #0b0769;
-        }
+            color: #0b0769;}
 
         .detail_statue_metrics_div {
             border: none;
             padding: 2px;
             width: 40%;
             float: left;
-            margin-right: 2px;
-        }
+            margin-right: 2px;}
 
         .title {
-            font-size:18px;
+            font-size: 18px;
             font-weight: bold;
             line-height: 80%;
             font-family: Verdana;
-            padding-top:3px;
+            padding-top: 3px;
             color: #0a074a;
-            text-decoration: underline; 
-        }
+            text-decoration: underline;}
 
         .details {
             font-size: 15px;
@@ -117,7 +109,14 @@
             font-family: Verdana;
             padding-bottom: 0;
             color: #0a074a;
-        }
+            margin: 1px;}
+
+        #ETA #STA #route #avail {
+            font-size: 15px;
+            line-height: 100%;
+            font-family: Verdana;
+            padding-bottom: 0;
+            color: #0a074a;}
 
         .detail_statue {
             border: 1px solid #0b0769;
@@ -125,8 +124,7 @@
             border-radius: 8px;
             padding: 5px;
             padding-left: 8px;
-            background-color: #fafbeb
-        }
+            background-color: #fafbeb;}
 
         .detail_metrics {
             border: 1px solid #0b0769;
@@ -134,8 +132,7 @@
             border-radius: 8px;
             padding: 5px;
             padding-left: 8px;
-            background-color: #fafbeb
-        }
+            background-color: #fafbeb;}
 
         .detail_acitivity {
             border: 1px solid #0b0769;
@@ -143,23 +140,18 @@
             border-radius: 8px;
             padding: 5px;
             padding-left: 8px;
-            background-color: #fafbeb;
-        }
+            background-color: #fafbeb;}
 
-        .UAV_time_tr {
-            line-height: 100%;
-        }
+        .UAV_time_tr {line-height: 100%;}
 
         .UAV_time_td {
             font-size: 15px;
-            font-family: Verdana;
-        }
+            font-family: Verdana;}
 
         .UAV_time_td_2nd {
             font-size: 15px;
             font-family: Verdana;
-            padding-left: 15px;
-        }
+            padding-left: 15px;}
 
         .map {
             border: none;
@@ -167,8 +159,7 @@
             margin: 2px;
             margin-left: 0;
             float: right;
-            height: 100%;   
-        }
+            height: 100%;}
 
         #map-canvas {
             width: auto;
@@ -176,8 +167,7 @@
             margin: auto;
             padding: 0px;
             border: 1px solid #0b0769;
-            border-radius: 8px;            
-        }
+            border-radius: 8px;}
 
         .detail_package {
             border: 1px solid #0b0769;
@@ -187,43 +177,46 @@
             padding-left: 8px;
             background-color: #fafbeb;
             width: auto;
-            height: auto;
-        }
+            height: auto;}
 
-        .content_tr {
-            line-height: 100%;
-        }
-
-        .content_td1 {
-            font-size: 15px;
-            font-family: Verdana;
-            padding-left: 35px;
+        .labels {
+            color: blue;
+            font-size: 12px;
+            font-weight: bold;
             text-align: center;
+            width: 60px;
         }
-
-        .content_td2 {
-            font-size: 15px;
-            font-family: Verdana;
-            padding-left: 15px;
-            text-align: center;
-        }
-
+        
     </style>
 
 </head>
 <body>
     <br />
     <div class="outside">
-        <table class="UAV_table">
+        <table class="UAV_table" id="UAV_table">
             <tr>
                 <th>Callsign</th>
                 <th>NumDeliveries</th>
                 <th>Mileage</th>
-                <th>Battery Level</th>
+                <th>Battery</th>
+                <th style="display:none">ETA</th>
+                <th style="display:none">STA</th>
+                <th style="display:none">Route</th>
+                <th style="display:none">Availability</th>
+                <th style="display:none">Configuration</th>
+                <th style="display:none">current_lat</th>
+                <th style="display:none">current_long</th>
+                <th style="display:none">current_alt</th>
+                <th style="display:none">dest_lat</th>
+                <th style="display:none">dest_long</th>
+                <th style="display:none">total_delivery</th>
+                <th style="display:none">payload</th>
+                <th style="display:none">UAV ID</th>
+                <th style="display:none">Cost</th>
             </tr>
             @foreach (UAV uav in Model.UAVs)
             {
-                <tr onclick="click_row()">
+                <tr id="UAV_table_row">
                     <td>
                         @Html.DisplayFor(modelItem => uav.Callsign)
                     </td>
@@ -234,74 +227,84 @@
                         @Html.DisplayFor(modelItem => uav.Mileage)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().BatteryLevel) %
+                        @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().BatteryLevel)
+                    </td>
+                    <td style="display:none">
+                        @*@Html.DisplayFor(modelItem => uav.Mission.EstimatedCompletionTime)*@
+                    </td>
+                    <td style="display:none">
+                        @*@Html.DisplayFor(modelItem => uav.Mission.ScheduledCompletionTime)*@
+                    </td>
+                    <td style="display:none">
+                        @*@Html.DisplayFor(modelItem => uav.Mission.Phase)*@
+                    </td>
+                    <td style="display:none">
+                        @*@Html.DisplayFor(modelItem => uav.Mission.FlightPattern)*@
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => uav.Configurations.Classification)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().Latitude)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().Longitude)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().Altitude)
+                    </td>
+                    <td style="display:none">
+                        @*@Html.DisplayFor(modelItem => uav.Mission.Latitude)*@
+                    </td>
+                    <td style="display:none">
+                        @*@Html.DisplayFor(modelItem => uav.Mission.Longitude)*@
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => uav.NumDeliveries)
+                    </td>
+                    <td style="display:none">
+                        payload
+                        @*@Html.DisplayFor(modelItem =>*@
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => uav.Id)
+                    </td>
+                    <td style="display:none">
+                        cost
                     </td>
                 </tr>
             }
         </table>
 
         <div class="outer_detail_div" id="outer_detail_div">
-            @foreach (UAV uavid in Model.UAVs)
-            {
-                <p class="detial_title">
-                    &nbsp;UAV: # @Html.DisplayFor(modelItem => uavid.Id) (@Html.DisplayFor(modelItem => uavid.Callsign)) Detail
-                </p>
-            }
+            <p class="detail_title" id="detail_title">
+                UAV #
+            </p>
 
             <div class="detail_statue_metrics_div">
                 <div class="detail_statue">
                     <p class="title">Statue</p>
                     <p class="details">
                         Delivering package <br />
-                        @foreach (Mission miss in Model.missions)
-                        {
-                            <p class="details">
-                                ETA: @Html.DisplayFor(modelItem => miss.EstimatedCompletionTime) <br />
-                                STA: @Html.DisplayFor(modelItem => miss.ScheduledCompletionTime) <br />
-                                Route: @Html.DisplayFor(modelItem => miss.Phase) <br />
-                                Availability: @Html.DisplayFor(modelItem => miss.FlightPattern)
-                            </p>
-                            
-                            foreach (Configuration conf in Model.Configurations)
-                            {
-                                <p class="details">
-                                    Configureation: @Html.DisplayFor(modelItem => conf.Classification) <br />
-                                </p>
-                            }
-                        }
-
-                    @foreach (FlightState uav_coor in Model.FlightStates)
-                    {
-                        <p class="details">
-                            Current Coord: <br />
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.Latitude), <br />
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;@Html.DisplayFor(modelItem => uav_coor.Longitude),<br />
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => uav_coor.Altitude)<br />
-                        </p>
-                    }
-
-                    @foreach (Mission dest_coor in Model.missions)
-                    {
-                        <p class="details">
-                            Destination Coord: <br />
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => dest_coor.Latitude), <br />
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;@Html.DisplayFor(modelItem => dest_coor.Longitude),<br />
-                            <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;//Html.DisplayFor(modelItem => dest_coor.Altitude)<br />-->
-                        </p>
-                    }
-
+                    <p class="details" id="ETA">ETA: </p>
+                    <p class="details" id="STA">STA: </p>
+                    <p class="details" id="route">Route:  </p>
+                    <p class="details" id="avail">Availability: </p>
+                    <p class="details" id="conf">Configuration:
+                    <p class="details"> Current Coord: </p>
+                    <p class="details" id="curr_lat"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp; </p>
+                    <p class="details" id="curr_long"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;</p>
+                    <p class="details" id="curr_alt"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                    <p class="details"> Destination Coord:</p>
+                    <p class="details" id="dest_lat"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp; </p>
+                    <p class="details" id="dest_long"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;</p>
                 </div>
                 <div class="detail_metrics">
                     <p class="title">Metrics</p>
-                    @foreach (UAV uav in Model.UAVs)
-                    {
-                        <p class="details">
-                            Battery: @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().BatteryLevel) %<br />
-                            Total Miles: @Html.DisplayFor(modelItem => uav.Mileage) miles<br />
-                            Current Delivery: @Html.DisplayFor(modelItem => uav.NumDeliveries)<br />
-                            Total Deliveries: @Html.DisplayFor(modelItem => uav.NumDeliveries)
-                        </p>
-                    }
+                    <p class="details" id="battery"> Battery: </p>
+                    <p class="details" id="mileage"> Total Miles: </p>
+                    <p class="details" id="numdeliveries"> Current Delivery: </p>
+                    <p class="details" id="total_deliveries"> Total Delivery: </p>
                 </div>
 
                 <div class="detail_acitivity">
@@ -341,12 +344,9 @@
                                 </td>
                             </tr>
                             <tr class="UAV_time_tr">
-                                @foreach (UAV uav in Model.UAVs)
-                                {
-                                    <td class="UAV_time_td">
-                                        Delivered #@Html.DisplayFor(modelItem => uav.NumDeliveries)
-                                    </td>
-                                }
+                                <td class="UAV_time_td" id="UAV_time_td">
+                                    Delivered #
+                                </td>
                                 <td class="UAV_time_td_2nd">
                                     9:25 AM
                                 </td>
@@ -360,8 +360,6 @@
                                 </td>
                             </tr>
                         </table>
-
-
                     </p>
                 </div>
             </div>
@@ -374,40 +372,24 @@
                     <p class="details">
                         Dest. Addr: 3550 Nordhoff St, <br />
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Northridge, CA 91330 <br /><br />
-                        Package Contents:
-                        <table>
-                            <tr class="content_tr">
-                                <td class="content_td1">
-                                    Red Robin Seasoning
-                                </td>
-                                <td class="content_td2">
-                                    Shrimp
-                                </td>
-                            </tr>
-                            <tr class="content_tr">
-                                <td class="content_td1">
-                                    Fries
-                                </td>
-                                <td class="content_td2">
-                                    Celery
-                                </td>
-                            </tr>
-                        </table>
-                    </p>
-                    <p class="details">
-                        Total Cost of Package: $999 <br /><br />
-                        Customer Notes: Please do not leave package by front door.
-                    </p>
+                        Package Contents: </p>
+                    <p class="details" id="payload" style="margin-bottom: 2px;"></p>
+                    <p class="details" id="cost"> Total Cost of Package: $</p>
+                    <p class="details">Customer Notes: Please do not leave package by front door.</p>
                 </div>
             </div>
         </div>
-     </div>
+    </div>
+
+
 </body>
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=drawing"></script>
 @Scripts.Render("~/bundles/jquery")
 @Scripts.Render("~/Scripts/jquery.signalR-2.0.2.js")
 @Scripts.Render("~/signalr/hubs")
 <script type="text/javascript">
+
+
     $(document).ready(function () {
         var mapOptions = {
             zoom: 17,
@@ -415,18 +397,83 @@
             disableDefaultUI: true,
             zoomControl: true,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
-            //mapTypeControl: true,
-            //mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU},
             disableDoubleClickZoom: true,
+            draggable: false
         }
-        map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+        var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
+        var uavSymbolBlack = {
+            path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
+            fillColor: 'black',
+            fillOpacity: 0.8,
+            scale: 0.2,
+            zIndex: 1,
+            anchor: new google.maps.Point(355, 295)
+        };
+
+        var table = document.getElementById("UAV_table");
+        if (table != null) {
+            for (var i = 1; i < table.rows.length; i++) {
+                for (var j = 0; j < table.rows[i].cells.length; j++) {
+                    table.rows[i].onclick = function () {
+                        var callsign = this.cells[0];
+                        var numDelivery = this.cells[1];
+                        var mile = this.cells[2];
+                        var battery = this.cells[3];
+                        var ETA = this.cells[4];
+                        var STA = this.cells[5];
+                        var route = this.cells[6];
+                        var availability = this.cells[7];
+                        var confiugration = this.cells[8];
+                        var current_lat = this.cells[9];
+                        var current_long = this.cells[10];
+                        var current_alt = this.cells[11];
+                        var dest_lat = this.cells[12];
+                        var dest_long = this.cells[13];
+                        var total_delivery = this.cells[14];
+                        var payload = this.cells[15];
+                        var uavid = this.cells[16];
+                        var cost = this.cells[17];
+                        var uav_lat_long = new google.maps.LatLng(this.cells[9].innerHTML, this.cells[10].innerHTML);
+
+                        document.getElementById("detail_title").innerHTML = 'UAV #' + uavid.innerHTML + '(' + callsign.innerHTML + ') Detail';
+                        document.getElementById("numdeliveries").innerHTML = 'Current Delivery: ' + numDelivery.innerHTML;
+                        document.getElementById("total_deliveries").innerHTML = 'Total Delivery: ' + total_delivery.innerHTML;
+                        document.getElementById("mileage").innerHTML = 'Total Miles: ' + mile.innerHTML + ' miles';
+                        document.getElementById("battery").innerHTML = 'Battery: ' + battery.innerHTML;
+                        document.getElementById("ETA").innerHTML = 'ETA: ' + ETA.innerHTML;
+                        document.getElementById("STA").innerHTML = 'STA: ' + STA.innerHTML;
+                        document.getElementById("route").innerHTML = 'Route: ' + route.innerHTML;
+                        document.getElementById("avail").innerHTML = 'Availability: ' + availability.innerHTML;
+                        document.getElementById("conf").innerHTML = 'Configuration: ' + confiugration.innerHTML;
+                        document.getElementById("UAV_time_td").innerHTML = 'Delivered #' + numDelivery.innerHTML;
+                        document.getElementById("curr_lat").innerHTML = '　　LAT:　　 ' + current_lat.innerHTML;
+                        document.getElementById("curr_long").innerHTML = '　　LONG:　' + current_long.innerHTML;
+                        document.getElementById("curr_alt").innerHTML = '　　ALT:　　 ' + current_alt.innerHTML;
+                        document.getElementById("dest_lat").innerHTML = '　　LAT:　　 ' + dest_lat.innerHTML;
+                        document.getElementById("dest_long").innerHTML = '　　LONG:　' + dest_long.innerHTML;
+                        document.getElementById("payload").innerHTML = '　　' + payload.innerHTML;
+                        document.getElementById("cost").innerHTML = 'Total Cost of Package: $' + cost.innerHTML;
+                        
+                        var UAVmarker = new google.maps.Marker({
+                                position: uav_lat_long,
+                                map: map,
+                                icon: uavSymbolBlack,
+                                labelContent: this.cells[0].innerHTML + '<div style="text-align: center;"><b>Alt: </b>' + this.cells[11].innerHTML + '<br/><b>Bat: </b>' + this.cells[3].innerHTML + '</div>',
+                                labelAnchor: new google.maps.Point(95, 20),
+                                labelClass: "labels",
+                                labelStyle: { opacity: 0.75 },
+                        });
+
+                        map.setCenter(uav_lat_long);
+
+
+                    };
+                }
+            }
+        }
     });
 
-    function click_row() {
-        document.getElementById("outer_detail_div").style.display = "block";
-    }
-    
 
 
 </script>
