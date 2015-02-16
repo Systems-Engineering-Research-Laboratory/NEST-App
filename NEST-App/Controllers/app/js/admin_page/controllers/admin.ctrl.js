@@ -121,6 +121,16 @@
         $scope.userSelected = function (user) {
             $scope.selectedUser = user;
         };
+
+        $http.get('/api/users')
+        .success(function (data, status, headers, config) {
+            $scope.allUsers = data;
+        })
+        .error(function (data, status, headers, config) {
+            alert("An error has occurred. Check console");
+            console.log(data);
+        });
+        $scope.getGeneratedUAVs();
     };
 
 
