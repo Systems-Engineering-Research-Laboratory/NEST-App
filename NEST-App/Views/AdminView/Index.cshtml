@@ -6,77 +6,120 @@
     .glyphicon-remove {
         cursor: pointer;
     }
+
+    .assignmentWrapper {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .assignedWrapper {
+        width: 40%;
+        float: left;
+        border: 1px solid gray;
+    }
+
+    .unassignedWrapper {
+        border: 1px solid gray;
+        overflow: hidden;
+    }
 </style>
 
 <h2>Index</h2>
 <div ng-app="adminApp" ng-controller="AdminCtrl">
-    <input type="number" value="0" id="desiredUAVCount"/>
-    <button ng-click="generateUAVs($('#desiredUAVCount').val())">Generate UAVs</button>
-    <button ng-click="getGeneratedUAVs()">Get UAV List</button>
-    <table class="table">
-        <tr>
-            <th>
-                UAV Callsign
-            </th>
-            <th>
-                # Deliveries
-            </th>
-            <th>
-                Mileage
-            </th>
-            <th>
-                Create Date
-            </th>
-            <th>
-                Modified Date
-            </th>
-            <th>
-                Max Velocity
-            </th>
-            <th>
-                Max Acceleration
-            </th>
-            <th>
-                Max Vert Velocity
-            </th>
-            <th>
-                Update Rate
-            </th>
-            <th>
-                Cruise Altitude
-            </th>
-            <th>
-                Min Delivery Alt
-            </th>
-            <th>
+    <div>
+        <input type="number" value="0" id="desiredUAVCount" />
+        <button ng-click="generateUAVs($('#desiredUAVCount').val())">Generate UAVs</button>
+        <button ng-click="getGeneratedUAVs()">Get UAV List</button>
+        <table class="table">
+            <tr>
+                <th>
+                    UAV Callsign
+                </th>
+                <th>
+                    # Deliveries
+                </th>
+                <th>
+                    Mileage
+                </th>
+                <th>
+                    Create Date
+                </th>
+                <th>
+                    Modified Date
+                </th>
+                <th>
+                    Max Velocity
+                </th>
+                <th>
+                    Max Acceleration
+                </th>
+                <th>
+                    Max Vert Velocity
+                </th>
+                <th>
+                    Update Rate
+                </th>
+                <th>
+                    Cruise Altitude
+                </th>
+                <th>
+                    Min Delivery Alt
+                </th>
+                <th>
 
-            </th>
-        </tr>
-        <tr ng-repeat="uav in uavs">
-            <td>{{uav.Callsign}}</td>
-            <td>{{uav.NumDeliveries}}</td>
-            <td>{{uav.Mileage}}</td>
-            <td>{{uav.create_date}}</td>
-            <td>{{uav.modified_date}}</td>
-            <td>{{uav.MaxVelocity}}</td>
-            <td>{{uav.MaxAcceleration}}</td>
-            <td>{{uav.MaxVerticalVelocity}}</td>
-            <td>{{uav.UpdateRate}}</td>
-            <td>{{uav.CruiseAltitude}}</td>
-            <td>{{uav.MinDeliveryAlt}}</td>
-            <td><div class="glyphicon glyphicon-remove" ng-click='deleteUAV(uav.Id)'></div></td>
-        </tr>
-    </table>
-    <input type="text" id="operatorName"/>
-    <button ng-click="addOperator()">Add Operator</button>
-    <table class="table">
-        <tr>
-            <th>Operator Username</th>
-        </tr>
-        <tr ng-repeat="operator in allUsers">
-            <td>{{operator.username}}</td>
-        </tr>
-    </table>
+                </th>
+            </tr>
+            <tr ng-repeat="uav in uavs">
+                <td>{{uav.Callsign}}</td>
+                <td>{{uav.NumDeliveries}}</td>
+                <td>{{uav.Mileage}}</td>
+                <td>{{uav.create_date}}</td>
+                <td>{{uav.modified_date}}</td>
+                <td>{{uav.MaxVelocity}}</td>
+                <td>{{uav.MaxAcceleration}}</td>
+                <td>{{uav.MaxVerticalVelocity}}</td>
+                <td>{{uav.UpdateRate}}</td>
+                <td>{{uav.CruiseAltitude}}</td>
+                <td>{{uav.MinDeliveryAlt}}</td>
+                <td><div class="glyphicon glyphicon-remove" ng-click='deleteUAV(uav.Id)'></div></td>
+            </tr>
+        </table>
+        <input type="text" id="operatorName" />
+        <button ng-click="addOperator()">Add Operator</button>
+        <table class="table">
+            <tr>
+                <th>Operator Username</th>
+            </tr>
+            <tr ng-repeat="operator in allUsers">
+                <td>{{operator.username}}</td>
+            </tr>
+        </table>
+    </div>
+    <hr />
+    <div>
+
+        <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-expanded="true" ng-model="selectedUser">
+                <span ng-show="selectedUser">{{selectedUser.username}}</span>
+                <span ng-hide="selectedUser">Select a user</span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                <li role="presentation" ng-repeat="operator in allUsers">
+                    <a role="menuitem" tabindex="-1" ng-click="userSelected(operator)">{{operator.username}}</a>
+                </li>
+            </ul>
+        </div>
+        <div class="assignmentWrapper">
+            <div class="assignedWrapper">
+
+            </div>
+            <div class="unassignedWrapper">
+
+            </div>
+        </div>
+    </div>
+
 </div>
 
 @section scripts {
