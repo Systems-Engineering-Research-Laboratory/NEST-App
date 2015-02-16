@@ -348,7 +348,7 @@ namespace NEST_App.Controllers.Api
 
         [ResponseType(typeof(UAV))]
         [HttpPost]
-        [Route("api/uavs/assignuser?uav_id={uav_id}&user_id={user_id}")]
+        [Route("api/uavs/assignuser/{uav_id}/{user_id}")]
         public async Task<IHttpActionResult> assignUser(int uav_id, int user_id)
         {
             UAV uav = await db.UAVs.FindAsync(uav_id);
