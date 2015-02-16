@@ -8,6 +8,7 @@
         $scope.uavs = [];
         $scope.allUsers = [];
         $scope.desiredUAVCount = '';
+        $scope.selectedUser = null;
         var User = function (user) {
             //insert user model here
             var User = {
@@ -109,13 +110,16 @@
             });
         };
         $scope.assignUser = function (uav_id, user_id) {
-            $http.post('/api/uavs/assignuser?uav_id=' + uav_id + '&user_id=' + user_id)
+            $http.post('/api/uavs/assignuser/' + uav_id + '/' + user_id)
             .success(function (data, status, headers, config) {
 
             })
             .error(function (data, status, headers, config) {
 
             });
+        };
+        $scope.userSelected = function (user) {
+            $scope.selectedUser = user;
         };
     };
 
