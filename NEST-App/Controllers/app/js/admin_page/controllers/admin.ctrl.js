@@ -9,6 +9,7 @@
         $scope.allUsers = [];
         $scope.desiredUAVCount = '';
         $scope.selectedUser = null;
+        $scope.unassignedUavs = [];
         var User = function (user) {
             //insert user model here
             var User = {
@@ -79,7 +80,7 @@
                 phone_number: "555-555-5555"
             };
             console.log(user);
-            $http.post('/api/users',JSON.stringify(user))
+            $http.post('/api/users', JSON.stringify(user))
             .success(function (data, status, headers, config) {
                 //$scope.allUsers.push(data);
                 $scope.getOperators();
@@ -129,6 +130,13 @@
         .error(function (data, status, headers, config) {
             alert("An error has occurred. Check console");
             console.log(data);
+        });
+        $http.get('/api/uavs/getunassigned')
+        .success(function (data, status, headers, config) {
+            $scope.unassignedUavs = data;
+        })
+        .error(function (data, status, headers, config) {
+
         });
         $scope.getGeneratedUAVs();
     };
