@@ -10,6 +10,13 @@
         $scope.desiredUAVCount = '';
         $scope.selectedUser = null;
         $scope.unassignedUavs = [];
+        $scope.emergencyEvents = [];
+        $scope.emergencySituations = [
+            " Strong crosswinds detected",
+            " Detected damage to rotary blades",
+            " Weak GPS link",
+            " Payload in danger of detachment",
+        ]
         var User = function (user) {
             //insert user model here
             var User = {
@@ -89,6 +96,30 @@
                 alert(data);
             });
         };
+
+        $scope.createEmergencyEvent = function () {
+            var number = Math.floor((Math.random() * ($scope.uavs.length - 1)) + 0);
+            var number2 = Math.floor((Math.random() * ($scope.emergencySituations.length)) + 0);
+            var pickedUav = $scope.uavs[number];
+            var eEvent = {
+                uav_id: pickedUav.Id,
+                message: $scope.emergencySituations[number2],
+                criticality: "critical",
+                uav_callsign: pickedUav.Callsign,
+                operator_screen_name: "Test Operator",
+                UAVId: pickedUav.Id
+            }
+            $http.post('/api/uavs/postuavevent', eEvent)
+            .success(function (data, status, headers, config) {
+                $scope.emergencyEvents.push(data);
+                var emitHub = $.connection.eventLogHub;
+                emitHub.connection.start().done(function () {
+                    emitHub.server.emit(eEvent);
+                });
+            });
+            console.log(eEvent);
+        };
+
         $scope.getOperators = function () {
             $http.get('/api/users')
                 .success(function (data, status, headers, config) {
@@ -139,6 +170,7 @@
 
         });
         $scope.getGeneratedUAVs();
+
     };
 
 

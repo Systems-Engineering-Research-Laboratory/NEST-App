@@ -169,7 +169,7 @@ namespace NEST_App.Controllers.Api
                        YawRate = 0, 
                        RollRate = 0, 
                        PitchRate = 0, 
-                       BatteryLevel = (num.Next(1,99) / 100), 
+                       BatteryLevel = .99, 
                        UAVId = i
                    },    
                };

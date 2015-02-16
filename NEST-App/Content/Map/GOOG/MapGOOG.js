@@ -141,7 +141,21 @@ $(document).ready(function () {
                 mapFunctions.note_hide();
             });
         });
+
+
     });
+    emitHub.client.newEvent = function (evt) {
+        console.log(evt);
+        //console.log(document.getElementById("infobox"));
+        console.log(document.getElementById("warn"));
+        document.getElementById("infobox").innerHTML = "<p id='warn'>Warning:</p>"+evt.message;
+        document.getElementById("warn").style.color = "red";
+        document.getElementById("warn").style.fontWeight = "bold";
+        document.getElementById("warn").style.margin = 0;
+        mapStyles.infobox.open(map, uavs[evt.UAVId].marker);
+        mapStyles.infoboxAlert.open(map, uavs[evt.UAVId].marker);
+    }
+
     var warningMessageCounter = 0;
   
     /* Vehicle Movement */
@@ -171,7 +185,7 @@ $(document).ready(function () {
             labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + vehicle.Altitude + '<br/><b>Bat: </b>' + parse + '</div>',
             icon: uavs[vehicle.Id].marker.icon /// <-----------------TODO:  Isn't this redundant?
         });
-
+        
         //console.log(parse);
         if (parse < .2) {
             //console.log(eventLog);
