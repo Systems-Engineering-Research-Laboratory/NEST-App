@@ -11,6 +11,12 @@
         $scope.selectedUser = null;
         $scope.unassignedUavs = [];
         $scope.emergencyEvents = [];
+        $scope.emergencySituations = [
+            "Warning: Strong crosswinds detected",
+            "Warning: Detected damage to rotary blades",
+            "Warning: Weak GPS link",
+            "Warning: Payload in danger of detachment",
+        ]
         var User = function (user) {
             //insert user model here
             var User = {
@@ -92,11 +98,12 @@
         };
 
         $scope.createEmergencyEvent = function () {
-            var number = Math.floor((Math.random() * ($scope.uavs.length - 1)) + 0);
+            var number = Math.floor((Math.random() * ($scope.uavs.length)) + 0);
+            var number2 = Math.floor((Math.random() * ($scope.emergencySituations.length)) + 0);
             var pickedUav = $scope.uavs[number];
             var eEvent = {
                 uav_id: pickedUav.Id,
-                message: "Warning: Strong crosswinds detected",
+                message: $scope.emergencySituations[number2],
                 criticality: "critical",
                 uav_callsign: pickedUav.Callsign,
                 operator_screen_name: "Test Operator",
