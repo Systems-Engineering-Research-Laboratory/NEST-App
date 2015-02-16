@@ -103,9 +103,9 @@
     },
 
     AreaSelect: function (theMap, e, mouseIsDown, shiftPressed, gridBoundingBox, selectedDrones, uavs) {
-        console.log("mouseIsDown: " + mouseIsDown);
-        console.log("shiftPressed: " + shiftPressed);
-        console.log("gridBoundingBox: " + gridBoundingBox);
+        //console.log("mouseIsDown: " + mouseIsDown);
+        //console.log("shiftPressed: " + shiftPressed);
+        //console.log("gridBoundingBox: " + gridBoundingBox);
         if (mouseIsDown && (shiftPressed || gridBoundingBox != null)) {
             //console.log("AreaSelect check fired");
             mouseIsDown = false;
@@ -136,5 +136,7 @@
         theMap.setOptions({
             draggable: true
         });
+        mapFunctions.ResetMouseDown();
+
     }
 };
