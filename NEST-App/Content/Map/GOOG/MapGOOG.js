@@ -70,6 +70,8 @@ function uavMarkers(data, textStatus, jqXHR) {
 $(document).ready(function () {
     wpm = new WaypointManager(map);
     map = new google.maps.Map(document.getElementById('map-canvas'), mapStyles.mapOptions);
+    google.maps.event.trigger(map, 'resize');
+    map.setZoom(map.getZoom());
     var counter = 0, parse;
     var distanceCircle = new google.maps.Circle(mapStyles.distanceCircleOptions);
     distanceCircle.setCenter(homeBase);
