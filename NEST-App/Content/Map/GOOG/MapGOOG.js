@@ -139,7 +139,17 @@ $(document).ready(function () {
                 mapFunctions.note_hide();
             });
         });
+
+
     });
+
+    emitHub.client.newEvent = function (evt) {
+        console.log(evt);
+        mapStyles.infobox.setContent(evt.message);
+        mapStyles.infobox.open(map, evt.UAVId.marker);
+        mapStyles.infoboxAlert.open(map, evt.UAVId.marker);
+    }
+
     var warningMessageCounter = 0;
   
     /* Vehicle Movement */
@@ -169,7 +179,7 @@ $(document).ready(function () {
             labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + vehicle.Altitude + '<br/><b>Bat: </b>' + parse + '</div>',
             icon: uavs[vehicle.Id].marker.icon /// <-----------------TODO:  Isn't this redundant?
         });
-
+        
         //console.log(parse);
         if (parse < .2) {
             //console.log(eventLog);
