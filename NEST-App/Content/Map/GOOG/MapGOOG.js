@@ -66,7 +66,7 @@ function uavMarkers(data, textStatus, jqXHR) {
         google.maps.event.addListener(marker, 'click', (function () {droneSelection.CtrlSelect(this, selectedDrones, selectedUAV)}));
         //Events to ccur when a UAV's marker icon has changed (ie the marker's been clicked)
         //google.maps.event.addListener(marker, "icon_changed", function () { droneSelection.SelectionStateChanged(this, selectedDrones, selectedUAV, flightLines, droneTrails.uavTrails, selectedTrail) });
-        google.maps.event.addListener(marker, 'selection_changed', function () { console.log("event fired correctly"); });
+        google.maps.event.addListener(marker, 'selection_changed', function () { droneSelection.SelectionStateChanged(this, selectedDrones, selectedUAV, flightLines, droneTrails.uavTrails, selectedTrail) });
     }
 }
 
@@ -193,7 +193,7 @@ $(document).ready(function () {
         mapStyles.uavSymbolGreen.rotation = vehicle.Yaw;
         uavs[vehicle.Id].marker.setOptions({
             labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + vehicle.Altitude + '<br/><b>Bat: </b>' + parse + '</div>',
-            icon: mapStyles.uavSymbolBlack /// <-----------------TODO:  Isn't this redundant?
+            //icon: uavs[vehicle.Id].marker.icon/// <-----------------TODO:  Isn't this redundant?
         });
         
         //console.log(parse);
