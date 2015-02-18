@@ -16,8 +16,8 @@ var selectedTrail; //the trail that the selected uav has
 var mapListeners = map; //use this to add listeners to the map
 var wpm;
 function uavMarkers(data, textStatus, jqXHR) {
-    var pointText, results;
     console.log("Pulling Flightstates...", textStatus);
+    //mapFunctions.PopulateUAVs(data, uavs, flightLines);
     for (var i = 0; i < data.length; i++) {
         //TODO Make a copier fuction for this:
         uavs[data[i].Id] = {};
@@ -59,7 +59,7 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].Id].flightPath = flightLines[data[i].Id];
         uavs[data[i].Id].markerCircle.setMap(map);
         uavs[data[i].Id].marker.setMap(map);
-        marker.set('flightPath', flightLines[data[i].Id]);
+        //marker.set('flightPath', flightLines[data[i].Id]);
         //When fired, the UAV is marked as 'selected'
         google.maps.event.addListener(marker, 'click', (function () {droneSelection.CtrlSelect(this, selectedDrones, selectedUAV)}));
         //Events to ccur when a UAV's marker icon has changed (ie the marker's been clicked)
@@ -70,8 +70,6 @@ function uavMarkers(data, textStatus, jqXHR) {
 $(document).ready(function () {
     wpm = new WaypointManager(map);
     map = new google.maps.Map(document.getElementById('map-canvas'), mapStyles.mapOptions);
-    google.maps.event.trigger(map, 'resize');
-    map.setZoom(map.getZoom());
     var counter = 0, parse;
     var distanceCircle = new google.maps.Circle(mapStyles.distanceCircleOptions);
     distanceCircle.setCenter(homeBase);
@@ -232,7 +230,7 @@ $(document).ready(function () {
             //console.log("Shift key up");
         }
     });
-
+    google.maps.event.trigger(map, 'resize');
     var mapListeners = map;/// <-----------------------------TODO: Redundant?
 
     google.maps.event.addListener(mapListeners, 'mousemove', function (e) { mapFunctions.DrawBoundingBox(this, e) });

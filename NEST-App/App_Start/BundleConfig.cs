@@ -74,7 +74,7 @@ namespace NEST_App
             
             //Google Map JS bundle
             var googMapJS = new CustomScriptBundle("~/bundles/googMapJS");
-            googMapJS.Include("~/Content/Map/GOOG/*.js");
+            googMapJS.Include("~/Content/Map/GOOG/*.js", "~/Content/Map/GOOG/lib/*.js");
             googMapJS.Transforms.Add(jsTransformer);
             googMapJS.Orderer = nullOrderer;
             bundles.Add(googMapJS);

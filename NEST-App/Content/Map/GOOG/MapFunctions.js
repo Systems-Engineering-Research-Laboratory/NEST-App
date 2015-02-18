@@ -43,7 +43,7 @@
     },
 
     DrawBoundingBox: function (theMap, e) {
-        console.log("move mouse down, shift down", this.mouseIsDown, this.shiftPressed);
+        //console.log("move mouse down, shift down", this.mouseIsDown, this.shiftPressed);
         if (this.mouseIsDown && (this.shiftPressed || this.gridBoundingBox != null)) {
             if (this.gridBoundingBox != null) {
                 //console.log("fire first if");
@@ -84,6 +84,14 @@
                 draggable: false
             });
         }
+    },
+
+    //This function takes uav info form an ajax call and then uses it to populate/update the list of drones
+    PopulateUAVs : function (data, uavs, flightLines){
+        var pointText, results;
+
+
+
     },
 
     goTo_show: function () {

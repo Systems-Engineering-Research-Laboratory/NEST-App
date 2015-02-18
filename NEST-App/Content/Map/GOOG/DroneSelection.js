@@ -71,7 +71,7 @@
             flightLines[marker.uav.Id].setMap(null);
 
             //TURN OFF TRAIL 
-            droneTrails.deleteTrails(selectedUAV.Id);
+            //droneTrails.deleteTrails(selectedUAV.Id);
         }
             //**************DANGER****************//
         else if (marker.icon.fillColor == 'red') {//"RED FOR DANGER"......placeholder in case we decide to do this
