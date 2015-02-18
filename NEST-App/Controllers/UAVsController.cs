@@ -15,6 +15,7 @@ using NEST_App.DAL;
 using NEST_App.Models;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using System.Data.Entity.Validation;
 
 namespace NEST_App.Controllers.Api
 {
@@ -201,12 +202,23 @@ namespace NEST_App.Controllers.Api
                        modified_date = dateValue.AddHours(0.02) 
                   }
                };
+                var maintenances = new List<Maintenance>
+                {
+                    new Maintenance {
+                       last_maintenance = dateValue,
+                       next_maintenance = dateValue.AddMonths(1),
+                       time_remaining = "15 days",
+                       ScheduleId = 0,
+                       create_date = dateValue,
+                       modified_date = dateValue
+                    }
+                };
 
                 var sched = new List<Schedule>
                 { 
                    new Schedule {
                        UAV = uav,
-                       //Maintenances = maintenances,
+                       Maintenances = maintenances,
                        Missions = mission,
                        create_date = DateTime.Now,
                        modified_date = DateTime.Now
@@ -219,8 +231,10 @@ namespace NEST_App.Controllers.Api
 
                 db.UAVs.Add(uav);
                 db.Missions.Add(mission.First());
+                db.Maintenances.Add(maintenances.First());
                 db.Configurations.Add(config);
                 db.Schedules.Add(sched.First());
+                db.FlightStates.Add(flights.First());
 
                 try
                 {
