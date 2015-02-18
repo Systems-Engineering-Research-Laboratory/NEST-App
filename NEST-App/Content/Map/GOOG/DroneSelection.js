@@ -1,13 +1,21 @@
 ﻿var droneSelection = {
     /*CTRL-SELECT*/
     CtrlSelect: function (marker, selectedDrones) {
-        if (marker.icon.fillColor == 'green') {
-            marker.setIcon(mapStyles.uavSymbolBlack);
+        if (marker.selected == false) {//other drone-selection-related events should trigger off this!
+            marker.selected = true;
+            marker.setIcon(mapStyles.uavSymbolGreen);
             marker.setMap(marker.map);
-            //TODO: deselect and remove from selectedDrone (tricky because it's an array)
+            //TODO: deselect and remove from selectedDrone (tricky because it's an array)            
+            console.log("fired true");
         }
         else {
-            marker.setIcon(mapStyles.uavSymbolGreen);//other drone-selection-related events should trigger off this!
+            marker.selected = false;//other drone-selection-related events should trigger off this!
+            marker.setIcon(mapStyles.uavSymbolBlack);
+            marker.setMap(marker.map);
+            console.log("fired false");
+        }
+        google.maps.event.trigger(marker, 'selection_changed');
+            
             selectedUAV = marker.uav;
             if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, ignore immediate key repeats and proceed
                 ctrlDown = false
@@ -25,7 +33,7 @@
             // enable waypoint buttons
             $("#goBtn").removeClass("disabled");
             $("#clickToGoBtn").removeClass("disabled");
-        }
+        
     },
 
     //This fires when a drone turns green or black, ie it has either been selected or de-selected
@@ -33,7 +41,7 @@
         //console.log("Selection change event fired");
 
         //*******************SELECTED*********************//
-        if (marker.icon.fillColor == 'green') {
+        if (marker.selected == true) {
 
             selectedUAV = marker.uav;
             console.log(selectedUAV);
@@ -64,7 +72,7 @@
             }
         }
             //******************DE-SELECTED*******************//
-        else if (marker.icon.fillColor == 'black') {
+        else if (marker.selected == false) {
             console.log("UAV De-selected");
 
             //Turn off drone's flightpath
@@ -74,9 +82,9 @@
             //droneTrails.deleteTrails(selectedUAV.Id);
         }
             //**************DANGER****************//
-        else if (marker.icon.fillColor == 'red') {//"RED FOR DANGER"......placeholder in case we decide to do this
+        /*else if (marker.icon.fillColor == 'red') {//"RED FOR DANGER"......placeholder in case we decide to do this
             //otherstuff
-        }
+        }*/
     },
 
     KeyBinding: function (selectedDrones, storedGroups, evt) {

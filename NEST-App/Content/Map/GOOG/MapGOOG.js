@@ -53,23 +53,30 @@ function uavMarkers(data, textStatus, jqXHR) {
             zIndex: 999999,
             uav: uavs[data[i].Id]
         });
+        marker.set('selected', false);
         wpm.addMarker(marker);
         uavs[data[i].Id].marker = marker;
         uavs[data[i].Id].markerCircle = markerCircle;
         uavs[data[i].Id].flightPath = flightLines[data[i].Id];
         uavs[data[i].Id].markerCircle.setMap(map);
         uavs[data[i].Id].marker.setMap(map);
+
         //marker.set('flightPath', flightLines[data[i].Id]);
         //When fired, the UAV is marked as 'selected'
         google.maps.event.addListener(marker, 'click', (function () {droneSelection.CtrlSelect(this, selectedDrones, selectedUAV)}));
         //Events to ccur when a UAV's marker icon has changed (ie the marker's been clicked)
-        google.maps.event.addListener(marker, "icon_changed", function () { droneSelection.SelectionStateChanged(this, selectedDrones, selectedUAV, flightLines, droneTrails.uavTrails, selectedTrail) });
+        //google.maps.event.addListener(marker, "icon_changed", function () { droneSelection.SelectionStateChanged(this, selectedDrones, selectedUAV, flightLines, droneTrails.uavTrails, selectedTrail) });
+        google.maps.event.addListener(marker, 'selection_changed', function () { droneSelection.SelectionStateChanged(this, selectedDrones, selectedUAV, flightLines, droneTrails.uavTrails, selectedTrail) });
     }
 }
 
 $(document).ready(function () {
     wpm = new WaypointManager(map);
     map = new google.maps.Map(document.getElementById('map-canvas'), mapStyles.mapOptions);
+    /*map = new GMaps({
+        div:'#map-canvas',
+    });
+    map.setOptions(mapStyles.mapOptions);*/
     var counter = 0, parse;
     var distanceCircle = new google.maps.Circle(mapStyles.distanceCircleOptions);
     distanceCircle.setCenter(homeBase);
@@ -119,6 +126,10 @@ $(document).ready(function () {
     google.maps.event.addDomListener(document.getElementById('delete-all-button'), 'click', mapDraw.deleteAllShape());
     mapDraw.buildColorPalette(mapDraw.drawingManager);
 
+    /////////////////////////////
+  
+    /////////////////////////////
+
     new RestrictedAreasContainer(map, mapDraw.drawingManager)
     /* Event Log */
     var emitHub = $.connection.eventLogHub;
@@ -133,11 +144,12 @@ $(document).ready(function () {
         console.log("connection started for evt log");
 
         google.maps.event.addListener(map, "rightclick", function (event) {
-            mapFunctions.note_show();
+
+            /*mapFunctions.note_show();
             document.getElementById("send").addEventListener("click", function () {
                 emitHub.server.sendNote(event.latLng.lat(), event.latLng.lng(), document.getElementById("notifier").value, document.getElementById("message").value);
                 mapFunctions.note_hide();
-            });
+            });*/
         });
 
 
@@ -181,7 +193,7 @@ $(document).ready(function () {
         mapStyles.uavSymbolGreen.rotation = vehicle.Yaw;
         uavs[vehicle.Id].marker.setOptions({
             labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + vehicle.Altitude + '<br/><b>Bat: </b>' + parse + '</div>',
-            icon: uavs[vehicle.Id].marker.icon /// <-----------------TODO:  Isn't this redundant?
+            //icon: uavs[vehicle.Id].marker.icon/// <-----------------TODO:  Isn't this redundant?
         });
         
         //console.log(parse);
@@ -236,4 +248,5 @@ $(document).ready(function () {
     google.maps.event.addListener(mapListeners, 'mousemove', function (e) { mapFunctions.DrawBoundingBox(this, e) });
     google.maps.event.addListener(mapListeners, 'mousedown', function (e) { mapFunctions.StopMapDrag(this, e); console.log("GOOG mouseIsDown: " + mapFunctions.mouseIsDown); });
     google.maps.event.addListener(mapListeners, 'mouseup', function (e) { droneSelection.AreaSelect(this, e, mapFunctions.mouseIsDown, mapFunctions.shiftPressed, mapFunctions.gridBoundingBox, selectedDrones, uavs) });
+    google.maps.event
 });

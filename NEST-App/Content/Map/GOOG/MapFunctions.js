@@ -75,9 +75,9 @@
 
 
     StopMapDrag: function (theMap, e) {
-        console.log("StopMapDrag fired");
+        //console.log("StopMapDrag fired");
         if (this.shiftPressed) {
-            console.log("MouseDown true");
+            //console.log("MouseDown true");
             this.mouseIsDown = true;
             this.mouseDownPos = e.latLng;
             theMap.setOptions({
