@@ -2,16 +2,6 @@
     colors: ['#1E90FF', '#FF1493', '#32CD32', '#FF8C00', '#4B0082'],
 
 
-    noPOIs: [
-        {
-            featureType: "poi",
-            elementType: "labels",
-            stylers: [
-                  { visibility: "off" }
-            ]
-        }
-    ],
-
     mapOptions: {
         zoom: 18,
         center: new google.maps.LatLng(34.2417, -118.529),
@@ -19,7 +9,13 @@
         zoomControl: true,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         disableDoubleClickZoom: true,
-        styles: this.noPOIs,
+        styles: [{
+            featureType: "poi",
+            elementType: "labels",
+            stylers: [
+                  { visibility: "off" }
+            ]
+        }]
     },
 
     polyOptions: { //Options set for the polygon shapes and drawing manager
