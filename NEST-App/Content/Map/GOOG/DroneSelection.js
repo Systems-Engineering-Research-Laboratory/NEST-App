@@ -1,12 +1,15 @@
 ﻿var droneSelection = {
     /*CTRL-SELECT*/
     CtrlSelect: function (marker, selectedDrones) {
-        if (marker.icon.fillColor == 'green') {
-            marker.setIcon(mapStyles.uavSymbolBlack);
-            marker.setMap(marker.map);
-            //TODO: deselect and remove from selectedDrone (tricky because it's an array)
+        if (marker.selected == false) {
+            marker.selected = true;
+            console.log("fired true");
         }
         else {
+            marker.selected = false;
+            console.log("fired false");
+        }
+        google.maps.event.trigger(marker, 'selection_changed');
             marker.setIcon(mapStyles.uavSymbolGreen);//other drone-selection-related events should trigger off this!
             selectedUAV = marker.uav;
             if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, ignore immediate key repeats and proceed
@@ -25,7 +28,7 @@
             // enable waypoint buttons
             $("#goBtn").removeClass("disabled");
             $("#clickToGoBtn").removeClass("disabled");
-        }
+        
     },
 
     //This fires when a drone turns green or black, ie it has either been selected or de-selected
