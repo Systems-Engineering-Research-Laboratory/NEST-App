@@ -97,6 +97,16 @@
             });
         };
 
+        $scope.createMission = function () {
+            $http.post('/api/uavs/postuavmission')
+            .success(function (data, status, headers, config) {
+                console.log('created a new mission...')
+            })
+            .error(function (data, status, headers, config) {
+                alert(data);
+            });
+        }
+
         $scope.createEmergencyEvent = function () {
             var number = Math.floor((Math.random() * ($scope.uavs.length - 1)) + 0);
             var number2 = Math.floor((Math.random() * ($scope.emergencySituations.length)) + 0);
