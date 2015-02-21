@@ -1,22 +1,24 @@
 ﻿var droneSelection = {
     /*CTRL-SELECT*/
     CtrlSelect: function (marker, selectedDrones) {
+        selectedUAV = marker.uav;
+  
         if (marker.selected == false) {//other drone-selection-related events should trigger off this!
             marker.selected = true;
-            marker.setIcon(mapStyles.uavSymbolGreen);
+            marker.setIcon(selectedUAV.marker.uavSymbolGreen);
             marker.setMap(marker.map);
             //TODO: deselect and remove from selectedDrone (tricky because it's an array)            
             console.log("fired true");
         }
         else {
             marker.selected = false;//other drone-selection-related events should trigger off this!
-            marker.setIcon(mapStyles.uavSymbolBlack);
+            marker.setIcon(selectedUAV.marker.uavSymbolBlack);
             marker.setMap(marker.map);
             console.log("fired false");
         }
         google.maps.event.trigger(marker, 'selection_changed');
             
-            selectedUAV = marker.uav;
+            
             if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, ignore immediate key repeats and proceed
                 ctrlDown = false
                 selectedDrones.push(selectedUAV);
@@ -125,12 +127,12 @@
                 for (var key in uavs) {
                     if (gridBoundingBox.getBounds().contains(uavs[key].marker.getPosition())) {
                         //selected = true; //Possibly deprecated since updating the selection paradigm
-                        uavs[key].marker.setIcon(mapStyles.uavSymbolGreen);
+                        uavs[key].marker.setIcon(selectedUAV.marker.uavSymbolGreen);
                         selectedDrones.push(uavs[key]);//push the selected markers to an array
                         console.log("Number of selected drones: " + selectedDrones.length);
                     } else {
                         //selected = false; //Possibly deprecated since updating the selection paradigm
-                        uavs[key].marker.setIcon(mapStyles.uavSymbolBlack);
+                        uavs[key].marker.setIcon(selectedUAV.marker.uavSymbolBlack);
                         console.log("Number of selected drones: " + selectedDrones.length);
                     }
                 }

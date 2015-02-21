@@ -15,6 +15,7 @@ var selectedTrail; //the trail that the selected uav has
 //TODO: Do we need this? Are we changing this to "var theMap = map;" ?
 var mapListeners = map; //use this to add listeners to the map
 var wpm;
+
 function uavMarkers(data, textStatus, jqXHR) {
     console.log("Pulling Flightstates...", textStatus);
     //mapFunctions.PopulateUAVs(data, uavs, flightLines);
@@ -31,6 +32,7 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].Id].Battery = data[i].FlightState.BatteryLevel;
         uavs[data[i].Id].Position = new google.maps.LatLng(fs.Latitude, fs.Longitude);
         uavs[data[i].Id].Mission = data[i].Mission;
+        uavs[data[i].Id].Orientation = data[i].FlightState.Yaw;
 
         var mis = uavs[data[i].Id].Mission;
         uavs[data[i].Id].Destination = new google.maps.LatLng(mis.Latitude, mis.Longitude);
@@ -51,7 +53,23 @@ function uavMarkers(data, textStatus, jqXHR) {
             labelClass: "labels",
             labelStyle: { opacity: 0.75 },
             zIndex: 999999,
-            uav: uavs[data[i].Id]
+            uav: uavs[data[i].Id],
+            uavSymbolBlack: {
+                path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
+                fillColor: 'black',
+                fillOpacity: 0.8,
+                scale: 0.2,
+                zIndex: 1,
+                anchor: new google.maps.Point(355, 295)
+            },
+            uavSymbolGreen: {
+                path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
+                fillColor: 'green',
+                fillOpacity: 0.8,
+                scale: 0.2,
+                zIndex: 1,
+                anchor: new google.maps.Point(355, 295)
+            }
         });
         marker.set('selected', false);
         wpm.addMarker(marker);
@@ -173,7 +191,7 @@ $(document).ready(function () {
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         //mapFunctions.vehicleHubUpdate(vehicle, uavs, selected);
 
-        console.log(vehicle);
+        //console.log(vehicle);
 
         var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
         droneTrails.storeTrail(vehicle.Id, LatLng);
@@ -188,16 +206,34 @@ $(document).ready(function () {
 
         uavs[vehicle.Id].marker.setPosition(LatLng);
         uavs[vehicle.Id].markerCircle.setPosition(LatLng);
-        parse = parseFloat(Math.round(vehicle.BatteryLevel * 100) / 100).toFixed(2);
-        mapStyles.uavSymbolBlack.rotation = vehicle.Yaw;
-        mapStyles.uavSymbolGreen.rotation = vehicle.Yaw;
+        uavs[vehicle.Id].Battery = vehicle.BatteryLevel;
+        uavs[vehicle.Id].Alt = vehicle.Altitude;
+        uavs[vehicle.Id].BatteryCheck = parseFloat(Math.round(vehicle.BatteryLevel * 100) / 100).toFixed(2);
+        uavs[vehicle.Id].Yaw = vehicle.Yaw;
+
+
+        if ((Math.round((10000000 * uavs[vehicle.Id].Orientation)) / 10000000) != (Math.round((10000000 * uavs[vehicle.Id].Yaw)) / 10000000)) {
+
+            uavs[vehicle.Id].Orientation = uavs[vehicle.Id].Yaw;
+           
+            uavs[vehicle.Id].marker.uavSymbolBlack.rotation = uavs[vehicle.Id].Yaw;
+            uavs[vehicle.Id].marker.uavSymbolGreen.rotation = uavs[vehicle.Id].Yaw;
+
+            if (uavs[vehicle.Id].marker.selected == true)
+                uavs[vehicle.Id].marker.setOptions({
+                    icon: uavs[vehicle.Id].marker.uavSymbolGreen
+                });
+            else
+                uavs[vehicle.Id].marker.setOptions({
+                    icon: uavs[vehicle.Id].marker.uavSymbolBlack
+                })
+        }
         uavs[vehicle.Id].marker.setOptions({
-            labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + vehicle.Altitude + '<br/><b>Bat: </b>' + parse + '</div>',
-            //icon: uavs[vehicle.Id].marker.icon/// <-----------------TODO:  Isn't this redundant?
+            labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uavs[vehicle.Id].Alt + '<br/><b>Bat: </b>' + uavs[vehicle.Id].BatteryCheck + '</div>'
         });
         
         //console.log(parse);
-        if (parse < .2) {
+        if (uavs[vehicle.Id].BatteryCheck < .2) {
             //console.log(eventLog);
             //emitHub.server.emit(eventLog);
             if (warningMessageCounter == 0) {
@@ -226,7 +262,6 @@ $(document).ready(function () {
     
     vehicleHub.connection.start();
 
-
     $(window).keydown(function (evt) {
         if (evt.which === 16) {
             mapFunctions.shiftPressed = true;
@@ -248,5 +283,4 @@ $(document).ready(function () {
     google.maps.event.addListener(mapListeners, 'mousemove', function (e) { mapFunctions.DrawBoundingBox(this, e) });
     google.maps.event.addListener(mapListeners, 'mousedown', function (e) { mapFunctions.StopMapDrag(this, e); console.log("GOOG mouseIsDown: " + mapFunctions.mouseIsDown); });
     google.maps.event.addListener(mapListeners, 'mouseup', function (e) { droneSelection.AreaSelect(this, e, mapFunctions.mouseIsDown, mapFunctions.shiftPressed, mapFunctions.gridBoundingBox, selectedDrones, uavs) });
-    google.maps.event
 });
