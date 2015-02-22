@@ -167,7 +167,7 @@ $(document).ready(function () {
     });
     
     emitHub.client.newEvent = function (evt) {
-        
+
         document.getElementById("infobox").innerHTML = "<p id='warn'>Warning:</p>" + evt.message;
         document.getElementById("infobox").onclick = mapStyles.infobox.close();
         document.getElementById("warn").style.color = "red";
@@ -181,6 +181,23 @@ $(document).ready(function () {
             if (mapStyles.infobox.open) {
                 mapStyles.infobox.close();
                 
+                var eventLog = {
+                    uav_id: uavs[evt.UAVId].Id,
+                    message: "Acknowledged: " + evt.message,
+                    criticality: null,
+                    uav_callsign: uavs[evt.UAVId].Callsign,
+                    operator_screen_name: evt.operator_screen_name,
+                    UAVId: uavs[evt.UAVId].Id
+                };
+
+                emitHub.server.emit(eventLog);
+                $.ajax({
+                    type: "POST",
+                    url: "/api/uavs/postuavevent",
+                    success: function () { },
+                    data: eventLog
+                });
+
             }
         });
     }
