@@ -69,17 +69,29 @@
         this.gridBoundingBox = null;
     },
 
+    ResetMouseDown : function (){
+        this.mouseDownPos = null;
+    },
+
 
     StopMapDrag: function (theMap, e) {
-        console.log("StopMapDrag fired");
+        //console.log("StopMapDrag fired");
         if (this.shiftPressed) {
-            console.log("MouseDown true");
+            //console.log("MouseDown true");
             this.mouseIsDown = true;
             this.mouseDownPos = e.latLng;
             theMap.setOptions({
                 draggable: false
             });
         }
+    },
+
+    //This function takes uav info form an ajax call and then uses it to populate/update the list of drones
+    PopulateUAVs : function (data, uavs, flightLines){
+        var pointText, results;
+
+
+
     },
 
     goTo_show: function () {

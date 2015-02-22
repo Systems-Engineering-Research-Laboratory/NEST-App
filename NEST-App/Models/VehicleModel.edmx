@@ -241,19 +241,19 @@
     <Key>
       <PropertyRef Name="id" />
     </Key>
-    <Property Name="Phase" Type="varchar" Nullable="false" MaxLength="50" />
+    <Property Name="Phase" Type="varchar" Nullable="true" MaxLength="50" />
     <Property Name="FlightPattern" Type="varchar" Nullable="true" MaxLength="50" />
-    <Property Name="Payload" Type="varchar(max)" Nullable="false" />
+    <Property Name="Payload" Type="varchar(max)" Nullable="true" />
     <Property Name="Priority" Type="int" Nullable="false" />
     <Property Name="FinancialCost" Type="decimal" Nullable="true" Precision="19" Scale="4" />
-    <Property Name="TimeAssigned" Type="datetime" Nullable="false" />
+    <Property Name="TimeAssigned" Type="datetime" Nullable="true" />
     <Property Name="TimeCompleted" Type="datetime" Nullable="true" />
-    <Property Name="ScheduledCompletionTime" Type="datetime" Nullable="false" />
-    <Property Name="EstimatedCompletionTime" Type="datetime" Nullable="false" />
+    <Property Name="ScheduledCompletionTime" Type="datetime" Nullable="true" />
+    <Property Name="EstimatedCompletionTime" Type="datetime" Nullable="true" />
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="ScheduleId" Type="int" Nullable="false" />
-    <Property Name="create_date" Type="datetime" Nullable="false" />
-    <Property Name="modified_date" Type="datetime" Nullable="false" />
+    <Property Name="create_date" Type="datetime" Nullable="true" />
+    <Property Name="modified_date" Type="datetime" Nullable="true" />
     <Property Name="Latitude" Type="float" Nullable="false" />
     <Property Name="Longitude" Type="float" Nullable="false" />
   </EntityType>
@@ -1019,22 +1019,22 @@
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="Phase" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="FlightPattern" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Payload" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Phase" Type="String" Nullable="true" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FlightPattern" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="true" />
+          <Property Name="Payload" Type="String" Nullable="true" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Priority" Type="Int32" Nullable="false" />
-          <Property Name="FinancialCost" Type="Decimal" Precision="19" Scale="4" />
-          <Property Name="TimeAssigned" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="FinancialCost" Type="Decimal" Precision="19" Scale="4" Nullable="true" />
+          <Property Name="TimeAssigned" Type="DateTime" Nullable="true" Precision="3" />
           <Property Name="TimeCompleted" Type="DateTime" Nullable="true" Precision="3" />
-          <Property Name="ScheduledCompletionTime" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="EstimatedCompletionTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ScheduledCompletionTime" Type="DateTime" Nullable="true" Precision="3" />
+          <Property Name="EstimatedCompletionTime" Type="DateTime" Nullable="true" Precision="3" />
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <NavigationProperty Name="Orders" Relationship="VehicleModel.MissionOrder" FromRole="Mission" ToRole="Order" />
           <NavigationProperty Name="Schedule" Relationship="VehicleModel.MissionSchedule" FromRole="Mission" ToRole="Schedule" />
           <Property Name="ScheduleId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="MissionLogs" Relationship="VehicleModel.MissionMissionLog" FromRole="Mission" ToRole="MissionLog" />
-          <Property Name="create_date" Type="DateTime" Nullable="false" />
-          <Property Name="modified_date" Type="DateTime" Nullable="false" />
+          <Property Name="create_date" Type="DateTime" Nullable="true" />
+          <Property Name="modified_date" Type="DateTime" Nullable="true" />
           <NavigationProperty Name="Waypoints" Relationship="VehicleModel.WaypointMission" FromRole="Mission" ToRole="Waypoint" />
           <Property Name="Latitude" Type="Double" Nullable="false" />
           <Property Name="Longitude" Type="Double" Nullable="false" />

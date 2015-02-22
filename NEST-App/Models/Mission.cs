@@ -26,14 +26,14 @@ namespace NEST_App.Models
         public string Payload { get; set; }
         public int Priority { get; set; }
         public Nullable<decimal> FinancialCost { get; set; }
-        public System.DateTime TimeAssigned { get; set; }
+        public Nullable<System.DateTime> TimeAssigned { get; set; }
         public Nullable<System.DateTime> TimeCompleted { get; set; }
-        public System.DateTime ScheduledCompletionTime { get; set; }
-        public System.DateTime EstimatedCompletionTime { get; set; }
+        public Nullable<System.DateTime> ScheduledCompletionTime { get; set; }
+        public Nullable<System.DateTime> EstimatedCompletionTime { get; set; }
         public int id { get; set; }
         public int ScheduleId { get; set; }
-        public System.DateTime create_date { get; set; }
-        public System.DateTime modified_date { get; set; }
+        public Nullable<System.DateTime> create_date { get; set; }
+        public Nullable<System.DateTime> modified_date { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
     
