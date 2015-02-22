@@ -167,39 +167,42 @@ $(document).ready(function () {
     });
     
     emitHub.client.newEvent = function (evt) {
-
-        document.getElementById("infobox").innerHTML = "<p id='warn'>Warning:</p>" + evt.message;
-        document.getElementById("infobox").onclick = mapStyles.infobox.close();
-        document.getElementById("warn").style.color = "red";
-        document.getElementById("warn").style.fontWeight = "bold";
-        document.getElementById("warn").style.margin = 0;
         
-        mapStyles.infobox.open(map, uavs[evt.UAVId].marker);
-        mapStyles.infoboxAlert.open(map, uavs[evt.UAVId].marker);
+        var checkMessage = evt.message.split(" ");
+        if (checkMessage[0] != "Acknowledged:") {
+            document.getElementById("infobox").innerHTML = "<p id='warn'>Warning:</p>" + evt.message;
+            document.getElementById("infobox").onclick = mapStyles.infobox.close();
+            document.getElementById("warn").style.color = "red";
+            document.getElementById("warn").style.fontWeight = "bold";
+            document.getElementById("warn").style.margin = 0;
 
-        google.maps.event.addDomListener(document.getElementById("infobox"), 'click', function () {
-            if (mapStyles.infobox.open) {
-                mapStyles.infobox.close();
-                
-                var eventLog = {
-                    uav_id: uavs[evt.UAVId].Id,
-                    message: "Acknowledged: " + evt.message,
-                    criticality: null,
-                    uav_callsign: uavs[evt.UAVId].Callsign,
-                    operator_screen_name: evt.operator_screen_name,
-                    UAVId: uavs[evt.UAVId].Id
-                };
+            mapStyles.infobox.open(map, uavs[evt.UAVId].marker);
+            mapStyles.infoboxAlert.open(map, uavs[evt.UAVId].marker);
 
-                emitHub.server.emit(eventLog);
-                $.ajax({
-                    type: "POST",
-                    url: "/api/uavs/postuavevent",
-                    success: function () { },
-                    data: eventLog
-                });
+            google.maps.event.addDomListener(document.getElementById("infobox"), 'click', function () {
+                if (mapStyles.infobox.open) {
+                    mapStyles.infobox.close();
 
-            }
-        });
+                    var eventACK = {
+                        uav_id: uavs[evt.UAVId].Id,
+                        message: "Acknowledged: " + evt.message,
+                        criticality: "normal",
+                        uav_callsign: uavs[evt.UAVId].Callsign,
+                        operator_screen_name: evt.operator_screen_name,
+                        UAVId: uavs[evt.UAVId].Id
+                    };
+
+                    emitHub.server.emit(eventACK);
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/uavs/postuavevent",
+                        success: function () { },
+                        data: eventACK
+                    });
+
+                }
+            });
+        }
     }
     
     var warningMessageCounter = 0;
