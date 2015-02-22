@@ -175,45 +175,38 @@ namespace NEST_App.Controllers.Api
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-        
         [HttpPut]
         [ResponseType(typeof(HttpResponseMessage))]
-        [Route("api/uavs/schedulemission/{number}")]
-        public async Task<HttpResponseMessage> scheduleMission(int number)
+        [Route("api/uavs/schedulemissions")]
+        public async Task<HttpResponseMessage> scheduleMission()
         {
-            for (int i = 0; i < number; i++)
-            {
-                Queue<UAV> uavQ = new Queue<UAV>(db.UAVs);
-                UAV head = uavQ.Peek();
+            Queue<UAV> uavQ = new Queue<UAV>(db.UAVs);
+            Queue<Schedule> schedQ = new Queue<Schedule>(db.Schedules);
+         
+            while (schedQ.Count > 0) {
+                UAV u = uavQ.Dequeue();
 
-                while (uavQ.Count > 0)
+                Schedule s = schedQ.Dequeue();
+                if (s.UAVId == null)
                 {
-                    UAV u = uavQ.Dequeue();
-                    if (head == u)
-                    {
-                        db.Schedules.FirstOrDefault().UAVId = u.Id;
-                        break;
-                    }
-                    else if (u.Schedules.FirstOrDefault().UAVId == null)
-                    {
-                        db.Schedules.FirstOrDefault().UAVId = u.Id;
-                        break;
-                    }
-                    else if (u.Schedules.FirstOrDefault().UAVId != null)
-                    {
-                        uavQ.Enqueue(u);
-                        continue;
-                    }
+                    s.UAVId = u.Id;
+                    s.modified_date = DateTime.Now;
+                    s.Missions.FirstOrDefault().TimeAssigned = DateTime.Now;
+                    s.Missions.FirstOrDefault().Phase = "assigned";
                 }
-                try
-                {
-                    await db.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
+                
+                uavQ.Enqueue(u);
             }
+                
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+       
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
@@ -278,8 +271,6 @@ namespace NEST_App.Controllers.Api
                 DateTime dateValue = new DateTime();
                 dateValue = DateTime.Now;
                 var randPoint = getDistance();
-              
-            
 
                 uav.Configurations = config;
                 uav.FlightStates = flights;
