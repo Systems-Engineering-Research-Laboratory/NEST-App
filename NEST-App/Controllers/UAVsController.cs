@@ -124,6 +124,25 @@ namespace NEST_App.Controllers.Api
             return Request.CreateResponse(HttpStatusCode.OK, uavs);
         }
         [HttpPost]
+        [ResponseType(typeof(HttpResponse))]
+        [Route("api/uavs/schedulemission")]
+        public async Task<HttpResponseMessage> scheduleMission()
+        {
+            IQueryable<UAV> uav = db.UAVs;
+            Queue<UAV> u = new Queue<UAV>(uav);
+            var loop = 0;
+            while (loop == 0)
+            {
+                UAV drone = u.Dequeue();
+                if ( drone.Schedules.LastOrDefault().UAVId == null )
+                {
+                    Console.Write(drone);
+                }
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, "Mission Assigned...");
+        }
+
+        [HttpPost]
         [ResponseType(typeof(HttpStatusCode))]
         [Route("api/uavs/createuavmission/{number}")]
         public async Task<IHttpActionResult> createMission(int number)
@@ -172,8 +191,6 @@ namespace NEST_App.Controllers.Api
                 {
                     throw;
                 }
-
-
             }
             return StatusCode(HttpStatusCode.Created);
         }
@@ -241,56 +258,18 @@ namespace NEST_App.Controllers.Api
                 DateTime dateValue = new DateTime();
                 dateValue = DateTime.Now;
                 var randPoint = getDistance();
-                var mission = new List<Mission> 
-                { 
-                   new Mission {
-                       Phase = "home", 
-                       FlightPattern = null,
-                       Payload = null, 
-                       Priority = 1, 
-                       FinancialCost = null, 
-                       TimeAssigned = null, 
-                       TimeCompleted = null,  
-                       Latitude = 34.2417,
-                       Longitude = -118.529,
-                       ScheduledCompletionTime = null,
-                       EstimatedCompletionTime = null, 
-                       create_date = DateTime.Now,
-                       modified_date = null 
-                  }
-               };
-                var maintenances = new List<Maintenance>
-                {
-                    new Maintenance {
-                       last_maintenance = dateValue,
-                       next_maintenance = dateValue.AddMonths(1),
-                       time_remaining = "15 days",
-                       ScheduleId = 0,
-                       create_date = dateValue,
-                       modified_date = dateValue
-                    }
-                };
-
-                var sched = new List<Schedule>
-                { 
-                   new Schedule {
-                       UAV = uav,
-                       Maintenances = maintenances,
-                       Missions = mission,
-                       create_date = DateTime.Now,
-                       modified_date = DateTime.Now
-                   }
-                };
+              
+            
 
                 uav.Configurations = config;
                 uav.FlightStates = flights;
-                uav.Schedules = sched;
+                //uav.Schedules = sched;
 
                 db.UAVs.Add(uav);
-                db.Missions.Add(mission.First());
-                db.Maintenances.Add(maintenances.First());
+                //db.Missions.Add(mission.First());
+                //db.Maintenances.Add(maintenances.First());
                 db.Configurations.Add(config);
-                db.Schedules.Add(sched.First());
+                //db.Schedules.Add(sched.First());
                 db.FlightStates.Add(flights.First());
 
                 try
