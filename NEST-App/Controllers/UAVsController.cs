@@ -129,7 +129,6 @@ namespace NEST_App.Controllers.Api
         public async Task<IHttpActionResult> createMission(int number)
         {
             Random num = new Random();
-            var randPoint = this.getDistance();
             for (int i = 0; i < number; i++)
             {
                 var missions = new List<Mission>
@@ -143,8 +142,8 @@ namespace NEST_App.Controllers.Api
                         TimeAssigned = null, 
                         TimeCompleted = null, 
                                 //DestinationCoordinates = DbGeography.FromText("POINT(-118.52529 34.241670 400)"),  
-                        Latitude = randPoint.Latitude?? 34.2417,
-                        Longitude = randPoint.Longitude?? -118.529,
+                        Latitude = getDistance().Latitude?? 34.2417,
+                        Longitude = getDistance().Longitude?? -118.529,
                         ScheduledCompletionTime = null,
                         EstimatedCompletionTime = null, 
                         create_date = DateTime.Now,
@@ -164,17 +163,18 @@ namespace NEST_App.Controllers.Api
                 };
 
                 db.Schedules.Add(sched.First());
-            }
 
-            try
-            {
-                await db.SaveChangesAsync();
+                try
+                {
+                    await db.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+
+
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
-           
             return StatusCode(HttpStatusCode.Created);
         }
      
