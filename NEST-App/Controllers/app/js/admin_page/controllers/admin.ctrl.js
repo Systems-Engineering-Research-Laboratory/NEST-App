@@ -17,6 +17,21 @@
             " Weak GPS link",
             " Payload in danger of detachment",
         ]
+        $scope.blockUI = function () {
+            $.blockUI({
+                message: '<i class="fa fa-spinner fa-pulse"></i>',
+                css: {
+                    border: 'none',
+                    padding: '15px',
+                    backgroundColor: '#000',
+                    '-webkit-border-radius': '10px',
+                    '-moz-border-radius': '10px',
+                    opacity: .5,
+                    color: '#fff'
+                }
+            });
+        }
+        $scope.blockUI();
         var User = function (user) {
             //insert user model here
             var User = {
@@ -31,56 +46,58 @@
         };
 
         $scope.createUser = function () {
+            $scope.blockUI();
             $http({
                 method: 'POST',
                 url: '/api/users',
                 data: $scope.newUser,
                 success: function (data) {
                     $scope.allUsers.push(data);
+                    $.unblockUI();
                 }
             });
+            
         };
         $scope.createVehicle = function () {
+            $scope.blockUI();
             $http({
                 method: 'POST',
                 url: '/api/users',
                 data: $scope.newVehicle,
                 success: function (data) {
                     $scope.allVehicles.push(data);
+                    $.unblockUI();
                 }
             });
         };
         $scope.generateUAVs = function () {
-            //$http({
-            //    method: 'POST',
-            //    url: '/api/uavs/generateuavs/' + count,
-            //    success: function (data) {
-            //        $scope.uavs = (data);
-            //    },
-            //    error: function (err) {
-            //        alert(err);
-            //    }
-            //});
+            $scope.blockUI();
             $http.get('/api/uavs/generateuavs/' + $("#desiredUAVCount").val())
             .success(function (data, status, headers, config) {
                 $scope.uavs = data;
+                $.unblockUI();
             })
             .error(function (data, status, headers, config) {
+                $.unblockUI();
                 alert(data);
             });
         };
         $scope.getGeneratedUAVs = function () {
+            $scope.blockUI();
             $http.get('/api/uavs')
             .success(function (data, status, headers, config) {
                 $scope.uavs = data;
                 console.log(data);
+                $.unblockUI();
             })
             .error(function (data, status, headers, config) {
                 console.log(data);
+                $.unblockUI();
                 alert(data);
             });
         };
         $scope.addOperator = function () {
+            $scope.blockUI();
             var user = {
                 username: $("#operatorName").val(),
                 password: "test",
@@ -90,14 +107,17 @@
             $http.post('/api/users', JSON.stringify(user))
             .success(function (data, status, headers, config) {
                 //$scope.allUsers.push(data);
-                $scope.getOperators();
+                $scope.allUsers.push(data);
+                $.unblockUI();
             })
             .error(function (data, status, headers, config) {
+                $.unblockUI();
                 alert(data);
             });
         };
 
         $scope.createEmergencyEvent = function () {
+            $scope.blockUI();
             var number = Math.floor((Math.random() * ($scope.uavs.length - 1)) + 0);
             var number2 = Math.floor((Math.random() * ($scope.emergencySituations.length)) + 0);
             var pickedUav = $scope.uavs[number];
@@ -116,38 +136,62 @@
                 emitHub.connection.start().done(function () {
                     emitHub.server.emit(eEvent);
                 });
+                $.unblockUI();
             });
             console.log(eEvent);
         };
 
         $scope.getOperators = function () {
+            $scope.blockUI();
             $http.get('/api/users')
                 .success(function (data, status, headers, config) {
                     $scope.allUsers = data;
+                    $.unblockUI();
                 })
                 .error(function (data, status, headers, config) {
+                    $.unblockUI();
                     alert(data);
                 });
         };
         $scope.deleteUAV = function (uav_id) {
+            $scope.blockUI();
             $http.put('/api/uavs/disableuav/' + uav_id)
             .success(function (data, status, headers, config) {
                 $scope.uavs = $scope.uavs.filter(function (obj) {
                     return obj.Id != uav_id;
                 });
+                $.unblockUI();
             })
             .error(function (data, status, headers, config) {
+                $.unblockUI();
                 alert(data);
                 console.log(data);
             });
         };
         $scope.assignUser = function (uav_id, user_id) {
+            $scope.blockUI();
             $http.post('/api/uavs/assignuser/' + uav_id + '/' + user_id)
             .success(function (data, status, headers, config) {
-
+                for (var i = 0; i < $scope.allUsers.length; i++) {
+                    if ($scope.allUsers[i].user_id == user_id) {
+                        $scope.allUsers[i].UAVs.push(data);
+                    }
+                }
+                for (var i = 0; i < $scope.unassignedUavs.length; i++) {
+                    if ($scope.unassignedUavs[i].Id == uav_id) {
+                        $scope.unassignedUavs.splice(i, 1);
+                    }
+                }
+                //var uav = $scope.unassignedUavs.filter(function (obj) {
+                //    return obj.Id == uav_id;
+                //});
+                //user.UAVs.push(uav);
+                //$scope.unassignedUavs.splice($scope.unassignedUavs.indexOf(uav), 1);
+                $scope.$apply();
+                $.unblockUI();
             })
             .error(function (data, status, headers, config) {
-
+                $.unblockUI();
             });
         };
         $scope.userSelected = function (user) {
@@ -165,9 +209,10 @@
         $http.get('/api/uavs/getunassigned')
         .success(function (data, status, headers, config) {
             $scope.unassignedUavs = data;
+            $.unblockUI();
         })
         .error(function (data, status, headers, config) {
-
+            $.unblockUI();
         });
         $scope.getGeneratedUAVs();
 
