@@ -18,10 +18,12 @@ var wpm;
 
 function uavMarkers(data, textStatus, jqXHR) {
     console.log("Pulling Flightstates...", textStatus);
-    //mapFunctions.PopulateUAVs(data, uavs, flightLines);
+    
     for (var i = 0; i < data.length; i++) {
+        uavs[data[i].Id] = mapFunctions.PopulateUAVs(data[i], flightLines);
+
         //TODO Make a copier fuction for this:
-        uavs[data[i].Id] = {};
+       /* uavs[data[i].Id] = {};
         uavs[data[i].Id].Id = data[i].Id;
         uavs[data[i].Id].FlightState = data[i].FlightState;
         uavs[data[i].Id].Schedule = data[i].Schedule;
@@ -36,6 +38,7 @@ function uavMarkers(data, textStatus, jqXHR) {
 
         var mis = uavs[data[i].Id].Mission;
         uavs[data[i].Id].Destination = new google.maps.LatLng(mis.Latitude, mis.Longitude);
+        */
 
         //Creates the flightpath line from uav position to destination
         flightLines[data[i].Id] = new google.maps.Polyline(mapStyles.flightPathOptions);
@@ -83,7 +86,6 @@ function uavMarkers(data, textStatus, jqXHR) {
         //When fired, the UAV is marked as 'selected'
         google.maps.event.addListener(marker, 'click', (function () {droneSelection.CtrlSelect(this, selectedDrones, selectedUAV)}));
         //Events to ccur when a UAV's marker icon has changed (ie the marker's been clicked)
-        //google.maps.event.addListener(marker, "icon_changed", function () { droneSelection.SelectionStateChanged(this, selectedDrones, selectedUAV, flightLines, droneTrails.uavTrails, selectedTrail) });
         google.maps.event.addListener(marker, 'selection_changed', function () { droneSelection.SelectionStateChanged(this, selectedDrones, selectedUAV, flightLines, droneTrails.uavTrails, selectedTrail) });
     }
 }

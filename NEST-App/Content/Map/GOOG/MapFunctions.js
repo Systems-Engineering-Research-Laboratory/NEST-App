@@ -87,11 +87,25 @@
     },
 
     //This function takes uav info form an ajax call and then uses it to populate/update the list of drones
-    PopulateUAVs : function (data, uavs, flightLines){
-        var pointText, results;
+    PopulateUAVs : function (uavData,  flightLines){
+        var id = uavData.Id;
+        var uav = {};
+        uav.Id = id;
+        uav.FlightState = uavData.FlightState;
+        uav.Schedule = uavData.Schedule;
+        uav.Missions = uavData.Schedule.Missions;
+        var fs = uav.FlightState;
+        uav.Alt = uavData.FlightState.Altitude;
+        uav.Callsign = uavData.Callsign;
+        uav.Battery = uavData.FlightState.BatteryLevel;
+        uav.Position = new google.maps.LatLng(fs.Latitude, fs.Longitude);
+        uav.Mission = uavData.Mission;
+        uav.Orientation = uavData.FlightState.Yaw;
 
-
-
+        var mis = uav.Mission;
+        uav.Destination = new google.maps.LatLng(mis.Latitude, mis.Longitude);
+        
+        return uav;
     },
 
     goTo_show: function () {
