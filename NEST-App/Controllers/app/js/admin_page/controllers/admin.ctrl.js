@@ -11,6 +11,7 @@
         $scope.selectedUser = null;
         $scope.unassignedUavs = [];
         $scope.emergencyEvents = [];
+        $scope.numberToAssign = 0;
         $scope.emergencySituations = [
             " Strong crosswinds detected",
             " Detected damage to rotary blades",
@@ -56,7 +57,7 @@
                     $.unblockUI();
                 }
             });
-            
+
         };
         $scope.createVehicle = function () {
             $scope.blockUI();
@@ -122,7 +123,7 @@
                 console.log('created a new mission...')
             })
             .error(function (data, status, headers, config) {
-                alert(data +" "+ status);
+                alert(data + " " + status);
             });
         }
 
@@ -204,6 +205,22 @@
                 $.unblockUI();
             });
         };
+        $scope.assignMultipleUAVs = function () {
+            $http.post('/api/users/assignmultiple/' + $scope.selectedUser.user_id + '/' + $scope.numberToAssign)
+            .success(function (data,status,headers,config) {
+                for (var i = 0; i < $scope.allUsers.length; i++) {
+                    if ($scope.allUsers[i].user_id == $scope.selectedUser.user_id) {
+                        $scope.allUsers[i].UAVs = data.UAVs;
+                        
+                    }
+                }
+            })
+            .error(function (data, status, headers, config) {
+
+            });
+        };
+
+
         $scope.userSelected = function (user) {
             $scope.selectedUser = user;
         };

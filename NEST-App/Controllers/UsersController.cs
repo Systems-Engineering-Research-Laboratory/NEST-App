@@ -22,6 +22,29 @@ namespace NEST_App.Controllers
             return db.Users;
         }
 
+        [HttpPost]
+        [ResponseType(typeof(IEnumerable<UAV>))]
+        [Route("api/users/assignmultiple/{user_id}/{amt}")]
+        public IHttpActionResult assignMultipleUAVs(int user_id, int amt)
+        {
+            IEnumerable<UAV> uavs = db.UAVs.Where(u => u.User == null && u.isActive == true).Take(amt);
+            NEST_App.Models.User user = db.Users.Find(user_id);
+            foreach(UAV uav in uavs) {
+                user.UAVs.Add(uav);
+            }
+            db.Entry(user).State = EntityState.Modified;
+            try
+            {
+                db.SaveChanges();
+            }
+            catch
+            {
+                return StatusCode(HttpStatusCode.Conflict);
+            }
+
+            return Ok(user);
+        }
+
         // GET: api/Users/5
         [ResponseType(typeof(User))]
         public IHttpActionResult GetUser(int id)

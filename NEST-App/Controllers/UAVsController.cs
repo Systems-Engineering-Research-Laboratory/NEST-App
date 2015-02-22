@@ -315,6 +315,7 @@ namespace NEST_App.Controllers.Api
         public IQueryable<UAV> GetUAVs()
         {
             return db.UAVs.Where(u => u.isActive == true);
+            //return db.UAVs;
         }
 
         // GET: api/UAVs/5
