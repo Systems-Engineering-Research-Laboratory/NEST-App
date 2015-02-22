@@ -131,7 +131,8 @@
     <button ng-click="createEmergencyEvent()">Generate Event</button>
     <br/>
     <br/>
-    <button ng-click="createMission()">Generate Mission</button>
+    <input type="number" value="0" id="desiredMissionCount" />
+    <button ng-click="createMission($('#desiredMissionCount').val())">Generate Mission</button>
 </div>
 
 @section scripts {

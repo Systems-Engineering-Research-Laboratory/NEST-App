@@ -98,12 +98,12 @@
         };
 
         $scope.createMission = function () {
-            $http.post('/api/uavs/postuavmission')
+            $http.post('/api/uavs/createuavmission/' + $("#desiredMissionCount").val())
             .success(function (data, status, headers, config) {
                 console.log('created a new mission...')
             })
             .error(function (data, status, headers, config) {
-                alert(data);
+                alert(data +" "+ status);
             });
         }
 
