@@ -125,9 +125,11 @@
             .error(function (data, status, headers, config) {
                 alert(data + " " + status);
             });
-            $http.put('/api/uavs/schedulemission/' + $("#desiredMissionCount").val())
+        }
+        $scope.scheduleMissions = function () {
+            $http.put('/api/uavs/schedulemissions')
             .success(function (data, status, headers, config) {
-                console.log('assinged a mission...')
+                console.log('assigned missions...')
             })
             .error(function (data, status, headers, config) {
                 alert(data + " " + status);
