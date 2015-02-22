@@ -25,6 +25,53 @@ namespace NEST_App.Controllers.Api
         private String[] lines = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content\\Names.txt"));
         private String[] lines2 = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content\\Flowers.txt"));
 
+        private DbGeography getDistance()
+        {
+            int alt = 400;                                  //altitude of UAV with 400 ft default
+            double homeLat = 34.2417;                       //default home latitude
+            double homeLon = -118.529;                      //default home longitude
+            double radius = 8050;                           //meters (5 miles)
+            Random rand = new Random();                     //random number generator
+            double radiusDegrees = radius / 111300f;        //convert meters to degrees, from the equator, 111300 meters in 1 degree
+            double lat2 = rand.NextDouble();                //random double latitude
+            double lon2 = rand.NextDouble();                //random double longitude
+            double w = radiusDegrees * Math.Sqrt(lat2);
+            double t = 2 * Math.PI * lon2;
+            double x = w * Math.Cos(t);
+            double y = w * Math.Sin(t);
+
+            double newX = x / Math.Cos(homeLat);
+
+            double newLon = newX + homeLon;
+            double newLat = y + homeLat;
+
+            string point = "POINT(" + newLon.ToString() + " " + newLat.ToString() + " " + alt.ToString() + ")";
+            return DbGeography.FromText(point);
+        }
+
+        private string getName()
+        {
+            //string userPath = AppDomain.CurrentDomain.BaseDirectory;
+            //string filePath = Path.Combine(userPath, "Content\\Names.txt");
+            //var lines = File.ReadAllLines(filePath);
+            var rand = new Random();
+            var randomLineNumber = rand.Next(0, lines.Length - 1);
+            var line = lines[randomLineNumber];
+            return line;
+        }
+
+        private string getPackage()
+        {
+            //string userPath = AppDomain.CurrentDomain.BaseDirectory;
+            //string filePath = Path.Combine(userPath, "Content\\Flowers.txt");
+            //var lines = File.ReadAllLines(filePath);
+            var rand = new Random();
+            var randomLineNumber = rand.Next(0, lines2.Length - 1);
+            var line = lines2[randomLineNumber];
+            return line;
+        }
+
+
         //GET: api/uavs/getuavinfo
         [HttpGet]
         [Route("api/uavs/getuavinfo")]
@@ -76,52 +123,40 @@ namespace NEST_App.Controllers.Api
                        };
             return Request.CreateResponse(HttpStatusCode.OK, uavs);
         }
-
-        private DbGeography getDistance()
+        [HttpPost]
+        [Route("api/uavs/createuavmission")]
+        public async Task<IHttpActionResult> createMission(int number)
         {
-            int alt = 400;                                  //altitude of UAV with 400 ft default
-            double homeLat = 34.2417;                       //default home latitude
-            double homeLon = -118.529;                      //default home longitude
-            double radius = 8050;                           //meters (5 miles)
-            Random rand = new Random();                     //random number generator
-            double radiusDegrees = radius / 111300f;        //convert meters to degrees, from the equator, 111300 meters in 1 degree
-            double lat2 = rand.NextDouble();                //random double latitude
-            double lon2 = rand.NextDouble();                //random double longitude
-            double w = radiusDegrees * Math.Sqrt(lat2);
-            double t = 2 * Math.PI * lon2;
-            double x = w * Math.Cos(t);
-            double y = w * Math.Sin(t);
-
-            double newX = x / Math.Cos(homeLat);
-
-            double newLon = newX + homeLon;
-            double newLat = y + homeLat;
-
-            string point = "POINT(" + newLon.ToString() + " " + newLat.ToString() + " " + alt.ToString() + ")";
-            return DbGeography.FromText(point);
+            Random num = new Random();
+            var randPoint = this.getDistance();
+            for (int i = 0; i < number; i++)
+            {
+                var missions = new List<Mission>
+                {
+                    new Mission { 
+                        Phase = "standby", 
+                        FlightPattern = "abstract", 
+                        Payload = getPackage(), 
+                        Priority = 1, 
+                        FinancialCost = num.Next(1, 99), 
+                        TimeAssigned = null, 
+                        TimeCompleted = null, 
+                                //DestinationCoordinates = DbGeography.FromText("POINT(-118.52529 34.241670 400)"),  
+                        Latitude = randPoint.Latitude?? 34.2417,
+                        Longitude = randPoint.Longitude?? -118.529,
+                        ScheduledCompletionTime = null,
+                        EstimatedCompletionTime = null, 
+                        create_date = DateTime.Now,
+                        modified_date = null
+                    }
+               };
+                db.Missions.Add(missions.First());
+            }
+            await db.SaveChangesAsync();
+            return StatusCode(HttpStatusCode.Created);
         }
+     
 
-        private string getName()
-        {
-            //string userPath = AppDomain.CurrentDomain.BaseDirectory;
-            //string filePath = Path.Combine(userPath, "Content\\Names.txt");
-            //var lines = File.ReadAllLines(filePath);
-            var rand = new Random();
-            var randomLineNumber = rand.Next(0, lines.Length - 1);
-            var line = lines[randomLineNumber];
-            return line;
-        }
-
-        private string getPackage()
-        {
-            //string userPath = AppDomain.CurrentDomain.BaseDirectory;
-            //string filePath = Path.Combine(userPath, "Content\\Flowers.txt");
-            //var lines = File.ReadAllLines(filePath);
-            var rand = new Random();
-            var randomLineNumber = rand.Next(0, lines2.Length - 1);
-            var line = lines2[randomLineNumber];
-            return line;
-        }
         
         [HttpGet]
         [Route("api/uavs/generateuavs/{number}")]
@@ -187,19 +222,19 @@ namespace NEST_App.Controllers.Api
                 var mission = new List<Mission> 
                 { 
                    new Mission {
-                       Phase = "enroute", 
-                       FlightPattern = "abstract",
-                       Payload = getPackage(), 
+                       Phase = "home", 
+                       FlightPattern = null,
+                       Payload = null, 
                        Priority = 1, 
-                       FinancialCost = num.Next(1, 99), 
-                       TimeAssigned = dateValue, 
-                       TimeCompleted = dateValue.AddHours(0.0833),  
-                       Latitude = randPoint.Latitude?? 34.2417,
-                       Longitude = randPoint.Longitude?? -118.529,
-                       ScheduledCompletionTime = dateValue.AddHours(0.0899),
-                       EstimatedCompletionTime = dateValue.AddHours(0.09), 
-                       create_date = dateValue.AddHours(0.01),
-                       modified_date = dateValue.AddHours(0.02) 
+                       FinancialCost = null, 
+                       TimeAssigned = null, 
+                       TimeCompleted = null,  
+                       Latitude = 34.2417,
+                       Longitude = -118.529,
+                       ScheduledCompletionTime = null,
+                       EstimatedCompletionTime = null, 
+                       create_date = DateTime.Now,
+                       modified_date = null 
                   }
                };
                 var maintenances = new List<Maintenance>
