@@ -93,12 +93,12 @@ namespace NEST_App.Controllers
                                   Priority = mis.Priority,
                                   FinancialCost = mis.FinancialCost ?? 0,
                                   UAVId = mis.Schedule.UAVId ?? -1,
-                                  TimeAssigned = mis.TimeAssigned,
-                                  TimeCompleted = mis.TimeCompleted,
+                                  TimeAssigned = mis.TimeAssigned ?? DateTime.Now,
+                                  TimeCompleted = mis.TimeCompleted ?? DateTime.Now,
                                   Latitude = mis.Latitude,
                                   Longitude = mis.Longitude,
-                                  ScheduledCompletionTime = mis.ScheduledCompletionTime,
-                                  EstimatedCompletionTime = mis.EstimatedCompletionTime
+                                  ScheduledCompletionTime = mis.ScheduledCompletionTime ?? DateTime.Now,
+                                  EstimatedCompletionTime = mis.EstimatedCompletionTime ?? DateTime.Now
                               };
             return missionDtos;
         }
