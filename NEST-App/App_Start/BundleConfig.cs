@@ -104,6 +104,12 @@ namespace NEST_App
             angularJS.Transforms.Add(jsTransformer);
             angularJS.Orderer = nullOrderer;
             bundles.Add(angularJS);
+
+            //Font Awesome
+            //var fa = new CustomStyleBundle("~/bundles/fontawesome");
+            //fa.Include("~/Content/font-awesome-4.3.0/css/font-awesome.min.css");
+            //fa.Include("~/Content/font-awesome-4.3.0/fonts/font-awesome.webfont.woff");
+            //bundles.Add(fa);
         }
     }
 }
