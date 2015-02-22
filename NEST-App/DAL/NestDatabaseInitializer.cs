@@ -161,44 +161,12 @@ namespace NEST_App.DAL
                             wps[1].NextWaypoint = wps[2];
                             wps[2].NextWaypoint = wps[0];
                             context.Waypoints.AddRange(wps);
-
-                        var maintenances = new List<Maintenance>
-                        {
-                            new Maintenance
-                            {
-                                create_date = DateTime.Now.AddHours(-8),
-                                last_maintenance = DateTime.Now.AddHours(-3),
-                                modified_date = DateTime.Now,
-                                next_maintenance = DateTime.Now.AddHours(5),
-                                time_remaining = "55"
-                            }
-                        };
-
-                        var schedules = new List<Schedule>
-                        { 
-                            new Schedule {
-                                UAV = UAVs.First(),
-                                //Maintenances = maintenances,
-                                //Missions = missions,
-                                create_date = DateTime.Now,
-                                modified_date = DateTime.Now
-                           }
-                        };
+                      
                         try
                         {
-                            //missions.First().Schedule = schedules.First();
-                            
-                            maintenances.First().Schedule = schedules.First();
-                            UAVs.First().Schedules = schedules;
-                            //context.FlightStates.Add(FlightStates.First());
-                            //context.UAVs.Add(UAVs.First());
-                            //context.Missions.Add(missions.First());
-                            //context.Maintenances.Add(maintenances.First());
-                            context.Schedules.Add(schedules.First());
+                            context.FlightStates.Add(FlightStates.First());
+                            context.UAVs.Add(UAVs.First());
                             context.MapRestrictedSet.AddRange(RestrictedArea);
-                            context.SaveChanges();
-                            //schedules.First().CurrentMission = missions.First().id;
-                            context.Entry(schedules.First()).State = System.Data.Entity.EntityState.Modified;
                             context.SaveChanges();
                         }
                         catch (DbEntityValidationException e)
