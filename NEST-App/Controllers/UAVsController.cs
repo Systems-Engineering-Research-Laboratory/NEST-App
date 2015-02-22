@@ -123,29 +123,11 @@ namespace NEST_App.Controllers.Api
                        };
             return Request.CreateResponse(HttpStatusCode.OK, uavs);
         }
-        [HttpPost]
-        [ResponseType(typeof(HttpResponse))]
-        [Route("api/uavs/schedulemission")]
-        public async Task<HttpResponseMessage> scheduleMission()
-        {
-            IQueryable<UAV> uav = db.UAVs;
-            Queue<UAV> u = new Queue<UAV>(uav);
-            var loop = 0;
-            while (loop == 0)
-            {
-                UAV drone = u.Dequeue();
-                if ( drone.Schedules.LastOrDefault().UAVId == null )
-                {
-                    Console.Write(drone);
-                }
-            }
-            return Request.CreateResponse(HttpStatusCode.OK, "Mission Assigned...");
-        }
 
         [HttpPost]
-        [ResponseType(typeof(HttpStatusCode))]
+        [ResponseType(typeof(HttpResponseMessage))]
         [Route("api/uavs/createuavmission/{number}")]
-        public async Task<IHttpActionResult> createMission(int number)
+        public async Task<HttpResponseMessage> createMission(int number)
         {
             Random num = new Random();
             for (int i = 0; i < number; i++)
@@ -168,21 +150,19 @@ namespace NEST_App.Controllers.Api
                         create_date = DateTime.Now,
                         modified_date = null
                     }
-               };
-                db.Missions.Add(missions.First());
-
-                var sched = new List<Schedule>
-                { 
-                   new Schedule {
-                       UAV = null,
-                       Missions = missions,
-                       create_date = DateTime.Now,
-                       modified_date = DateTime.Now,
-                   }
                 };
-
-                db.Schedules.Add(sched.First());
-
+                db.Missions.Add(missions.FirstOrDefault());
+                var sched = new List<Schedule>
+                {
+                    new Schedule {
+                        create_date = DateTime.Now,
+                        modified_date = DateTime.Now,
+                        UAVId = null,
+                        CurrentMission = missions.First().id
+                    }
+                };
+                
+                db.Schedules.Add(sched.FirstOrDefault());
                 try
                 {
                     await db.SaveChangesAsync();
@@ -192,11 +172,51 @@ namespace NEST_App.Controllers.Api
                     throw;
                 }
             }
-            return StatusCode(HttpStatusCode.Created);
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
-     
 
         
+        [HttpPut]
+        [ResponseType(typeof(HttpResponseMessage))]
+        [Route("api/uavs/schedulemission/{number}")]
+        public async Task<HttpResponseMessage> scheduleMission(int number)
+        {
+            for (int i = 0; i < number; i++)
+            {
+                Queue<UAV> uavQ = new Queue<UAV>(db.UAVs);
+                UAV head = uavQ.Peek();
+
+                while (uavQ.Count > 0)
+                {
+                    UAV u = uavQ.Dequeue();
+                    if (head == u)
+                    {
+                        db.Schedules.FirstOrDefault().UAVId = u.Id;
+                        break;
+                    }
+                    else if (u.Schedules.FirstOrDefault().UAVId == null)
+                    {
+                        db.Schedules.FirstOrDefault().UAVId = u.Id;
+                        break;
+                    }
+                    else if (u.Schedules.FirstOrDefault().UAVId != null)
+                    {
+                        uavQ.Enqueue(u);
+                        continue;
+                    }
+                }
+                try
+                {
+                    await db.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+            }
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
         [HttpGet]
         [Route("api/uavs/generateuavs/{number}")]
         public IHttpActionResult generateUAVs(int number)
