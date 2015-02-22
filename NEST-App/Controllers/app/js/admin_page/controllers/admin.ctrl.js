@@ -125,6 +125,13 @@
             .error(function (data, status, headers, config) {
                 alert(data + " " + status);
             });
+            $http.put('/api/uavs/schedulemission/' + $("#desiredMissionCount").val())
+            .success(function (data, status, headers, config) {
+                console.log('assinged a mission...')
+            })
+            .error(function (data, status, headers, config) {
+                alert(data + " " + status);
+            })
         }
 
         $scope.createEmergencyEvent = function () {
