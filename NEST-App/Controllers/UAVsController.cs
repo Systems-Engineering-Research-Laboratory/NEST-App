@@ -124,7 +124,8 @@ namespace NEST_App.Controllers.Api
             return Request.CreateResponse(HttpStatusCode.OK, uavs);
         }
         [HttpPost]
-        [Route("api/uavs/createuavmission")]
+        [ResponseType(typeof(HttpStatusCode))]
+        [Route("api/uavs/createuavmission/{number}")]
         public async Task<IHttpActionResult> createMission(int number)
         {
             Random num = new Random();
@@ -151,8 +152,29 @@ namespace NEST_App.Controllers.Api
                     }
                };
                 db.Missions.Add(missions.First());
+
+                var sched = new List<Schedule>
+                { 
+                   new Schedule {
+                       UAV = null,
+                       Missions = missions,
+                       create_date = DateTime.Now,
+                       modified_date = DateTime.Now,
+                   }
+                };
+
+                db.Schedules.Add(sched.First());
             }
-            await db.SaveChangesAsync();
+
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+           
             return StatusCode(HttpStatusCode.Created);
         }
      

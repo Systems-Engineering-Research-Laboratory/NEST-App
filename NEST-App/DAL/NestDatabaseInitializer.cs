@@ -105,26 +105,7 @@ namespace NEST_App.DAL
                         dateValue = DateTime.Now;
 
                         var randPoint = this.distance();
-
-                        var missions = new List<Mission>
-                        {
-                            new Mission { 
-                                Phase = "enroute", 
-                                FlightPattern = "abstract", 
-                                Payload = "cheetos", 
-                                Priority = 1, 
-                                FinancialCost = 40, 
-                                TimeAssigned = dateValue, 
-                                TimeCompleted = dateValue.AddHours(0.0833), 
-                                //DestinationCoordinates = DbGeography.FromText("POINT(-118.52529 34.241670 400)"),  
-                                Latitude = randPoint.Latitude?? 34.2417,
-                                Longitude = randPoint.Longitude?? -118.529,
-                                ScheduledCompletionTime = dateValue.AddHours(0.0899),
-                                EstimatedCompletionTime = dateValue.AddHours(0.09), 
-                                create_date = dateValue.AddHours(0.01),
-                                modified_date = dateValue.AddHours(0.02) }
-                        };
-
+                        
                         var RestrictedArea = new List<MapRestricted>
                         {
                             new MapRestricted {
@@ -151,8 +132,8 @@ namespace NEST_App.DAL
                                 Action = "Fly Through", 
                                 Latitude = 34.2365205,
                                 Longitude = -118.4902736,
-                                Altitude = 400,
-                                Missions = missions[0]
+                                Altitude = 400
+                                //Missions = missions[0]
                             },
                             new Waypoint { 
                                 WaypointName = "Jeff's Waypoint", 
@@ -161,8 +142,8 @@ namespace NEST_App.DAL
                                 Action = "Fly Through", 
                                 Latitude = 34.2417,
                                 Longitude = -118.529,
-                                Altitude = 400,
-                                Missions = missions[0] 
+                                Altitude = 400
+                                //Missions = missions[0] 
                             },
                             new Waypoint { 
                                 WaypointName = "Jeff's Next Waypoint", 
@@ -172,8 +153,9 @@ namespace NEST_App.DAL
                                 Action = "Fly Through", 
                                 Latitude = 34.217,
                                 Longitude = -118.529,
-                                Altitude = 400,
-                                Missions = missions[0]}
+                                Altitude = 400
+                                //Missions = missions[0]
+                                }
                             };
                         
                             wps[1].NextWaypoint = wps[2];
@@ -204,7 +186,7 @@ namespace NEST_App.DAL
                         };
                         try
                         {
-                            missions.First().Schedule = schedules.First();
+                            //missions.First().Schedule = schedules.First();
                             
                             maintenances.First().Schedule = schedules.First();
                             UAVs.First().Schedules = schedules;
@@ -215,7 +197,7 @@ namespace NEST_App.DAL
                             context.Schedules.Add(schedules.First());
                             context.MapRestrictedSet.AddRange(RestrictedArea);
                             context.SaveChanges();
-                            schedules.First().CurrentMission = missions.First().id;
+                            //schedules.First().CurrentMission = missions.First().id;
                             context.Entry(schedules.First()).State = System.Data.Entity.EntityState.Modified;
                             context.SaveChanges();
                         }
