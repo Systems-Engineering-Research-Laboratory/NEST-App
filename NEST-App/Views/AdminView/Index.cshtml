@@ -113,6 +113,7 @@
         </div>
         <div class="assignmentWrapper">
             <div class="assignedWrapper">
+                <div>Assigned</div>
                 <div class="list-group">
                     <a class="list-group-item" ng-repeat="uav in selectedUser.UAVs">
                         {{uav.Callsign}}
@@ -120,6 +121,7 @@
                 </div>
             </div>
             <div class="unassignedWrapper">
+                <div>Unassigned</div>
                 <div class="list-group">
                     <a class="list-group-item" ng-dblclick="assignUser(uav.Id, selectedUser.user_id)" ng-repeat="uav in unassignedUavs">
                         {{uav.Callsign}}
