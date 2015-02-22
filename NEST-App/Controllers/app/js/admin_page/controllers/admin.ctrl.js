@@ -11,6 +11,7 @@
         $scope.selectedUser = null;
         $scope.unassignedUavs = [];
         $scope.emergencyEvents = [];
+        $scope.numberToAssign = 0;
         $scope.emergencySituations = [
             " Strong crosswinds detected",
             " Detected damage to rotary blades",
