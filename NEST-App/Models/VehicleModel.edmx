@@ -251,7 +251,7 @@
     <Property Name="ScheduledCompletionTime" Type="datetime" Nullable="true" />
     <Property Name="EstimatedCompletionTime" Type="datetime" Nullable="true" />
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="ScheduleId" Type="int" Nullable="false" />
+    <Property Name="ScheduleId" Type="int" Nullable="true" />
     <Property Name="create_date" Type="datetime" Nullable="true" />
     <Property Name="modified_date" Type="datetime" Nullable="true" />
     <Property Name="Latitude" Type="float" Nullable="false" />
@@ -586,7 +586,7 @@
   </Association>
   <Association Name="MissionSchedule">
     <End Role="Mission" Type="VehicleModel.Store.Missions" Multiplicity="*" />
-    <End Role="Schedule" Type="VehicleModel.Store.Schedules" Multiplicity="1" />
+    <End Role="Schedule" Type="VehicleModel.Store.Schedules" Multiplicity="0..1" />
     <ReferentialConstraint>
       <Principal Role="Schedule">
         <PropertyRef Name="Id" />
@@ -1031,7 +1031,7 @@
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <NavigationProperty Name="Orders" Relationship="VehicleModel.MissionOrder" FromRole="Mission" ToRole="Order" />
           <NavigationProperty Name="Schedule" Relationship="VehicleModel.MissionSchedule" FromRole="Mission" ToRole="Schedule" />
-          <Property Name="ScheduleId" Type="Int32" Nullable="false" />
+          <Property Name="ScheduleId" Type="Int32" Nullable="true" />
           <NavigationProperty Name="MissionLogs" Relationship="VehicleModel.MissionMissionLog" FromRole="Mission" ToRole="MissionLog" />
           <Property Name="create_date" Type="DateTime" Nullable="true" />
           <Property Name="modified_date" Type="DateTime" Nullable="true" />
@@ -1068,7 +1068,7 @@
         </Association>
         <Association Name="MissionSchedule">
           <End Type="VehicleModel.Mission" Role="Mission" Multiplicity="*" />
-          <End Type="VehicleModel.Schedule" Role="Schedule" Multiplicity="1" />
+          <End Type="VehicleModel.Schedule" Role="Schedule" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="Schedule">
               <PropertyRef Name="Id" />

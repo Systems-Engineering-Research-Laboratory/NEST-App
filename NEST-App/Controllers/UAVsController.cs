@@ -130,74 +130,65 @@ namespace NEST_App.Controllers.Api
         public async Task<HttpResponseMessage> createMission(int number)
         {
             Random num = new Random();
+            var missions = new List<Mission>();
             for (int i = 0; i < number; i++)
             {
-                var missions = new List<Mission>
+
+                var miss = new Mission
                 {
-                    new Mission { 
-                        Phase = "standby", 
-                        FlightPattern = "abstract", 
-                        Payload = getPackage(), 
-                        Priority = 1, 
-                        FinancialCost = num.Next(1, 99), 
-                        TimeAssigned = null, 
-                        TimeCompleted = null, 
-                                //DestinationCoordinates = DbGeography.FromText("POINT(-118.52529 34.241670 400)"),  
-                        Latitude = getDistance().Latitude?? 34.2417,
-                        Longitude = getDistance().Longitude?? -118.529,
-                        ScheduledCompletionTime = null,
-                        EstimatedCompletionTime = null, 
-                        create_date = DateTime.Now,
-                        modified_date = null
-                    }
+                    Phase = "standby",
+                    FlightPattern = "abstract",
+                    Payload = getPackage(),
+                    Priority = 1,
+                    FinancialCost = num.Next(1, 99),
+                    TimeAssigned = null,
+                    TimeCompleted = null,
+                    //DestinationCoordinates = DbGeography.FromText("POINT(-118.52529 34.241670 400)"),  
+                    Latitude = getDistance().Latitude ?? 34.2417,
+                    Longitude = getDistance().Longitude ?? -118.529,
+                    ScheduledCompletionTime = null,
+                    EstimatedCompletionTime = null,
+                    create_date = DateTime.Now,
+                    modified_date = null
                 };
-                db.Missions.Add(missions.FirstOrDefault());
-                var sched = new List<Schedule>
-                {
-                    new Schedule {
-                        create_date = DateTime.Now,
-                        modified_date = DateTime.Now,
-                        UAVId = null,
-                        CurrentMission = missions.First().id
-                    }
-                };
-                
-                db.Schedules.Add(sched.FirstOrDefault());
-                try
-                {
-                    await db.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
+                missions.Add(miss);
             }
+            db.Missions.AddRange(missions);
+            await db.SaveChangesAsync();
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
+        /// <summary>
+        /// Creates missions and assigns them to the schedules
+        /// </summary>
+        /// <returns></returns>
         [HttpPut]
         [ResponseType(typeof(HttpResponseMessage))]
         [Route("api/uavs/schedulemissions")]
         public async Task<HttpResponseMessage> scheduleMission()
         {
-            Queue<UAV> uavQ = new Queue<UAV>(db.UAVs);
+            //Ensure that the UAVs have schedules before we do the round robin so we don't skip UAVs
+            await createSchedulesForUavs();
             Queue<Schedule> schedQ = new Queue<Schedule>(db.Schedules);
-         
-            while (schedQ.Count > 0) {
-                UAV u = uavQ.Dequeue();
+            //Grab all the unassigned missions in the database.
+            var unassigned = from mis in db.Missions
+                             where mis.ScheduleId == null
+                             select mis;
 
+            //Assign each of those unassigned missions to the a schedule
+            foreach (Mission mis in unassigned)
+            {
                 Schedule s = schedQ.Dequeue();
-                if (s.UAVId == null)
+                s.Missions.Add(mis);
+                if(s.CurrentMission == null)
                 {
-                    s.UAVId = u.Id;
-                    s.modified_date = DateTime.Now;
-                    s.Missions.FirstOrDefault().TimeAssigned = DateTime.Now;
-                    s.Missions.FirstOrDefault().Phase = "assigned";
+                    //This schedule had no current mission, so just assign it one
+                    s.CurrentMission = mis.id;
                 }
-                
-                uavQ.Enqueue(u);
+                //Add to the back of the queue for round robinness
+                schedQ.Enqueue(s);
             }
-                
+
             try
             {
                 await db.SaveChangesAsync();
@@ -206,8 +197,35 @@ namespace NEST_App.Controllers.Api
             {
                 throw;
             }
-       
+
             return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+        /// <summary>
+        /// This creates schedules for UAVs that do not have a schedules
+        /// </summary>
+        /// <returns>true always</returns>
+        private async Task<bool> createSchedulesForUavs()
+        {
+            var uavsWithNoScheds = from u in db.UAVs
+                                   where u.Schedules.Count == 0
+                                   select u;
+            foreach(UAV u in uavsWithNoScheds)
+            {
+                u.Schedules = new List<Schedule>
+                {
+                    new Schedule
+                    {
+                        UAVId = u.Id,
+                        create_date = DateTime.Now,
+                        modified_date = DateTime.Now,
+                    }
+                };
+            }
+            
+            await db.SaveChangesAsync();
+
+            return true;
         }
 
         [HttpGet]
@@ -285,7 +303,7 @@ namespace NEST_App.Controllers.Api
 
                 try
                 {
-                    db.SaveChanges();    
+                    db.SaveChanges();
                 }
                 catch (DbUpdateException e)
                 {
@@ -319,7 +337,7 @@ namespace NEST_App.Controllers.Api
             evnt.create_date = DateTime.Now;
             evnt.modified_date = DateTime.Now;
             db.EventLogs.Add(evnt);
-            
+
             try
             {
                 await db.SaveChangesAsync();
@@ -484,7 +502,7 @@ namespace NEST_App.Controllers.Api
             }
 
             return Ok(uav);
-            
+
         }
 
         protected override void Dispose(bool disposing)
