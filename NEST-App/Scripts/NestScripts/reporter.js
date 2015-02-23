@@ -16,13 +16,14 @@ function Reporter() {
                 FinancialCost: mission.FinancialCost,
                 TimeAssigned: mission.TimeAssigned,
                 TimeComplete: mission.TimeCompleted,
-                DestinationCoordinates: mission.DestinationCoordinates.Geography.WellKnownText,
                 ScheduledCompletionTime: mission.ScheduledCompletionTime,
                 EstimatedCompletionTime: mission.EstimatedCompletionTime,
                 id: mission.id,
                 ScheduleId: mission.ScheduleId,
                 create_date: mission.create_date,
                 modified_date: mission.modified_date,
+                Latitude: mission.Latitude,
+                Longitude: mission.Longitude,
             },
             {});
 
@@ -93,5 +94,23 @@ function Reporter() {
             url: 'api/missions',
             type: 'GET',
         })
+    }
+
+
+    this.addNewRouteToMission = function (id, pts) {
+        var promise = $.ajax(
+            {
+                url: '/api/missions/' + id + '/newroute',
+                type: 'POST',
+                headers: {
+                    "Content-Type": 'application/json',
+                },
+                data: JSON.stringify(pts),
+            });
+        var $this = this;
+        promise.fail(function (jqXHR, textStatus, errorThrown) {
+            console.error("addNewRouteToMission failed!");
+        });
+        return promise;
     }
 }

@@ -59,6 +59,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     //If the mission is defined, get the waypoints associated with it
     if (this.Mission) {
+        LatLongToXY(this.Mission);
         this.reporter.retrieveWaypointsByMissionId(this.Mission.id, this, this.gotNewWaypoints);
     }
 
@@ -90,7 +91,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         if (this.currentWaypoint) {
             if (this.performWaypoint(dt)) {
                 console.log("Finished with waypoint " + this.currentWaypoint.WaypointName);
-                this.updateCurrentWaypoint();
+                //this.updateCurrentWaypoint();
                 this.getNextWaypoint();
             }
         }
@@ -139,13 +140,14 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     //Advances the aircraft directly towards its destination. Nothing fancy here.
     this.deadReckon = function (dt, X, Y) {
         var reachedDest = false;
-        var velocity = 20; //m/s
         //Find the direction it wants to go there
         heading = calculateHeading(this.FlightState.X, this.FlightState.Y, X, Y);
         //Update the vehicle's yaw.
         //Put the heading into the flight state for when it gets pushed to the server.
         this.FlightState.Yaw = heading * rad2deg;
-        this.approachSpeed(this.MaxVelocity, heading, dt);
+        var idealSpeed = this.MaxVelocity;
+        idealSpeed = 200;
+        this.approachSpeed(idealSpeed, heading, dt);
         var distanceX = X - this.FlightState.X;
         var distanceY = Y - this.FlightState.Y;
         var dX = this.FlightState.VelocityX * dt;
@@ -285,6 +287,11 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         var update = false;
         //TODO: Report mission progress
         switch (mis.Phase) {
+            case "standby":
+                {
+                    update = true;
+                    mis.Phase = "takeoff";
+                }
             case "takeoff":
                 if (this.takeOff(dt)) {
                     mis.Phase = "enroute";
@@ -391,13 +398,14 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             && calculateDistance(thisX, thisY, base.X, base.Y) < 5;
     }
 
-    this.generateWaypoints = function() {
-        if(this.Command) {
-            this.pathGen.resolvePath(this.Command, [], this);
-        }
-        else if(this.Mission) {
-            this.pathGen.resolvePath(this.Mission, [], this);
-        }
+    this.generateWaypoints = function () {
+        var target = this.Command || this.Mission;
+        var type = this.Command ? "command" : "mission";
+        this.waypoints = this.pathGen.brandNewTarget(this.FlightState, target, true, this);
+        wps[1].obj = target;
+        wps[1].type = type;
+        this.currentWaypoint = this.waypoints[0];
+        this.currentWaypointIndex = 0;
     }
 
     this.getNextWaypoint = function () {
@@ -424,6 +432,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         wp.TimeCompleted = curTime.toISOString();
         this.reporter.updateWaypoint(wp);
     }
+
 }
 
 
@@ -459,6 +468,7 @@ function VehicleContainer (){
     this.makeStale = function () {
         this.newRestrictedArea = false;
     }
+
 }
 
 // The waypoint creation logic container so that there isn't logic all over the vehicle code
@@ -469,6 +479,15 @@ function PathGenerator(areaContainer, reporter) {
 
     this.gotNewRestrictedArea = function () {
         return this.areaContainer.newRestrictedArea;
+    }
+
+    this.brandNewTarget = function (begin, end, isMission, veh) {
+        var pts = [new Waypoint({ Latitude: begin.Latitude, Longitude: begin.Longitude }),
+            new Waypoint({ Latitude: end.Latitude, Longitude: end.Longitude })];
+        if (isMission) {
+            this.reporter.addNewRouteToMission(end.id, pts);
+        }
+        return pts;
     }
 
     this.generatePath = function(wps, veh) {
@@ -482,7 +501,7 @@ function PathGenerator(areaContainer, reporter) {
     this.resolvePath = function(mission, wps, veh) {
         //For now, we are just going to get the direct waypoints.
         if (wps  && wps.length < 2) {
-            var is = this.withEndPoints(mission, wps, veh);
+            this.withEndPoints(mission, wps, veh);
         }
         return wps;
     }
@@ -583,6 +602,10 @@ function Waypoint(info) {
     this.Action = info.Action ? info.Action : "fly through";
     this.GeneratedBy = info.GeneratedBy ? info.GeneratedBy : "vehicle";
     this.Altitude = info.Altitude || 400;
+    this.IsActive = info.IsActive || true;
+    this.MissionId = info.MissionId || null;
+    this.WasSkipped = info.WasSkipped || false;
+    this.NextWaypointId = info.NextWaypointId || null;
     if (info.Position) {
         appendLonLatFromDbPoint(this, info.Position);
         LatLongToXY(this);
@@ -592,12 +615,6 @@ function Waypoint(info) {
     this.Latitude = info.Latitude;
     this.Longitude = info.Longitude;
     LatLongToXY(this);
-    if(info.NextWaypointId) {
-        this.NextWaypointId = info.NextWaypointId;
-    }
-    if (info.MissionId) {
-        this.MissionId = info.MissionId;
-    }
     this.Id = info.Id;
 }
 
