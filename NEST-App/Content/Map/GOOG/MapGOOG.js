@@ -1,6 +1,7 @@
 ﻿var map;
 var homeBase = new google.maps.LatLng(34.2417, -118.529);
 var uavs = {};
+var vehicleHub;
 
 //DroneSelection
 var selectedDrones = []; //store drones selected from any method here
@@ -111,7 +112,7 @@ $(document).ready(function () {
 
     // add event listener
     if (document.getElementById("go_lat") != isNaN && document.getElementById("go_long") != isNaN) {
-        document.getElementById("goWaypoint").addEventListener("click", droneTrails.goWaypoint(document.getElementById("go_lat"), document.getElementById("go_long")));
+        document.getElementById("goBtn").addEventListener("click", droneTrails.goWaypoint(document.getElementById("go_lat"), document.getElementById("go_long")));
     }
 
     $.ajax({
@@ -187,7 +188,7 @@ $(document).ready(function () {
     var warningMessageCounter = 0;
   
     /* Vehicle Movement */
-    var vehicleHub = $.connection.vehicleHub;
+    vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         //mapFunctions.vehicleHubUpdate(vehicle, uavs, selected);
 
@@ -277,6 +278,7 @@ $(document).ready(function () {
             //console.log("Shift key up");
         }
     });
+
     google.maps.event.trigger(map, 'resize');
     var mapListeners = map;/// <-----------------------------TODO: Redundant?
 

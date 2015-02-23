@@ -72,6 +72,11 @@
                     selectedTrail[i].setMap(marker.map);
                 }
             }
+
+            // make goWaypoint buttons avaliable
+            $("#UAVId").html("UAV: " + selectedUAV.Callsign);
+            $("#goBtn").removeClass("disabled");
+            $("#clickToGoBtn").removeClass("disabled");
         }
             //******************DE-SELECTED*******************//
         else if (marker.selected == false) {
