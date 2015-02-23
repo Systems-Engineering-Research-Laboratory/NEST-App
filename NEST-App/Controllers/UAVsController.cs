@@ -24,6 +24,7 @@ namespace NEST_App.Controllers.Api
         private NestContainer db = new NestContainer();
         private String[] lines = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content\\Names.txt"));
         private String[] lines2 = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content\\Flowers.txt"));
+        private Random rand = new Random();
 
         private DbGeography getDistance()
         {
@@ -31,7 +32,6 @@ namespace NEST_App.Controllers.Api
             double homeLat = 34.2417;                       //default home latitude
             double homeLon = -118.529;                      //default home longitude
             double radius = 8050;                           //meters (5 miles)
-            Random rand = new Random();                     //random number generator
             double radiusDegrees = radius / 111300f;        //convert meters to degrees, from the equator, 111300 meters in 1 degree
             double lat2 = rand.NextDouble();                //random double latitude
             double lon2 = rand.NextDouble();                //random double longitude
@@ -133,7 +133,7 @@ namespace NEST_App.Controllers.Api
             var missions = new List<Mission>();
             for (int i = 0; i < number; i++)
             {
-
+                DbGeography p = getDistance();
                 var miss = new Mission
                 {
                     Phase = "standby",
@@ -144,8 +144,8 @@ namespace NEST_App.Controllers.Api
                     TimeAssigned = null,
                     TimeCompleted = null,
                     //DestinationCoordinates = DbGeography.FromText("POINT(-118.52529 34.241670 400)"),  
-                    Latitude = getDistance().Latitude ?? 34.2417,
-                    Longitude = getDistance().Longitude ?? -118.529,
+                    Latitude = p.Latitude ?? 34.2417,
+                    Longitude = p.Longitude ?? -118.529,
                     ScheduledCompletionTime = null,
                     EstimatedCompletionTime = null,
                     create_date = DateTime.Now,
