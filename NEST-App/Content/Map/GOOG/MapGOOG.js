@@ -32,32 +32,8 @@ function uavMarkers(data, textStatus, jqXHR) {
             position: uavs[data[i].Id].Position,
             icon: mapStyles.uavCircleBlack
         });
-        var marker = new MarkerWithLabel({
-            position: uavs[data[i].Id].Position,
-            icon: mapStyles.uavSymbolBlack,
-            labelContent: uavs[data[i].Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uavs[data[i].Id].Alt + '<br/><b>Bat: </b>' + uavs[data[i].Id].Battery + '</div>',
-            labelAnchor: new google.maps.Point(95, 20),
-            labelClass: "labels",
-            labelStyle: { opacity: 0.75 },
-            zIndex: 999999,
-            uav: uavs[data[i].Id],
-            uavSymbolBlack: {
-                path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
-                fillColor: 'black',
-                fillOpacity: 0.8,
-                scale: 0.2,
-                zIndex: 1,
-                anchor: new google.maps.Point(355, 295)
-            },
-            uavSymbolGreen: {
-                path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
-                fillColor: 'green',
-                fillOpacity: 0.8,
-                scale: 0.2,
-                zIndex: 1,
-                anchor: new google.maps.Point(355, 295)
-            }
-        });
+        var marker = mapFunctions.SetUAVMarker(uavs[data[i].Id]);
+
 
         //Apply the UAV's visual aspects and make them appear on the map
         marker.set('selected', false);
@@ -221,8 +197,8 @@ $(document).ready(function () {
     vehicleHub.client.flightStateUpdate = function (vehicle) {
 
         uavs[vehicle.Id] = mapFunctions.UpdateVehicle(uavs[vehicle.Id], vehicle);
-        //console.log(vehicle);
 
+        //console.log(vehicle);
         // draw trail
         if (selectedUAV && selectedTrail != undefined) {
             if (selectedTrail.length < 2)
@@ -230,27 +206,6 @@ $(document).ready(function () {
             else
                 selectedTrail[selectedTrail.length - 2].setMap(map);
         }
-
-        //Check drone heading and adjust as necessary
-        if ((Math.round((10000000 * uavs[vehicle.Id].Orientation)) / 10000000) != (Math.round((10000000 * uavs[vehicle.Id].Yaw)) / 10000000)) {
-
-            uavs[vehicle.Id].Orientation = uavs[vehicle.Id].Yaw;
-           
-            uavs[vehicle.Id].marker.uavSymbolBlack.rotation = uavs[vehicle.Id].Yaw;
-            uavs[vehicle.Id].marker.uavSymbolGreen.rotation = uavs[vehicle.Id].Yaw;
-
-            if (uavs[vehicle.Id].marker.selected == true)
-                uavs[vehicle.Id].marker.setOptions({
-                    icon: uavs[vehicle.Id].marker.uavSymbolGreen
-                });
-            else
-                uavs[vehicle.Id].marker.setOptions({
-                    icon: uavs[vehicle.Id].marker.uavSymbolBlack
-                })
-        }
-        uavs[vehicle.Id].marker.setOptions({
-            labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uavs[vehicle.Id].Alt + '<br/><b>Bat: </b>' + uavs[vehicle.Id].BatteryCheck + '</div>'
-        });
         
         if (uavs[vehicle.Id].BatteryCheck < .2) {
             if (warningMessageCounter == 0) {

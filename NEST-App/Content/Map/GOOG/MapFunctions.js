@@ -4,6 +4,7 @@
     gridBoundingBox : null,
     mouseIsDown : false,
 
+    //Returns the latlong of the clicked point
     GetLatLong: function (theMap, event) {
         var lat = event.latLng.lat();
         var lng = event.latLng.lng();
@@ -16,6 +17,18 @@
         infowindow.open(theMap);
     },
 
+    //Helper function for issuing UAV commands
+    UAVCommand : function(id, command){
+        //I imagine that this could be something like:
+        /*$.ajax({
+            type: "POST",
+            url: '/api/uavs/commandUAV'+id,
+            success: function () { },
+            data: command
+        });*/
+    },
+
+    //Creates the context menu for the map
     MapContext : function(theMap){
         var contextMenuOptions = {};
         contextMenuOptions.classNames = { menu: 'context_menu', menuSeparator: 'context_menu_separator' };
@@ -29,7 +42,7 @@
 
         return contextMenu;
     },
-
+    //Controls context menu selection for the map
     MapContextSelection : function(map, latLng, eventName){
         switch (eventName) {
             case 'get_coords':
@@ -49,6 +62,7 @@
         }
     },
 
+    //Creates the context menu for UAVs
     UAVContext: function (theMap) {
         var contextMenuOptions = {};
         contextMenuOptions.classNames = { menu: 'context_menu', menuSeparator: 'context_menu_separator' };
@@ -61,17 +75,18 @@
 
         return contextMenu;
     },
-
+    //Controls context menu selection for UAVs
     UAVContextSelection: function (map, marker, latLng, eventName) {
         switch (eventName) {
             case 'force_land':
+                this.UAVCommand(marker.Id, 'force_land');
                 break;
             case 'get_details':
                 window.open("localhost:53130/detailview");
                 console.log("Trying to open window");
                 break;
             case 'return':
-                
+                this.UAVCommand(marker.Id, 'return');
                 break;
             default:
                 break;
@@ -170,6 +185,36 @@
         return uav;
     },
 
+    SetUAVMarker : function(uav){
+        var marker = new MarkerWithLabel({
+            position: uav.Position,
+            icon: mapStyles.uavSymbolBlack,
+            labelContent: uav.Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uav.Alt + '<br/><b>Bat: </b>' + uav.Battery + '</div>',
+            labelAnchor: new google.maps.Point(95, 20),
+            labelClass: "labels",
+            labelStyle: { opacity: 0.75 },
+            zIndex: 999999,
+            uav: uav,
+            uavSymbolBlack: {
+                path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
+                fillColor: 'black',
+                fillOpacity: 0.8,
+                scale: 0.2,
+                zIndex: 1,
+                anchor: new google.maps.Point(355, 295)
+            },
+            uavSymbolGreen: {
+                path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
+                fillColor: 'green',
+                fillOpacity: 0.8,
+                scale: 0.2,
+                zIndex: 1,
+                anchor: new google.maps.Point(355, 295)
+            }
+        });
+        return marker;
+    },
+
     UpdateVehicle : function(uav, updatedUAV){
         var LatLng = new google.maps.LatLng(updatedUAV.Latitude, updatedUAV.Longitude);
         droneTrails.storeTrail(updatedUAV.Id, LatLng);
@@ -180,6 +225,28 @@
         uav.Alt = updatedUAV.Altitude;
         uav.BatteryCheck = parseFloat(Math.round(updatedUAV.BatteryLevel * 100) / 100).toFixed(2);
         uav.Yaw = updatedUAV.Yaw;
+
+        //Check drone heading and adjust as necessary
+        if ((Math.round((10000000 * uav.Orientation)) / 10000000) != (Math.round((10000000 * uav.Yaw)) / 10000000)) {
+
+            uav.Orientation = uav.Yaw;
+
+            uav.marker.uavSymbolBlack.rotation = uav.Yaw;
+            uav.marker.uavSymbolGreen.rotation = uav.Yaw;
+
+            if (uav.marker.selected == true)
+                uav.marker.setOptions({
+                    icon: uav.marker.uavSymbolGreen
+                });
+            else
+                uav.marker.setOptions({
+                    icon: uav.marker.uavSymbolBlack
+                })
+        }
+
+        uav.marker.setOptions({
+            labelContent: uav.Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uav.Alt + '<br/><b>Bat: </b>' + uav.BatteryCheck + '</div>'
+        });
 
         return uav;
     },
