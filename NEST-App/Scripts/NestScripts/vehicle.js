@@ -402,9 +402,9 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         var type = this.Command ? "command" : "mission";
         this.waypoints = this.pathGen.brandNewTarget(this.FlightState, target, true, this);
         this.waypoints[1].obj = target;
-        this.waypoints[1].type = type;
+        this.waypoints[1].objType = type;
         this.currentWaypoint = this.waypoints[0];
-        this.currentWaypointIndex = 0;
+        this.currentWpIndex = 0;
     }
 
     this.getNextWaypoint = function () {
