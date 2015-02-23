@@ -33,8 +33,9 @@ function WaypointManager() {
 
     //Add a callback to the listener. This is the best way to not have its own code.
     this.addMarker = function (marker) {
-        google.maps.event.addListener(marker, 'icon_changed', function () {
+        google.maps.event.addListener(marker, 'selection_changed', function () {
             that.handleIconChanged(this);
+            console.log("Waypoint manager selection changed");
         });
         this.markers.push(marker);
     }
@@ -52,12 +53,12 @@ function WaypointManager() {
         //Find the schedule corresponding to this uav. Ensure that the current mission is in it, or else we can't find
         //the path.
         var sched = this.getScheduleByUavId(Id);
-        if (sched == null || !sched.CurrentMission) {
+        if (sched == null || sched.CurrentMission == undefined) {
             return;
         }
         var miss = this.getMissionByMissionId(sched.CurrentMission);
         if (miss) {
-            if (marker.icon.fillColor === "green") {
+            if (marker.selected) {
                 //This was a selection, we need to display the waypoints
                 this.displayWaypointsPerMission(miss)
             }
