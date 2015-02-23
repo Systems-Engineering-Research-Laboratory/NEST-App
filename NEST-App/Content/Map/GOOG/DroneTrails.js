@@ -130,7 +130,15 @@
     },
 
     //still working on it -David
-    goWaypoint: function (lat, long) {
+    goWaypoint: function (lat, long, cmd) {
+        vehicleHub.server.ackCommand({
+            CommandId: cmd.Id,
+            CommandType: "waypoint",
+            Reason: "OK",
+            Accepted: true
+        }, cmd.connId);
+
+
         //vehicleHub.server.sendCommand({
         //    Id: 123,
         //    Latitude: lat,

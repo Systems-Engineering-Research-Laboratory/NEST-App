@@ -82,11 +82,6 @@
                     selectedTrail[i].setMap(marker.map);
                 }
             }
-
-            // make goWaypoint buttons avaliable
-            $("#UAVId").html("UAV: " + selectedUAV.Callsign);
-            $("#goBtn").removeClass("disabled");
-            $("#clickToGoBtn").removeClass("disabled");
         }
             //******************DE-SELECTED*******************//
         else if (marker.selected == false) {
@@ -95,13 +90,31 @@
             //Turn off drone's flightpath
             flightLines[marker.uav.Id].setMap(null);
 
+            
             //TURN OFF TRAIL 
             //droneTrails.deleteTrails(selectedUAV.Id);
         }
+
+        // toggle goWaypoint buttons
+        this.WaypointBtnToggle(marker.selected, selectedUAV);
+
             //**************DANGER****************//
         /*else if (marker.icon.fillColor == 'red') {//"RED FOR DANGER"......placeholder in case we decide to do this
             //otherstuff
         }*/
+    },
+
+    WaypointBtnToggle: function (selected, uav) {
+        if (selected == true) {
+            $("#UAVId").html("UAV: " + uav.Callsign);
+            $("#goBtn").removeClass("disabled");
+            $("#clickToGoBtn").removeClass("disabled");
+        }
+        else if (selected == false) {
+            $("#UAVId").html("Select an UAV first");
+            $("#goBtn").addClass("disabled");
+            $("#clickToGoBtn").addClass("disabled");
+        }
     },
 
     KeyBinding: function (selectedDrones, storedGroups, evt) {

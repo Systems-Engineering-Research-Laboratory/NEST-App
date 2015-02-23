@@ -142,11 +142,11 @@ $(document).ready(function () {
 
         google.maps.event.addListener(map, "rightclick", function (event) {
 
-            /*mapFunctions.note_show();
+            mapFunctions.note_show();
             document.getElementById("send").addEventListener("click", function () {
                 emitHub.server.sendNote(event.latLng.lat(), event.latLng.lng(), document.getElementById("notifier").value, document.getElementById("message").value);
                 mapFunctions.note_hide();
-            });*/
+            });
         });
 
 

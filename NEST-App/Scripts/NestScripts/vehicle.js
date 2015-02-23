@@ -340,8 +340,8 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                 data.objType = "command";
                 that.currentWaypoint = data;
             });
-            promise.done(function (data, textStatus, jqXHR) {
-                that.reporter.ackCommand(target, target.type, "Waypoint creation failed", false);
+            promise.fail(function (jqXHR, textStatus, err) {
+                that.reporter.ackCommand(target, target.type, "Waypoint creation failed, Error: " + err, false);
                 
             });
         }
