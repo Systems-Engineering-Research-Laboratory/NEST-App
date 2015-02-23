@@ -16,6 +16,41 @@
         infowindow.open(theMap);
     },
 
+    MapContext : function(){
+        var contextMenuOptions = {};
+        contextMenuOptions.classNames = { menu: 'context_menu', menuSeparator: 'context_menu_separator' };
+        var menuItems = [];
+        menuItems.push({ className: 'context_menu_item', eventName: 'get_coords', label: 'Get Coords' });
+        menuItems.push({});
+        menuItems.push({ className: 'context_menu_item', eventName: 'go_here', label: 'Go Here' });
+        menuItems.push({ className: 'context_menu_item', eventName: 'add_waypoint', label: 'Add Waypoint' });
+        contextMenuOptions.menuItems = menuItems;
+        var contextMenu = new ContextMenu(map, contextMenuOptions);
+
+        return contextMenu;
+    },
+
+    MapContextSelection : function(map, latLng, eventName){
+        switch (eventName) {
+            case 'get_coords':
+                var coords = {
+                    latLng: latLng
+                }
+                this.GetLatLong(map, coords);
+                break;
+            case 'go_here':
+                this.goTo_show();
+                break;
+            case 'add_waypoint':
+                this.goTo_show();
+                break;
+            default:
+                break;
+        }
+    },
+
+
+
     ConsNotifier: function (theMap, lat, lng, notifier, message) {
         var location = new google.maps.LatLng(lat, lng);
         var noteMarker = new google.maps.Marker({

@@ -111,7 +111,19 @@ $(document).ready(function () {
     
 
     //Right click for infowindow coordinates on map
-    google.maps.event.addListener(map, "rightclick", function (event) { mapFunctions.GetLatLong(this, event) });
+   // google.maps.event.addListener(map, "rightclick", function (event) { mapFunctions.GetLatLong(this, event) });
+
+   
+    //MAP CONTEXT MENU - Right-click to activate
+    var mapContext = mapFunctions.MapContext();
+    google.maps.event.addListener(map, 'rightclick', function (event) {
+        mapContext.show(event.latLng);
+    });
+    google.maps.event.addListener(mapContext, 'menu_item_selected', function (latLng, eventName) {
+        mapFunctions.MapContextSelection(map, latLng, eventName);
+    });
+
+
 
     mapDraw.InitDrawingManager();
     mapDraw.drawingManager.setMap(map);
