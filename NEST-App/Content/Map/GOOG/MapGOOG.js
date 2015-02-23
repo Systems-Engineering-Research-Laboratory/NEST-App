@@ -109,16 +109,9 @@ $(document).ready(function () {
         }
     });
     
-    /**** Currently in progress 
-    google.maps.event.addListener(map, 'click', function () {
-        if (infobox) {
-            infobox.close();
-        }
-    });
-   */
 
     //Right click for infowindow coordinates on map
-    //google.maps.event.addListener(map, "rightclick", function (event) { mapFunctions.GetLatLong(this, event) });
+    google.maps.event.addListener(map, "rightclick", function (event) { mapFunctions.GetLatLong(this, event) });
 
     mapDraw.InitDrawingManager();
     mapDraw.drawingManager.setMap(map);
@@ -159,26 +152,54 @@ $(document).ready(function () {
 
 
     });
+    
     emitHub.client.newEvent = function (evt) {
-        console.log(evt);
-        //console.log(document.getElementById("infobox"));
-        console.log(document.getElementById("warn"));
-        document.getElementById("infobox").innerHTML = "<p id='warn'>Warning:</p>"+evt.message;
-        document.getElementById("warn").style.color = "red";
-        document.getElementById("warn").style.fontWeight = "bold";
-        document.getElementById("warn").style.margin = 0;
-        mapStyles.infobox.open(map, uavs[evt.UAVId].marker);
-        mapStyles.infoboxAlert.open(map, uavs[evt.UAVId].marker);
-    }
+        
+        var checkMessage = evt.message.split(" ");
+        if (checkMessage[0] != "Acknowledged:") {
+            document.getElementById("infobox").innerHTML = "<p id='warn'>Warning:</p>" + evt.message;
+            document.getElementById("infobox").onclick = mapStyles.infobox.close();
+            document.getElementById("warn").style.color = "red";
+            document.getElementById("warn").style.fontWeight = "bold";
+            document.getElementById("warn").style.margin = 0;
 
+            mapStyles.infobox.open(map, uavs[evt.UAVId].marker);
+            mapStyles.infoboxAlert.open(map, uavs[evt.UAVId].marker);
+
+            google.maps.event.addDomListener(document.getElementById("infobox"), 'click', function () {
+                if (mapStyles.infobox.open) {
+                    mapStyles.infobox.close();
+
+                    var eventACK = {
+                        uav_id: uavs[evt.UAVId].Id,
+                        message: "Acknowledged: " + evt.message,
+                        criticality: "normal",
+                        uav_callsign: uavs[evt.UAVId].Callsign,
+                        operator_screen_name: evt.operator_screen_name,
+                        UAVId: uavs[evt.UAVId].Id
+                    };
+
+                    emitHub.server.emit(eventACK);
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/uavs/postuavevent",
+                        success: function () { },
+                        data: eventACK
+                    });
+
+                }
+            });
+        }
+    }
+    
     var warningMessageCounter = 0;
   
     /* Vehicle Movement */
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
-        //mapFunctions.vehicleHubUpdate(vehicle, uavs, selected);
 
         uavs[vehicle.Id] = mapFunctions.UpdateVehicle(uavs[vehicle.Id], vehicle);
+        //console.log(vehicle);
 
         // draw trail
         if (selectedUAV && selectedTrail != undefined) {
@@ -209,23 +230,19 @@ $(document).ready(function () {
             labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uavs[vehicle.Id].Alt + '<br/><b>Bat: </b>' + uavs[vehicle.Id].BatteryCheck + '</div>'
         });
         
-        //console.log(parse);
         if (uavs[vehicle.Id].BatteryCheck < .2) {
-            //console.log(eventLog);
-            //emitHub.server.emit(eventLog);
             if (warningMessageCounter == 0) {
                 warningMessageCounter++;
-                mapStyles.infobox.open(map, uavs[vehicle.Id].marker);
-                mapStyles.infoboxAlert.open(map, uavs[vehicle.Id].marker);
-
+                
                 var eventLog = {
                     uav_id: uavs[vehicle.Id].Id,
-                    message: mapStyles.message,
+                    message: "Low Battery",
                     criticality: "critical",
                     uav_callsign: uavs[vehicle.Id].Callsign,
                     operator_screen_name: "Test Operator",
                     UAVId: uavs[vehicle.Id].Id
                 };
+          
                 emitHub.server.emit(eventLog);
                 $.ajax({
                     type: "POST",
@@ -233,7 +250,7 @@ $(document).ready(function () {
                     success: function () { },
                     data: eventLog
                 });
-            }
+            }            
         }
     }
     
@@ -261,3 +278,5 @@ $(document).ready(function () {
     google.maps.event.addListener(mapListeners, 'mousedown', function (e) { mapFunctions.StopMapDrag(this, e); console.log("GOOG mouseIsDown: " + mapFunctions.mouseIsDown); });
     google.maps.event.addListener(mapListeners, 'mouseup', function (e) { droneSelection.AreaSelect(this, e, mapFunctions.mouseIsDown, mapFunctions.shiftPressed, mapFunctions.gridBoundingBox, selectedDrones, uavs) });
 });
+
+

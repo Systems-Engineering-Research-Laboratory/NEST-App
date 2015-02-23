@@ -312,13 +312,23 @@ namespace NEST_App.Controllers.Api
         }
 
         [HttpPost]
+        [ResponseType(typeof(HttpResponseMessage))]
         [Route("api/uavs/postuavevent")]
-        public void PostUavEvent(EventLog evnt)
+        public async Task<HttpResponseMessage> PostUavEvent(EventLog evnt)
         {
             evnt.create_date = DateTime.Now;
             evnt.modified_date = DateTime.Now;
             db.EventLogs.Add(evnt);
-            db.SaveChanges();
+            
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
 

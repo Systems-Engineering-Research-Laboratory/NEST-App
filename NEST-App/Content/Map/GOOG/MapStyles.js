@@ -112,14 +112,14 @@
         });
     },
 
-    message: $("#infobox").attr("msg"),
-
     infobox: new InfoBox({
         content: document.getElementById("infobox"),
         disableAutoPan: false,
         maxWidth: 100,
         pixelOffset: new google.maps.Size(-75, 30),
         zIndex: null,
+        enableEventPropagation: true,
+        pane: "floatPane",
         boxStyle: {
             opacity: 0.75,
             width: "150px"
