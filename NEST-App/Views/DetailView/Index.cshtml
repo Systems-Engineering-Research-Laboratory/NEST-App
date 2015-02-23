@@ -20,14 +20,14 @@
         .table {
             border: none;
             width: 38%;
+            /*height: 695px;*/
             /*overflow: auto;
             overflow-x: hidden;*/
-            /*height: 690px;*/
         }
 
         .UAV_table {
             width: 100%;
-            border: none;
+            /*height: 695px;*/
             float: left;
             padding: 10px;
             margin: 0px;
@@ -84,7 +84,6 @@
             border-radius: 8px;
             width: 58%;
             float: right;
-            /*display: inline-block;*/
             background-color: #e9e9ea;
         }
 
@@ -205,6 +204,7 @@
 </head>
 <body>
     <br />
+    @*<h2> UAV Detail view </h2>*@
     <div class="outside">
         <div class="table">
             <table class="UAV_table" id="UAV_table">
@@ -396,8 +396,9 @@
 
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=drawing"></script>
 @Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/Scripts/jquery.signalR-2.0.2.js")
+@Scripts.Render("~/Scripts/jquery.signalR-2.1.2.js")
 @Scripts.Render("~/signalr/hubs")
+<script src="/signalr/hubs"></script>
 <script type="text/javascript">
     $(document).ready(function () {
         var mapOptions = {
@@ -411,39 +412,16 @@
         }
         var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
-        var uavSymbolBlack = {
-            path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
-            fillColor: 'gray',
-            fillOpacity: 1.0,
-            scale: 0.2,
-            zIndex: 1,
-            anchor: new google.maps.Point(355, 295)
-        };
-
-        var uavSymbolGreen = {
-            path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
-            fillColor: 'green',
-            fillOpacity: 1.0,
-            scale: 0.2,
-            zIndex: 10000000000000,
-            anchor: new google.maps.Point(355, 295)
-        };
-
         var table = document.getElementById("UAV_table");
-        var marker_arr = [];
-        var marker_array = new Array(table.rows.length);
         var presentMarker, lastMarker;
-        //for (var i = 1; i <= table.rows.length; i++) {
-        //    bat = table.rows[i].cells[4].innerHTML;
-        //    final_bat = bat * 100;
-        //    table.rows[i].cells[4].innerHTML = final_bat + "%";
-        //}
+        var current_id = 1;
 
         if (table != null) {
             for (var i = 1; i < table.rows.length; i++) {
                 for (var j = 0; j < table.rows[i].cells.length; j++) {
                     table.rows[i].onclick = function () {
                         var uavid = this.cells[0];
+                        current_id = this.cells[0].innerHTML;
                         var callsign = this.cells[1];
                         var numDelivery = this.cells[2];
                         var mile = this.cells[3];
@@ -515,12 +493,151 @@
                 }
             }
         }
+
+
+        $.connection.hub.start().done(function () {
+            console.log("connection started for evt log");
+        });
+
+        var uav_list_array = new Array(table.rows.length);
+
+
+        var vehicleHub = $.connection.vehicleHub;
+        vehicleHub.client.flightStateUpdate = function (vehicle) {
+            console.log("connection started for vehicle Hub");
+
+            var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
+
+            //uavs[vehicle.Id].marker.setPosition(LatLng);
+            uavs[vehicle.Id].Battery = vehicle.BatteryLevel;
+            uavs[vehicle.Id].Alt = vehicle.Altitude;
+            uavs[vehicle.Id].BatteryCheck = parseFloat(Math.round(vehicle.BatteryLevel * 100) / 100).toFixed(2);
+
+            //uavs[vehicle.Id].marker.setOptions({
+            //    labelContent: uavs[vehicle.Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uavs[vehicle.Id].Alt + '<br/><b>Bat: </b>' + uavs[vehicle.Id].BatteryCheck + '</div>'
+            //});
+
+            console.log("　UAV ID: #" + vehicle.Id + "　　Current coordinates: " + vehicle.Latitude + ", " + vehicle.Longitude);
+
+
+            //for (var i = 1; i <= vehicle.Id; i++) {
+            //    uav_list_array[i] = new Array(6);
+            //}
+
+            //for (var j = 1; j <= uav_list_array.length; j++) {
+            //    //uav_list_array[j][1] = vehicle.Id;
+            //    //uav_list_array[j][2] = vehicle.Latitude;
+            //    //uav_list_array[j][3] = vehicle.Longitude;
+            //    //uav_list_array[j][4] = vehicle.Altitude;
+            //    //uav_list_array[j][5] = vehicle.Battery;
+            //    //uav_list_array[j][6] = uavs[vehicle.Id].Callsign;
+
+            //    //console.log(uav_list_array[j][1]);
+            //    //console.log(uav_list_array[j][6]);
+
+                if (current_id == uavs[vehicle.Id].Id)
+                {
+                    document.getElementById("curr_lat").innerHTML = '　LAT:　　 ' + vehicle.Latitude.toFixed(10);
+                    document.getElementById("curr_long").innerHTML = '　LONG:　' + vehicle.Longitude.toFixed(10);
+                    document.getElementById("curr_alt").innerHTML = '　ALT:　　 ' + vehicle.Altitude;
+                    if (final_battery < 20)
+                        document.getElementById("battery").innerHTML = 'Battery: ' + vehicle.Battery + "% 　" + low_battery.fontcolor("red").bold();
+                    else
+                        document.getElementById("battery").innerHTML = 'Battery: ' + vehicle.Battery + "%";
+                }
+            //}
+
+            //console.log("　UAV ID: #" + current_id + "　　Current coordinates: " + current_id.Latitude);
+            
+        }
+
+        vehicleHub.connection.start();
+
+
+        $.ajax({
+            url: '/api/uavs/getuavinfo',
+            success: function (data, textStatus, jqXHR) {
+                uavMarkers(data, textStatus, jqXHR);
+
+            }
+        });
     });
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // end of init function
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    var uavSymbolBlack = {
+        path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
+        fillColor: 'gray',
+        fillOpacity: 1.0,
+        scale: 0.2,
+        zIndex: 1,
+        anchor: new google.maps.Point(355, 295)
+    };
+
+    var uavSymbolGreen = {
+        path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
+        fillColor: 'green',
+        fillOpacity: 1.0,
+        scale: 0.2,
+        zIndex: 10000000000000,
+        anchor: new google.maps.Point(355, 295)
+    };
+
+    var flightPathOptions = {
+        geodesic: true,
+        strokeColor: 'blue',
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+    };
+
+    var uavs = {};
+    var map;
+    //var flightLines = [];
+
+    function uavMarkers(data, textStatus, jqXHR) {
+        console.log("Pulling Flightstates...", textStatus);
+        //mapFunctions.PopulateUAVs(data, uavs, flightLines);
+        for (var i = 0; i < data.length; i++) {
+            //TODO Make a copier fuction for this:
+            uavs[data[i].Id] = {};
+            uavs[data[i].Id].Id = data[i].Id;
+            uavs[data[i].Id].FlightState = data[i].FlightState;
+            var fs = uavs[data[i].Id].FlightState;
+            uavs[data[i].Id].Alt = data[i].FlightState.Altitude;
+            uavs[data[i].Id].Callsign = data[i].Callsign;
+            uavs[data[i].Id].Battery = data[i].FlightState.BatteryLevel;
+            uavs[data[i].Id].Position = new google.maps.LatLng(fs.Latitude, fs.Longitude);
+
+            //var mis = uavs[data[i].Id].Mission;
+            //uavs[data[i].Id].Destination = new google.maps.LatLng(mis.Latitude, mis.Longitude);
+
+            ////Creates the flightpath line from uav position to destination
+            //flightLines[data[i].Id] = new google.maps.Polyline(flightPathOptions);
+            //flightLines[data[i].Id].setPath([uavs[data[i].Id].Position, uavs[data[i].Id].Destination]);
+
+            //var marker = new google.maps.Marker({
+            //    position: uavs[data[i].Id].Position,
+            //    icon: uavSymbolBlack,
+            //    labelContent: uavs[data[i].Id].Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uavs[data[i].Id].Alt + '<br/><b>Bat: </b>' + uavs[data[i].Id].Battery + '</div>',
+            //    labelAnchor: new google.maps.Point(95, 20),
+            //    labelClass: "labels",
+            //    labelStyle: { opacity: 0.75 },
+            //    zIndex: 999999,
+            //    uav: uavs[data[i].Id],
+            //});
+            //marker.set('selected', false);
+            //uavs[data[i].Id].marker = marker;
+            ////uavs[data[i].Id].flightPath = flightLines[data[i].Id];
+            //uavs[data[i].Id].marker.setMap(map);
+        }
+    }
+
+
 
     function moveMarker(map, marker, position) {
         marker.setPosition(position);
-        //marker.setIcon(uavSymbolGreen);
-        //marker.setVisible(true);
         map.setCenter(position);
     }
 </script>
