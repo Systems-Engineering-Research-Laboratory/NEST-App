@@ -1,40 +1,50 @@
 ﻿var droneSelection = {
     /*CTRL-SELECT*/
     CtrlSelect: function (marker, selectedDrones) {
-        selectedUAV = marker.uav;
-  
+        var selectedUAV = null;
+        clickedUAV = marker.uav;
+        //UAV has been selected
         if (marker.selected == false) {//other drone-selection-related events should trigger off this!
             marker.selected = true;
-            marker.setIcon(selectedUAV.marker.uavSymbolGreen);
+            marker.setIcon(clickedUAV.marker.uavSymbolGreen);
             marker.setMap(marker.map);
-            //TODO: deselect and remove from selectedDrone (tricky because it's an array)            
-            console.log("fired true");
+            selectedUAV = marker.uav;           
+            //console.log("fired true");
         }
+        //UAV has been de-selected
         else {
             marker.selected = false;//other drone-selection-related events should trigger off this!
-            marker.setIcon(selectedUAV.marker.uavSymbolBlack);
+            marker.setIcon(clickedUAV.marker.uavSymbolBlack);
             marker.setMap(marker.map);
-            console.log("fired false");
+            //console.log("fired false");
         }
-        google.maps.event.trigger(marker, 'selection_changed');
-            
-            
-            if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, ignore immediate key repeats and proceed
-                ctrlDown = false
-                selectedDrones.push(selectedUAV);
-            }
-            else {//otherwise, empty the selectedDrones list and add the drone to the empty list
-                //console.log("hit else");
-                while (selectedDrones.length > 0) {//clear the selected drone list
-                    selectedDrones.pop();
-                }
-                selectedDrones.push(selectedUAV);
-            }
-            console.log("Number of drones selected: " + selectedDrones.length);
 
-            // enable waypoint buttons
-            $("#goBtn").removeClass("disabled");
-            $("#clickToGoBtn").removeClass("disabled");
+        //Let the selection state change listener know that the state has changed
+        google.maps.event.trigger(marker, 'selection_changed');
+
+        if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, ignore immediate key repeats and proceed
+            ctrlDown = false
+            console.log(selectedUAV);
+            if (selectedUAV != null) {
+                selectedDrones.push(selectedUAV);
+            }
+            /*else {
+                //TODO: remove from selectedDrones (tricky because it's an array) 
+            }*/
+        }
+        else {//otherwise, empty the selectedDrones list and add the drone to the empty list
+            //console.log("hit else");
+            while (selectedDrones.length > 0) {//clear the selected drone list
+                selectedDrones.pop(); 
+            }
+            if (selectedUAV != null) {
+                selectedDrones.push(selectedUAV);
+            }
+        }
+        console.log("Number of drones selected: " + selectedDrones.length);
+                 // enable waypoint buttons
+        $("#goBtn").removeClass("disabled");
+        $("#clickToGoBtn").removeClass("disabled");
         
     },
 
