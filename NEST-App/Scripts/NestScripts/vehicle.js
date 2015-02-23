@@ -146,7 +146,6 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         //Put the heading into the flight state for when it gets pushed to the server.
         this.FlightState.Yaw = heading * rad2deg;
         var idealSpeed = this.MaxVelocity;
-        idealSpeed = 200;
         this.approachSpeed(idealSpeed, heading, dt);
         var distanceX = X - this.FlightState.X;
         var distanceY = Y - this.FlightState.Y;
@@ -312,7 +311,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                     wpComplete =  true;
                     //TODO: Assign the path back to the base.
                     update = true;
-                    this.pathGen.generateBackToBaseWaypoints(this.FlightState, this.Base);
+                    //this.pathGen.generateBackToBaseWaypoints(this.FlightState, this.Base);
                 }
                 break;
             case "back to base":
@@ -402,8 +401,8 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         var target = this.Command || this.Mission;
         var type = this.Command ? "command" : "mission";
         this.waypoints = this.pathGen.brandNewTarget(this.FlightState, target, true, this);
-        wps[1].obj = target;
-        wps[1].type = type;
+        this.waypoints[1].obj = target;
+        this.waypoints[1].type = type;
         this.currentWaypoint = this.waypoints[0];
         this.currentWaypointIndex = 0;
     }
