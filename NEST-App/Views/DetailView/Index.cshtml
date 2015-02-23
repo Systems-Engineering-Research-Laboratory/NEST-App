@@ -450,9 +450,9 @@
                         document.getElementById("numdeliveries").innerHTML = 'Current Delivery: ' + numDelivery.innerHTML;
                         document.getElementById("total_deliveries").innerHTML = 'Total Delivery: ' + final_total;
                         document.getElementById("mileage").innerHTML = 'Total Miles: ' + mile.innerHTML + ' miles';
-                        if (final_battery < 20)
-                            document.getElementById("battery").innerHTML = 'Battery: ' + final_battery + "% 　" + low_battery.fontcolor("red").bold();
-                        else
+                        //if (final_battery < 20)
+                        //    document.getElementById("battery").innerHTML = 'Battery: ' + final_battery + "% 　" + low_battery.fontcolor("red").bold();
+                        //else
                             document.getElementById("battery").innerHTML = 'Battery: ' + final_battery + "%";
                         document.getElementById("ETA").innerHTML = 'ETA: ' + ETA.innerHTML;
                         document.getElementById("STA").innerHTML = 'STA: ' + STA.innerHTML;
@@ -518,6 +518,8 @@
             //});
 
             console.log("　UAV ID: #" + vehicle.Id + "　　Current coordinates: " + vehicle.Latitude + ", " + vehicle.Longitude);
+            //console.log("　UAV Battery: " + uavs[vehicle.Id].Battery);
+            console.log("　UAV Battery using battery level: " + vehicle.BatteryLevel);
 
 
             //for (var i = 1; i <= vehicle.Id; i++) {
@@ -537,13 +539,15 @@
 
                 if (current_id == uavs[vehicle.Id].Id)
                 {
+                    var low_battery = "LOW BATTERY!";
                     document.getElementById("curr_lat").innerHTML = '　LAT:　　 ' + vehicle.Latitude.toFixed(10);
                     document.getElementById("curr_long").innerHTML = '　LONG:　' + vehicle.Longitude.toFixed(10);
                     document.getElementById("curr_alt").innerHTML = '　ALT:　　 ' + vehicle.Altitude;
-                    if (final_battery < 20)
-                        document.getElementById("battery").innerHTML = 'Battery: ' + vehicle.Battery + "% 　" + low_battery.fontcolor("red").bold();
-                    else
-                        document.getElementById("battery").innerHTML = 'Battery: ' + vehicle.Battery + "%";
+                    
+                    //if (vehicle.BatteryLevel < 15)
+                    //    document.getElementById("battery").innerHTML = 'Battery: ' + vehicle.BatteryLevel.toFixed(3) + "% 　" + low_battery.fontcolor("red").bold();
+                    //else
+                        document.getElementById("battery").innerHTML = 'Battery: ' + vehicle.BatteryLevel.toFixed(3) + "%";
                 }
             //}
 
