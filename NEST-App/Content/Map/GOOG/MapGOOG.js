@@ -95,20 +95,6 @@ $(document).ready(function () {
             uavMarkers(data, textStatus, jqXHR);
         }
     });
-    
-
-    //Right click for infowindow coordinates on map
-   // google.maps.event.addListener(map, "rightclick", function (event) { mapFunctions.GetLatLong(this, event) });
-
-   
-    //MAP CONTEXT MENU - Right-click to activate
-    var mapContext = mapFunctions.MapContext(map);
-    google.maps.event.addListener(map, 'rightclick', function (event) {
-        mapContext.show(event.latLng);
-    });
-    google.maps.event.addListener(mapContext, 'menu_item_selected', function (latLng, eventName) {
-        mapFunctions.MapContextSelection(map, latLng, eventName);
-    });
 
 
 
@@ -139,17 +125,6 @@ $(document).ready(function () {
 
     $.connection.hub.start().done(function () {
         console.log("connection started for evt log");
-
-        google.maps.event.addListener(map, "rightclick", function (event) {
-
-            mapFunctions.note_show();
-            document.getElementById("send").addEventListener("click", function () {
-                emitHub.server.sendNote(event.latLng.lat(), event.latLng.lng(), document.getElementById("notifier").value, document.getElementById("message").value);
-                mapFunctions.note_hide();
-            });
-        });
-
-
     });
     
     emitHub.client.newEvent = function (evt) {
@@ -252,6 +227,17 @@ $(document).ready(function () {
 
     google.maps.event.trigger(map, 'resize');
     var mapListeners = map;/// <-----------------------------TODO: Redundant?
+
+    //MAP CONTEXT MENU - Right-click to activate
+    var mapContext = mapFunctions.MapContext(map);
+    google.maps.event.addListener(map, 'rightclick', function (event) {
+        mapContext.show(event.latLng);
+    });
+    google.maps.event.addListener(mapContext, 'menu_item_selected', function (latLng, eventName) {
+        mapFunctions.MapContextSelection(map, latLng, eventName, emitHub);
+    });
+
+
 
     google.maps.event.addListener(mapListeners, 'mousemove', function (e) { mapFunctions.DrawBoundingBox(this, e) });
     google.maps.event.addListener(mapListeners, 'mousedown', function (e) { mapFunctions.StopMapDrag(this, e); });

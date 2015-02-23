@@ -33,6 +33,7 @@
         var contextMenuOptions = {};
         contextMenuOptions.classNames = { menu: 'context_menu', menuSeparator: 'context_menu_separator' };
         var menuItems = [];
+        menuItems.push({ className: 'context_menu_item', eventName: 'send_note', label: 'Send Note' });
         menuItems.push({ className: 'context_menu_item', eventName: 'get_coords', label: 'Get Coords' });
         menuItems.push({});
         menuItems.push({ className: 'context_menu_item', eventName: 'go_here', label: 'Go Here' });
@@ -43,13 +44,20 @@
         return contextMenu;
     },
     //Controls context menu selection for the map
-    MapContextSelection : function(map, latLng, eventName){
+    MapContextSelection : function(map, latLng, eventName, emitHub){
         switch (eventName) {
             case 'get_coords':
                 var coords = {
                     latLng: latLng
                 }
                 this.GetLatLong(map, coords);
+                break;
+            case 'send_note':
+                mapFunctions.note_show();
+                document.getElementById("send").addEventListener("click", function () {
+                    emitHub.server.sendNote(latLng.lat(), latLng.lng(), document.getElementById("notifier").value, document.getElementById("message").value);
+                    mapFunctions.note_hide();
+                });
                 break;
             case 'go_here':
                 this.goTo_show();
