@@ -9,7 +9,7 @@ var ctrlDown = false;
 var flightLines = [];
 var selectedUAV; //the uav that's been selected
 
-//DroneTrails
+//Drone Trails
 var selectedTrail; //the trail that the selected uav has
 
 //TODO: Do we need this? Are we changing this to "var theMap = map;" ?
@@ -20,30 +20,14 @@ function uavMarkers(data, textStatus, jqXHR) {
     console.log("Pulling Flightstates...", textStatus);
     
     for (var i = 0; i < data.length; i++) {
-        uavs[data[i].Id] = mapFunctions.PopulateUAVs(data[i], flightLines);
-
-        //TODO Make a copier fuction for this:
-       /* uavs[data[i].Id] = {};
-        uavs[data[i].Id].Id = data[i].Id;
-        uavs[data[i].Id].FlightState = data[i].FlightState;
-        uavs[data[i].Id].Schedule = data[i].Schedule;
-        uavs[data[i].Id].Missions = data[i].Schedule.Missions;
-        var fs = uavs[data[i].Id].FlightState;
-        uavs[data[i].Id].Alt = data[i].FlightState.Altitude;
-        uavs[data[i].Id].Callsign = data[i].Callsign;
-        uavs[data[i].Id].Battery = data[i].FlightState.BatteryLevel;
-        uavs[data[i].Id].Position = new google.maps.LatLng(fs.Latitude, fs.Longitude);
-        uavs[data[i].Id].Mission = data[i].Mission;
-        uavs[data[i].Id].Orientation = data[i].FlightState.Yaw;
-
-        var mis = uavs[data[i].Id].Mission;
-        uavs[data[i].Id].Destination = new google.maps.LatLng(mis.Latitude, mis.Longitude);
-        */
+        //Set UAV properties
+        uavs[data[i].Id] = mapFunctions.SetUAV(data[i]);
 
         //Creates the flightpath line from uav position to destination
         flightLines[data[i].Id] = new google.maps.Polyline(mapStyles.flightPathOptions);
         flightLines[data[i].Id].setPath([uavs[data[i].Id].Position, uavs[data[i].Id].Destination]);
 
+        //Create the map's visual aspects of the uav
         var markerCircle = new google.maps.Marker({
             position: uavs[data[i].Id].Position,
             icon: mapStyles.uavCircleBlack
@@ -74,6 +58,8 @@ function uavMarkers(data, textStatus, jqXHR) {
                 anchor: new google.maps.Point(355, 295)
             }
         });
+
+        //Apply the UAV's visual aspects and make them appear on the map
         marker.set('selected', false);
         wpm.addMarker(marker);
         uavs[data[i].Id].marker = marker;
@@ -82,7 +68,7 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].Id].markerCircle.setMap(map);
         uavs[data[i].Id].marker.setMap(map);
 
-        //marker.set('flightPath', flightLines[data[i].Id]);
+        ///////UAV Marker listeners/////////
         //When fired, the UAV is marked as 'selected'
         google.maps.event.addListener(marker, 'click', (function () {droneSelection.CtrlSelect(this, selectedDrones, selectedUAV)}));
         //Events to ccur when a UAV's marker icon has changed (ie the marker's been clicked)
@@ -148,8 +134,7 @@ $(document).ready(function () {
 
     /////////////////////////////
   
-    /////////////////////////////
-
+    
     new RestrictedAreasContainer(map, mapDraw.drawingManager)
     /* Event Log */
     var emitHub = $.connection.eventLogHub;
@@ -193,10 +178,7 @@ $(document).ready(function () {
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         //mapFunctions.vehicleHubUpdate(vehicle, uavs, selected);
 
-        //console.log(vehicle);
-
-        var LatLng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
-        droneTrails.storeTrail(vehicle.Id, LatLng);
+        uavs[vehicle.Id] = mapFunctions.UpdateVehicle(uavs[vehicle.Id], vehicle);
 
         // draw trail
         if (selectedUAV && selectedTrail != undefined) {
@@ -206,14 +188,7 @@ $(document).ready(function () {
                 selectedTrail[selectedTrail.length - 2].setMap(map);
         }
 
-        uavs[vehicle.Id].marker.setPosition(LatLng);
-        uavs[vehicle.Id].markerCircle.setPosition(LatLng);
-        uavs[vehicle.Id].Battery = vehicle.BatteryLevel;
-        uavs[vehicle.Id].Alt = vehicle.Altitude;
-        uavs[vehicle.Id].BatteryCheck = parseFloat(Math.round(vehicle.BatteryLevel * 100) / 100).toFixed(2);
-        uavs[vehicle.Id].Yaw = vehicle.Yaw;
-
-
+        //Check drone heading and adjust as necessary
         if ((Math.round((10000000 * uavs[vehicle.Id].Orientation)) / 10000000) != (Math.round((10000000 * uavs[vehicle.Id].Yaw)) / 10000000)) {
 
             uavs[vehicle.Id].Orientation = uavs[vehicle.Id].Yaw;
