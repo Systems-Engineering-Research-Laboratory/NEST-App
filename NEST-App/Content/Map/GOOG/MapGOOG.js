@@ -73,6 +73,16 @@ function uavMarkers(data, textStatus, jqXHR) {
         google.maps.event.addListener(marker, 'click', (function () {droneSelection.CtrlSelect(this, selectedDrones, selectedUAV)}));
         //Events to ccur when a UAV's marker icon has changed (ie the marker's been clicked)
         google.maps.event.addListener(marker, 'selection_changed', function () { droneSelection.SelectionStateChanged(this, selectedDrones, selectedUAV, flightLines, droneTrails.uavTrails, selectedTrail) });
+        //UAV Context Menu
+        var UAVContext = mapFunctions.UAVContext(map);
+        google.maps.event.addListener(marker, 'rightclick', function (event) {
+            UAVContext.show(event.latLng);
+        });
+        //Context Menu Selection
+        google.maps.event.addListener(UAVContext, 'menu_item_selected', function (latLng, eventName) {
+            mapFunctions.UAVContextSelection(map, marker, latLng, eventName);
+        });
+
     }
 }
 
@@ -115,7 +125,7 @@ $(document).ready(function () {
 
    
     //MAP CONTEXT MENU - Right-click to activate
-    var mapContext = mapFunctions.MapContext();
+    var mapContext = mapFunctions.MapContext(map);
     google.maps.event.addListener(map, 'rightclick', function (event) {
         mapContext.show(event.latLng);
     });

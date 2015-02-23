@@ -16,7 +16,7 @@
         infowindow.open(theMap);
     },
 
-    MapContext : function(){
+    MapContext : function(theMap){
         var contextMenuOptions = {};
         contextMenuOptions.classNames = { menu: 'context_menu', menuSeparator: 'context_menu_separator' };
         var menuItems = [];
@@ -25,7 +25,7 @@
         menuItems.push({ className: 'context_menu_item', eventName: 'go_here', label: 'Go Here' });
         menuItems.push({ className: 'context_menu_item', eventName: 'add_waypoint', label: 'Add Waypoint' });
         contextMenuOptions.menuItems = menuItems;
-        var contextMenu = new ContextMenu(map, contextMenuOptions);
+        var contextMenu = new ContextMenu(theMap, contextMenuOptions);
 
         return contextMenu;
     },
@@ -43,6 +43,35 @@
                 break;
             case 'add_waypoint':
                 this.goTo_show();
+                break;
+            default:
+                break;
+        }
+    },
+
+    UAVContext: function (theMap) {
+        var contextMenuOptions = {};
+        contextMenuOptions.classNames = { menu: 'context_menu', menuSeparator: 'context_menu_separator' };
+        var menuItems = [];
+        menuItems.push({ className: 'context_menu_item', eventName: 'force_land', label: 'Force Land' });
+        menuItems.push({ className: 'context_menu_item', eventName: 'get_details', label: 'Get UAV Details' });
+        menuItems.push({ className: 'context_menu_item', eventName: 'return', label: 'Return to Base' });
+        contextMenuOptions.menuItems = menuItems;
+        var contextMenu = new ContextMenu(theMap, contextMenuOptions);
+
+        return contextMenu;
+    },
+
+    UAVContextSelection: function (map, marker, latLng, eventName) {
+        switch (eventName) {
+            case 'force_land':
+                break;
+            case 'get_details':
+                window.open("localhost:53130/detailview");
+                console.log("Trying to open window");
+                break;
+            case 'return':
+                
                 break;
             default:
                 break;
