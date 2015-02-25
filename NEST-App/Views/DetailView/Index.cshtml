@@ -395,6 +395,8 @@
 <script src="~/Scripts/MarkerWithLabel.js"></script>
 <script src="/signalr/hubs"></script>
 <script type="text/javascript">
+    var marker;
+
     $(document).ready(function () {
         mapOptions = {
             zoom: 17,
@@ -418,6 +420,7 @@
         var table = document.getElementById("UAV_table");
         var presentMarker, lastMarker;
         var current_id = 1;
+        
 
         if (table != null) {
             for (var i = 1; i < table.rows.length; i++) {
@@ -469,31 +472,65 @@
                         document.getElementById("cost").innerHTML = 'Total Cost of Package: $' + cost.innerHTML;
                         document.getElementById("UAV_time_td2").innerHTML = STA.innerHTML;
 
-                        if (presentMarker == null) {
-                            presentMarker = new google.maps.Marker({
-                                position: uav_lat_long,
-                                map: map,
-                                icon: uavSymbolGreen,
-                                zIndex: 100000000000,
-                                animation: google.maps.Animation.DROP
-                            });
-                            map.setCenter(uav_lat_long);
-                        }
+                        //if (presentMarker == null) {
+                        //    presentMarker = new google.maps.Marker({
+                        //        position: uav_lat_long,
+                        //        map: map,
+                        //        icon: uavSymbolGreen,
+                        //        zIndex: 100000000000,
+                        //        animation: google.maps.Animation.DROP
+                        //    });
+                        //    map.setCenter(uav_lat_long);
+                        //}
 
-                        else {
-                            last_lat_long = presentMarker.getPosition();
-                            lastMarker = new google.maps.Marker({
-                                position: last_lat_long,
-                                map: map,
-                                icon: uavSymbolBlack,
-                            })
-                            moveMarker(map, presentMarker, uav_lat_long);
-                        }
+                        //else {
+                        //    last_lat_long = presentMarker.getPosition();
+                        //    lastMarker = new google.maps.Marker({
+                        //        position: last_lat_long,
+                        //        map: map,
+                        //        icon: uavSymbolBlack,
+                        //    })
+                        //    moveMarker(map, presentMarker, uav_lat_long);
+                        //}
                     };
                 }
             }
         }
 
+        function UpdateVehicle(uav, updatedUAV) {
+            var LatLng = new google.maps.LatLng(updatedUAV.Latitude, updatedUAV.Longitude);
+            
+            //SetUAVMarker(uav);
+            uav.marker.setPosition(LatLng);
+            uav.Battery = updatedUAV.BatteryLevel;
+            uav.Alt = updatedUAV.Altitude;
+            uav.BatteryCheck = parseFloat(Math.round(updatedUAV.BatteryLevel * 100) / 100).toFixed(2);
+            uav.Yaw = updatedUAV.Yaw;
+
+            //Check drone heading and adjust as necessary
+            if ((Math.round((10000000 * uav.Orientation)) / 10000000) != (Math.round((10000000 * uav.Yaw)) / 10000000)) {
+
+                uav.Orientation = uav.Yaw;
+
+                uav.marker.uavSymbolBlack.rotation = uav.Yaw;
+                uav.marker.uavSymbolGreen.rotation = uav.Yaw;
+
+                if (uav.marker.selected == true)
+                    uav.marker.setOptions({
+                        icon: uav.marker.uavSymbolGreen
+                    });
+                else
+                    uav.marker.setOptions({
+                        icon: uav.marker.uavSymbolBlack
+                    })
+            }
+
+            uav.marker.setOptions({
+                labelContent: uav.Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uav.Alt + '<br/><b>Bat: </b>' + uav.BatteryCheck + '</div>'
+            });
+
+            return uav;
+        };
 
         $.connection.hub.start().done(function () {
             console.log("connection started for evt log");
@@ -502,7 +539,8 @@
         var vehicleHub = $.connection.vehicleHub;
         vehicleHub.client.flightStateUpdate = function (vehicle) {
             console.log("connection started for vehicle Hub");
-            
+            uavs[vehicle.Id] = UpdateVehicle(uavs[vehicle.Id], vehicle);
+
             uavs[vehicle.Id].Battery = vehicle.BatteryLevel;
             uavs[vehicle.Id].Alt = vehicle.Altitude;
             uavs[vehicle.Id].BatteryCheck = parseFloat(Math.round(vehicle.BatteryLevel * 100)).toFixed(2);
@@ -516,8 +554,8 @@
                 document.getElementById("curr_alt").innerHTML = '　ALT:　　 ' + vehicle.Altitude;
                 document.getElementById("battery").innerHTML = 'Battery: ' + vehicle.BatteryLevel.toFixed(3) + "%";
                 var latlng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
+                uavs[vehicle.Id].marker.setMap(map);
                 map.setCenter(latlng);
-                //marker.setPosition(latlng);
             }
         }
 
@@ -535,23 +573,8 @@
     // end of init function
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    var uavSymbolBlack = {
-        path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
-        fillColor: '#CECED4',
-        fillOpacity: 1.0,
-        scale: 0.2,
-        zIndex: 1,
-        anchor: new google.maps.Point(355, 295)
-    };
-
-    var uavSymbolGreen = {
-        path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
-        fillColor: 'green',
-        fillOpacity: 1.0,
-        scale: 0.2,
-        zIndex: 10000000000000,
-        anchor: new google.maps.Point(355, 295)
-    };
+    var uavSymbolBlack;
+    var uavSymbolGreen;
 
     var flightPathOptions = {
         geodesic: true,
@@ -560,7 +583,7 @@
         strokeWeight: 2
     };
 
-    var SetUAV = function (uavData) {
+    function SetUAV(uavData) {
         var uav = {};
         uav.Id = uavData.Id;
         uav.FlightState = uavData.FlightState;
@@ -579,8 +602,8 @@
         return uav;
     };
 
-    var SetUAVMarker = function (uav) {
-        var marker = new MarkerWithLabel({
+    function SetUAVMarker(uav) {
+        var marker_uav = new MarkerWithLabel({
             position: uav.Position,
             icon: uavSymbolBlack,
             labelContent: uav.Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uav.Alt + '<br/><b>Bat: </b>' + uav.Battery + '</div>',
@@ -606,9 +629,8 @@
                 anchor: new google.maps.Point(355, 295)
             }
         });
-        return marker;
+        return marker_uav;
     };
-
 
     var uavs = {};
     var map;
@@ -623,21 +645,12 @@
             flightLines[data[i].Id] = new google.maps.Polyline(flightPathOptions);
             flightLines[data[i].Id].setPath([uavs[data[i].Id].Position, uavs[data[i].Id].Destination]);
 
-            var marker = SetUAVMarker(uavs[data[i].Id]);
+            marker = SetUAVMarker(uavs[data[i].Id]);
             
-            //marker.set('selected', false);
-            //map.addMarker(marker);
             uavs[data[i].Id].marker = marker;
             uavs[data[i].Id].flightPath = flightLines[data[i].Id];
             uavs[data[i].Id].marker.setMap(map);
         }
-    }
-
-
-
-    function moveMarker(map, marker, position) {
-        marker.setPosition(position);
-        //map.setCenter(position);
     }
 
     function Simulation()
