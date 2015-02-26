@@ -22,9 +22,9 @@
         //I imagine that this could be something like:
         /*$.ajax({
             type: "POST",
-            url: '/api/uavs/commandUAV'+id,
+            url: '/api/uavs/commandUAV'+id+command,
             success: function () { },
-            data: command
+            data: buildcommand(stuff)
         });*/
     },
 
@@ -90,7 +90,7 @@
                 this.UAVCommand(marker.Id, 'force_land');
                 break;
             case 'get_details':
-                window.open("localhost:53130/detailview");
+                window.open("http://localhost:53130/detailview", "_blank");
                 console.log("Trying to open window");
                 break;
             case 'return':
