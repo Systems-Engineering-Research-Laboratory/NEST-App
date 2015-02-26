@@ -255,6 +255,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminViewController.cs" />
+    <Compile Include="Controllers\CommandController.cs" />
     <Compile Include="Controllers\DetailViewController.cs" />
     <Compile Include="Controllers\EventLogController.cs" />
     <Compile Include="Controllers\FlightStateController.cs" />
@@ -436,6 +437,7 @@
     <Content Include="Content\Map\GOOG\MapFunctions.js" />
     <Content Include="Content\Map\GOOG\MapStyles.js" />
     <Content Include="Content\Map\GOOG\RestrictedAreas.js" />
+    <Content Include="Content\Map\GOOG\UAVCommands.js" />
     <Content Include="Content\Map\GOOG\WaypointManager.js" />
     <Content Include="Content\Map\OL\MapOL.css" />
     <Content Include="Content\Map\OL\MapOL.js" />
