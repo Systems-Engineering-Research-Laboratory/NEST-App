@@ -19,6 +19,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     this.FlightState = vehicleInfo.FlightState;
     LatLongToXY(this.FlightState);
     this.Schedule = vehicleInfo.Schedule;
+    //Garbage collect some crap. This stuff is not needed.
     for (var i = 0; i < this.Schedule.Missions.length; i++) {
         var m = this.Schedule.Missions[i];
         m.Schedule = null;
@@ -81,12 +82,16 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     //Functions. Careful not to add global helper functions here.
     this.process = function (dt) {
         //If the current waypoint is null but the reporter is pending, just return.
+        if (this.isAtBase() && this.battery < 1)
+        {
+            this.chargeBattery(dt);
+            reporter.updateFlightState(this.FlightState);
+            return;
+        }
         if (this.currentWaypoint && this.reporter.pendingResult) {
             return;
         }
-        if (pathGen.gotNewRestrictedArea()) {
-            this.pathGen(this.waypoints, this);
-        }
+        //TODO: Check if there is a new restricted area, adjust accordingly.
         //Process this waypoint if we have one
         if (this.currentWaypoint) {
             if (this.performWaypoint(dt)) {
@@ -95,16 +100,16 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                 this.getNextWaypoint();
             }
         }
+        else if (this.hasScheduledMissions() && this.battery >= .9) {
+            this.getNextMission();
+        }
         //Well, I guess we have nothing better to do!
         else if (!this.isAtBase()) {
             this.backToBase(dt);
         }
             //Charging at base
         else {
-            this.FlightState.BatteryLevel += 5 * dt / 18000;
-            if (this.FlightState.BatteryLevel > 1) {
-                this.FlightState.BatteryLevel = 1;
-            }
+            this.chargeBattery(dt);
             //Don't let the flight states get too stale, even if we are sitting at base.
             reporter.updateFlightState(this.FlightState);
             //Make sure we don't drop the battery level 
@@ -115,6 +120,23 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
         reporter.updateFlightState(this.FlightState);
     };
+    this.getNextMission = function() {
+        var missions = this.Schedule.Missions;
+        this.Mission = missions.shift();
+        LatLongToXY(this.Mission);
+        this.reporter.retrieveWaypointsByMissionId(mission.id, this, this.gotNewWaypoints);
+    }
+
+    this.hasScheduledMissions = function () {
+        return this.Schedule.Missions.length > 0;
+    }
+
+    this.chargeBattery = function (dt) {
+        this.FlightState.BatteryLevel += 5 * dt / 18000;
+        if (this.FlightState.BatteryLevel > 1) {
+            this.FlightState.BatteryLevel = 1;
+        }
+    }
 
     this.performWaypoint = function(dt) {
         var wp = this.currentWaypoint;
@@ -202,6 +224,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     //This only works on the XY plane, not for vertical velocity.
     this.approachSpeed = function (desiredSpeed, heading, dt) {
+        desiredSpeed = 1000;
         var velocity = this.getVelocity();
         if (Math.abs(velocity - desiredSpeed) < 0.005) {
             return true;
