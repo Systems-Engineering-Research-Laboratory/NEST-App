@@ -96,7 +96,7 @@ ContextMenu.prototype.onAdd = function () {
     if (this.classNames_.menu) {
         menu.className = this.classNames_.menu;
     }
-    menu.style.cssText = 'display:none; position:absolute';
+    menu.style.cssText = 'display:none; position:absolute; background:white';
 
     for (var i = 0, j = this.menuItems_.length; i < j; i++) {
         if (this.menuItems_[i].label && this.menuItems_[i].eventName) {

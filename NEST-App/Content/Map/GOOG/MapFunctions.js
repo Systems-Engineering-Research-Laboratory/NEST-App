@@ -17,22 +17,12 @@
         infowindow.open(theMap);
     },
 
-    //Helper function for issuing UAV commands
-    UAVCommand : function(id, command){
-        //I imagine that this could be something like:
-        /*$.ajax({
-            type: "POST",
-            url: '/api/uavs/commandUAV'+id,
-            success: function () { },
-            data: command
-        });*/
-    },
-
     //Creates the context menu for the map
     MapContext : function(theMap){
         var contextMenuOptions = {};
         contextMenuOptions.classNames = { menu: 'context_menu', menuSeparator: 'context_menu_separator' };
         var menuItems = [];
+        menuItems.push({ className: 'context_menu_item', eventName: 'send_note', label: 'Send Note' });
         menuItems.push({ className: 'context_menu_item', eventName: 'get_coords', label: 'Get Coords' });
         menuItems.push({});
         menuItems.push({ className: 'context_menu_item', eventName: 'go_here', label: 'Go Here' });
@@ -43,13 +33,20 @@
         return contextMenu;
     },
     //Controls context menu selection for the map
-    MapContextSelection : function(map, latLng, eventName){
+    MapContextSelection : function(map, latLng, eventName, emitHub){
         switch (eventName) {
             case 'get_coords':
                 var coords = {
                     latLng: latLng
                 }
                 this.GetLatLong(map, coords);
+                break;
+            case 'send_note':
+                mapFunctions.note_show();
+                document.getElementById("send").addEventListener("click", function () {
+                    emitHub.server.sendNote(latLng.lat(), latLng.lng(), document.getElementById("notifier").value, document.getElementById("message").value);
+                    mapFunctions.note_hide();
+                });
                 break;
             case 'go_here':
                 this.goTo_show();
@@ -67,8 +64,12 @@
         var contextMenuOptions = {};
         contextMenuOptions.classNames = { menu: 'context_menu', menuSeparator: 'context_menu_separator' };
         var menuItems = [];
+        menuItems.push({ className: 'context_menu_item', eventName: 'get_details', label: 'UAV Details' });
+        menuItems.push({ className: 'context_menu_item', eventName: 'non_nav', label: 'Adjust Parameters' });
+        menuItems.push({ className: 'context_menu_item', eventName: 'hold', label: 'Hold Position' });
+        menuItems.push({ className: 'context_menu_item', eventName: 'insert_waypoint', label: 'Insert Waypoint' });
+        menuItems.push({ className: 'context_menu_item', eventName: 'go_to', label: 'Go to...' });
         menuItems.push({ className: 'context_menu_item', eventName: 'force_land', label: 'Force Land' });
-        menuItems.push({ className: 'context_menu_item', eventName: 'get_details', label: 'Get UAV Details' });
         menuItems.push({ className: 'context_menu_item', eventName: 'return', label: 'Return to Base' });
         contextMenuOptions.menuItems = menuItems;
         var contextMenu = new ContextMenu(theMap, contextMenuOptions);
@@ -78,15 +79,27 @@
     //Controls context menu selection for UAVs
     UAVContextSelection: function (map, marker, latLng, eventName) {
         switch (eventName) {
-            case 'force_land':
-                this.UAVCommand(marker.Id, 'force_land');
-                break;
             case 'get_details':
-                window.open("localhost:53130/detailview");
-                console.log("Trying to open window");
+                window.open("http://localhost:53130/detailview", "_blank");
+                //console.log("Trying to open window");
+                break;
+            case 'non_nav':
+                uavCommand.NonNav(marker.uav, latLng);
+                break;
+            case 'hold':
+                uavCommand.HoldPos(marker.uav, latLng);
+                break;
+            case 'insert_waypoint':
+                uavCommand.InsertWP(marker.uav, latLng);
+                break;
+            case 'go_to':
+                uavCommand.GoTo(marker.uav, latLng);
+                break;
+            case 'force_land':
+                uavCommand.ForceLand(marker.uav, latLng);
                 break;
             case 'return':
-                this.UAVCommand(marker.Id, 'return');
+                uavCommand.BackToBase(marker.uav, latLng);
                 break;
             default:
                 break;

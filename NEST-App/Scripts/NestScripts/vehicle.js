@@ -357,17 +357,21 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                 target.NextWaypointId = this.currentWaypoint.Id;
             }
             var promise = this.pathGen.insertWaypoint(this.Mission, target, this.waypoints);
+            //
             promise.done(function (data, textStatus, jqXHR) {
                 that.reporter.ackCommand(target, target.type, "OK", true);
+                //extra
                 data.obj = target;
                 data.objType = "command";
                 that.currentWaypoint = data;
             });
-            promise.done(function (data, textStatus, jqXHR) {
-                that.reporter.ackCommand(target, target.type, "Waypoint creation failed", false);
+            //if fail pass false
+            promise.fail(function (jqXHR, textStatus, err) {
+                that.reporter.ackCommand(target, target.type, "Waypoint creation failed, Error: " + err, false);
                 
             });
         }
+        //else non navigational
     }
 
     this.handleNonNavigationalCommand = function (target) {

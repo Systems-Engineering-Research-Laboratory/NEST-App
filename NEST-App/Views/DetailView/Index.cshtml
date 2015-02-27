@@ -2,31 +2,36 @@
 
 @model dynamic
 
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-@{
-    ViewBag.Title = "Index";
-}
+@{Layout = "~/Views/Shared/_Layout.cshtml";}
+@{ViewBag.Title = "Index";}
 
 <!DOCTYPE html>
 <head>
-
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
     <style>
         .outside {
             border: none;
-            padding: 10px;
+            padding: 0px;
             height: 700px;
-            width: 100%;}
+            width: 100%;
+        }
+
+        .table {
+            border: none;
+            width: 38%;
+            /*height: 695px;*/
+            /*overflow: auto;
+            overflow-x: hidden;*/
+        }
 
         .UAV_table {
-            width: 36%;
-            border: none;
+            width: 100%;
+            /*height: 695px;*/
             float: left;
             padding: 10px;
-            margin: 5px;}
+            margin: 0px;
+        }
 
         .UAV_table tr {
             background-color: #ffffff;
@@ -35,21 +40,25 @@
             padding-top: 3px;
             padding-bottom: 3px;
             padding-left: 6px;
-            padding-right: 6px;}
+            padding-right: 6px;
+        }
 
-        .UAV_table tr:hover {background-color: #e9e9ea;}
+        .UAV_table tr:hover {
+            background-color: #e9e9ea;
+        }
 
         .UAV_table th {
             background-color: #0a074a;
             border-radius: 8px;
             border: 1px solid white;
             text-align: center;
-            padding-top: 5px;
-            padding-bottom: 5px;
+            padding-top: 3px;
+            padding-bottom: 3px;
             padding-left: 6px;
             padding-right: 6px;
             color: white;
-            font-size: 15px;}
+            font-size: 15px;
+        }
 
         .UAV_table td {
             border: 1px solid white;
@@ -58,41 +67,41 @@
             padding-bottom: 3px;
             padding-left: 6px;
             padding-right: 6px;
-            border-radius: 5px;}
+            border-radius: 5px;
+        }
 
-        .UAV_table td:hover {cursor: pointer;}
-
-        .mission_table th {text-align: center;}
-
-        .mission_table td {
-            text-align: center;
-            padding: 5px;}
+        .UAV_table td:hover {
+            cursor: pointer;
+        }
 
         .outer_detail_div {
-            margin: 5px;
+            margin: 0px;
             padding-top: 12px;
             padding-bottom: 8px;
             padding-right: 8px;
             padding-left: 8px;
             border: none;
             border-radius: 8px;
-            width: 62%;
+            width: 58%;
             float: right;
-            background-color: #e9e9ea;}
+            background-color: #e9e9ea;
+        }
 
         .detail_title {
             font-size: 25px;
             font-weight: bold;
             line-height: 90%;
             font-family: Verdana;
-            color: #0b0769;}
+            color: #0b0769;
+        }
 
         .detail_statue_metrics_div {
             border: none;
             padding: 2px;
-            width: 40%;
+            width: 43%;
             float: left;
-            margin-right: 2px;}
+            margin-right: 2px;
+        }
 
         .title {
             font-size: 18px;
@@ -101,7 +110,8 @@
             font-family: Verdana;
             padding-top: 3px;
             color: #0a074a;
-            text-decoration: underline;}
+            text-decoration: underline;
+        }
 
         .details {
             font-size: 15px;
@@ -109,14 +119,8 @@
             font-family: Verdana;
             padding-bottom: 0;
             color: #0a074a;
-            margin: 1px;}
-
-        #ETA #STA #route #avail {
-            font-size: 15px;
-            line-height: 100%;
-            font-family: Verdana;
-            padding-bottom: 0;
-            color: #0a074a;}
+            margin: 1px;
+        }
 
         .detail_statue {
             border: 1px solid #0b0769;
@@ -124,7 +128,8 @@
             border-radius: 8px;
             padding: 5px;
             padding-left: 8px;
-            background-color: #fafbeb;}
+            background-color: #fafbeb;
+        }
 
         .detail_metrics {
             border: 1px solid #0b0769;
@@ -132,7 +137,8 @@
             border-radius: 8px;
             padding: 5px;
             padding-left: 8px;
-            background-color: #fafbeb;}
+            background-color: #fafbeb;
+        }
 
         .detail_acitivity {
             border: 1px solid #0b0769;
@@ -140,26 +146,32 @@
             border-radius: 8px;
             padding: 5px;
             padding-left: 8px;
-            background-color: #fafbeb;}
+            background-color: #fafbeb;
+        }
 
-        .UAV_time_tr {line-height: 100%;}
+        .UAV_time_tr {
+            line-height: 100%;
+        }
 
         .UAV_time_td {
             font-size: 15px;
-            font-family: Verdana;}
+            font-family: Verdana;
+        }
 
         .UAV_time_td_2nd {
             font-size: 15px;
             font-family: Verdana;
-            padding-left: 15px;}
+            padding-left: 15px;
+        }
 
         .map {
             border: none;
-            width: 59%;
+            width: 56%;
             margin: 2px;
             margin-left: 0;
             float: right;
-            height: 100%;}
+            height: 100%;
+        }
 
         #map-canvas {
             width: auto;
@@ -167,7 +179,8 @@
             margin: auto;
             padding: 0px;
             border: 1px solid #0b0769;
-            border-radius: 8px;}
+            border-radius: 8px;
+        }
 
         .detail_package {
             border: 1px solid #0b0769;
@@ -177,105 +190,97 @@
             padding-left: 8px;
             background-color: #fafbeb;
             width: auto;
-            height: auto;}
-
-        .labels {
-            color: blue;
-            font-size: 12px;
-            font-weight: bold;
-            text-align: center;
-            width: 60px;
+            height: auto;
         }
-        
     </style>
-
 </head>
 <body>
     <br />
+    @*<h2> UAV Detail view </h2>*@
     <div class="outside">
-        <table class="UAV_table" id="UAV_table">
-            <tr>
-                <th>Callsign</th>
-                <th>NumDeliveries</th>
-                <th>Mileage</th>
-                <th>Battery</th>
-                <th style="display:none">ETA</th>
-                <th style="display:none">STA</th>
-                <th style="display:none">Route</th>
-                <th style="display:none">Availability</th>
-                <th style="display:none">Configuration</th>
-                <th style="display:none">current_lat</th>
-                <th style="display:none">current_long</th>
-                <th style="display:none">current_alt</th>
-                <th style="display:none">dest_lat</th>
-                <th style="display:none">dest_long</th>
-                <th style="display:none">total_delivery</th>
-                <th style="display:none">payload</th>
-                <th style="display:none">UAV ID</th>
-                <th style="display:none">Cost</th>
-            </tr>
-            @foreach (UAV uav in Model.UAVs)
-            {
-                <tr id="UAV_table_row">
-                    <td>
-                        @Html.DisplayFor(modelItem => uav.Callsign)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => uav.NumDeliveries)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => uav.Mileage)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().BatteryLevel)
-                    </td>
-                    <td style="display:none">
-                        @*@Html.DisplayFor(modelItem => uav.Mission.EstimatedCompletionTime)*@
-                    </td>
-                    <td style="display:none">
-                        @*@Html.DisplayFor(modelItem => uav.Mission.ScheduledCompletionTime)*@
-                    </td>
-                    <td style="display:none">
-                        @*@Html.DisplayFor(modelItem => uav.Mission.Phase)*@
-                    </td>
-                    <td style="display:none">
-                        @*@Html.DisplayFor(modelItem => uav.Mission.FlightPattern)*@
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => uav.Configurations.Classification)
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().Latitude)
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().Longitude)
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => uav.FlightStates.FirstOrDefault().Altitude)
-                    </td>
-                    <td style="display:none">
-                        @*@Html.DisplayFor(modelItem => uav.Mission.Latitude)*@
-                    </td>
-                    <td style="display:none">
-                        @*@Html.DisplayFor(modelItem => uav.Mission.Longitude)*@
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => uav.NumDeliveries)
-                    </td>
-                    <td style="display:none">
-                        payload
-                        @*@Html.DisplayFor(modelItem =>*@
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => uav.Id)
-                    </td>
-                    <td style="display:none">
-                        cost
-                    </td>
+        <div class="table">
+            <table class="UAV_table" id="UAV_table">
+                <tr>
+                    <th>UAV ID</th>
+                    <th>Callsign</th>
+                    <th style="display: none;">NumDeliveries</th>
+                    <th style="display: none;">Mileage</th>
+                    <th>Battery</th>
+                    <th>ETA</th>
+                    <th style="display: none;">STA</th>
+                    <th style="display: none;">Route</th>
+                    <th style="display: none;">Availability</th>
+                    <th style="display: none;">Configuration</th>
+                    <th style="display: none;">current_lat</th>
+                    <th style="display: none;">current_long</th>
+                    <th style="display: none;">current_alt</th>
+                    <th style="display: none;">dest_lat</th>
+                    <th style="display: none;">dest_long</th>
+                    <th style="display: none;">total_delivery</th>
+                    <th style="display: none;">payload</th>
+                    <th style="display: none;">Cost</th>
                 </tr>
-            }
-        </table>
-
+                @foreach (Mission miss in Model.missions)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => miss.Schedule.UAV.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => miss.Schedule.UAV.Callsign)
+                        </td>
+                        <td style="display: none;">
+                            @Html.DisplayFor(modelItem => miss.Schedule.UAV.NumDeliveries)
+                        </td>
+                        <td style="display: none;">
+                            @Html.DisplayFor(modelItem => miss.Schedule.UAV.Mileage)
+                        </td>
+                        <td id="battery_cell">
+                            @Html.DisplayFor(modelItem => miss.Schedule.UAV.FlightStates.FirstOrDefault().BatteryLevel)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => miss.EstimatedCompletionTime)
+                        </td>
+                        <td style="display: none;">
+                            @Html.DisplayFor(modelItem => miss.ScheduledCompletionTime)
+                        </td>
+                        <td style="display: none;">
+                            @Html.DisplayFor(modelItem => miss.Phase)
+                        </td>
+                        <td style="display: none;">
+                            @Html.DisplayFor(modelItem => miss.FlightPattern)
+                        </td>
+                        <td style="display: none;">
+                            @Html.DisplayFor(modelItem => miss.Schedule.UAV.Configurations.Classification)
+                        </td>
+                        <td style="display: none;">
+                            @Html.DisplayFor(modelItem => miss.Schedule.UAV.FlightStates.FirstOrDefault().Latitude)
+                        </td>
+                        <td style="display: none;">
+                            @Html.DisplayFor(modelItem => miss.Schedule.UAV.FlightStates.FirstOrDefault().Longitude)
+                        </td>
+                        <td style="display: none;">
+                            @Html.DisplayFor(modelItem => miss.Schedule.UAV.FlightStates.FirstOrDefault().Altitude)
+                        </td>
+                        <td style="display: none;">
+                            @Html.DisplayFor(modelItem => miss.Latitude)
+                        </td>
+                        <td style="display: none;">
+                            @Html.DisplayFor(modelItem => miss.Longitude)
+                        </td>
+                        <td style="display: none;">
+                            @Html.DisplayFor(modelItem => miss.Schedule.UAV.NumDeliveries)
+                        </td>
+                        <td style="display: none;">
+                            @Html.DisplayFor(modelItem => miss.Payload)
+                        </td>
+                        <td style="display: none;">
+                            @Html.DisplayFor(modelItem => miss.FinancialCost)
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
         <div class="outer_detail_div" id="outer_detail_div">
             <p class="detail_title" id="detail_title">
                 UAV #
@@ -292,12 +297,12 @@
                     <p class="details" id="avail">Availability: </p>
                     <p class="details" id="conf">Configuration:
                     <p class="details"> Current Coord: </p>
-                    <p class="details" id="curr_lat"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp; </p>
-                    <p class="details" id="curr_long"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;</p>
-                    <p class="details" id="curr_alt"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                    <p class="details" id="curr_lat"> &nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp; </p>
+                    <p class="details" id="curr_long"> &nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;</p>
+                    <p class="details" id="curr_alt"> &nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;</p>
                     <p class="details"> Destination Coord:</p>
-                    <p class="details" id="dest_lat"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp; </p>
-                    <p class="details" id="dest_long"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;</p>
+                    <p class="details" id="dest_lat"> &nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp; </p>
+                    <p class="details" id="dest_long"> &nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;</p>
                 </div>
                 <div class="detail_metrics">
                     <p class="title">Metrics</p>
@@ -313,7 +318,7 @@
                         <table>
                             <tr class="UAV_time_tr">
                                 <td class="UAV_time_td">
-                                    UAV Take off
+                                    Base Off
                                 </td>
                                 <td class="UAV_time_td_2nd">
                                     9:00 AM
@@ -321,23 +326,23 @@
                             </tr>
                             <tr class="UAV_time_tr">
                                 <td class="UAV_time_td">
-                                    UAV Re-routed
+                                    Re-routed
                                 </td>
                                 <td class="UAV_time_td_2nd">
-                                    9:20 AM
+                                    N/A
                                 </td>
                             </tr>
                             <tr class="UAV_time_tr">
                                 <td class="UAV_time_td">
-                                    UAV Force Land
+                                    Force Land
                                 </td>
                                 <td class="UAV_time_td_2nd">
-                                    9:21 AM
+                                    N/A
                                 </td>
                             </tr>
                             <tr class="UAV_time_tr">
                                 <td class="UAV_time_td">
-                                    UAV Take off
+                                    Dest. Off
                                 </td>
                                 <td class="UAV_time_td_2nd">
                                     9:22 AM
@@ -347,15 +352,15 @@
                                 <td class="UAV_time_td" id="UAV_time_td">
                                     Delivered #
                                 </td>
-                                <td class="UAV_time_td_2nd">
+                                <td class="UAV_time_td_2nd" id="UAV_time_td2">
                                     9:25 AM
                                 </td>
                             </tr>
                             <tr class="UAV_time_tr">
                                 <td class="UAV_time_td">
-                                    Begin Returning
+                                    Returning
                                 </td>
-                                <td class="UAV_time_td_2nd">
+                                <td class="UAV_time_td_2nd" id="UAV_time_td2;">
                                     9:26 AM
                                 </td>
                             </tr>
@@ -364,116 +369,299 @@
                 </div>
             </div>
 
-
             <div class="map">
                 <div id="map-canvas"></div>
                 <div class="detail_package">
                     <p class="title">Package</p>
                     <p class="details">
                         Dest. Addr: 3550 Nordhoff St, <br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Northridge, CA 91330 <br /><br />
-                        Package Contents: </p>
-                    <p class="details" id="payload" style="margin-bottom: 2px;"></p>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Northridge, CA 91330 <br />
+                    </p>
+                    <p class="details" id="payload" style="margin-bottom: 2px;">Package Contents: </p>
                     <p class="details" id="cost"> Total Cost of Package: $</p>
                     <p class="details">Customer Notes: Please do not leave package by front door.</p>
                 </div>
             </div>
         </div>
     </div>
-
-
+    <button onclick="Simulation()"> Go to Simulation Page </button>
+    <button onclikc="Adminview()"> Go to Admin Page </button>
 </body>
+
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=drawing"></script>
 @Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/Scripts/jquery.signalR-2.0.2.js")
+@Scripts.Render("~/Scripts/jquery.signalR-2.1.2.js")
 @Scripts.Render("~/signalr/hubs")
+<script src="~/Scripts/MarkerWithLabel.js"></script>
+<script src="/signalr/hubs"></script>
 <script type="text/javascript">
-
+    var marker;
 
     $(document).ready(function () {
-        var mapOptions = {
+        mapOptions = {
             zoom: 17,
             center: new google.maps.LatLng(34.2417, -118.529),
             disableDefaultUI: true,
             zoomControl: true,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             disableDoubleClickZoom: true,
-            draggable: false
-        }
-        var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-
-        var uavSymbolBlack = {
-            path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
-            fillColor: 'black',
-            fillOpacity: 0.8,
-            scale: 0.2,
-            zIndex: 1,
-            anchor: new google.maps.Point(355, 295)
+            draggable: false,
+            styles: [{
+                featureType: "poi",
+                elementType: "labels",
+                stylers: [
+                      { visibility: "off" }
+                ]
+            }]
         };
 
+        var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+        
         var table = document.getElementById("UAV_table");
+        var presentMarker, lastMarker;
+        var current_id = 1;
+        
+
         if (table != null) {
             for (var i = 1; i < table.rows.length; i++) {
                 for (var j = 0; j < table.rows[i].cells.length; j++) {
                     table.rows[i].onclick = function () {
-                        var callsign = this.cells[0];
-                        var numDelivery = this.cells[1];
-                        var mile = this.cells[2];
-                        var battery = this.cells[3];
-                        var ETA = this.cells[4];
-                        var STA = this.cells[5];
-                        var route = this.cells[6];
-                        var availability = this.cells[7];
-                        var confiugration = this.cells[8];
-                        var current_lat = this.cells[9];
-                        var current_long = this.cells[10];
-                        var current_alt = this.cells[11];
-                        var dest_lat = this.cells[12];
-                        var dest_long = this.cells[13];
-                        var total_delivery = this.cells[14];
-                        var payload = this.cells[15];
-                        var uavid = this.cells[16];
+                        var uavid = this.cells[0];
+                        current_id = this.cells[0].innerHTML;
+                        var callsign = this.cells[1];
+                        var numDelivery = this.cells[2];
+                        var mile = this.cells[3];
+                        var battery = this.cells[4];
+                        var ETA = this.cells[5];
+                        var STA = this.cells[6];
+                        var route = this.cells[7];
+                        var availability = this.cells[8];
+                        var confiugration = this.cells[9];
+                        var current_lat = this.cells[10];
+                        var current_long = this.cells[11];
+                        var current_alt = this.cells[12];
+                        var dest_lat = this.cells[13];
+                        var dest_long = this.cells[14];
+                        var total_delivery = this.cells[15];
+                        var payload = this.cells[16];
                         var cost = this.cells[17];
-                        var uav_lat_long = new google.maps.LatLng(this.cells[9].innerHTML, this.cells[10].innerHTML);
+                        var uav_lat_long = new google.maps.LatLng(this.cells[10].innerHTML, this.cells[11].innerHTML);
+                        var total_num = total_delivery.innerHTML;
+                        var final_total = total_num - 1;
+                        var bat = battery.innerHTML;
+                        var final_battery = bat * 100;
+                        var low_battery = "LOW BATTERY!";
 
                         document.getElementById("detail_title").innerHTML = 'UAV #' + uavid.innerHTML + '(' + callsign.innerHTML + ') Detail';
                         document.getElementById("numdeliveries").innerHTML = 'Current Delivery: ' + numDelivery.innerHTML;
-                        document.getElementById("total_deliveries").innerHTML = 'Total Delivery: ' + total_delivery.innerHTML;
+                        document.getElementById("total_deliveries").innerHTML = 'Total Delivery: ' + final_total;
                         document.getElementById("mileage").innerHTML = 'Total Miles: ' + mile.innerHTML + ' miles';
-                        document.getElementById("battery").innerHTML = 'Battery: ' + battery.innerHTML;
+                        document.getElementById("battery").innerHTML = 'Battery: ' + final_battery + "%";
                         document.getElementById("ETA").innerHTML = 'ETA: ' + ETA.innerHTML;
                         document.getElementById("STA").innerHTML = 'STA: ' + STA.innerHTML;
                         document.getElementById("route").innerHTML = 'Route: ' + route.innerHTML;
                         document.getElementById("avail").innerHTML = 'Availability: ' + availability.innerHTML;
                         document.getElementById("conf").innerHTML = 'Configuration: ' + confiugration.innerHTML;
-                        document.getElementById("UAV_time_td").innerHTML = 'Delivered #' + numDelivery.innerHTML;
-                        document.getElementById("curr_lat").innerHTML = '　　LAT:　　 ' + current_lat.innerHTML;
-                        document.getElementById("curr_long").innerHTML = '　　LONG:　' + current_long.innerHTML;
-                        document.getElementById("curr_alt").innerHTML = '　　ALT:　　 ' + current_alt.innerHTML;
-                        document.getElementById("dest_lat").innerHTML = '　　LAT:　　 ' + dest_lat.innerHTML;
-                        document.getElementById("dest_long").innerHTML = '　　LONG:　' + dest_long.innerHTML;
-                        document.getElementById("payload").innerHTML = '　　' + payload.innerHTML;
+                        document.getElementById("UAV_time_td").innerHTML = 'Delivered # ' + numDelivery.innerHTML;
+                        document.getElementById("curr_lat").innerHTML = '　LAT:　　 ' + current_lat.innerHTML;
+                        document.getElementById("curr_long").innerHTML = '　LONG:　' + current_long.innerHTML;
+                        document.getElementById("curr_alt").innerHTML = '　ALT:　　 ' + current_alt.innerHTML;
+                        document.getElementById("dest_lat").innerHTML = '　LAT:　　 ' + dest_lat.innerHTML;
+                        document.getElementById("dest_long").innerHTML = '　LONG:　' + dest_long.innerHTML;
+                        document.getElementById("payload").innerHTML = 'Package Contents: ' + payload.innerHTML;
                         document.getElementById("cost").innerHTML = 'Total Cost of Package: $' + cost.innerHTML;
-                        
-                        var UAVmarker = new google.maps.Marker({
-                                position: uav_lat_long,
-                                map: map,
-                                icon: uavSymbolBlack,
-                                labelContent: this.cells[0].innerHTML + '<div style="text-align: center;"><b>Alt: </b>' + this.cells[11].innerHTML + '<br/><b>Bat: </b>' + this.cells[3].innerHTML + '</div>',
-                                labelAnchor: new google.maps.Point(95, 20),
-                                labelClass: "labels",
-                                labelStyle: { opacity: 0.75 },
-                        });
+                        document.getElementById("UAV_time_td2").innerHTML = STA.innerHTML;
 
-                        map.setCenter(uav_lat_long);
+                        //if (presentMarker == null) {
+                        //    presentMarker = new google.maps.Marker({
+                        //        position: uav_lat_long,
+                        //        map: map,
+                        //        icon: uavSymbolGreen,
+                        //        zIndex: 100000000000,
+                        //        animation: google.maps.Animation.DROP
+                        //    });
+                        //    map.setCenter(uav_lat_long);
+                        //}
 
-
+                        //else {
+                        //    last_lat_long = presentMarker.getPosition();
+                        //    lastMarker = new google.maps.Marker({
+                        //        position: last_lat_long,
+                        //        map: map,
+                        //        icon: uavSymbolBlack,
+                        //    })
+                        //    moveMarker(map, presentMarker, uav_lat_long);
+                        //}
                     };
                 }
             }
         }
+
+        function UpdateVehicle(uav, updatedUAV) {
+            var LatLng = new google.maps.LatLng(updatedUAV.Latitude, updatedUAV.Longitude);
+            
+            //SetUAVMarker(uav);
+            uav.marker.setPosition(LatLng);
+            uav.Battery = updatedUAV.BatteryLevel;
+            uav.Alt = updatedUAV.Altitude;
+            uav.BatteryCheck = parseFloat(Math.round(updatedUAV.BatteryLevel * 100) / 100).toFixed(2);
+            uav.Yaw = updatedUAV.Yaw;
+
+            //Check drone heading and adjust as necessary
+            if ((Math.round((10000000 * uav.Orientation)) / 10000000) != (Math.round((10000000 * uav.Yaw)) / 10000000)) {
+
+                uav.Orientation = uav.Yaw;
+
+                uav.marker.uavSymbolBlack.rotation = uav.Yaw;
+                uav.marker.uavSymbolGreen.rotation = uav.Yaw;
+
+                if (uav.marker.selected == true)
+                    uav.marker.setOptions({
+                        icon: uav.marker.uavSymbolGreen
+                    });
+                else
+                    uav.marker.setOptions({
+                        icon: uav.marker.uavSymbolBlack
+                    })
+            }
+
+            uav.marker.setOptions({
+                labelContent: uav.Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uav.Alt + '<br/><b>Bat: </b>' + uav.BatteryCheck + '</div>'
+            });
+
+            return uav;
+        };
+
+        $.connection.hub.start().done(function () {
+            console.log("connection started for evt log");
+        });
+
+        var vehicleHub = $.connection.vehicleHub;
+        vehicleHub.client.flightStateUpdate = function (vehicle) {
+            console.log("connection started for vehicle Hub");
+            uavs[vehicle.Id] = UpdateVehicle(uavs[vehicle.Id], vehicle);
+
+            uavs[vehicle.Id].Battery = vehicle.BatteryLevel;
+            uavs[vehicle.Id].Alt = vehicle.Altitude;
+            uavs[vehicle.Id].BatteryCheck = parseFloat(Math.round(vehicle.BatteryLevel * 100)).toFixed(2);
+            console.log("　UAV ID: #" + vehicle.Id + "　　Current coordinates: " + vehicle.Latitude + ", " + vehicle.Longitude);
+            console.log("　UAV Battery using battery level: " + uavs[vehicle.Id].Battery);
+            if (current_id == uavs[vehicle.Id].Id)
+            {
+                var battery_percent = vehicle.BatteryLevel 
+                document.getElementById("curr_lat").innerHTML = '　LAT:　　 ' + vehicle.Latitude.toFixed(10);
+                document.getElementById("curr_long").innerHTML = '　LONG:　' + vehicle.Longitude.toFixed(10);
+                document.getElementById("curr_alt").innerHTML = '　ALT:　　 ' + vehicle.Altitude;
+                document.getElementById("battery").innerHTML = 'Battery: ' + vehicle.BatteryLevel.toFixed(3) + "%";
+                var latlng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
+                uavs[vehicle.Id].marker.setMap(map);
+                map.setCenter(latlng);
+            }
+        }
+
+        vehicleHub.connection.start();
+
+        $.ajax({
+            url: '/api/uavs/getuavinfo',
+            success: function (data, textStatus, req) {
+                uavMarkers(data, textStatus, req);
+            }
+        });
     });
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // end of init function
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    var uavSymbolBlack;
+    var uavSymbolGreen;
 
+    var flightPathOptions = {
+        geodesic: true,
+        strokeColor: 'blue',
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+    };
+
+    function SetUAV(uavData) {
+        var uav = {};
+        uav.Id = uavData.Id;
+        uav.FlightState = uavData.FlightState;
+        uav.Schedule = uavData.Schedule;
+        uav.Missions = uavData.Schedule.Missions;
+        var fs = uav.FlightState;
+        uav.Alt = uavData.FlightState.Altitude;
+        uav.Callsign = uavData.Callsign;
+        uav.Battery = uavData.FlightState.BatteryLevel;
+        uav.Position = new google.maps.LatLng(fs.Latitude, fs.Longitude);
+        uav.Mission = uavData.Mission;
+        uav.Orientation = uavData.FlightState.Yaw;
+        var mis = uav.Mission;
+        uav.Destination = new google.maps.LatLng(mis.Latitude, mis.Longitude);
+
+        return uav;
+    };
+
+    function SetUAVMarker(uav) {
+        var marker_uav = new MarkerWithLabel({
+            position: uav.Position,
+            icon: uavSymbolBlack,
+            labelContent: uav.Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uav.Alt + '<br/><b>Bat: </b>' + uav.Battery + '</div>',
+            labelAnchor: new google.maps.Point(95, 20),
+            labelClass: "labels",
+            labelStyle: { opacity: 0.75 },
+            zIndex: 999999,
+            uav: uav,
+            uavSymbolBlack: {
+                path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
+                fillColor: '#CECED4',
+                fillOpacity: 1.0,
+                scale: 0.2,
+                zIndex: 1,
+                anchor: new google.maps.Point(355, 295)
+            },
+            uavSymbolGreen: {
+                path: 'M 355.5,212.5 513,312.25 486.156,345.5 404.75,315.5 355.5,329.5 308.25,315.5 224.75,345.5 197.75,313 z',
+                fillColor: 'green',
+                fillOpacity: 0.8,
+                scale: 0.2,
+                zIndex: 1,
+                anchor: new google.maps.Point(355, 295)
+            }
+        });
+        return marker_uav;
+    };
+
+    var uavs = {};
+    var map;
+    var flightLines = [];
+
+    function uavMarkers(data, textStatus, jqXHR) {
+        console.log("Pulling Flightstates...", textStatus);
+
+        for (var i = 0; i < data.length; i++) {
+            uavs[data[i].Id] = SetUAV(data[i]);
+
+            flightLines[data[i].Id] = new google.maps.Polyline(flightPathOptions);
+            flightLines[data[i].Id].setPath([uavs[data[i].Id].Position, uavs[data[i].Id].Destination]);
+
+            marker = SetUAVMarker(uavs[data[i].Id]);
+            
+            uavs[data[i].Id].marker = marker;
+            uavs[data[i].Id].flightPath = flightLines[data[i].Id];
+            uavs[data[i].Id].marker.setMap(map);
+        }
+    }
+
+    function Simulation()
+    {
+        window.open("localhost:53130/Sim");
+    }
+
+    function Adminview()
+    {
+        window.open("localhost:53130/adminview");
+    }
 </script>
+
+
