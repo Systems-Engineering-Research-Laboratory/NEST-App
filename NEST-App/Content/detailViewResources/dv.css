@@ -1,0 +1,173 @@
+﻿        .outside {
+            border: none;
+            padding: 10px;
+            height: 700px;
+            width: 100%;
+
+        }
+
+        .UAV_table {
+            width: 36%;
+            border: none;
+            float: left;
+            padding: 10px;
+            margin: 5px;}
+
+        .UAV_table tr {
+            background-color: #ffffff;
+            border: none;
+            border-radius: 3px;
+            padding-top: 3px;
+            padding-bottom: 3px;
+            padding-left: 6px;
+            padding-right: 6px;}
+
+        .UAV_table tr:hover {background-color: #e9e9ea;}
+
+        .UAV_table th {
+            background-color: #0a074a;
+            border-radius: 8px;
+            border: 1px solid white;
+            text-align: center;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 6px;
+            padding-right: 6px;
+            color: white;
+            font-size: 15px;}
+
+        .UAV_table td {
+            border: 1px solid white;
+            text-align: center;
+            padding-top: 3px;
+            padding-bottom: 3px;
+            padding-left: 6px;
+            padding-right: 6px;
+            border-radius: 5px;}
+
+        .UAV_table td:hover {cursor: pointer;}
+
+        .mission_table th {text-align: center;}
+
+        .mission_table td {
+            text-align: center;
+            padding: 5px;}
+
+        .outer_detail_div {
+            margin: 5px;
+            padding-top: 12px;
+            padding-bottom: 8px;
+            padding-right: 8px;
+            padding-left: 8px;
+            border: none;
+            border-radius: 8px;
+            width: 62%;
+            float: right;
+            background-color: #e9e9ea;}
+
+        .detail_title {
+            font-size: 25px;
+            font-weight: bold;
+            line-height: 90%;
+            font-family: Verdana;
+            color: #0b0769;}
+
+        .detail_statue_metrics_div {
+            border: none;
+            padding: 2px;
+            width: 40%;
+            float: left;
+            margin-right: 2px;}
+
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+            line-height: 80%;
+            font-family: Verdana;
+            padding-top: 3px;
+            color: #0a074a;
+            text-decoration: underline;}
+
+        .details {
+            font-size: 15px;
+            line-height: 100%;
+            font-family: Verdana;
+            padding-bottom: 0;
+            color: #0a074a;
+            margin: 1px;}
+
+        #ETA #STA #route #avail {
+            font-size: 15px;
+            line-height: 100%;
+            font-family: Verdana;
+            padding-bottom: 0;
+            color: #0a074a;}
+
+        .detail_statue {
+            border: 1px solid #0b0769;
+            margin-bottom: 6px;
+            border-radius: 8px;
+            padding: 5px;
+            padding-left: 8px;
+            background-color: #fafbeb;}
+
+        .detail_metrics {
+            border: 1px solid #0b0769;
+            margin-top: 6px;
+            border-radius: 8px;
+            padding: 5px;
+            padding-left: 8px;
+            background-color: #fafbeb;}
+
+        .detail_acitivity {
+            border: 1px solid #0b0769;
+            margin-top: 6px;
+            border-radius: 8px;
+            padding: 5px;
+            padding-left: 8px;
+            background-color: #fafbeb;}
+
+        .UAV_time_tr {line-height: 100%;}
+
+        .UAV_time_td {
+            font-size: 15px;
+            font-family: Verdana;}
+
+        .UAV_time_td_2nd {
+            font-size: 15px;
+            font-family: Verdana;
+            padding-left: 15px;}
+
+        .map {
+            border: none;
+            width: 59%;
+            margin: 2px;
+            margin-left: 0;
+            float: right;
+            height: 100%;}
+
+        #map-canvas {
+            width: auto;
+            height: 350px;
+            margin: auto;
+            padding: 0px;
+            border: 1px solid #0b0769;
+            border-radius: 8px;}
+
+        .detail_package {
+            border: 1px solid #0b0769;
+            margin-top: 6px;
+            border-radius: 8px;
+            padding: 5px;
+            padding-left: 8px;
+            background-color: #fafbeb;
+            width: auto;
+            height: auto;}
+
+        .labels {
+            color: blue;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            width: 60px;
+        }

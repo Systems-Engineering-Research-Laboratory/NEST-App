@@ -105,6 +105,18 @@ namespace NEST_App
             angularJS.Orderer = nullOrderer;
             bundles.Add(angularJS);
 
+            var detailView = new CustomStyleBundle("~/bundles/detailsCSS");
+            detailView.Include("~/Content/detailViewResources/dv.css");
+            detailView.Transforms.Add(cssTransformer);
+            detailView.Orderer = nullOrderer;
+            bundles.Add(detailView);
+
+            var detailViewJS = new CustomScriptBundle("~/bundles/detailsJS");
+            detailViewJS.Include("~/Content/detailViewResources/dv.js");
+            detailViewJS.Transforms.Add(jsTransformer);
+            detailViewJS.Orderer = nullOrderer;
+            bundles.Add(detailViewJS);
+
             //Font Awesome
             //var fa = new CustomStyleBundle("~/bundles/fontawesome");
             //fa.Include("~/Content/font-awesome-4.3.0/css/font-awesome.min.css");
