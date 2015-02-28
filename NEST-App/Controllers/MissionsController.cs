@@ -114,6 +114,33 @@ namespace NEST_App.Controllers
             return unassgn;
         }
 
+        [Route("api/missions/{id}/newroute")]
+        [ResponseType(typeof(void))]
+        [HttpPost]
+        public async Task<IHttpActionResult> NewRouteForMission(int id, Waypoint[] wps)
+        {
+            Mission mission = await db.Missions.FindAsync(id);
+            if(mission == null)
+            {
+                return NotFound();
+            }
+            if(mission.Waypoints.Count != 0 || wps == null || wps.Count() < 1)
+            {
+                return BadRequest();
+            }
+
+            for(int i = 0; i < wps.Count() - 1; i++)
+            {
+                var wp = wps.ElementAt(i);
+                wp.NextWaypoint = wps.ElementAt(i+1);
+                mission.Waypoints.Add(wp);
+            }
+            mission.Waypoints.Add(wps.Last());
+            db.Entry(mission).State = System.Data.Entity.EntityState.Modified;
+            await db.SaveChangesAsync();
+            return Ok();
+        }
+
         // GET: api/Missions/5
         [ResponseType(typeof(Mission))]
         public async Task<IHttpActionResult> GetMission(int id)

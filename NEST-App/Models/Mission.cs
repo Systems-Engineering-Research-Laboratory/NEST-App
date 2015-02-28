@@ -31,7 +31,7 @@ namespace NEST_App.Models
         public Nullable<System.DateTime> ScheduledCompletionTime { get; set; }
         public Nullable<System.DateTime> EstimatedCompletionTime { get; set; }
         public int id { get; set; }
-        public int ScheduleId { get; set; }
+        public Nullable<int> ScheduleId { get; set; }
         public Nullable<System.DateTime> create_date { get; set; }
         public Nullable<System.DateTime> modified_date { get; set; }
         public double Latitude { get; set; }

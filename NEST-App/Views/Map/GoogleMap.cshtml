@@ -42,7 +42,7 @@
             <input type="text" name="go_latitude" id="go_lat" placeholder="Latitude" />
             ,
             <input type="text" name="go_longitude" id="go_long" placeholder="Longitude" />
-            )<button class="btn btn-default disabled" id="clickToGoBtn" onclick="clickToGo()"><span class="glyphicon glyphicon-hand-down"></span></button>
+            )<button class="btn btn-default disabled" id="clickToGoBtn" onclick="droneTrails.clickToGo()"><span class="glyphicon glyphicon-hand-down"></span></button>
         </p>
         <button class="btn btn-default disabled sendBtn" id="goBtn">GO</button>
         <button class="btn btn-default clear" id="clearBtn">CLEAR</button>
@@ -51,7 +51,7 @@
     <!-- send notification window -->
     <div id="notification">
         <div class="closeBtn"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.note_hide()"></span></div>
-        <h3>Send Notificatoin</h3>
+        <h3>Send Notification</h3>
         <p>
             <input type="text" name="notifier" id="notifier" placeholder="Name" />
             <input type="text" name="message" id="message" placeholder="Message" />

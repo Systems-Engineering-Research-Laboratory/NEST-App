@@ -1,40 +1,54 @@
 ﻿var droneSelection = {
     /*CTRL-SELECT*/
     CtrlSelect: function (marker, selectedDrones) {
-        selectedUAV = marker.uav;
-  
+        var selectedUAV = null;
+        clickedUAV = marker.uav;
+        //UAV has been selected
         if (marker.selected == false) {//other drone-selection-related events should trigger off this!
             marker.selected = true;
-            marker.setIcon(selectedUAV.marker.uavSymbolGreen);
+            marker.setIcon(clickedUAV.marker.uavSymbolGreen);
             marker.setMap(marker.map);
-            //TODO: deselect and remove from selectedDrone (tricky because it's an array)            
-            console.log("fired true");
+            selectedUAV = marker.uav;           
+            //console.log("fired true");
         }
+        //UAV has been de-selected
         else {
             marker.selected = false;//other drone-selection-related events should trigger off this!
-            marker.setIcon(selectedUAV.marker.uavSymbolBlack);
+            marker.setIcon(clickedUAV.marker.uavSymbolBlack);
             marker.setMap(marker.map);
-            console.log("fired false");
+            //console.log("fired false");
         }
-        google.maps.event.trigger(marker, 'selection_changed');
-            
-            
-            if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, ignore immediate key repeats and proceed
-                ctrlDown = false
-                selectedDrones.push(selectedUAV);
-            }
-            else {//otherwise, empty the selectedDrones list and add the drone to the empty list
-                //console.log("hit else");
-                while (selectedDrones.length > 0) {//clear the selected drone list
-                    selectedDrones.pop();
-                }
-                selectedDrones.push(selectedUAV);
-            }
-            console.log("Number of drones selected: " + selectedDrones.length);
 
-            // enable waypoint buttons
-            $("#goBtn").removeClass("disabled");
-            $("#clickToGoBtn").removeClass("disabled");
+        //Let the selection state change listener know that the state has changed
+        google.maps.event.trigger(marker, 'selection_changed');
+
+        if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, ignore immediate key repeats and proceed
+            ctrlDown = false
+            //console.log(selectedUAV);
+            if (selectedUAV != null) {
+                selectedDrones.push(selectedUAV);
+            }
+            /*else {
+                //TODO: remove from selectedDrones (tricky because it's an array) 
+            }*/
+        }
+        else {//otherwise, empty the selectedDrones list and add the drone to the empty list
+            //console.log("hit else");
+            while (selectedDrones.length > 0) {//clear the selected drone list
+                selectedDrones.pop(); 
+            }/*
+            for (var c = selectedDrones.length; c > 0; c--) {
+                selectedDrones[c].marker.setIcon(selectedDrones[c].uavSymbolBlack);
+            }
+            selectedDrones = [];*/
+            if (selectedUAV != null) {
+                selectedDrones.push(selectedUAV);
+            }
+        }
+        console.log("Number of drones selected: " + selectedDrones.length);
+                 // enable waypoint buttons
+        $("#goBtn").removeClass("disabled");
+        $("#clickToGoBtn").removeClass("disabled");
         
     },
 
@@ -75,27 +89,49 @@
         }
             //******************DE-SELECTED*******************//
         else if (marker.selected == false) {
-            console.log("UAV De-selected");
+            //console.log("UAV De-selected");
 
             //Turn off drone's flightpath
             flightLines[marker.uav.Id].setMap(null);
 
+            
             //TURN OFF TRAIL 
             //droneTrails.deleteTrails(selectedUAV.Id);
         }
+
+        // toggle goWaypoint buttons
+        this.WaypointBtnToggle(marker.selected, selectedUAV);
+
             //**************DANGER****************//
         /*else if (marker.icon.fillColor == 'red') {//"RED FOR DANGER"......placeholder in case we decide to do this
             //otherstuff
         }*/
     },
 
+    WaypointBtnToggle: function (selected, uav) {
+        if (selected == true) {
+            $("#UAVId").html("UAV: " + uav.Callsign);
+            $("#goBtn").removeClass("disabled");
+            $("#clickToGoBtn").removeClass("disabled");
+        }
+        else if (selected == false) {
+            $("#UAVId").html("Select an UAV first");
+            $("#goBtn").addClass("disabled");
+            $("#clickToGoBtn").addClass("disabled");
+        }
+    },
+
     KeyBinding: function (selectedDrones, storedGroups, evt) {
+        //console.log("length in function is: " + selectedDrones.length);
         //if shift + (0 through 9) is pressed, all selected drones will be bound to that number
         if (evt.shiftKey && ((evt.which >= 48) && (evt.which <= 57))) {
             storedGroups[evt.which] = selectedDrones;
+
+            console.log("selected is: " + selectedDrones[0]);
+            console.log("selected " + selectedDrones[0].marker);
         }
         //if 0 through 9 is pressed, it restores that list of selected drones and turns them green
-        if ((evt.which >= 48) && (evt.which <= 57)) {
+        else if ((evt.which >= 48) && (evt.which <= 57)) {
             while (selectedDrones.length > 0) {//clear the selected drone list
                 selectedDrones.pop();
             }
@@ -104,12 +140,13 @@
                 if (selectedDrones.length != 0) {
                     var i;
                     for (i = 0; i < selectedDrones.length; i++) {
-                        //selectedDrones[i].marker.setIcon(mapStyles.uavIconGreen);
+                        //selectedDrones[i].setIcon(selectedDrones[i].uavIconGreen);
                     }
                 }
             }
-            console.log("Number of selected drones: " + selectedDrones.length);
+            //console.log("Number of selected drones: " + selectedDrones.length);
         }
+        return storedGroups;
     },
 
     AreaSelect: function (theMap, e, mouseIsDown, shiftPressed, gridBoundingBox, selectedDrones, uavs) {
@@ -127,12 +164,12 @@
                 for (var key in uavs) {
                     if (gridBoundingBox.getBounds().contains(uavs[key].marker.getPosition())) {
                         //selected = true; //Possibly deprecated since updating the selection paradigm
-                        uavs[key].marker.setIcon(selectedUAV.marker.uavSymbolGreen);
+                        uavs[key].marker.setIcon(uavs[key].marker.uavSymbolGreen);
                         selectedDrones.push(uavs[key]);//push the selected markers to an array
                         console.log("Number of selected drones: " + selectedDrones.length);
                     } else {
                         //selected = false; //Possibly deprecated since updating the selection paradigm
-                        uavs[key].marker.setIcon(selectedUAV.marker.uavSymbolBlack);
+                        uavs[key].marker.setIcon(uavs[key].marker.uavSymbolBlack);
                         console.log("Number of selected drones: " + selectedDrones.length);
                     }
                 }
