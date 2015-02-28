@@ -170,9 +170,9 @@ $(document).ready(function () {
             infobox.open(map, uavs[evt.UAVId].marker);
             infoboxAlert.open(map, uavs[evt.UAVId].marker);
 
-            google.maps.event.addDomListener(document.getElementById("infobox"), 'click', function () {
-                if (mapStyles.infobox.open) {
-                    mapStyles.infobox.close();
+            google.maps.event.addDomListener(boxText, 'click', function () {
+                if (infobox.open) {
+                    infobox.close();
 
                     var eventACK = {
                         uav_id: uavs[evt.UAVId].Id,
