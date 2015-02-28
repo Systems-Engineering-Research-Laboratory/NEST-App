@@ -55,25 +55,25 @@ $(document).ready(function () {
                     var final_battery = bat * 100;
                     var low_battery = "LOW BATTERY!";
 
-                    document.getElementById("detail_title").innerHTML = 'UAV #' + uavid.innerHTML + '(' + callsign.innerHTML + ') Detail';
-                    document.getElementById("numdeliveries").innerHTML = 'Current Delivery: ' + numDelivery.innerHTML;
-                    document.getElementById("total_deliveries").innerHTML = 'Total Delivery: ' + final_total;
-                    document.getElementById("mileage").innerHTML = 'Total Miles: ' + mile.innerHTML + ' miles';
-                    document.getElementById("battery").innerHTML = 'Battery: ' + final_battery + "%";
-                    document.getElementById("ETA").innerHTML = 'ETA: ' + ETA.innerHTML;
-                    document.getElementById("STA").innerHTML = 'STA: ' + STA.innerHTML;
-                    document.getElementById("route").innerHTML = 'Route: ' + route.innerHTML;
-                    document.getElementById("avail").innerHTML = 'Availability: ' + availability.innerHTML;
-                    document.getElementById("conf").innerHTML = 'Configuration: ' + confiugration.innerHTML;
-                    document.getElementById("UAV_time_td").innerHTML = 'Delivered # ' + numDelivery.innerHTML;
-                    document.getElementById("curr_lat").innerHTML = '　LAT:　　 ' + current_lat.innerHTML;
-                    document.getElementById("curr_long").innerHTML = '　LONG:　' + current_long.innerHTML;
-                    document.getElementById("curr_alt").innerHTML = '　ALT:　　 ' + current_alt.innerHTML;
-                    document.getElementById("dest_lat").innerHTML = '　LAT:　　 ' + dest_lat.innerHTML;
-                    document.getElementById("dest_long").innerHTML = '　LONG:　' + dest_long.innerHTML;
-                    document.getElementById("payload").innerHTML = 'Package Contents: ' + payload.innerHTML;
-                    document.getElementById("cost").innerHTML = 'Total Cost of Package: $' + cost.innerHTML;
-                    document.getElementById("UAV_time_td2").innerHTML = STA.innerHTML;
+                    document.getElementById("detail_title").innerHTML           = 'UAV #'                   + uavid.innerHTML + '(' + callsign.innerHTML + ') Detail';
+                    document.getElementById("numdeliveries").innerHTML          = 'Current Delivery: '      + numDelivery.innerHTML;
+                    document.getElementById("total_deliveries").innerHTML       = 'Total Delivery: '        + final_total;
+                    document.getElementById("mileage").innerHTML                = 'Total Miles: '           + mile.innerHTML + ' miles';
+                    document.getElementById("battery").innerHTML                = 'Battery: '               + final_battery + "%";
+                    document.getElementById("ETA").innerHTML                    = 'ETA: '                   + ETA.innerHTML;
+                    document.getElementById("STA").innerHTML                    = 'STA: '                   + STA.innerHTML;
+                    document.getElementById("route").innerHTML                  = 'Route: '                 + route.innerHTML;
+                    document.getElementById("avail").innerHTML                  = 'Availability: '          + availability.innerHTML;
+                    document.getElementById("conf").innerHTML                   = 'Configuration: '         + confiugration.innerHTML;
+                    document.getElementById("UAV_time_td").innerHTML            = 'Delivered # '            + numDelivery.innerHTML;
+                    document.getElementById("curr_lat").innerHTML               = '　LAT:　　 '             + current_lat.innerHTML;
+                    document.getElementById("curr_long").innerHTML              = '　LONG:　'               + current_long.innerHTML;
+                    document.getElementById("curr_alt").innerHTML               = '　ALT:　　 '             + current_alt.innerHTML;
+                    document.getElementById("dest_lat").innerHTML               = '　LAT:　　 '             + dest_lat.innerHTML;
+                    document.getElementById("dest_long").innerHTML              = '　LONG:　'               + dest_long.innerHTML;
+                    document.getElementById("payload").innerHTML                = 'Package Contents: '      + payload.innerHTML;
+                    document.getElementById("cost").innerHTML                   = 'Total Cost of Package: $' + cost.innerHTML;
+                    document.getElementById("UAV_time_td2").innerHTML           = STA.innerHTML;
 
                     //if (presentMarker == null) {
                     //    presentMarker = new google.maps.Marker({
@@ -136,8 +136,47 @@ $(document).ready(function () {
     };
 
     $.connection.hub.start().done(function () {
-        console.log("connection started for evt log");
+        console.log("connection for signalR...success");
     });
+    var emitHub = $.connection.eventLogHub;
+    emitHub.client.newEvent = function (evt) {
+
+        var checkMessage = evt.message.split(" ");
+        if (checkMessage[0] != "Acknowledged:") {
+            document.getElementById("infobox").innerHTML = "<p id='warn'>Warning:</p>" + evt.message;
+            document.getElementById("infobox").onclick = mapStyles.infobox.close();
+            document.getElementById("warn").style.color = "red";
+            document.getElementById("warn").style.fontWeight = "bold";
+            document.getElementById("warn").style.margin = 0;
+
+            mapStyles.infobox.open(map, uavs[evt.UAVId].marker);
+            mapStyles.infoboxAlert.open(map, uavs[evt.UAVId].marker);
+
+            google.maps.event.addDomListener(document.getElementById("infobox"), 'click', function () {
+                if (mapStyles.infobox.open) {
+                    mapStyles.infobox.close();
+
+                    var eventACK = {
+                        uav_id: uavs[evt.UAVId].Id,
+                        message: "Acknowledged: " + evt.message,
+                        criticality: "normal",
+                        uav_callsign: uavs[evt.UAVId].Callsign,
+                        operator_screen_name: evt.operator_screen_name,
+                        UAVId: uavs[evt.UAVId].Id
+                    };
+
+                    emitHub.server.emit(eventACK);
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/uavs/postuavevent",
+                        success: function () { },
+                        data: eventACK
+                    });
+
+                }
+            });
+        }
+    }
 
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
@@ -161,7 +200,7 @@ $(document).ready(function () {
         }
     }
 
-    vehicleHub.connection.start();
+    //vehicleHub.connection.start();
 
     $.ajax({
         url: '/api/uavs/getuavinfo',
