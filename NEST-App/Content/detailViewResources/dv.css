@@ -180,3 +180,7 @@
             width: auto;
             height: auto;
         }
+
+        img[src="http://www.google.com/intl/en_us/mapfiles/close.gif"] {
+        display: none;
+    }
