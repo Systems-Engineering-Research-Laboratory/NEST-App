@@ -101,7 +101,7 @@ $(document).ready(function () {
         /* Vehicle Movement */
         vehicleHub = $.connection.vehicleHub;
         vehicleHub.client.flightStateUpdate = function (vehicle) {
-            console.log(vehicle.Latitude, vehicle.Longitude);
+            //console.log(vehicle.Latitude, vehicle.Longitude);
 
             uavs[vehicle.Id] = mapFunctions.UpdateVehicle(uavs[vehicle.Id], vehicle);
 
@@ -163,12 +163,9 @@ $(document).ready(function () {
 
         }
 
-        //Make sure to set all SignalR callbacks BEFORE the call to connect
-        $.connection.hub.start().done(function () {
-            console.log("connection started for evt log");
-        });
-
         emitHub.client.newEvent = function (evt) {
+
+            console.log(evt);
 
             var checkMessage = evt.message.split(" ");
             if (checkMessage[0] != "Acknowledged:") {
@@ -240,6 +237,10 @@ $(document).ready(function () {
         var warningMessageCounter = 0;
 
         
+        //Make sure to set all SignalR callbacks BEFORE the call to connect
+        $.connection.hub.start().done(function () {
+            console.log("connection started for evt log");
+        });
 
         vehicleHub.connection.start();
 
