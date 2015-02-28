@@ -337,6 +337,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                     //this.pathGen.generateBackToBaseWaypoints(this.FlightState, this.Base);
                 }
                 break;
+            case "done":
             case "back to base":
                 if (this.backToBase(dt, base.X, base.Y)) {
                     mis.Phase = "done";
