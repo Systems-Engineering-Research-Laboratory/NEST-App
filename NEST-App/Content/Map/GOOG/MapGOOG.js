@@ -96,8 +96,47 @@ $(document).ready(function () {
                 uavMarkers(data, textStatus, jqXHR);
             }
         });
+        
+        //SignalR callbacks must be set before the call to connect!
+        /* Vehicle Movement */
+        vehicleHub = $.connection.vehicleHub;
+        vehicleHub.client.flightStateUpdate = function (vehicle) {
+            console.log(vehicle.Latitude, vehicle.Longitude);
 
+            uavs[vehicle.Id] = mapFunctions.UpdateVehicle(uavs[vehicle.Id], vehicle);
 
+            //console.log(vehicle);
+            // draw trail
+            if (selectedUAV && selectedTrail != undefined) {
+                if (selectedTrail.length < 2)
+                    selectedTrail[selectedTrail.length - 1].setMap(map);
+                else
+                    selectedTrail[selectedTrail.length - 2].setMap(map);
+            }
+
+            if (uavs[vehicle.Id].BatteryCheck < .2) {
+                if (warningMessageCounter == 0) {
+                    warningMessageCounter++;
+
+                    var eventLog = {
+                        uav_id: uavs[vehicle.Id].Id,
+                        message: "Low Battery",
+                        criticality: "critical",
+                        uav_callsign: uavs[vehicle.Id].Callsign,
+                        operator_screen_name: "Test Operator",
+                        UAVId: uavs[vehicle.Id].Id
+                    };
+
+                    emitHub.server.emit(eventLog);
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/uavs/postuavevent",
+                        success: function () { },
+                        data: eventLog
+                    });
+                }
+            }
+        }
 
         mapDraw.InitDrawingManager();
         mapDraw.drawingManager.setMap(map);
@@ -124,6 +163,7 @@ $(document).ready(function () {
 
         }
 
+        //Make sure to set all SignalR callbacks BEFORE the call to connect
         $.connection.hub.start().done(function () {
             console.log("connection started for evt log");
         });
@@ -199,44 +239,7 @@ $(document).ready(function () {
 
         var warningMessageCounter = 0;
 
-        /* Vehicle Movement */
-        vehicleHub = $.connection.vehicleHub;
-        vehicleHub.client.flightStateUpdate = function (vehicle) {
-
-            uavs[vehicle.Id] = mapFunctions.UpdateVehicle(uavs[vehicle.Id], vehicle);
-
-            //console.log(vehicle);
-            // draw trail
-            if (selectedUAV && selectedTrail != undefined) {
-                if (selectedTrail.length < 2)
-                    selectedTrail[selectedTrail.length - 1].setMap(map);
-                else
-                    selectedTrail[selectedTrail.length - 2].setMap(map);
-            }
-
-            if (uavs[vehicle.Id].BatteryCheck < .2) {
-                if (warningMessageCounter == 0) {
-                    warningMessageCounter++;
-
-                    var eventLog = {
-                        uav_id: uavs[vehicle.Id].Id,
-                        message: "Low Battery",
-                        criticality: "critical",
-                        uav_callsign: uavs[vehicle.Id].Callsign,
-                        operator_screen_name: "Test Operator",
-                        UAVId: uavs[vehicle.Id].Id
-                    };
-
-                    emitHub.server.emit(eventLog);
-                    $.ajax({
-                        type: "POST",
-                        url: "/api/uavs/postuavevent",
-                        success: function () { },
-                        data: eventLog
-                    });
-                }
-            }
-        }
+        
 
         vehicleHub.connection.start();
 
