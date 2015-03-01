@@ -287,5 +287,31 @@
     clear: function () {
         document.getElementById("go_lat").value = "";
         document.getElementById("go_long").value = "";
+    },
+
+    // USER INTERFACE PROMPT TO ACCEPT OR REJECT UAV ASSIGNMENT ON MAP
+    goTo_RR_show: function () {
+        document.getElementById("RoundRobin_popup").style.display = "block";
+    },
+
+    goTo_RR_hide: function () {
+        $(".RoundRobin_popup").fadeOut("slow", function () { });
+    },
+
+    RR_button_accept: function () {
+        $(".RoundRobin_popup").fadeOut("slow", function () { });
+        document.getElementById('RR_choice_p').innerHTML = "You have accepted UAV";
+        document.getElementById('RR_choice_p').style.color = "green";
+        document.getElementById('RR_outer_result').style.display = "block";
+        $(".RR_outer_result").fadeOut("slow", function () {});
+    },
+
+
+    RR_button_decline: function () {
+        $(".RoundRobin_popup").fadeOut("slow", function () { });
+        document.getElementById('RR_choice_p').innerHTML = "You have declined UAV";
+        document.getElementById('RR_choice_p').style.color = "red";
+        document.getElementById('RR_outer_result').style.display = "block";
+        $(".RR_outer_result").fadeOut("slow", function () { });
     }
 };
