@@ -15,10 +15,10 @@ namespace NEST_App.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        public AccountController()
-            : this(new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext())))
-        {
-        }
+        //public AccountController()
+        //    : this(new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext())))
+        //{
+        //}
 
         public AccountController(UserManager<ApplicationUser> userManager)
         {

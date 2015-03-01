@@ -111,34 +111,7 @@
             map.setZoom(18);
         });
     },
-
-    infobox: new InfoBox({
-        content: document.getElementById("infobox"),
-        disableAutoPan: false,
-        maxWidth: 100,
-        pixelOffset: new google.maps.Size(-75, 30),
-        zIndex: null,
-        enableEventPropagation: true,
-        pane: "floatPane",
-        boxStyle: {
-            opacity: 0.75,
-            width: "150px"
-        },
-        closeBoxMargin: "9px 1px 2px 2px"
-    }),
-
-    infoboxAlert: new InfoBox({
-        content: document.getElementById("infoboxAlert"),
-        disableAutoPan: false,
-        maxWidth: 20,
-        pixelOffset: new google.maps.Size(-10, -80),
-        zIndex: null,
-        boxStyle: {
-            opacity: 0.75,
-            width: "20px",
-        },
-    }),
-
+    
     //setting trail style
     uavTrail: {
         url: '../Content/img/blue.jpg',

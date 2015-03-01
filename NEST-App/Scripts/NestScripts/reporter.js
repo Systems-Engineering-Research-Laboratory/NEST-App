@@ -55,12 +55,17 @@ function Reporter() {
     }
 
     this.retrieveWaypointsByMissionId = function (id, caller, success) {
-        this.pendingResult = false;
+        this.pendingResult = true;
         var url = '/api/missions/waypoints/' + id;
-        return $.ajax({
+        var req = $.ajax({
             url: url,
             success: function (data, textStatus, jqXHR) { success(data, textStatus, jqXHR); }
         });
+        var $this = this;
+        req.always(function (data, textStatus, jqXHR) {
+            $this.pendingResult = false;
+        });
+        return req;
     }
 
     this.insertWaypoint = function (id, newWp) {

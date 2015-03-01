@@ -24,10 +24,6 @@
     <button id="delete-button">Delete One</button>
     <button id="delete-all-button">Delete All</button>
 </div>
-<div id="infobox"></div>
-<div id="infoboxAlert">
-  <p>!</p>
-</div>
 
 
 <!-- command pop up placeholder -->
@@ -62,6 +58,29 @@
 
     
 </div>         <!-- end of placeholder -->
+
+<!-- USER INTERFACE PROMPT TO ACCEPT OR REJECT UAV ASSIGNMENT ON MAP -->
+<div id="RR_outer_result" class="RR_outer_result">
+    <p class="RR_choice_p" id="RR_choice_p">
+        You have accepted UAV
+    </p>
+</div>
+
+<div class="RR_outer" id="RR_outer">
+
+    <div class="RoundRobin_popup" id="RoundRobin_popup">
+        <div class="RR_close" id="RR_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.goTo_RR_hide()"></span></div>
+        <p class="warning" style="text-align:center; color:red; margin:0px; font-size:23px;font-weight:bold;">Warning!</p>
+        <p style="margin-bottom:3px;">
+            UAV ID: #<br />
+            UAV Callsign: <br />
+            Reason: <br />
+        </p>
+        <button class="RR_button_accept" onclick="mapFunctions.RR_button_accept()">ACCEPT</button>
+        <button class="RR_button_decline" onclick="mapFunctions.RR_button_decline()">DECLINE</button>
+    </div>
+</div>
+
 
 
 <script src="~/Scripts/proj4.js" type="text/javascript"></script>
