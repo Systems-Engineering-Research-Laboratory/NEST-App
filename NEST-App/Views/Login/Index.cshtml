@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewBag.Title = "Log In";
+}
+
+<h2>Log In</h2>
+
+@using (Html.BeginForm("Login", "Login", FormMethod.Post))
+{
+    <fieldset>
+        <input type="text" name="username" value=""/>
+        <input type="submit" class="submit" value="Log In" />
+    </fieldset>
+    
+    
+}
