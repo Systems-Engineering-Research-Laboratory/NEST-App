@@ -159,7 +159,7 @@ $(document).ready(function () {
             alertText.style.cssText = "border: 1px solid red;height: 40px;background: #333;color: #FFF;padding: 0px 0px 15px 4px;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;"
             alertText.innerHTML = "<span style='color: red; font-size: 30px;'>!</span";
 
-            infobox = new InfoBox({
+            var infobox = new InfoBox({
                 content: boxText,
                 disableAutoPan: false,
                 maxWidth: 100,
@@ -175,7 +175,7 @@ $(document).ready(function () {
                 uav_id: null
             })
 
-            infoboxAlert = new InfoBox({
+            var infoboxAlert = new InfoBox({
                 content: alertText,
                 disableAutoPan: false,
                 maxWidth: 20,
@@ -185,19 +185,24 @@ $(document).ready(function () {
                     opacity: 0.75,
                     width: "20px",
                 },
-                uav_id: null,
+                uav_id: null
             })
 
-            infobox.open(map, uavs[evt.uav_id].marker);
+            //infobox.open(map, uavs[evt.uav_id].marker);
             infobox.uav_id = uavs[evt.uav_id].Id;
-            infoboxAlert.open(map, uavs[evt.uav_id].marker);
+            //infoboxAlert.open(map, uavs[evt.uav_id].marker);
             infoboxAlert.uav_id = uavs[evt.uav_id].Id;
+            
+            infoboxContainer[evt.uav_id] = containBox(infobox, infoboxAlert);
+
+            document.getElementById(evt.uav_id).style.backgroundColor = "red";
+            uavs[evt.uav_id].CurrentEvent = evt;
         }
     }
     
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
-  
+        
         uavs[vehicle.Id] = UpdateVehicle(uavs[vehicle.Id], vehicle);
         uavs[vehicle.Id].Id = vehicle.Id;
         uavs[vehicle.Id].Battery = vehicle.BatteryLevel;
@@ -214,27 +219,24 @@ $(document).ready(function () {
             var latlng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
             uavs[vehicle.Id].marker.setMap(map);
             uavs[vehicle.Id].marker.setVisible(true);
-            
+            if (uavs[vehicle.Id].CurrentEvent != null) {
+                infoboxContainer[vehicle.Id].infobox.open(map, uavs[vehicle.Id].marker);
+                infoboxContainer[vehicle.Id].infoboxAlert.open(map, uavs[vehicle.Id].marker);
+            }
+          
             if (uavs[vehicle.Id].Id != previous_id && previous_id != null) {
                 if (typeof previous_id == "string") {
                     var selector = parseInt(previous_id);
                     uavs[selector].marker.setMap(null);
-                    uavs[selector].marker.setVisible(false);            
+                    uavs[selector].marker.setVisible(false);
+                    infoboxContainer[selector].infobox.close();
+                    infoboxContainer[selector].infoboxAlert.close();
                 }
                 else {
                     uavs[previous_id].marker.setMap(null);
                     uavs[previous_id].marker.setVisible(false);
-                }
-                if (typeof current_id == "string") {
-                    var selector = parseInt(current_id);
-                    if (infobox.uav_id != selector) {
-                        infobox.close();
-                        infoboxAlert.close();
-                    }
-                }
-                else if (infobox.uav_id != current_id) {
-                    infobox.close();
-                    infoboxAlert.close();
+                    infoboxContainer[previous_id].infobox.close();
+                    infoboxContainer[previous_id].infoboxAlert.close();
                 }
             }
             map.setCenter(latlng);
@@ -255,8 +257,15 @@ $(document).ready(function () {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // end of init function
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var infobox;
-var infoboxAlert;
+var infoboxContainer = {};
+
+function containBox(iBox, iABox) {
+    var infoboxContainer = {};
+    infoboxContainer.infobox = iBox;
+    infoboxContainer.infoboxAlert = iABox;
+    return infoboxContainer;
+}
+
 var uavSymbolBlack;
 var uavSymbolGreen;
 
@@ -282,7 +291,7 @@ function SetUAV(uavData) {
     uav.Orientation = uavData.FlightState.Yaw;
     var mis = uav.Mission;
     uav.Destination = new google.maps.LatLng(mis.Latitude, mis.Longitude);
-
+    uav.CurrentEvent = null;
     return uav;
 };
 
