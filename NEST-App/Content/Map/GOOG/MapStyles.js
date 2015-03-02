@@ -1,6 +1,6 @@
 ﻿var mapStyles = {
     colors: ['#1E90FF', '#FF1493', '#32CD32', '#FF8C00', '#4B0082'],
-
+    uavFilterClick: false,
 
     mapOptions: {
         zoom: 18,
@@ -109,6 +109,67 @@
         google.maps.event.addDomListener(controlUI, 'click', function () {
             map.setCenter(homeBase);
             map.setZoom(18);
+        });
+    },
+
+    uavFilter: function(controlDiv, map) {
+        controlDiv.style.padding = '6px';
+        //CSS for control button exterior
+        var controlUI = document.createElement('div');
+        controlUI.style.backgroundColor = 'white';
+        controlUI.style.borderStyle = 'solid';
+        controlUI.style.borderWidth = '1px';
+        controlUI.style.width = '53px';
+        controlUI.style.cursor = 'pointer';
+        controlUI.style.textAlign = 'center';
+        controlUI.title = "Filter User Drones";
+        controlDiv.appendChild(controlUI);
+
+        //CSS for control button interior
+        var controlText = document.createElement('div');
+        controlText.style.fontFamily = 'Arial,sans-serif';
+        controlText.style.fontSize = '11px';
+        controlText.style.paddingLeft = '4px';
+        controlText.style.paddingRight = '4px';
+        controlText.style.paddingTop = '2px';
+        controlText.style.paddingBottom = '4px';
+        controlText.innerHTML = 'Filter UAVs';
+        controlUI.appendChild(controlText);
+
+        //Click event listener
+        google.maps.event.addDomListener(controlUI, 'click', function () {
+            if (mapStyles.uavFilterClick == false) {
+                var i = 1;
+                while (uavs[i] != undefined || uavs[i] != null) {
+                    if (assignment.assignments[uavs[i].Id - 1] != null) {
+                        i++;
+                        continue;
+                    }
+                    else {
+                        uavs[i].marker.setMap(null);
+                        uavs[i].markerCircle.setMap(null);
+                        uavs[i].markerCircle.setVisible(false);
+                        uavs[i].marker.setVisible(false);
+                        i++;
+                    }
+                }
+                mapStyles.uavFilterClick = true;
+            }
+            else {
+                mapStyles.uavFilterClick = false;
+                var i = 1;
+                while ((uavs[i] != undefined || uavs[i] != null)) {
+                    if (uavs[i].marker.getMap() == null) {
+                        uavs[i].marker.setMap(map);
+                        uavs[i].markerCircle.setMap(map);
+                        uavs[i].markerCircle.setVisible(true);
+                        uavs[i].marker.setVisible(true);
+                        i++;
+                    }
+                    else
+                        i++;
+                }
+            }
         });
     },
     
