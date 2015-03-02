@@ -41,24 +41,28 @@ namespace NEST_App.Controllers
             }
         }
 
-        // POST api/Command2
+        // POST 
+        [HttpPost]
+        [Route("api/command/goto/{uid}")]
         [ResponseType(typeof(CMD_NAV_Target))]
-        public IHttpActionResult PostCMD_NAV_TARGET(int uavID, int userID, Object jsObject)
+        public IHttpActionResult PostCMD_NAV_TARGET(int uid, CMD_NAV_Target jsObject)
         {
             CMD_NAV_Target cmd_nav_target = new CMD_NAV_Target();
 
-            cmd_nav_target.Altitude = jsObject.altitude;
-
+            cmd_nav_target.Altitude = jsObject.Altitude;
+            cmd_nav_target.Latitude = jsObject.Latitude;
+            cmd_nav_target.Longitude = jsObject.Longitude;
+            cmd_nav_target.UAVId = jsObject.UAVId;
 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.CMD_NAV_Land.Add(cmd_nav_land);
+            db.CMD_NAV_Target.Add(cmd_nav_target);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = cmd_nav_land.Id }, cmd_nav_land);
+            return Ok();
         }
 
         [HttpPost]

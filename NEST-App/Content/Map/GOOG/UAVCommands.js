@@ -51,7 +51,7 @@ var uavCommands = {
     },
 
     //Send UAV to these coordinates
-    GoTo: function (uav, coords, altitude, uid) {
+    GoTo: function (uid, uav, coords, altitude) {
         var cmd = {
             Altitude: altitude,
             Latitude: coords.Latitude,
