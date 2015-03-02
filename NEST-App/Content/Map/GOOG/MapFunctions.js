@@ -86,22 +86,41 @@
                 //console.log("Trying to open window");
                 break;
             case 'non_nav':
-                uavCommand.NonNav(uid, uav, latLng, alt, throttle);
+                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
+                    console.log("You're not the owner");
+                }else{
+                    uavCommand.NonNav(uid, uav, latLng, alt, throttle);}
                 break;
             case 'hold':
-                uavCommand.HoldPos(uid, uav, latLng, alt, throttle);
+                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
+                      console.log("You're not the owner");
+                 }else{
+                    uavCommand.HoldPos(uid, uav, latLng, alt, throttle);
+                }
                 break;
             case 'insert_waypoint':
-                uavCommand.InsertWP(uid, marker.uav, latLng);
+                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
+                    console.log("You're not the owner");
+                }else{
+                uavCommand.InsertWP(uid, marker.uav, latLng);}
                 break;
             case 'go_to':
-                uavCommand.GoTo(uid, marker.uav, latLng, alt);
+                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
+                    console.log("You're not the owner");
+                }else{
+                    uavCommand.GoTo(uid, marker.uav, latLng, alt);}
                 break;
             case 'force_land':
-                uavCommand.ForceLand(uid, marker.uav, latLng, alt, throttle);
+                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
+                    console.log("You're not the owner");
+                }else{
+                uavCommand.ForceLand(uid, marker.uav, latLng, alt, throttle);}
                 break;
             case 'return':
-                uavCommand.BackToBase(uid, marker.uav, latLng);
+                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
+                    console.log("You're not the owner");
+                }else{
+                uavCommand.BackToBase(uid, marker.uav, latLng);}
                 break;
             default:
                 break;

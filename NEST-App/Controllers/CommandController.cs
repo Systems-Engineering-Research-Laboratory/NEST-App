@@ -24,23 +24,6 @@ namespace NEST_App.Controllers
     {
         private NestContainer db = new NestContainer();
 
-        [HttpPost]
-        [Route("api/command/nav/return/{uavId}/{opId}")]
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> ReturnToBase(int uavId, int opId, Object cmd)
-        {
-
-            if (await db.SaveChangesAsync() > 0)
-            {
-                return Ok();
-            }
-            else
-            {
-                Console.Write("Not ok");
-                return NotFound();
-            }
-        }
-
         // POST
         [HttpPost]
         [Route("api/command/goto/{uid}")]
@@ -112,39 +95,28 @@ namespace NEST_App.Controllers
 
             return Ok();
         }
-        
-        [HttpPost]
-        [Route("api/command/nav/return/{uavId}/{opId}")]
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> InsertWaypoint(int uavId, int opId, Object cmd)
-        {
-
-            if (await db.SaveChangesAsync() > 0)
-            {
-                return Ok();
-            }
-            else
-            {
-                Console.Write("Not ok");
-                return NotFound();
-            }
-        }
 
         [HttpPost]
-        [Route("api/command/nonav/return/{uavId}/{opId}")]
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> AdjustParameters(int uavId, int opId, Object cmd)
+        [Route("api/command/return/{uid}")]
+        [ResponseType(typeof(CMD_NAV_Land))]
+        public IHttpActionResult PostCMD_DO_LAND(int uid, CMD_DO_Return_To_Base jsObject)
         {
+            CMD_DO_Return_To_Base cmd_do_return = new CMD_DO_Return_To_Base();
+            cmd_do_return.Id = jsObject.Id;
+            cmd_do_return.Latitude = jsObject.Latitude;
+            cmd_do_return.Longitude = jsObject.Longitude;
+            cmd_do_return.UAVId = jsObject.UAVId;
+            cmd_do_return.UseCurrent = jsObject.UseCurrent;
 
-            if (await db.SaveChangesAsync() > 0)
+            if (!ModelState.IsValid)
             {
-                return Ok();
+                return BadRequest(ModelState);
             }
-            else
-            {
-                Console.Write("Not ok");
-                return NotFound();
-            }
+
+            db.CMD_DO_Return_To_Base.Add(cmd_do_return);
+            db.SaveChanges();
+
+            return Ok();
         }
 
 

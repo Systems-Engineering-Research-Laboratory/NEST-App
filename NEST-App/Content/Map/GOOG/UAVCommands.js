@@ -1,11 +1,24 @@
 ﻿/*Build each command type with the necessary data here and send it to the controller*/
 /*User input is gathered and defined here, where required; the controller should just be in charge of data*/
 var uavCommands = {
+ 
 
     /**********NAVIGATIONAL COMMANDS**********/
 
     //Return to base
     BackToBase: function (uav, coords) {
+        var cmd = {
+            Id: 0,
+            Latitude: coords.Latitude,
+            Longitude: coords.Longitude,
+            UAVId: uad.Id,
+            UseCurrent: null
+        }
+        $.ajax({
+            type: "POST",
+            url: "/api/command/return/" + uid,
+            data: cmd,
+        });
         //clear all waypoints
         //change mission phase to "returning"
         //set new waypoint for base
@@ -15,6 +28,7 @@ var uavCommands = {
     HoldPos: function (uid, uav, coords, alt, throttle) {
         var time /*= user input*/;
         var cmd = {
+            Id: 0,
             Altitude: altitude,
             Latitude: coords.Latitude,
             Longitude: coords.Longitude,
@@ -52,6 +66,7 @@ var uavCommands = {
     //Immediately force a landing
     ForceLand: function (uid, uav, coords, alt, throttle) {
         var cmd = {
+            Id: 0,
             Altitude: altitude,
             Latitude: coords.Latitude,
             Longitude: coords.Longitude,
