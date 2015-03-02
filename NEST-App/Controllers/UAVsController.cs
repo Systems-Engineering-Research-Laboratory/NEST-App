@@ -26,6 +26,121 @@ namespace NEST_App.Controllers.Api
         private String[] lines2 = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content\\Flowers.txt"));
         private Random rand = new Random();
 
+        [HttpPost]
+        [Route("api/uavs/rejectassignment")]
+        public HttpResponseMessage RejectAssignment(int uavid, int userid)
+        {
+            var user = db.Users.Find(userid);
+            var uav = db.UAVs.Find(uavid);
+            var nextUserInQueue = db.Users.FirstOrDefault(u => u.position_in_queue == 1);
+            try
+            {
+                user.UAVs.Remove(uav);
+                if (nextUserInQueue != null)
+                {
+                    nextUserInQueue.UAVs.Add(uav);
+                    uav.User = nextUserInQueue;
+                    foreach (var user in db.Users.Where(u => u.user_id != nextUserInQueue.user_id))
+                    {
+                        user.position_in_queue--;
+                        db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                    }
+                    nextUserInQueue.position_in_queue = users.Count();
+                    db.Entry(nextUserInQueue).State = System.Data.Entity.EntityState.Modified;
+                    db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
+                    db.SaveChanges();
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.Conflict);
+                }
+
+                db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
+                db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.Conflict);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+
+        [HttpPost]
+        [Route("api/uavs/adduavandassign")]
+        public HttpResponseMessage AddUavAndAssign(UAV uav)
+        {
+            try
+            {
+                db.UAVs.Add(uav);
+                var nextUserInQueue = db.Users.FirstOrDefault(u => u.position_in_queue == 1);
+                var users = db.Users;
+                if (nextUserInQueue != null)
+                {
+                    nextUserInQueue.UAVs.Add(uav);
+                    uav.User = nextUserInQueue;
+                    foreach (var user in users.Where(user => user.user_id != nextUserInQueue.user_id))
+                    {
+                        user.position_in_queue--;
+                        db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                    }
+                    nextUserInQueue.position_in_queue = users.Count();
+                    db.Entry(nextUserInQueue).State = System.Data.Entity.EntityState.Modified;
+                    db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
+                    db.SaveChanges();
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.Conflict);
+                }
+            }
+            catch (Exception exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.Conflict);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK);
+            //emit to user that uav has been tasked to them later via signalr
+        }
+
+        [HttpPost]
+        [Route("api/uavs/assignexistinguav")]
+        public HttpResponseMessage AssignExistingUav(int uavid)
+        {
+            try
+            {
+                var foundUav = db.UAVs.Find(uavid);
+                var nextUserInQueue = db.Users.FirstOrDefault(u => u.position_in_queue == 1);
+                var users = db.Users;
+                if (nextUserInQueue != null)
+                {
+                    nextUserInQueue.UAVs.Add(foundUav);
+                    foundUav.User = nextUserInQueue;
+                    foreach (var user in users.Where(user => user.user_id != nextUserInQueue.user_id))
+                    {
+                        user.position_in_queue--;
+                        db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                    }
+                    nextUserInQueue.position_in_queue = users.Count();
+                    db.Entry(nextUserInQueue).State = System.Data.Entity.EntityState.Modified;
+                    db.Entry(foundUav).State = System.Data.Entity.EntityState.Modified;
+                    db.SaveChanges();
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.Conflict);
+                }
+            }
+            catch (Exception exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.Conflict);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
         private DbGeography getDistance()
         {
             int alt = 400;                                  //altitude of UAV with 400 ft default
