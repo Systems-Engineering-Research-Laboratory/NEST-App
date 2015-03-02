@@ -1149,6 +1149,7 @@
           <Property Name="phone_number" Type="String" Nullable="false" />
           <NavigationProperty Name="UserRole" Relationship="VehicleModel.UserUserRole" FromRole="User" ToRole="UserRole" />
           <NavigationProperty Name="UAVs" Relationship="VehicleModel.UserUAV" FromRole="User" ToRole="UAV" />
+          <Property Name="position_in_queue" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="UserRole">
           <Key>
