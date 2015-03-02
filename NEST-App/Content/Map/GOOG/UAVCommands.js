@@ -51,8 +51,20 @@ var uavCommands = {
     },
 
     //Send UAV to these coordinates
-    GoTo: function (uav, coords) {
-        
+    GoTo: function (uav, coords, altitude, uid) {
+        var cmd = {
+            Altitude: altitude,
+            Latitude: coords.Latitude,
+            Longitude: coords.Longitude,
+            UAVId: uav.Id
+        };
+
+
+        $.ajax({
+            type: "POST",
+            url: "/api/command/goto/"+uid,
+            data: cmd,
+        });
     },
 
     //Pass direct control to a pilot
