@@ -78,18 +78,18 @@
     },
     //Controls context menu selection for UAVs
     UAVContextSelection: function (map, marker, latLng, eventName) {
-        var uid = assignment.user.user_id;
-        var alt;
+        var uid = assignment.getUserId();
+        var alt, throttle;
         switch (eventName) {
             case 'get_details':
                 window.open("http://localhost:53130/detailview", "_blank");
                 //console.log("Trying to open window");
                 break;
             case 'non_nav':
-                uavCommand.NonNav(uid, marker.uav, latLng);
+                uavCommand.NonNav(uid, uav, latLng, alt, throttle);
                 break;
             case 'hold':
-                uavCommand.HoldPos(uid, marker.uav, latLng);
+                uavCommand.HoldPos(uid, uav, latLng, alt, throttle);
                 break;
             case 'insert_waypoint':
                 uavCommand.InsertWP(uid, marker.uav, latLng);
@@ -98,7 +98,7 @@
                 uavCommand.GoTo(uid, marker.uav, latLng, alt);
                 break;
             case 'force_land':
-                uavCommand.ForceLand(uid, marker.uav, latLng);
+                uavCommand.ForceLand(uid, marker.uav, latLng, alt, throttle);
                 break;
             case 'return':
                 uavCommand.BackToBase(uid, marker.uav, latLng);

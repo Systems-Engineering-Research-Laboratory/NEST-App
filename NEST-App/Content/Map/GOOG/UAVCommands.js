@@ -12,8 +12,21 @@ var uavCommands = {
     },
 
     //Hold position
-    HoldPos: function (uav, coords) {
+    HoldPos: function (uid, uav, coords, alt, throttle) {
         var time /*= user input*/;
+        var cmd = {
+            Altitude: altitude,
+            Latitude: coords.Latitude,
+            Longitude: coords.Longitude,
+            Throttle: throttle,
+            UAVId: uad.Id
+        }
+        $.ajax({
+            type: "POST",
+            url: "/api/command/hold/" + uid,
+            data: cmd,
+        });
+
         //set mission phase to "holding"
         if (time == null) {
             //get and store current mission phase
@@ -37,7 +50,19 @@ var uavCommands = {
     },
 
     //Immediately force a landing
-    ForceLand: function (uav, coords) {
+    ForceLand: function (uid, uav, coords, alt, throttle) {
+        var cmd = {
+            Altitude: altitude,
+            Latitude: coords.Latitude,
+            Longitude: coords.Longitude,
+            Throttle: throttle,
+            UAVId: uad.Id
+        }
+        $.ajax({
+            type: "POST",
+            url: "/api/command/land/" + uid,
+            data: cmd,
+        });
         //specify a location to land, maybe by click?
         //set mission phase to "landing"
         //ajax call to force land
@@ -51,15 +76,14 @@ var uavCommands = {
     },
 
     //Send UAV to these coordinates
-    GoTo: function (uid, uav, coords, altitude) {
+    GoTo: function (uid, uav, coords, alt) {
         var cmd = {
-            Altitude: altitude,
+            Id: 0,
+            Altitude: alt,
             Latitude: coords.Latitude,
             Longitude: coords.Longitude,
             UAVId: uav.Id
         };
-
-
         $.ajax({
             type: "POST",
             url: "/api/command/goto/"+uid,

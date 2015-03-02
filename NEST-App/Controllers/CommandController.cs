@@ -41,14 +41,14 @@ namespace NEST_App.Controllers
             }
         }
 
-        // POST 
+        // POST
         [HttpPost]
         [Route("api/command/goto/{uid}")]
         [ResponseType(typeof(CMD_NAV_Target))]
         public IHttpActionResult PostCMD_NAV_TARGET(int uid, CMD_NAV_Target jsObject)
         {
             CMD_NAV_Target cmd_nav_target = new CMD_NAV_Target();
-
+            cmd_nav_target.Id = jsObject.Id;
             cmd_nav_target.Altitude = jsObject.Altitude;
             cmd_nav_target.Latitude = jsObject.Latitude;
             cmd_nav_target.Longitude = jsObject.Longitude;
@@ -66,60 +66,57 @@ namespace NEST_App.Controllers
         }
 
         [HttpPost]
-        [Route("api/command/nav/return/{uavId}/{opId}")]
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> HoldPosition(int uavId, int opId, Object cmd)
+        [Route("api/command/hold/{uid}")]
+        [ResponseType(typeof(CMD_NAV_Target))]
+        public IHttpActionResult PostCMD_NAV_HOLD(int uid, CMD_NAV_Hover jsObject)
         {
+            CMD_NAV_Hover cmd_nav_hover = new CMD_NAV_Hover();
+            cmd_nav_hover.Id = jsObject.Id;
+            cmd_nav_hover.Altitude = jsObject.Altitude;
+            cmd_nav_hover.Latitude = jsObject.Latitude;
+            cmd_nav_hover.Longitude = jsObject.Longitude;
+            cmd_nav_hover.UAVId = jsObject.UAVId;
 
-            if (await db.SaveChangesAsync() > 0)
+            if (!ModelState.IsValid)
             {
-                return Ok();
+                return BadRequest(ModelState);
             }
-            else
-            {
-                Console.Write("Not ok");
-                return NotFound();
-            }
+
+            db.CMD_NAV_Hover.Add(cmd_nav_hover);
+            db.SaveChanges();
+
+            return Ok();
         }
         
+        // POST
         [HttpPost]
-        [Route("api/command/nav/return/{uavId}/{opId}")]
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> ForceLand(int uavId, int opId, Object cmd)
+        [Route("api/command/land/{uid}")]
+        [ResponseType(typeof(CMD_NAV_Land))]
+        public IHttpActionResult PostCMD_NAV_LAND(int uid, CMD_NAV_Land jsObject)
         {
+            CMD_NAV_Land cmd_nav_land = new CMD_NAV_Land();
+            cmd_nav_land.Id = jsObject.Id;
+            cmd_nav_land.Altitude = jsObject.Altitude;
+            cmd_nav_land.Latitude = jsObject.Latitude;
+            cmd_nav_land.Longitude = jsObject.Longitude;
+            cmd_nav_land.Throttle = jsObject.Throttle;
+            cmd_nav_land.UAVId = jsObject.UAVId;
 
-            if (await db.SaveChangesAsync() > 0)
+            if (!ModelState.IsValid)
             {
-                return Ok();
+                return BadRequest(ModelState);
             }
-            else
-            {
-                Console.Write("Not ok");
-                return NotFound();
-            }
+
+            db.CMD_NAV_Land.Add(cmd_nav_land);
+            db.SaveChanges();
+
+            return Ok();
         }
         
         [HttpPost]
         [Route("api/command/nav/return/{uavId}/{opId}")]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> InsertWaypoint(int uavId, int opId, Object cmd)
-        {
-
-            if (await db.SaveChangesAsync() > 0)
-            {
-                return Ok();
-            }
-            else
-            {
-                Console.Write("Not ok");
-                return NotFound();
-            }
-        }
-
-        [HttpPost]
-        [Route("api/command/nav/return/{uavId}/{opId}")]
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> GoTo(int uavId, int opId, Object cmd)
         {
 
             if (await db.SaveChangesAsync() > 0)
