@@ -1,5 +1,5 @@
 ﻿var marker;
-
+var previous_id = null;
 $(document).ready(function () {
     mapOptions = {
         zoom: 17,
@@ -30,7 +30,9 @@ $(document).ready(function () {
             for (var j = 0; j < table.rows[i].cells.length; j++) {
                 table.rows[i].onclick = function () {
                     var uavid = this.cells[0];
+                    previous_id = current_id;
                     current_id = this.cells[0].innerHTML;
+                    
                     var callsign = this.cells[1];
                     var numDelivery = this.cells[2];
                     var mile = this.cells[3];
@@ -138,10 +140,11 @@ $(document).ready(function () {
     $.connection.hub.start().done(function () {
         console.log("connection for signalR...success");
     });
-
+    
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
-        console.log("connection started for vehicle Hub");
+  
+        console.log("previousid " +previous_id);
         uavs[vehicle.Id] = UpdateVehicle(uavs[vehicle.Id], vehicle);
         uavs[vehicle.Id].Id = vehicle.Id;
         uavs[vehicle.Id].Battery = vehicle.BatteryLevel;
@@ -157,6 +160,19 @@ $(document).ready(function () {
             document.getElementById("battery").innerHTML = 'Battery: ' + vehicle.BatteryLevel.toFixed(3) + "%";
             var latlng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
             uavs[vehicle.Id].marker.setMap(map);
+            uavs[vehicle.Id].marker.setVisible(true);
+            
+            if (uavs[vehicle.Id].Id != previous_id && previous_id != null) {
+                if (typeof previous_id == "string") {
+                    var selector = parseInt(previous_id);
+                    uavs[selector].marker.setMap(null);
+                    uavs[selector].marker.setVisible(false);
+                }
+                else {
+                    uavs[previous_id].marker.setMap(null);
+                    uavs[previous_id].marker.setVisible(false);
+                }
+            }
             map.setCenter(latlng);
         }
     }
@@ -168,7 +184,7 @@ $(document).ready(function () {
             uavMarkers(data, textStatus, req);
         }
     });
-
+    
     var emitHub = $.connection.eventLogHub;
     emitHub.client.newEvent = function (evt) {
 

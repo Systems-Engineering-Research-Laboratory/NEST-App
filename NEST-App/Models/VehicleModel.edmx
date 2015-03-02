@@ -299,7 +299,7 @@
     <Property Name="create_date" Type="datetime" Nullable="false" />
     <Property Name="modified_date" Type="datetime" Nullable="false" />
     <Property Name="phone_number" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="position_in_queue" Type="int" Nullable="false" />
+    <Property Name="position_in_queue" Type="int" Nullable="true" />
     <Property Name="UserRole_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="UserRoles">
@@ -1150,7 +1150,7 @@
           <Property Name="phone_number" Type="String" Nullable="false" />
           <NavigationProperty Name="UserRole" Relationship="VehicleModel.UserUserRole" FromRole="User" ToRole="UserRole" />
           <NavigationProperty Name="UAVs" Relationship="VehicleModel.UserUAV" FromRole="User" ToRole="UAV" />
-          <Property Name="position_in_queue" Type="Int32" Nullable="false" />
+          <Property Name="position_in_queue" Type="Int32" Nullable="true" />
         </EntityType>
         <EntityType Name="UserRole">
           <Key>
