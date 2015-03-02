@@ -75,6 +75,7 @@ $(document).ready(function () {
         var distanceCircle = new google.maps.Circle(mapStyles.distanceCircleOptions);
         distanceCircle.setCenter(homeBase);
         distanceCircle.setMap(map);
+
         var homeControlDiv = document.createElement('div');
         var homeControl = new mapStyles.BaseControl(homeControlDiv, map, homeBase);
         var marker = new google.maps.Marker({
@@ -83,7 +84,14 @@ $(document).ready(function () {
             map: map
         });
         homeControlDiv.index = 1;
-        map.controls[google.maps.ControlPosition.RIGHT].push(homeControlDiv);
+        map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
+        
+        var uavFilterDiv = document.createElement('div');
+        var uavFilter = new mapStyles.uavFilter(uavFilterDiv, map);
+        uavFilterDiv.index = 1;
+        map.controls[google.maps.ControlPosition.RIGHT_TOP].push(uavFilterDiv);
+
+
 
         // add event listener
         document.getElementById("goBtn").addEventListener("click", function () {
@@ -107,7 +115,7 @@ $(document).ready(function () {
         /* Vehicle Movement */
         vehicleHub = $.connection.vehicleHub;
         vehicleHub.client.flightStateUpdate = function (vehicle) {
-            console.log(vehicle.Latitude, vehicle.Longitude);
+            //console.log(vehicle.Latitude, vehicle.Longitude);
 
             uavs[vehicle.Id] = mapFunctions.UpdateVehicle(uavs[vehicle.Id], vehicle);
 
@@ -169,12 +177,9 @@ $(document).ready(function () {
 
         }
 
-        //Make sure to set all SignalR callbacks BEFORE the call to connect
-        $.connection.hub.start().done(function () {
-            console.log("connection started for evt log");
-        });
-
         emitHub.client.newEvent = function (evt) {
+
+            console.log(evt);
 
             var checkMessage = evt.message.split(" ");
             if (checkMessage[0] != "Acknowledged:") {
@@ -246,6 +251,10 @@ $(document).ready(function () {
         var warningMessageCounter = 0;
 
         
+        //Make sure to set all SignalR callbacks BEFORE the call to connect
+        $.connection.hub.start().done(function () {
+            console.log("connection started for evt log");
+        });
 
         vehicleHub.connection.start();
 

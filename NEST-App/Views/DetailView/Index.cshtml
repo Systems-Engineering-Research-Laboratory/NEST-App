@@ -39,7 +39,7 @@
                 </tr>
                 @foreach (Mission miss in Model.missions)
                 {
-                    <tr>
+                    <tr id=@miss.Schedule.UAV.Id.ToString()>
                         <td>
                             @Html.DisplayFor(modelItem => miss.Schedule.UAV.Id)
                         </td>
@@ -201,10 +201,6 @@
             </div>
         </div>
     </div>
-    <div id="infobox"></div>
-    <div id="infoboxAlert">
-        <p>!</p>
-    </div>
     <button onclick="Simulation()"> Go to Simulation Page </button>
     <button onclick="Adminview()"> Go to Admin Page </button>
 </body>
@@ -215,6 +211,5 @@
 @Scripts.Render("~/signalr/hubs")
 @Scripts.Render("~/bundles/detailsJS")
 @Styles.Render("~/bundles/detailsCSS")
-@Scripts.Render("~/Scripts/jquery.signalR-2.1.2.js")
-@Scripts.Render("~/signalr/hubs")
 <script src="~/Scripts/MarkerWithLabel.js"></script>
+<script src="~/Scripts/InfoBox.js"></script>
