@@ -12,8 +12,6 @@ namespace NEST_App.Hubs
 {
     public class VehicleHub : Hub
     {
-        private readonly static ConnectionMapping<string> connections =
-            new ConnectionMapping<string>();
 
         public Task JoinGroup(string groupName){
             return Groups.Add(Context.ConnectionId, groupName);
@@ -86,16 +84,6 @@ namespace NEST_App.Hubs
                         break;
                 }
             }
-        }
-
-        public override Task OnConnected()
-        {
-            string name = (string)System.Web.HttpContext.Current.Cache["current_user"];
-
-            if(name != null)
-                connections.Add(name, Context.ConnectionId);
-
-            return base.OnConnected();
         }
     }
 }

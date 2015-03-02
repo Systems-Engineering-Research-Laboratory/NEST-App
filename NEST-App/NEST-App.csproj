@@ -279,7 +279,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Hubs\ConnectionMapping.cs" />
     <Compile Include="Hubs\EventLogHub.cs" />
     <Compile Include="Hubs\VehicleHub.cs" />
     <Compile Include="Hubs\VehicleRouteHub.cs" />
