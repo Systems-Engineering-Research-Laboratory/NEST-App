@@ -1,6 +1,6 @@
 ﻿var mapStyles = {
     colors: ['#1E90FF', '#FF1493', '#32CD32', '#FF8C00', '#4B0082'],
-
+    uavFilterClick: false,
 
     mapOptions: {
         zoom: 18,
@@ -122,7 +122,7 @@
         controlUI.style.width = '53px';
         controlUI.style.cursor = 'pointer';
         controlUI.style.textAlign = 'center';
-        controlUI.title = "Zoom to base";
+        controlUI.title = "Filter User Drones";
         controlDiv.appendChild(controlUI);
 
         //CSS for control button interior
@@ -138,8 +138,38 @@
 
         //Click event listener
         google.maps.event.addDomListener(controlUI, 'click', function () {
-            map.setCenter(homeBase);
-            map.setZoom(18);
+            if (mapStyles.uavFilterClick == false) {
+                var i = 1;
+                while (uavs[i] != undefined || uavs[i] != null) {
+                    if (assignment.assignments[uavs[i].Id - 1] != null) {
+                        i++;
+                        continue;
+                    }
+                    else {
+                        uavs[i].marker.setMap(null);
+                        uavs[i].markerCircle.setMap(null);
+                        uavs[i].markerCircle.setVisible(false);
+                        uavs[i].marker.setVisible(false);
+                        i++;
+                    }
+                }
+                mapStyles.uavFilterClick = true;
+            }
+            else {
+                mapStyles.uavFilterClick = false;
+                var i = 1;
+                while ((uavs[i] != undefined || uavs[i] != null)) {
+                    if (uavs[i].marker.getMap() == null) {
+                        uavs[i].marker.setMap(map);
+                        uavs[i].markerCircle.setMap(map);
+                        uavs[i].markerCircle.setVisible(true);
+                        uavs[i].marker.setVisible(true);
+                        i++;
+                    }
+                    else
+                        i++;
+                }
+            }
         });
     },
     

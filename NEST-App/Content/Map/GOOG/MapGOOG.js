@@ -75,6 +75,7 @@ $(document).ready(function () {
         var distanceCircle = new google.maps.Circle(mapStyles.distanceCircleOptions);
         distanceCircle.setCenter(homeBase);
         distanceCircle.setMap(map);
+
         var homeControlDiv = document.createElement('div');
         var homeControl = new mapStyles.BaseControl(homeControlDiv, map, homeBase);
         var marker = new google.maps.Marker({
@@ -84,7 +85,7 @@ $(document).ready(function () {
         });
         homeControlDiv.index = 1;
         map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
-
+        
         var uavFilterDiv = document.createElement('div');
         var uavFilter = new mapStyles.uavFilter(uavFilterDiv, map);
         uavFilterDiv.index = 1;

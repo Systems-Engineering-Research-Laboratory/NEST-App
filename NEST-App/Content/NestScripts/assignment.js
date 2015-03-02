@@ -8,7 +8,7 @@ assignment = {
 
             var assgnJson = $('#assignment_array').html();
             $this.assignments = JSON.parse(assgnJson);
-
+            
             $this.ready = true;
 
             console.log($this);
