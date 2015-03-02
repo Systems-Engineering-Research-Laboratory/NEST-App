@@ -111,6 +111,37 @@
             map.setZoom(18);
         });
     },
+
+    uavFilter: function(controlDiv, map) {
+        controlDiv.style.padding = '6px';
+        //CSS for control button exterior
+        var controlUI = document.createElement('div');
+        controlUI.style.backgroundColor = 'white';
+        controlUI.style.borderStyle = 'solid';
+        controlUI.style.borderWidth = '1px';
+        controlUI.style.width = '53px';
+        controlUI.style.cursor = 'pointer';
+        controlUI.style.textAlign = 'center';
+        controlUI.title = "Zoom to base";
+        controlDiv.appendChild(controlUI);
+
+        //CSS for control button interior
+        var controlText = document.createElement('div');
+        controlText.style.fontFamily = 'Arial,sans-serif';
+        controlText.style.fontSize = '11px';
+        controlText.style.paddingLeft = '4px';
+        controlText.style.paddingRight = '4px';
+        controlText.style.paddingTop = '2px';
+        controlText.style.paddingBottom = '4px';
+        controlText.innerHTML = 'Filter UAVs';
+        controlUI.appendChild(controlText);
+
+        //Click event listener
+        google.maps.event.addDomListener(controlUI, 'click', function () {
+            map.setCenter(homeBase);
+            map.setZoom(18);
+        });
+    },
     
     //setting trail style
     uavTrail: {

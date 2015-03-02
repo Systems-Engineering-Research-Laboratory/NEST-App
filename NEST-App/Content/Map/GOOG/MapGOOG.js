@@ -83,7 +83,14 @@ $(document).ready(function () {
             map: map
         });
         homeControlDiv.index = 1;
-        map.controls[google.maps.ControlPosition.RIGHT].push(homeControlDiv);
+        map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
+
+        var uavFilterDiv = document.createElement('div');
+        var uavFilter = new mapStyles.uavFilter(uavFilterDiv, map);
+        uavFilterDiv.index = 1;
+        map.controls[google.maps.ControlPosition.RIGHT_TOP].push(uavFilterDiv);
+
+
 
         // add event listener
         if (document.getElementById("go_lat") != isNaN && document.getElementById("go_long") != isNaN) {
