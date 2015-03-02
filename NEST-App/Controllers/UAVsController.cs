@@ -190,7 +190,7 @@ namespace NEST_App.Controllers.Api
         //GET: api/uavs/getuavinfo
         [HttpGet]
         [Route("api/uavs/getuavinfo")]
-        public HttpResponseMessage GetUAVInfo()
+        public async Task<HttpResponseMessage> GetUAVInfo()
         {
             var uavs = from u in db.UAVs.Include(u => u.FlightStates).Include(u => u.Schedules).Include(u => u.EventLogs)
                        let s = u.Schedules.OrderBy(s => s.create_date).FirstOrDefault()
@@ -215,24 +215,7 @@ namespace NEST_App.Controllers.Api
                                modified_date = s.modified_date,
                                Missions = s.Missions,
                            },
-                           Mission = new
-                           {
-                               Phase = m.Phase,
-                               FlightPattern = m.FlightPattern,
-                               Payload = m.Payload,
-                               Priority = m.Priority,
-                               FinancialCost = m.FinancialCost,
-                               TimeAssigned = m.TimeAssigned,
-                               TimeCompleted = m.TimeCompleted,
-                               Latitude = m.Latitude,
-                               Longitude = m.Longitude,
-                               ScheduledCompletionTime = m.ScheduledCompletionTime,
-                               EstimatedCompletionTime = m.EstimatedCompletionTime,
-                               Id = m.id,
-                               ScheduleId = m.ScheduleId,
-                               create_date = m.create_date,
-                               modified_date = m.modified_date,
-                           },
+                           Mission = m,
                            FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
                            EventLog = u.EventLogs,
                        };
@@ -352,7 +335,7 @@ namespace NEST_App.Controllers.Api
 
         [HttpGet]
         [Route("api/uavs/generateuavs/{number}")]
-        public IHttpActionResult generateUAVs(int number)
+        public async Task<IHttpActionResult> generateUAVs(int number)
         {
             Random num = new Random();
             for (int i = 0; i < number; i++)
@@ -423,6 +406,7 @@ namespace NEST_App.Controllers.Api
                 //db.Schedules.Add(sched.First());
                 db.FlightStates.Add(flights.First());
 
+                await createSchedulesForUavs();
                 try
                 {
                     db.SaveChanges();
