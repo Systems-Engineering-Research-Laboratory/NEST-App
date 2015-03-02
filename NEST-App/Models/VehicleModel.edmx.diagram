@@ -28,8 +28,8 @@
         <EntityTypeShape EntityType="VehicleModel.MissionLogActivity" Width="1.5" PointX="13.25" PointY="14.25" />
         <AssociationConnector Association="VehicleModel.MissionMissionLog" />
         <AssociationConnector Association="VehicleModel.MissionLogMissionLogActivity" />
-        <EntityTypeShape EntityType="VehicleModel.User" Width="1.5" PointX="11.125" PointY="2.125" />
-        <EntityTypeShape EntityType="VehicleModel.UserRole" Width="1.5" PointX="12.375" PointY="4.875" />
+        <EntityTypeShape EntityType="VehicleModel.User" Width="1.5" PointX="11.25" PointY="0.75" />
+        <EntityTypeShape EntityType="VehicleModel.UserRole" Width="1.5" PointX="12.125" PointY="5.25" />
         <AssociationConnector Association="VehicleModel.UserUserRole" />
         <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Waypoint" Width="1.5" PointX="24.25" PointY="3.125" />
         <EntityTypeShape EntityType="VehicleModel.CMD_NAV_Hover" Width="1.5" PointX="24.25" PointY="6.25" />

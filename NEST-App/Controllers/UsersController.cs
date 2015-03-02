@@ -110,6 +110,7 @@ namespace NEST_App.Controllers
         {
             user.create_date = DateTime.Now;
             user.modified_date = DateTime.Now;
+            user.position_in_queue = db.Users.Count()+1;
             user.UserRole = new UserRole
             {
                 access_level = "admin",
