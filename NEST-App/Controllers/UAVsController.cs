@@ -40,12 +40,12 @@ namespace NEST_App.Controllers.Api
                 {
                     nextUserInQueue.UAVs.Add(uav);
                     uav.User = nextUserInQueue;
-                    foreach (var user in db.Users.Where(u => u.user_id != nextUserInQueue.user_id))
+                    foreach (var usr in db.Users.Where(u => u.user_id != nextUserInQueue.user_id))
                     {
-                        user.position_in_queue--;
-                        db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                        usr.position_in_queue--;
+                        db.Entry(usr).State = System.Data.Entity.EntityState.Modified;
                     }
-                    nextUserInQueue.position_in_queue = users.Count();
+                    nextUserInQueue.position_in_queue = db.Users.Count();
                     db.Entry(nextUserInQueue).State = System.Data.Entity.EntityState.Modified;
                     db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
                     db.SaveChanges();
