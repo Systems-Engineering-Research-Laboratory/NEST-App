@@ -141,13 +141,12 @@
         */
 
         console.log("gowaypoint clicked");
-        var nxtwp, wps;
-        for (var i = 0; i < selectedUAV.Missions.length; i++) {
-            for (var j = 0; j < selectedUAV.Missions[i].Waypoints.length; j++){
-                if (selectedUAV.Missions[i].Waypoints[j].IsActive) {
-                    wps = selectedUAV.Missions[i].Waypoints;
-                    nxtwp = selectedUAV.Missions[i].Waypoints[j];
-                }
+        var nxtwp;
+        var wps = selectedUAV.Mission.Waypoints;
+        for (var i = 0; i < wps.length; i++) {
+            if (wps[i].IsActive) {
+                nxtwp = wps[i];
+                break;
             }
         }
         console.log("next waypoint:");
@@ -158,21 +157,22 @@
             Longitude: lng,
             Altitude: 400,
             WaypointName: "name",
-            NextWaypointId: nxtwp.NextWaypointId,
+            NextWaypointId: nxtwp.NextWaypointId || null,
             IsActive: true,
             WasSkipped: false,
             GeneratedBy: "User",
             Action: "fly through",
-            MissionId: selectedUAV.Mission.Id,
+            MissionId: selectedUAV.Mission.id || null,
         };
 
         this.insertWpIntoList(newWp, wps);
 
         var url = '/api/waypoints/insert/' + newWp.MissionId;
-        return $.ajax({
+        $.ajax({
             type: "POST",
             url: url,
-            data: newWp,
+            success: function () { },
+            data: newWp
         });
     },
 
