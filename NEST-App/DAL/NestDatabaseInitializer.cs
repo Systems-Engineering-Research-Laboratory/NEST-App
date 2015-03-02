@@ -74,6 +74,13 @@ namespace NEST_App.DAL
                             NumberOfMotors = 4
                         };
 
+                        UAVs[0].Schedules.Add(
+                            new Schedule
+                            {
+                                create_date = DateTime.Now,
+                                modified_date = DateTime.Now
+                            });
+
                         var FlightStates = new List<FlightState>
                         {
                             new FlightState { 

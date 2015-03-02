@@ -2,9 +2,10 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 02/28/2015 19:44:54
+-- Date Created: 03/01/2015 16:42:05
 -- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
+
 
 
 -- --------------------------------------------------
@@ -351,6 +352,7 @@ CREATE TABLE [dbo].[Users] (
     [create_date] datetime  NOT NULL,
     [modified_date] datetime  NOT NULL,
     [phone_number] nvarchar(max)  NOT NULL,
+    [position_in_queue] int  NOT NULL,
     [UserRole_Id] int  NOT NULL
 );
 GO

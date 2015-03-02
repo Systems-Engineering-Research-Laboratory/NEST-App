@@ -25,6 +25,7 @@ namespace NEST_App.Models
         public System.DateTime create_date { get; set; }
         public System.DateTime modified_date { get; set; }
         public string phone_number { get; set; }
+        public Nullable<int> position_in_queue { get; set; }
     
         public virtual UserRole UserRole { get; set; }
         public virtual ICollection<UAV> UAVs { get; set; }

@@ -299,6 +299,7 @@
     <Property Name="create_date" Type="datetime" Nullable="false" />
     <Property Name="modified_date" Type="datetime" Nullable="false" />
     <Property Name="phone_number" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="position_in_queue" Type="int" Nullable="true" />
     <Property Name="UserRole_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="UserRoles">
@@ -1149,6 +1150,7 @@
           <Property Name="phone_number" Type="String" Nullable="false" />
           <NavigationProperty Name="UserRole" Relationship="VehicleModel.UserUserRole" FromRole="User" ToRole="UserRole" />
           <NavigationProperty Name="UAVs" Relationship="VehicleModel.UserUAV" FromRole="User" ToRole="UAV" />
+          <Property Name="position_in_queue" Type="Int32" Nullable="true" />
         </EntityType>
         <EntityType Name="UserRole">
           <Key>
@@ -1584,6 +1586,7 @@
           <ScalarProperty Name="create_date" ColumnName="create_date" />
           <ScalarProperty Name="modified_date" ColumnName="modified_date" />
           <ScalarProperty Name="phone_number" ColumnName="phone_number" />
+          <ScalarProperty Name="position_in_queue" ColumnName="position_in_queue" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

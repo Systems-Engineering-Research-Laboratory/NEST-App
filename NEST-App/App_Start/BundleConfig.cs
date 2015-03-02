@@ -117,6 +117,12 @@ namespace NEST_App
             detailViewJS.Orderer = nullOrderer;
             bundles.Add(detailViewJS);
 
+            var sim = new CustomScriptBundle("~/bundles/sim");
+            sim.Include("~/Scripts/proj4.js");
+            sim.Include("~/Content/NestScripts/reporter.js");
+            sim.Include("~/Content/NestScripts/simulation.js");
+            sim.Include("~/Content/NestScripts/vehicle.js");
+            bundles.Add(sim);
             //Font Awesome
             //var fa = new CustomStyleBundle("~/bundles/fontawesome");
             //fa.Include("~/Content/font-awesome-4.3.0/css/font-awesome.min.css");
