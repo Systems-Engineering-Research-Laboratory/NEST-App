@@ -50,7 +50,7 @@ namespace NEST_App.Controllers
 
         [HttpPost]
         [Route("api/command/hold/{uid}")]
-        [ResponseType(typeof(CMD_NAV_Target))]
+        [ResponseType(typeof(CMD_NAV_Hover))]
         public IHttpActionResult PostCMD_NAV_HOLD(int uid, CMD_NAV_Hover jsObject)
         {
             CMD_NAV_Hover cmd_nav_hover = new CMD_NAV_Hover();
@@ -98,7 +98,7 @@ namespace NEST_App.Controllers
 
         [HttpPost]
         [Route("api/command/return/{uid}")]
-        [ResponseType(typeof(CMD_NAV_Land))]
+        [ResponseType(typeof(CMD_DO_Return_To_Base))]
         public IHttpActionResult PostCMD_DO_LAND(int uid, CMD_DO_Return_To_Base jsObject)
         {
             CMD_DO_Return_To_Base cmd_do_return = new CMD_DO_Return_To_Base();
