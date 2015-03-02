@@ -269,7 +269,14 @@ namespace NEST_App.Controllers.Api
                 missions.Add(miss);
             }
             db.Missions.AddRange(missions);
-            await db.SaveChangesAsync();
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                System.Diagnostics.Debug.Write(e);
+            }
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
