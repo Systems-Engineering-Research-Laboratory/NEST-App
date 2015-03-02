@@ -85,7 +85,7 @@
     // still working on it
     clickToGo: function () {
         if (selectedUAV != null) {
-            goTo_hide();
+            mapFunctions.goTo_hide();
 
             //setting dropMarkerListener
             this.dropMarkerListener = google.maps.event.addListener(mapListeners, 'click', this.dropWaypoint(event));
@@ -131,7 +131,7 @@
 
     //still working on it -David
     
-    goWaypoint: function (lat, long, cmd) {
+    goWaypoint: function (lat, lng) {
     /*    vehicleHub.server.ackCommand({
             CommandId: cmd.Id,
             CommandType: "waypoint",
@@ -140,12 +140,48 @@
         }, cmd.connId);
         */
 
-        //vehicleHub.server.sendCommand({
-        //    Id: 123,
-        //    Latitude: lat,
-        //    Longitude: long,
-        //    Altitude: 400,
-        //    UAVId: selectedUAV
-        //});
+        console.log("gowaypoint clicked");
+        var nxtwp, wps;
+        for (var i = 0; i < selectedUAV.Missions.length; i++) {
+            for (var j = 0; j < selectedUAV.Missions[i].Waypoints.length; j++){
+                if (selectedUAV.Missions[i].Waypoints[j].IsActive) {
+                    wps = selectedUAV.Missions[i].Waypoints;
+                    nxtwp = selectedUAV.Missions[i].Waypoints[j];
+                }
+            }
+        }
+        console.log("next waypoint:");
+        console.log(nxtwp);
+
+        var newWp = {
+            Latitude: lat,
+            Longitude: lng,
+            Altitude: 400,
+            WaypointName: "name",
+            NextWaypointId: nxtwp.NextWaypointId,
+            IsActive: true,
+            WasSkipped: false,
+            GeneratedBy: "User",
+            Action: "fly through",
+            MissionId: selectedUAV.Mission.Id,
+        };
+
+        this.insertWpIntoList(newWp, wps);
+
+        var url = '/api/waypoints/insert/' + newWp.MissionId;
+        return $.ajax({
+            type: "POST",
+            url: url,
+            data: newWp,
+        });
+    },
+
+    insertWpIntoList: function (newWp, wps) {
+        for (var i = 0; i < wps.length; i++) {
+            if (wps[i].NextWaypointId == newWp.NextWaypointId) {
+                wps[i].NextWaypointId = newWp.Id;
+                wps.splice(i, 0, newWp);
+            }
+        }
     }
 };

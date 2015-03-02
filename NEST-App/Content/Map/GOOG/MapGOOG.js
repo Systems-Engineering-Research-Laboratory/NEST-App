@@ -86,9 +86,15 @@ $(document).ready(function () {
         map.controls[google.maps.ControlPosition.RIGHT].push(homeControlDiv);
 
         // add event listener
-        if (document.getElementById("go_lat") != isNaN && document.getElementById("go_long") != isNaN) {
-            document.getElementById("goBtn").addEventListener("click", droneTrails.goWaypoint(document.getElementById("go_lat"), document.getElementById("go_long")));
-        }
+        document.getElementById("goBtn").addEventListener("click", function () {
+            if (isNaN(document.getElementById("go_lat").value) || isNaN(document.getElementById("go_long").value) || document.getElementById("go_lat").value == "" || document.getElementById("go_long").value == "") {
+                console.log("Need lat lng!");
+            }
+            else {
+                droneTrails.goWaypoint(document.getElementById("go_lat").value, document.getElementById("go_long").value);
+            }
+            
+        });
 
         $.ajax({
             url: '/api/uavs/getuavinfo',
