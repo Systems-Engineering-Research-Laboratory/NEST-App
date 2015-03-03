@@ -103,7 +103,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         else if (this.hasScheduledMissions() && this.battery >= .9) {
             this.getNextMission();
         }
-        //Well, I guess we have nothing better to do!
+            //Well, I guess we have nothing better to do!
         else if (!this.isAtBase()) {
             this.backToBase(dt);
         }
@@ -444,7 +444,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             this.currentWpIndex = nextIdx;
             console.log("UAV " + this.Callsign + " next waypoint: " + this.currentWaypoint.WaypointName);
         }
-        //If we didn't find it, then put null
+            //If we didn't find it, then put null
         else {
             console.log("UAV " + this.Callsign + " done with waypoints.");
             this.currentWaypoint = null;
@@ -617,6 +617,84 @@ function PathGenerator(areaContainer, reporter) {
         wps.push(newWps[0]);
         wps.push(newWps[1]);
         return wps;
+    }
+
+    function checkPathIntersectsRectangle(a_rectangleMinX,
+                                 a_rectangleMinY,
+                                 a_rectangleMaxX,
+                                 a_rectangleMaxY,
+                                 a_p1x,
+                                 a_p1y,
+                                 a_p2x,
+                                 a_p2y) {
+        // Find min and max X for the segment
+
+        minX = a_p1x;
+        maxX = a_p2x;
+
+        if(a_p1x > a_p2x)
+        {
+            minX = a_p2x;
+            maxX = a_p1x;
+        }
+
+        // Find the intersection of the segment's and rectangle's x-projections
+
+        if(maxX > a_rectangleMaxX)
+        {
+            maxX = a_rectangleMaxX;
+        }
+
+        if(minX < a_rectangleMinX)
+        {
+            minX = a_rectangleMinX;
+        }
+
+        if(minX > maxX) // If their projections do not intersect return false
+        {
+            return false;
+        }
+
+        // Find corresponding min and max Y for min and max X we found before
+
+        minY = a_p1y;
+        maxY = a_p2y;
+
+        dx = a_p2x - a_p1x;
+
+        if(Math.abs(dx) > 0.0000001)
+        {
+            a = (a_p2y - a_p1y) / dx;
+            b = a_p1y - a * a_p1x;
+            minY = a * minX + b;
+            maxY = a * maxX + b;
+        }
+
+        if(minY > maxY)
+        {
+            tmp = maxY;
+            maxY = minY;
+            minY = tmp;
+        }
+
+        // Find the intersection of the segment's and rectangle's y-projections
+
+        if(maxY > a_rectangleMaxY)
+        {
+            maxY = a_rectangleMaxY;
+        }
+
+        if(minY < a_rectangleMinY)
+        {
+            minY = a_rectangleMinY;
+        }
+
+        if(minY > maxY) // If Y-projections do not intersect return false
+        {
+            return false;
+        }
+
+        return true;
     }
 }
 
