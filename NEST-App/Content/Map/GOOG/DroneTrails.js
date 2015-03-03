@@ -86,102 +86,42 @@
     clickToGo: function () {
         if (selectedUAV != null) {
             mapFunctions.goTo_hide();
+            var that = this;
 
             //setting dropMarkerListener
-            this.dropMarkerListener = google.maps.event.addListener(mapListeners, 'click', this.dropWaypoint(event));
+            this.dropMarkerListener = google.maps.event.addListener(map, 'click', function (event) {
+                that.goWaypoint(event.latLng.lat(), event.latLng.lng());
+                mapFunctions.ConsNotifier(this, event.latLng.lat(), event.latLng.lng(), "", "");
+                
+            });
 
-            //actually adding the listener to the map
-            google.maps.event.addListener(mapListeners, 'click', dropWaypoint(event));
+            $("#UAVId").html("Select an UAV first");
+            $("#goBtn").addClass("disabled");
+            $("#clickToGoBtn").addClass("disabled");
         }
-    },
-    //still working on it -David
-    dropWaypoint: function (event) {
-        if (dropMarkerListener != null) {
-            //call function to create marker
-            if (this.waypointMarker) {
-                this.waypointMarker.setMap(null);
-                this.waypointMarker = null;
-            }
-            this.waypointMarker = createMarker(event.latLng, "name", "<b>Location</b><br>" + event.latLng);
-
-            // make uav fly to the dropped pin
-            this.goWaypoint(event.latLng.lat(), event.latLng.lng());
-
-            // remove listener so the marker can only be placed once
-            google.maps.event.removeListener(this.dropMarkerListener);
-            this.dropMarkerListener = null;
-        }
-
-            // reset selected uav if there's no waypoint
-        else if (this.waypointMarker) {
-            uavInfoWindow.close();
-            otherInfoWindow.close();
-        }
-        else {
-            for (i = 0; i < this.trailArray.length; i++) {
-                this.trailArray[i].setMap(null);
-            }
-            selectedUAV = null;
-            //uavInfoWindow.close();
-        }
-        $("#UAVId").html("Select an UAV first");
-        $("#goBtn").addClass("disabled");
-        $("#clickToGoBtn").addClass("disabled");
     },
 
     //still working on it -David
     
     goWaypoint: function (lat, lng) {
-    /*    vehicleHub.server.ackCommand({
-            CommandId: cmd.Id,
-            CommandType: "waypoint",
-            Reason: "OK",
-            Accepted: true
-        }, cmd.connId);
-        */
+        //vehicleHub.server.ackCommand({
+        //    CommandId: cmd.Id,
+        //    CommandType: "waypoint",
+        //    Reason: "OK",
+        //    Accepted: true
+        //}, cmd.connId);
 
-        console.log("gowaypoint clicked");
-        var nxtwp;
-        var wps = selectedUAV.Mission.Waypoints;
-        for (var i = 0; i < wps.length; i++) {
-            if (wps[i].IsActive) {
-                nxtwp = wps[i];
-                break;
-            }
-        }
-        console.log("next waypoint:");
-        console.log(nxtwp);
+        console.log("original waypoints");
+        console.log(selectedUAV.Mission.Waypoints);
 
-        var newWp = {
+        vehicleHub.server.sendCommand({
             Latitude: lat,
             Longitude: lng,
             Altitude: 400,
-            WaypointName: "name",
-            NextWaypointId: nxtwp.NextWaypointId || null,
-            IsActive: true,
-            WasSkipped: false,
-            GeneratedBy: "User",
-            Action: "fly through",
-            MissionId: selectedUAV.Mission.id || null,
-        };
-
-        this.insertWpIntoList(newWp, wps);
-
-        var url = '/api/waypoints/insert/' + newWp.MissionId;
-        $.ajax({
-            type: "POST",
-            url: url,
-            success: function () { },
-            data: newWp
+            UAVID: selectedUAV.Id
         });
-    },
 
-    insertWpIntoList: function (newWp, wps) {
-        for (var i = 0; i < wps.length; i++) {
-            if (wps[i].NextWaypointId == newWp.NextWaypointId) {
-                wps[i].NextWaypointId = newWp.Id;
-                wps.splice(i, 0, newWp);
-            }
-        }
+        console.log("new waypoints");
+        console.log(selectedUAV.Mission.Waypoints);
     }
 };
