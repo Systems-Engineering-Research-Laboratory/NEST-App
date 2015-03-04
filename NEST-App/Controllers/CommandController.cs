@@ -68,7 +68,7 @@ namespace NEST_App.Controllers
 
             //db.CMD_NAV_Hold.Add(cmd_nav_hold);
             db.SaveChanges();
-
+            System.Diagnostics.Debug.Write("Everything worked!!");
             return Ok();
         }
         

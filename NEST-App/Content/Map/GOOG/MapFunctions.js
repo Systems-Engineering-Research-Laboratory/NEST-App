@@ -79,6 +79,7 @@
     //Controls context menu selection for UAVs
     UAVContextSelection: function (map, marker, latLng, eventName) {
         var uid = assignment.getUserId();
+        var uav = marker.uav;
         //placeholders until UI is implemented
         var alt = 0;
         var throttle = 0;
@@ -94,14 +95,14 @@
                     console.log("You're not the owner");
                 } else {
                     //create ui
-                    uavCommand.NonNav(uid, uav, latLng, alt, throttle);}
+                    uavCommands.NonNav(uid, uav, latLng, alt, throttle);}
                 break;
             case 'hold':
                 if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
                       console.log("You're not the owner");
                 } else {
                     //create ui
-                    uavCommand.HoldPos(uid, uav, latLng, alt, throttle);
+                    uavCommands.HoldPos(uid, uav, latLng, alt, throttle);
                 }
                 break;
             case 'insert_waypoint':
@@ -109,21 +110,21 @@
                     console.log("You're not the owner");
                 } else {
                     //create ui
-                uavCommand.InsertWP(uid, marker.uav, latLng);}
+                uavCommands.InsertWP(uid, marker.uav, latLng);}
                 break;
             case 'go_to':
                 if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
                     console.log("You're not the owner");
                 } else {
                     //create ui
-                    uavCommand.GoTo(uid, marker.uav, latLng, alt);}
+                    uavCommands.GoTo(uid, marker.uav, latLng, alt);}
                 break;
             case 'force_land':
                 if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
                     console.log("You're not the owner");
                 }else{
                     //create ui
-                    uavCommand.ForceLand(uid, marker.uav, latLng, alt, throttle);
+                    uavCommands.ForceLand(uid, marker.uav, latLng, alt, throttle);
                 }
                 break;
             case 'return':
@@ -131,7 +132,7 @@
                     console.log("You're not the owner");
                 }else{
                     //create ui
-                    uavCommand.BackToBase(uid, marker.uav, latLng);
+                    uavCommands.BackToBase(uid, marker.uav, latLng);
                 }
                 break;
             default:

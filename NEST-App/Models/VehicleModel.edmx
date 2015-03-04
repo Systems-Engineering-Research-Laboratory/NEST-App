@@ -32,6 +32,9 @@
     <EntitySet Name="MapAreaSet" EntityType="VehicleModel.Store.MapAreaSet" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="MapRestrictedSet" EntityType="VehicleModel.Store.MapRestrictedSet" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="MapPointSet" EntityType="VehicleModel.Store.MapPointSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CMD_NAV_Return" EntityType="VehicleModel.Store.CMD_NAV_Return" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CMD_NAV_Hold" EntityType="VehicleModel.Store.CMD_NAV_Hold" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CMD_NAV_Adjust" EntityType="VehicleModel.Store.CMD_NAV_Adjust" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Waypoint_CMD_NAV_Hover" EntityType="VehicleModel.Store.CMD_NAV_Waypoint_CMD_NAV_Hover" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Set_Base_CMD_DO_Return_To_Base" EntityType="VehicleModel.Store.CMD_NAV_Set_Base_CMD_DO_Return_To_Base" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CMD_NAV_Takeoff_CMD_DO_Change_Speed" EntityType="VehicleModel.Store.CMD_NAV_Takeoff_CMD_DO_Change_Speed" store:Type="Tables" Schema="dbo" />
@@ -458,6 +461,39 @@
     <Property Name="Time_created" Type="datetime" Nullable="false" />
     <Property Name="Creator_created" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Warning" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CMD_NAV_Return">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Altitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Latitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Longitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Throttle" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="UAVId" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CMD_NAV_Hold">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Altitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Latitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Longitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="UAVId" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Time" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CMD_NAV_Adjust">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Altitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Latitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Longitude" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Throttle" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="UAVId" Type="nvarchar(max)" Nullable="false" />
   </EntityType>
   <EntityType Name="CMD_NAV_Waypoint_CMD_NAV_Hover">
     <Key>
@@ -1831,6 +1867,42 @@
           <ScalarProperty Name="Time_created" ColumnName="Time_created" />
           <ScalarProperty Name="Creator_created" ColumnName="Creator_created" />
           <ScalarProperty Name="Warning" ColumnName="Warning" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CMD_NAV_Return">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.CMD_NAV_Return)">
+        <MappingFragment StoreEntitySet="CMD_NAV_Return">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Altitude" ColumnName="Altitude" />
+          <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+          <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="Throttle" ColumnName="Throttle" />
+          <ScalarProperty Name="UAVId" ColumnName="UAVId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CMD_NAV_Hold">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.CMD_NAV_Hold)">
+        <MappingFragment StoreEntitySet="CMD_NAV_Hold">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Altitude" ColumnName="Altitude" />
+          <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+          <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="UAVId" ColumnName="UAVId" />
+          <ScalarProperty Name="Time" ColumnName="Time" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CMD_NAV_Adjust">
+      <EntityTypeMapping TypeName="IsTypeOf(VehicleModel.CMD_NAV_Adjust)">
+        <MappingFragment StoreEntitySet="CMD_NAV_Adjust">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Altitude" ColumnName="Altitude" />
+          <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+          <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="Throttle" ColumnName="Throttle" />
+          <ScalarProperty Name="UAVId" ColumnName="UAVId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

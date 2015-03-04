@@ -30,10 +30,10 @@ var uavCommands = {
         var time /*= user input*/;
         var cmd = {
             Id: 0,
-            Altitude: altitude,
+            Altitude: alt,
             Latitude: coords.Latitude,
             Longitude: coords.Longitude,
-            UAVId: uad.Id,
+            UAVId: uav.Id,
             Time: time
         }
         $.ajax({
@@ -68,7 +68,7 @@ var uavCommands = {
     ForceLand: function (uid, uav, coords, alt, throttle) {
         var cmd = {
             Id: 0,
-            Altitude: altitude,
+            Altitude: alt,
             Latitude: coords.Latitude,
             Longitude: coords.Longitude,
             Throttle: throttle,
@@ -128,7 +128,7 @@ var uavCommands = {
     NonNav: function (uid, uav, coords, alt, throttle) {
         var cmd = {
             Id: 0,
-            Altitude: altitude,
+            Altitude: alt,
             Latitude: coords.Latitude,
             Longitude: coords.Longitude,
             Throttle: throttle,
