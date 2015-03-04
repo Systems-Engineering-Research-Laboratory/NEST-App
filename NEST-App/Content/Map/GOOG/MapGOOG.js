@@ -261,10 +261,13 @@ $(document).ready(function () {
         $(window).keydown(function (evt) {
             if (evt.which === 16) {
                 mapFunctions.shiftPressed = true;
-                //console.log("Shift key down");
-            }
             if (evt.ctrlKey) {
                 ctrlDown = true;
+            }
+            if (evt.which === 69) {
+                console.log("User is: "+assignment.getUsername());
+            }
+                //console.log("Shift key down");
             }
             storedGroups = droneSelection.KeyBinding(selectedDrones, storedGroups, evt);
             // console.log("length in goog is: " + selectedDrones.length);
