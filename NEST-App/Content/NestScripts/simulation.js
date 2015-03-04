@@ -139,11 +139,6 @@ $(document).ready(function () {
         success: function(data, textStatus, jqXHR) { unassignedMissionsCb (availableMissions, data, textStatus, jqXHR);}
     })
 
-    $.ajax({
-        url: '/api/maprestricteds',
-        success: function(data, textStatus, jqXHR) { restrictedAreasCb(map, data, textStatus, jqXHR);},
-    })
-
     $("#start").click(start);
     $("#stop").click(stopSim);
     
@@ -188,10 +183,6 @@ var missionsRecvd = false;
 function unassignedMissionsCb(container, data, textStatus, jqXHR) {
     container = data;
     missionsRecvd = true;
-}
-
-function restrictedAreasCb(map, data, textStatus, jqXHR) {
-    map.restrictedAreas = data;
 }
 
 function updateSimulation(vehicleHub, map) {

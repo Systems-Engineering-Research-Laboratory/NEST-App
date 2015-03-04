@@ -73,7 +73,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         this.pathGen = gen;
     }
     this.setPathGen(pathGen);
-    
+
     this.appendLonLat = function (obj, point) {
         var pointText = point.Geography.WellKnownText;
         LatLongToXY(obj);
@@ -82,8 +82,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     //Functions. Careful not to add global helper functions here.
     this.process = function (dt) {
         //If the current waypoint is null but the reporter is pending, just return.
-        if (this.isAtBase() && this.battery < 1)
-        {
+        if (this.isAtBase() && this.battery < 1) {
             this.chargeBattery(dt);
             reporter.updateFlightState(this.FlightState);
             return;
@@ -122,7 +121,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
         reporter.updateFlightState(this.FlightState);
     };
-    this.getNextMission = function() {
+    this.getNextMission = function () {
         var missions = this.Schedule.Missions;
         this.Mission = missions.shift();
         LatLongToXY(this.Mission);
@@ -140,7 +139,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         }
     }
 
-    this.performWaypoint = function(dt) {
+    this.performWaypoint = function (dt) {
         var wp = this.currentWaypoint;
         //Get the original object, call the callback to perform the object specific functions
         if (wp.obj) {
@@ -153,7 +152,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                     break;
             }
             //If we are done, returns true. Means we can consume the waypoint.
-            
+
         }
         else {
             //Just go to, this is just a navigational point.
@@ -176,7 +175,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         var dX = this.FlightState.VelocityX * dt;
         var dY = this.FlightState.VelocityY * dt;
         //The distance to the target is less than the distance we would travel, i.e. it's reached it's destination
-        if (Math.sqrt(distanceX*distanceX+distanceY*distanceY) < Math.abs(this.getVelocity()*dt)) {
+        if (Math.sqrt(distanceX * distanceX + distanceY * distanceY) < Math.abs(this.getVelocity() * dt)) {
             //We are at the target, stop and set dX to the distance to put us over the target
             dX = distanceX;
             dY = distanceY;
@@ -333,7 +332,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             case "delivering":
                 if (this.deliver(dt, 200, 400, this.MaxVelocity)) {
                     mis.Phase = "back to base";
-                    wpComplete =  true;
+                    wpComplete = true;
                     //TODO: Assign the path back to the base.
                     update = true;
                     //this.pathGen.generateBackToBaseWaypoints(this.FlightState, this.Base);
@@ -371,7 +370,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             //if fail pass false
             promise.fail(function (jqXHR, textStatus, err) {
                 that.reporter.ackCommand(target, target.type, "Waypoint creation failed, Error: " + err, false);
-                
+
             });
         }
         //else non navigational
@@ -401,7 +400,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     this.backToBase = function (dt) {
         return this.flyToAndLand(dt, this.Base.X, this.Base.Y);
     }
-    
+
     this.flyToAndLand = function (dt, destX, destY) {
         var thisX = this.FlightState.X;
         var thisY = this.FlightState.Y;
@@ -465,7 +464,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 }
 
 
-function VehicleContainer (){
+function VehicleContainer() {
     this.ids = [];
     this.vehicles = [];
     this.restrictedAreas = [];
@@ -501,7 +500,7 @@ function VehicleContainer (){
 
     var $this = this;
     $.ajax({
-        url: '/api/maprestricteds',        
+        url: '/api/maprestricteds',
     }).success(function (data, textStatus, jqXHR) {
         for (var i = 0; i < data.length; i++) {
             $this.addRestrictedArea(data[i]);
@@ -528,17 +527,17 @@ function PathGenerator(areaContainer, reporter) {
         return pts;
     }
 
-    this.generatePath = function(wps, veh) {
-        if(this.gotNewRestrictedArea()) {
+    this.generatePath = function (wps, veh) {
+        if (this.gotNewRestrictedArea()) {
             var newWps = this.resolvePath(wps);
             return newWps;
         }
         return wps;
     }
 
-    this.resolvePath = function(mission, wps, veh) {
+    this.resolvePath = function (mission, wps, veh) {
         //For now, we are just going to get the direct waypoints.
-        if (wps  && wps.length < 2) {
+        if (wps && wps.length < 2) {
             this.withEndPoints(mission, wps, veh);
         }
         return wps;
@@ -546,7 +545,7 @@ function PathGenerator(areaContainer, reporter) {
 
     this.withEndPoints = function (mission, wps, veh) {
         //If the wps is less than 2, then we are missing the end points of the waypoints.
-        if(wps && wps.length < 2) {
+        if (wps && wps.length < 2) {
             wps = this.getBeginningAndEnd(veh.FlightState, mission, wps, veh);
         }
         return wps;
@@ -555,9 +554,9 @@ function PathGenerator(areaContainer, reporter) {
     //Immediately return the beginning and end of the waypoints.
     this.getBeginningAndEnd = function (begin, end, wps, veh) {
 
-        var pts = [Waypoint({Latitude: begin.Latitude, Longitude: end.Longitude}),
-            Waypoint({Latitude: end.Latitude, objective: end.Longitude})];
-        
+        var pts = [Waypoint({ Latitude: begin.Latitude, Longitude: end.Longitude }),
+            Waypoint({ Latitude: end.Latitude, objective: end.Longitude })];
+
         return pts;
     }
 
@@ -569,15 +568,15 @@ function PathGenerator(areaContainer, reporter) {
             return false;
         }
         var bidx = wps.indexOf(before);
-        
-        var after = bidx + 1 < wps.length? wps[bidx + 1] : null;
+
+        var after = bidx + 1 < wps.length ? wps[bidx + 1] : null;
         //Build a new waypoint from the passed in information.
         newWp = new Waypoint({
             Latitude: newPoint.Latitude,
             Longitude: newPoint.Longitude,
             Action: newPoint.Action,
             NextWaypointId: after ? after.Id : undefined,
-            NextWaypoint: after? after : undefined,
+            NextWaypoint: after ? after : undefined,
         });
         //Insert the new waypoint into the array
         wps.splice(idx + 1, 0, newWp);
@@ -654,7 +653,7 @@ function PathGenerator(areaContainer, reporter) {
         }
     }
 
-    this.movePointToCorner = function(wp, area) {
+    this.movePointToCorner = function (wp, area) {
         var dist1 = Math.abs(wp.X - area.NorthEastX);
         var dist2 = Math.abs(wp.X - area.SouthWestX);
         wp.X = dist1 < dist2 ? area.NorthEastX : area.SouthWestX;
@@ -680,19 +679,35 @@ function PathGenerator(areaContainer, reporter) {
     }
 
     this.fixPoints = function (p1, p2, area) {
-        
+        //Idea:
+        //case 1: intersect two sides that share a corner, set a new waypoint on that corner
+        //case 2: intersects two opposite sides, deal with that somehow
+        console.log(intersectsSide(area.SouthWestX, area.NorthEastX, area.SouthWestY, p1.X, p1.Y, p2.X, p2.Y));
+        console.log(intersectsSide(area.SouthWestX, area.NorthEastX, area.NorthEastY, p1.X, p1.Y, p2.X, p2.Y));
+        console.log(intersectsSide(area.SouthWestY, area.NorthEastY, area.SouthWestX, p1.Y, p1.X, p2.Y, p2.X));
+        console.log(intersectsSide(area.SouthWestY, area.NorthEastY, area.NorthEastX, p1.Y, p1.X, p2.Y, p2.X));
     }
 
+    function intersectsSide(axMin, axMax, y, px1, py1, px2, py2) {
+        if (Math.abs(py1 - py2) < .00001) {
+            return false;
+        }
+        var num = (px2 - px1);
+        var denom = (py2 - py1);
+        var xInt = num / denom * (y - py1) + px1;
+        return xInt <= axMax && xInt >= axMin;
+
+    }
+
+    //Checks if the path of two waypoints intersects an area
     this.checkIfIntersect = function (p1, p2, area) {
-        LatLongToXY(p1);
-        LatLongToXY(p2);
-        areaToEuclidean(area);
         var intersects = checkPathIntersectsRectangle(area.SouthWestX, area.SouthWestY, area.NorthEastX, area.NorthEastY,
             p1.X, p1.Y, p2.X, p2.Y);
         if (intersects) console.log("checkIfIntersect found an intersection!");
         return intersects;
     }
 
+    //Check if the line between two x,y points falls within a rectangle. Found on stack overflow.
     function checkPathIntersectsRectangle(a_rectangleMinX,
                                  a_rectangleMinY,
                                  a_rectangleMaxX,
@@ -706,25 +721,22 @@ function PathGenerator(areaContainer, reporter) {
         minX = a_p1x;
         maxX = a_p2x;
 
-        if(a_p1x > a_p2x)
-        {
+        if (a_p1x > a_p2x) {
             minX = a_p2x;
             maxX = a_p1x;
         }
 
         // Find the intersection of the segment's and rectangle's x-projections
 
-        if(maxX > a_rectangleMaxX)
-        {
+        if (maxX > a_rectangleMaxX) {
             maxX = a_rectangleMaxX;
         }
 
-        if(minX < a_rectangleMinX)
-        {
+        if (minX < a_rectangleMinX) {
             minX = a_rectangleMinX;
         }
 
-        if(minX > maxX) // If their projections do not intersect return false
+        if (minX > maxX) // If their projections do not intersect return false
         {
             return false;
         }
@@ -736,16 +748,14 @@ function PathGenerator(areaContainer, reporter) {
 
         dx = a_p2x - a_p1x;
 
-        if(Math.abs(dx) > 0.0000001)
-        {
+        if (Math.abs(dx) > 0.0000001) {
             a = (a_p2y - a_p1y) / dx;
             b = a_p1y - a * a_p1x;
             minY = a * minX + b;
             maxY = a * maxX + b;
         }
 
-        if(minY > maxY)
-        {
+        if (minY > maxY) {
             tmp = maxY;
             maxY = minY;
             minY = tmp;
@@ -753,17 +763,15 @@ function PathGenerator(areaContainer, reporter) {
 
         // Find the intersection of the segment's and rectangle's y-projections
 
-        if(maxY > a_rectangleMaxY)
-        {
+        if (maxY > a_rectangleMaxY) {
             maxY = a_rectangleMaxY;
         }
 
-        if(minY < a_rectangleMinY)
-        {
+        if (minY < a_rectangleMinY) {
             minY = a_rectangleMinY;
         }
 
-        if(minY > maxY) // If Y-projections do not intersect return false
+        if (minY > maxY) // If Y-projections do not intersect return false
         {
             return false;
         }
@@ -790,7 +798,7 @@ function Waypoint(info) {
         LatLongToXY(this);
         this.Position = info.Position;
     }
-    
+
     this.Latitude = info.Latitude;
     this.Longitude = info.Longitude;
     LatLongToXY(this);
@@ -830,7 +838,7 @@ function latToY(latitude) {
 }
 
 function yToLat(y) {
-    return wgsToMeters.inverse([base.X,y])[1];
+    return wgsToMeters.inverse([base.X, y])[1];
 }
 
 //Same thing here as above.
