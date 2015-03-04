@@ -165,6 +165,11 @@
             infowindow.open(map, noteMarker);
             document.getElementById("message").value = "";
         }
+
+        if (droneTrails.dropMarkerListener != null) {
+            google.maps.event.removeListener(droneTrails.dropMarkerListener);
+            droneTrails.dropMarkerListener = null;
+        }
     },
 
     DrawBoundingBox: function (theMap, e) {
