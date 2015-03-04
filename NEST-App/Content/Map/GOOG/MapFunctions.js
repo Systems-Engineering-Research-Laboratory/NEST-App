@@ -78,28 +78,62 @@
     },
     //Controls context menu selection for UAVs
     UAVContextSelection: function (map, marker, latLng, eventName) {
+        var uid = assignment.getUserId();
+        var uav = marker.uav;
+        //placeholders until UI is implemented
+        var alt = 0;
+        var throttle = 0;
+        var time = 0;
+        /////////////////
         switch (eventName) {
             case 'get_details':
                 window.open("http://localhost:53130/detailview", "_blank");
                 //console.log("Trying to open window");
                 break;
             case 'non_nav':
-                uavCommand.NonNav(marker.uav, latLng);
+                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
+                    console.log("You're not the owner");
+                } else {
+                    //create ui
+                    uavCommands.NonNav(uid, uav, latLng, alt, throttle);}
                 break;
             case 'hold':
-                uavCommand.HoldPos(marker.uav, latLng);
+                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
+                      console.log("You're not the owner");
+                } else {
+                    //create ui
+                    uavCommands.HoldPos(uid, uav, latLng, alt, throttle);
+                }
                 break;
             case 'insert_waypoint':
-                uavCommand.InsertWP(marker.uav, latLng);
+                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
+                    console.log("You're not the owner");
+                } else {
+                    //create ui
+                uavCommands.InsertWP(uid, marker.uav, latLng);}
                 break;
             case 'go_to':
-                uavCommand.GoTo(marker.uav, latLng);
+                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
+                    console.log("You're not the owner");
+                } else {
+                    //create ui
+                    uavCommands.GoTo(uid, marker.uav, latLng, alt);}
                 break;
             case 'force_land':
-                uavCommand.ForceLand(marker.uav, latLng);
+                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
+                    console.log("You're not the owner");
+                }else{
+                    //create ui
+                    uavCommands.ForceLand(uid, marker.uav, latLng, alt, throttle);
+                }
                 break;
             case 'return':
-                uavCommand.BackToBase(marker.uav, latLng);
+                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
+                    console.log("You're not the owner");
+                }else{
+                    //create ui
+                    uavCommands.BackToBase(uid, marker.uav, latLng);
+                }
                 break;
             default:
                 break;
@@ -131,6 +165,11 @@
 
             infowindow.open(map, noteMarker);
             document.getElementById("message").value = "";
+        }
+
+        if (droneTrails.dropMarkerListener != null) {
+            google.maps.event.removeListener(droneTrails.dropMarkerListener);
+            droneTrails.dropMarkerListener = null;
         }
     },
 

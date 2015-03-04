@@ -1,7 +1,7 @@
 ﻿var droneSelection = {
     /*CTRL-SELECT*/
     CtrlSelect: function (marker, selectedDrones) {
-        var selectedUAV = null;
+        selectedUAV = null;
         clickedUAV = marker.uav;
         //UAV has been selected
         if (marker.selected == false) {//other drone-selection-related events should trigger off this!

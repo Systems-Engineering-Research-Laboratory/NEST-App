@@ -75,6 +75,7 @@ $(document).ready(function () {
         var distanceCircle = new google.maps.Circle(mapStyles.distanceCircleOptions);
         distanceCircle.setCenter(homeBase);
         distanceCircle.setMap(map);
+
         var homeControlDiv = document.createElement('div');
         var homeControl = new mapStyles.BaseControl(homeControlDiv, map, homeBase);
         var marker = new google.maps.Marker({
@@ -83,12 +84,25 @@ $(document).ready(function () {
             map: map
         });
         homeControlDiv.index = 1;
-        map.controls[google.maps.ControlPosition.RIGHT].push(homeControlDiv);
+        map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
+        
+        var uavFilterDiv = document.createElement('div');
+        var uavFilter = new mapStyles.uavFilter(uavFilterDiv, map);
+        uavFilterDiv.index = 1;
+        map.controls[google.maps.ControlPosition.RIGHT_TOP].push(uavFilterDiv);
+
+
 
         // add event listener
-        if (document.getElementById("go_lat") != isNaN && document.getElementById("go_long") != isNaN) {
-            document.getElementById("goBtn").addEventListener("click", droneTrails.goWaypoint(document.getElementById("go_lat"), document.getElementById("go_long")));
-        }
+        document.getElementById("goBtn").addEventListener("click", function () {
+            if (isNaN(document.getElementById("go_lat").value) || isNaN(document.getElementById("go_long").value) || document.getElementById("go_lat").value == "" || document.getElementById("go_long").value == "") {
+                console.log("Need lat lng!");
+            }
+            else {
+                droneTrails.goWaypoint(document.getElementById("go_lat").value, document.getElementById("go_long").value);
+            }
+            
+        });
 
         $.ajax({
             url: '/api/uavs/getuavinfo',
@@ -247,10 +261,13 @@ $(document).ready(function () {
         $(window).keydown(function (evt) {
             if (evt.which === 16) {
                 mapFunctions.shiftPressed = true;
-                //console.log("Shift key down");
-            }
             if (evt.ctrlKey) {
                 ctrlDown = true;
+            }
+            if (evt.which === 69) {
+                console.log("User is: "+assignment.getUsername());
+            }
+                //console.log("Shift key down");
             }
             storedGroups = droneSelection.KeyBinding(selectedDrones, storedGroups, evt);
             // console.log("length in goog is: " + selectedDrones.length);

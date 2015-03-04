@@ -79,6 +79,9 @@ namespace NEST_App.Controllers
                     }
                     //We finished with the transactions, make sure to commit them.
                     trans.Commit();
+                    var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
+                    hub.Clients.All.WaypointInserted(id);
+
                     return Ok(newWp);
                 }
                 catch (DbUpdateException e)
