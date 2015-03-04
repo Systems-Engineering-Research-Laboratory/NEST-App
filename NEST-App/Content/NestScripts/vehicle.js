@@ -91,7 +91,9 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         if (this.currentWaypoint && this.reporter.pendingResult) {
             return;
         }
-        //TODO: Check if there is a new restricted area, adjust accordingly.
+        if (this.waypoints) {
+            this.pathGen.checkPathValidity(this.waypoints);
+        }
         //Process this waypoint if we have one
         if (this.currentWaypoint) {
             if (this.performWaypoint(dt)) {
@@ -487,7 +489,8 @@ function VehicleContainer (){
         this.vehicles.push(veh);
     }
 
-    this.addRestrcitedArea = function (area) {
+    this.addRestrictedArea = function (area) {
+        areaToEuclidean(area);
         this.restrictedAreas.push(area);
         this.newRestrictedArea = true;
     }
@@ -496,6 +499,14 @@ function VehicleContainer (){
         this.newRestrictedArea = false;
     }
 
+    var $this = this;
+    $.ajax({
+        url: '/api/maprestricteds',        
+    }).success(function (data, textStatus, jqXHR) {
+        for (var i = 0; i < data.length; i++) {
+            $this.addRestrictedArea(data[i]);
+        }
+    })
 }
 
 // The waypoint creation logic container so that there isn't logic all over the vehicle code
@@ -617,6 +628,69 @@ function PathGenerator(areaContainer, reporter) {
         wps.push(newWps[0]);
         wps.push(newWps[1]);
         return wps;
+    }
+
+    this.checkPathValidity = function (wps) {
+        this.movePointsOutOfAreas(wps);
+        if (this.areaContainer.newRestrictedArea) {
+            for (var i = 0; i < wps.length - 1; i++) {
+                this.checkPath(wps[i], wps[i + 1]);
+            }
+        }
+    }
+
+    this.movePointsOutOfAreas = function (wps) {
+        for (var i = 0; i < wps.length; i++) {
+            this.movePointOutOfArea(wps[i]);
+        }
+    }
+
+    this.movePointOutOfArea = function (wp) {
+        var areas = this.areaContainer.restrictedAreas;
+        for (var i = 0; i < areas.length; i++) {
+            if (this.checkIfPointInArea(wp, areas[i])) {
+                this.movePointToCorner(wp, areas[i]);
+            }
+        }
+    }
+
+    this.movePointToCorner = function(wp, area) {
+        var dist1 = Math.abs(wp.X - area.NorthEastX);
+        var dist2 = Math.abs(wp.X - area.SouthWestX);
+        wp.X = dist1 < dist2 ? area.NorthEastX : area.SouthWestX;
+        dist1 = Math.abs(wp.Y - area.NorthEastY);
+        dist2 = Math.abs(wp.Y - area.SouthWestY);
+        wp.Y = dist1 < dist2 ? area.NorthEastY : area.SouthWestY;
+        this.reporter.updateWaypoint(wp);
+        console.log("Moved point ", wp.WaypointName, wp.Id);
+    }
+
+    this.checkIfPointInArea = function (p, area) {
+        return p.X > area.SouthWestX && p.Y > area.SouthWestY && p.X < area.NorthEastX && p.Y < area.NorthEastY;
+    }
+
+    this.checkPath = function (p1, p2) {
+        var areas = this.areaContainer.restrictedAreas;
+        for (var i = 0; i < areas.length; i++) {
+            var area = areas[i];
+            if (this.checkIfIntersect(p1, p2, area)) {
+                toInsert = this.fixPoints(p1, p2, area);
+            }
+        }
+    }
+
+    this.fixPoints = function (p1, p2, area) {
+        
+    }
+
+    this.checkIfIntersect = function (p1, p2, area) {
+        LatLongToXY(p1);
+        LatLongToXY(p2);
+        areaToEuclidean(area);
+        var intersects = checkPathIntersectsRectangle(area.SouthWestX, area.SouthWestY, area.NorthEastX, area.NorthEastY,
+            p1.X, p1.Y, p2.X, p2.Y);
+        if (intersects) console.log("checkIfIntersect found an intersection!");
+        return intersects;
     }
 
     function checkPathIntersectsRectangle(a_rectangleMinX,
@@ -798,6 +872,23 @@ function LatLongToXY(vehicle) {
     vehicle.Y = xy[1];
 }
 
+function areaToEuclidean(area) {
+    var latlon = {
+        Latitude: area.NorthEastLatitude,
+        Longitude: area.NorthEastLongitude
+    }
+    LatLongToXY(latlon);
+    area.NorthEastX = latlon.X;
+    area.NorthEastY = latlon.Y;
+    latlon = {
+        Latitude: area.SouthWestLatitude,
+        Longitude: area.SouthWestLongitude
+    }
+    LatLongToXY(latlon);
+    area.SouthWestX = latlon.X;
+    area.SouthWestY = latlon.Y;
+}
+
 //Uses pythagoream theorem to calculate the distance between two points.
 //Only works if you are using UTM or some equivalent. Does not work on lat longs.
 function calculateDistance(x1, y1, x2, y2) {
@@ -806,6 +897,8 @@ function calculateDistance(x1, y1, x2, y2) {
     var distance = Math.sqrt(dx * dx + dy * dy);
     return distance;
 }
+
+
 
 //Takes the well formed geography and appends the lat and long as doubles, then appends the X and Y we get from the lat and long
 appendLonLatFromDbPoint = function (obj, point) {
