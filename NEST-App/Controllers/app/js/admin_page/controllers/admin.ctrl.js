@@ -136,6 +136,16 @@
             })
         }
 
+        $scope.createMaintenance = function () {
+            $http.put('/api/uavs/createmaintenance/' + $("#desiredMaintenanceCount").val())
+            .success(function (data, status, headers, config) {
+                console.log('created maintenances...')
+          })
+            .error(function (data, status, headers, config) {
+                alert(data + " " + status);
+          });
+        }
+
         $scope.createEmergencyEvent = function () {
             $scope.blockUI();
             var number = Math.floor((Math.random() * ($scope.uavs.length - 1)) + 0);

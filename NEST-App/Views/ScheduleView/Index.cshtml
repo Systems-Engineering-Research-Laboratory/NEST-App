@@ -6,6 +6,8 @@
     ViewBag.Title = "Index";
 }
 
+<style>
+</style>
 <div>
     <h2><u>Schedule</u></h2>
     <dl class="dl-horizontal"></dl>
@@ -33,20 +35,22 @@
                 Delivery Package:
             </th>
         </tr>
- @foreach (var sched in Model)
- {
-        <tr>
+      @foreach (var sched in Model)
+      {
+         <tr>
+             <td>  @(sched.UAV.Callsign.ToString()+":")</td>
              @foreach (var mission in sched.Missions)
              {
-               <td>  @(sched.UAV.Callsign.ToString())</td>
-               <td>  @(mission.EstimatedCompletionTime) </td>
-               <td>  @(mission.ScheduledCompletionTime) </td>
-               <td>  @(mission.Latitude +","+ mission.Longitude) </td>
-               <td>  @(mission.Phase)</td>
-               <td>  @(mission.Payload)</td>
+             <tr>
+                 <td>  @(mission.EstimatedCompletionTime) </td>
+                 <td>  @(mission.ScheduledCompletionTime) </td>
+                 <td>  @(mission.Latitude + "," + mission.Longitude) </td>
+                 <td>  @(mission.Phase)</td>
+                 <td>  @(mission.Payload)</td>
+             </tr>
              }
-            </tr>
-  }
+        </tr>
+      }
  </table>
 <h3>Maintenances:</h3>
 
@@ -65,19 +69,19 @@
                    Time Remaining:
                </th>
            </tr>
- @foreach (var sched in Model)
- {
+    @foreach (var sched in Model)
+    { 
            <tr>
-               @foreach (var maint in sched.Maintenances)
-                {
-                   <td> @(maint.id) </td>
-                   <td> @(maint.last_maintenance) </td>
-                   <td> @(maint.next_maintenance) </td>
-                   <td> @(maint.time_remaining)</td>
-                }
+               @foreach (var maintenance in sched.Maintenances)
+               {
+                   <td> @(maintenance.last_maintenance)</td>
+                   <td> @(maintenance.next_maintenance)</td>
+                   <td> @(maintenance.time_remaining)</td>
+               }
             </tr>
- }
+        }
  </table>
+
 
 
 

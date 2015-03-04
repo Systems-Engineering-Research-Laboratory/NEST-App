@@ -306,6 +306,53 @@ namespace NEST_App.Controllers.Api
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
+        [HttpPut]
+        [ResponseType(typeof(HttpResponseMessage))]
+        [Route("api/uavs/createmaintenance/{num}")]
+        public async Task<HttpResponseMessage> createMaintenance(int num)
+        {
+            var maintenance = new List<Maintenance>();
+            Queue<Schedule> maintQ = new Queue<Schedule>(db.Schedules);
+
+            for (int i = 0; i < num; i++)
+            {
+                var maint = new Maintenance
+                {
+                    last_maintenance = DateTime.Now,
+                    next_maintenance = DateTime.Now,
+                    time_remaining = "5 days",
+                    ScheduleId = 1,
+                    create_date = DateTime.Now,
+                    modified_date = DateTime.Now
+                };
+                maintenance.Add(maint);
+            }
+            db.Maintenances.AddRange(maintenance);
+
+            //grab all unassigned maintenances in the db
+            var unass = from maint in db.Maintenances
+                             where maint.ScheduleId == 1
+                             select maint;
+
+            //assign those maintenances
+            foreach (Maintenance maint in unass)
+            {
+                Schedule m = maintQ.Dequeue();
+                m.Maintenances.Add(maint);
+                maintQ.Enqueue(m);
+            }
+
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateException exc)
+            {
+                System.Diagnostics.Debug.Write(exc);
+            }
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
         /// <summary>
         /// This creates schedules for UAVs that do not have a schedules
         /// </summary>
