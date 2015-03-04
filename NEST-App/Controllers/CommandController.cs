@@ -50,22 +50,23 @@ namespace NEST_App.Controllers
 
         [HttpPost]
         [Route("api/command/hold/{uid}")]
-        [ResponseType(typeof(CMD_NAV_Hover))]
-        public IHttpActionResult PostCMD_NAV_HOLD(int uid, CMD_NAV_Hover jsObject)
+        [ResponseType(typeof(CMD_NAV_Hold))]
+        public IHttpActionResult PostCMD_NAV_HOLD(int uid, CMD_NAV_Hold jsObject)
         {
-            CMD_NAV_Hover cmd_nav_hover = new CMD_NAV_Hover();
-            cmd_nav_hover.Id = jsObject.Id;
-            cmd_nav_hover.Altitude = jsObject.Altitude;
-            cmd_nav_hover.Latitude = jsObject.Latitude;
-            cmd_nav_hover.Longitude = jsObject.Longitude;
-            cmd_nav_hover.UAVId = jsObject.UAVId;
+            CMD_NAV_Hold cmd_nav_hold = new CMD_NAV_Hold();
+            cmd_nav_hold.Id = jsObject.Id;
+            cmd_nav_hold.Altitude = jsObject.Altitude;
+            cmd_nav_hold.Latitude = jsObject.Latitude;
+            cmd_nav_hold.Longitude = jsObject.Longitude;
+            cmd_nav_hold.UAVId = jsObject.UAVId;
+            cmd_nav_hold.Time = jsObject.Time;
 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.CMD_NAV_Hover.Add(cmd_nav_hover);
+            //db.CMD_NAV_Hold.Add(cmd_nav_hold);
             db.SaveChanges();
 
             return Ok();
@@ -98,27 +99,47 @@ namespace NEST_App.Controllers
 
         [HttpPost]
         [Route("api/command/return/{uid}")]
-        [ResponseType(typeof(CMD_DO_Return_To_Base))]
-        public IHttpActionResult PostCMD_DO_LAND(int uid, CMD_DO_Return_To_Base jsObject)
+        [ResponseType(typeof(CMD_NAV_Return))]
+        public IHttpActionResult PostCMD_NAV_RETURN(int uid, CMD_NAV_Return jsObject)
         {
-            CMD_DO_Return_To_Base cmd_do_return = new CMD_DO_Return_To_Base();
-            cmd_do_return.Id = jsObject.Id;
-            cmd_do_return.Latitude = jsObject.Latitude;
-            cmd_do_return.Longitude = jsObject.Longitude;
-            cmd_do_return.UAVId = jsObject.UAVId;
-            cmd_do_return.UseCurrent = jsObject.UseCurrent;
+            CMD_NAV_Return cmd_nav_return = new CMD_NAV_Return();
+            cmd_nav_return.Id = jsObject.Id;
+            cmd_nav_return.Latitude = jsObject.Latitude;
+            cmd_nav_return.Longitude = jsObject.Longitude;
+            cmd_nav_return.UAVId = jsObject.UAVId;
 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.CMD_DO_Return_To_Base.Add(cmd_do_return);
+            db.CMD_NAV_Return.Add(cmd_nav_return);
             db.SaveChanges();
 
             return Ok();
         }
 
+        [HttpPost]
+        [Route("api/command/return/{uid}")]
+        [ResponseType(typeof(CMD_NAV_Adjust))]
+        public IHttpActionResult PostCMD_DO_RETURN(int uid, CMD_NAV_Adjust jsObject)
+        {
+            CMD_NAV_Adjust cmd_nav_adjust = new CMD_NAV_Adjust();
+            cmd_nav_adjust.Id = jsObject.Id;
+            cmd_nav_adjust.Latitude = jsObject.Latitude;
+            cmd_nav_adjust.Longitude = jsObject.Longitude;
+            cmd_nav_adjust.UAVId = jsObject.UAVId;
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            db.CMD_NAV_Adjust.Add(cmd_nav_adjust);
+            db.SaveChanges();
+
+            return Ok();
+        }
 
 
         // GET api/command

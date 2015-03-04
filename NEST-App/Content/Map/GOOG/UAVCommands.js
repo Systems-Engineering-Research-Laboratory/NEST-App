@@ -3,6 +3,8 @@
 var uavCommands = {
  
 
+    //TODO*********FIgure out how to handle ID
+
     /**********NAVIGATIONAL COMMANDS**********/
 
     //Return to base
@@ -12,7 +14,6 @@ var uavCommands = {
             Latitude: coords.Latitude,
             Longitude: coords.Longitude,
             UAVId: uad.Id,
-            UseCurrent: null
         }
         $.ajax({
             type: "POST",
@@ -25,15 +26,15 @@ var uavCommands = {
     },
 
     //Hold position
-    HoldPos: function (uid, uav, coords, alt, throttle) {
+    HoldPos: function (uid, uav, coords, alt, throttle, time) {
         var time /*= user input*/;
         var cmd = {
             Id: 0,
             Altitude: altitude,
             Latitude: coords.Latitude,
             Longitude: coords.Longitude,
-            Throttle: throttle,
-            UAVId: uad.Id
+            UAVId: uad.Id,
+            Time: time
         }
         $.ajax({
             type: "POST",
@@ -107,13 +108,32 @@ var uavCommands = {
     },
 
     //Pass direct control to a pilot
-    SurrenderControl: function (uav){
+    SurrenderControl: function (uid, uav, alt, throttle) {
+        var cmd = {
+            Id: 0,
+            Altitude: alt,
+            Throttle: throttle,
+            UAVId: uav.Id
+        }
+        $.ajax({
+            type: "POST",
+            url: "/api/command/goto/" + uid,
+            data: cmd,
+        });
 
     },
 
 
     /*****NON-NAVIGATIONAL COMMAND*****/
-    NonNav: function (uav) {
+    NonNav: function (uid, uav, coords, alt, throttle) {
+        var cmd = {
+            Id: 0,
+            Altitude: altitude,
+            Latitude: coords.Latitude,
+            Longitude: coords.Longitude,
+            Throttle: throttle,
+            UAVId: uad.Id
+        }
         //adjust parameters
     },
 };

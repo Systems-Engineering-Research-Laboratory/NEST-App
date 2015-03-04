@@ -52,5 +52,8 @@ namespace NEST_App.Models
         public virtual DbSet<MapArea> MapAreaSet { get; set; }
         public virtual DbSet<MapRestricted> MapRestrictedSet { get; set; }
         public virtual DbSet<MapPoint> MapPointSet { get; set; }
+        public virtual DbSet<CMD_NAV_Return> CMD_NAV_Return { get; set; }
+        public virtual DbSet<CMD_NAV_Hold> CMD_NAV_Hold { get; set; }
+        public virtual DbSet<CMD_NAV_Adjust> CMD_NAV_Adjust { get; set; }
     }
 }

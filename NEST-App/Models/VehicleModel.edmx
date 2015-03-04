@@ -844,6 +844,9 @@
             <End Role="User" EntitySet="Users" />
             <End Role="UAV" EntitySet="UAVs" />
           </AssociationSet>
+          <EntitySet Name="CMD_NAV_Return" EntityType="VehicleModel.CMD_NAV_Return" />
+          <EntitySet Name="CMD_NAV_Hold" EntityType="VehicleModel.CMD_NAV_Hold" />
+          <EntitySet Name="CMD_NAV_Adjust" EntityType="VehicleModel.CMD_NAV_Adjust" />
           </EntityContainer>
         <EntityType Name="UAV">
           <Key>
@@ -1391,6 +1394,39 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="CMD_NAV_Return">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Altitude" Type="String" Nullable="false" />
+          <Property Name="Latitude" Type="String" Nullable="false" />
+          <Property Name="Longitude" Type="String" Nullable="false" />
+          <Property Name="Throttle" Type="String" Nullable="false" />
+          <Property Name="UAVId" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_NAV_Hold">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Altitude" Type="String" Nullable="false" />
+          <Property Name="Latitude" Type="String" Nullable="false" />
+          <Property Name="Longitude" Type="String" Nullable="false" />
+          <Property Name="UAVId" Type="String" Nullable="false" />
+          <Property Name="Time" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CMD_NAV_Adjust">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Altitude" Type="String" Nullable="false" />
+          <Property Name="Latitude" Type="String" Nullable="false" />
+          <Property Name="Longitude" Type="String" Nullable="false" />
+          <Property Name="Throttle" Type="String" Nullable="false" />
+          <Property Name="UAVId" Type="String" Nullable="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->

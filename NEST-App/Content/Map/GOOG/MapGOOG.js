@@ -266,6 +266,9 @@ $(document).ready(function () {
             if (evt.ctrlKey) {
                 ctrlDown = true;
             }
+            if (evt.which === 69) {
+                console.log(assignment.getUsername);
+            }
             storedGroups = droneSelection.KeyBinding(selectedDrones, storedGroups, evt);
             // console.log("length in goog is: " + selectedDrones.length);
         }).keyup(function (evt) {

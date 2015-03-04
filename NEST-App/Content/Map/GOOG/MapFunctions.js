@@ -79,7 +79,11 @@
     //Controls context menu selection for UAVs
     UAVContextSelection: function (map, marker, latLng, eventName) {
         var uid = assignment.getUserId();
-        var alt, throttle;
+        //placeholders until UI is implemented
+        var alt = 0;
+        var throttle = 0;
+        var time = 0;
+        /////////////////
         switch (eventName) {
             case 'get_details':
                 window.open("http://localhost:53130/detailview", "_blank");
@@ -88,39 +92,47 @@
             case 'non_nav':
                 if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
                     console.log("You're not the owner");
-                }else{
+                } else {
+                    //create ui
                     uavCommand.NonNav(uid, uav, latLng, alt, throttle);}
                 break;
             case 'hold':
                 if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
                       console.log("You're not the owner");
-                 }else{
+                } else {
+                    //create ui
                     uavCommand.HoldPos(uid, uav, latLng, alt, throttle);
                 }
                 break;
             case 'insert_waypoint':
                 if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
                     console.log("You're not the owner");
-                }else{
+                } else {
+                    //create ui
                 uavCommand.InsertWP(uid, marker.uav, latLng);}
                 break;
             case 'go_to':
                 if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
                     console.log("You're not the owner");
-                }else{
+                } else {
+                    //create ui
                     uavCommand.GoTo(uid, marker.uav, latLng, alt);}
                 break;
             case 'force_land':
                 if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
                     console.log("You're not the owner");
                 }else{
-                uavCommand.ForceLand(uid, marker.uav, latLng, alt, throttle);}
+                    //create ui
+                    uavCommand.ForceLand(uid, marker.uav, latLng, alt, throttle);
+                }
                 break;
             case 'return':
                 if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
                     console.log("You're not the owner");
                 }else{
-                uavCommand.BackToBase(uid, marker.uav, latLng);}
+                    //create ui
+                    uavCommand.BackToBase(uid, marker.uav, latLng);
+                }
                 break;
             default:
                 break;
