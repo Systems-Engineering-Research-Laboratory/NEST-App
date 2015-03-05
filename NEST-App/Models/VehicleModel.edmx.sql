@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 03/03/2015 20:33:52
+-- Date Created: 03/04/2015 12:22:10
 -- Generated from EDMX file: C:\Users\draxi_000\Documents\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
@@ -159,6 +159,15 @@ IF OBJECT_ID(N'[dbo].[MapRestrictedSet]', 'U') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[MapPointSet]', 'U') IS NOT NULL
     DROP TABLE [dbo].[MapPointSet];
+GO
+IF OBJECT_ID(N'[dbo].[CMD_NAV_Return]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[CMD_NAV_Return];
+GO
+IF OBJECT_ID(N'[dbo].[CMD_NAV_Hold]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[CMD_NAV_Hold];
+GO
+IF OBJECT_ID(N'[dbo].[CMD_NAV_Adjust]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[CMD_NAV_Adjust];
 GO
 IF OBJECT_ID(N'[dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover]', 'U') IS NOT NULL
     DROP TABLE [dbo].[CMD_NAV_Waypoint_CMD_NAV_Hover];
@@ -424,10 +433,10 @@ GO
 -- Creating table 'CMD_NAV_Land'
 CREATE TABLE [dbo].[CMD_NAV_Land] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [Altitude] nvarchar(max)  NOT NULL,
-    [Latitude] nvarchar(max)  NOT NULL,
-    [Longitude] nvarchar(max)  NOT NULL,
-    [Throttle] nvarchar(max)  NOT NULL,
+    [Altitude] float  NOT NULL,
+    [Latitude] float  NOT NULL,
+    [Longitude] float  NOT NULL,
+    [Throttle] float  NOT NULL,
     [UAVId] int  NOT NULL
 );
 GO
@@ -522,33 +531,33 @@ GO
 -- Creating table 'CMD_NAV_Return'
 CREATE TABLE [dbo].[CMD_NAV_Return] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [Altitude] nvarchar(max)  NOT NULL,
-    [Latitude] nvarchar(max)  NOT NULL,
-    [Longitude] nvarchar(max)  NOT NULL,
-    [Throttle] nvarchar(max)  NOT NULL,
-    [UAVId] nvarchar(max)  NOT NULL
+    [Altitude] float  NOT NULL,
+    [Latitude] float  NOT NULL,
+    [Longitude] float  NOT NULL,
+    [Throttle] float  NOT NULL,
+    [UAVId] int  NOT NULL
 );
 GO
 
 -- Creating table 'CMD_NAV_Hold'
 CREATE TABLE [dbo].[CMD_NAV_Hold] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [Altitude] nvarchar(max)  NOT NULL,
-    [Latitude] nvarchar(max)  NOT NULL,
-    [Longitude] nvarchar(max)  NOT NULL,
-    [UAVId] nvarchar(max)  NOT NULL,
-    [Time] nvarchar(max)  NOT NULL
+    [Altitude] float  NOT NULL,
+    [Latitude] float  NOT NULL,
+    [Longitude] float  NOT NULL,
+    [UAVId] int  NOT NULL,
+    [Time] float  NOT NULL
 );
 GO
 
 -- Creating table 'CMD_NAV_Adjust'
 CREATE TABLE [dbo].[CMD_NAV_Adjust] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [Altitude] nvarchar(max)  NOT NULL,
-    [Latitude] nvarchar(max)  NOT NULL,
-    [Longitude] nvarchar(max)  NOT NULL,
-    [Throttle] nvarchar(max)  NOT NULL,
-    [UAVId] nvarchar(max)  NOT NULL
+    [Altitude] float  NOT NULL,
+    [Latitude] float  NOT NULL,
+    [Longitude] float  NOT NULL,
+    [Throttle] float  NOT NULL,
+    [UAVId] int  NOT NULL
 );
 GO
 

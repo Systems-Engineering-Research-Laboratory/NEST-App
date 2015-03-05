@@ -11,8 +11,8 @@ var uavCommands = {
     BackToBase: function (uav, coords) {
         var cmd = {
             Id: 0,
-            Latitude: coords.Latitude,
-            Longitude: coords.Longitude,
+            Latitude: coords.lat(),
+            Longitude: coords.lng(),
             UAVId: uad.Id,
         }
         $.ajax({
@@ -26,20 +26,30 @@ var uavCommands = {
     },
 
     //Hold position
-    HoldPos: function (uid, uav, coords, alt, throttle, time) {
-        var time /*= user input*/;
-        var cmd = {
-            Id: 0,
-            Altitude: alt,
-            Latitude: coords.Latitude,
-            Longitude: coords.Longitude,
-            UAVId: uav.Id,
-            Time: time
-        }
+    HoldPos: function (uid, uav, coords, alt, throttle) {
+        var time = 0 /*= user input*/;
+        console.log("Latitude is: " + coords.lat());
+       /* var cmd = JSON.stringify(
+            {
+                "Id": 0,
+                "Altitude": alt,
+                "Latitude": coords.lat(),
+                "Longitude": coords.lng(),
+                "UAVId": uav.Id,
+                "Time": time
+            });
+            */
         $.ajax({
             type: "POST",
             url: "/api/command/hold/" + uid,
-            data: cmd,
+            data: {
+                Id: 0,
+                Altitude: alt,
+                Latitude: coords.lat(),
+                Longitude: coords.lng(),
+                UAVId: uav.Id,
+                Time: time
+            }
         });
 
         //set mission phase to "holding"
@@ -69,8 +79,8 @@ var uavCommands = {
         var cmd = {
             Id: 0,
             Altitude: alt,
-            Latitude: coords.Latitude,
-            Longitude: coords.Longitude,
+            Latitude: coords.lat(),
+            Longitude: coords.lng(),
             Throttle: throttle,
             UAVId: uad.Id
         }
@@ -96,8 +106,8 @@ var uavCommands = {
         var cmd = {
             Id: 0,
             Altitude: alt,
-            Latitude: coords.Latitude,
-            Longitude: coords.Longitude,
+            Latitude: coords.lat(),
+            Longitude: coords.lng(),
             UAVId: uav.Id
         };
         $.ajax({
@@ -129,8 +139,8 @@ var uavCommands = {
         var cmd = {
             Id: 0,
             Altitude: alt,
-            Latitude: coords.Latitude,
-            Longitude: coords.Longitude,
+            Latitude: coords.lat(),
+            Longitude: coords.lng(),
             Throttle: throttle,
             UAVId: uad.Id
         }

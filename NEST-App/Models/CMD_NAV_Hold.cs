@@ -15,10 +15,10 @@ namespace NEST_App.Models
     public partial class CMD_NAV_Hold
     {
         public int Id { get; set; }
-        public string Altitude { get; set; }
-        public string Latitude { get; set; }
-        public string Longitude { get; set; }
-        public string UAVId { get; set; }
-        public string Time { get; set; }
+        public double Altitude { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public int UAVId { get; set; }
+        public double Time { get; set; }
     }
 }
