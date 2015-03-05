@@ -285,7 +285,7 @@ namespace NEST_App.Controllers.Api
             {
                 Schedule s = schedQ.Dequeue();
                 s.Missions.Add(mis);
-                if(s.CurrentMission == null)
+                if (s.CurrentMission == null)
                 {
                     //This schedule had no current mission, so just assign it one
                     s.CurrentMission = mis.id;
@@ -306,6 +306,36 @@ namespace NEST_App.Controllers.Api
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
+        [HttpPut]
+        [ResponseType(typeof(HttpResponseMessage))]
+        [Route("api/uavs/createmaintenance/{num}")]
+        public async Task<HttpResponseMessage> createMaintenance(int num)
+        {
+            var maintenance = new List<Maintenance>();
+            Queue<Schedule> maintQ = new Queue<Schedule>(db.Schedules);
+
+            for (int i = 0; i < num; i++)
+            {
+                var maint = new Maintenance
+                {
+                    last_maintenance = DateTime.Now,
+                    next_maintenance = DateTime.Now,
+                    time_remaining = "5 days",
+                    create_date = DateTime.Now,
+                    modified_date = DateTime.Now
+                };
+                var sched = maintQ.Dequeue();
+                sched.Maintenances.Add(maint);
+                db.Entry(sched).State = System.Data.Entity.EntityState.Modified;
+                maintQ.Enqueue(sched);
+            }
+            db.Maintenances.AddRange(maintenance);
+
+            await db.SaveChangesAsync();
+
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
         /// <summary>
         /// This creates schedules for UAVs that do not have a schedules
         /// </summary>
@@ -315,7 +345,7 @@ namespace NEST_App.Controllers.Api
             var uavsWithNoScheds = from u in db.UAVs
                                    where u.Schedules.Count == 0
                                    select u;
-            foreach(UAV u in uavsWithNoScheds)
+            foreach (UAV u in uavsWithNoScheds)
             {
                 u.Schedules = new List<Schedule>
                 {
@@ -327,7 +357,7 @@ namespace NEST_App.Controllers.Api
                     }
                 };
             }
-            
+
             await db.SaveChangesAsync();
 
             return true;
