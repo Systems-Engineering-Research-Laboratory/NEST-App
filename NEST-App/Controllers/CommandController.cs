@@ -53,6 +53,7 @@ namespace NEST_App.Controllers
         [ResponseType(typeof(CMD_NAV_Hold))]
         public IHttpActionResult PostCMD_NAV_HOLD(int uid, CMD_NAV_Hold jsObject)
         {
+
             CMD_NAV_Hold cmd_nav_hold = new CMD_NAV_Hold();
             cmd_nav_hold.Id = jsObject.Id;
             cmd_nav_hold.Altitude = jsObject.Altitude;
@@ -60,15 +61,31 @@ namespace NEST_App.Controllers
             cmd_nav_hold.Longitude = jsObject.Longitude;
             cmd_nav_hold.UAVId = jsObject.UAVId;
             cmd_nav_hold.Time = jsObject.Time;
-
+            
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            
 
-            //db.CMD_NAV_Hold.Add(cmd_nav_hold);
-            db.SaveChanges();
-            System.Diagnostics.Debug.Write("Everything worked!!");
+            try
+            {
+
+                db.CMD_NAV_Hold.Add(cmd_nav_hold);
+                db.SaveChanges();
+            }
+            catch (DbEntityValidationException e)
+            {
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    System.Diagnostics.Debug.Write("Entity of type " + eve.Entry.Entity.GetType().Name+" in state "+eve.Entry.State+ " has the following validation errors:");
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        System.Diagnostics.Debug.Write("- Property: " + ve.PropertyName + ", Error: " + ve.ErrorMessage);
+                    }
+                }
+                throw;
+            }
             return Ok();
         }
         

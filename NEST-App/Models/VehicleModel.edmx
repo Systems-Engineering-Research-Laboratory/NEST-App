@@ -369,10 +369,10 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Altitude" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Latitude" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Longitude" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Throttle" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Altitude" Type="float" Nullable="false" />
+    <Property Name="Latitude" Type="float" Nullable="false" />
+    <Property Name="Longitude" Type="float" Nullable="false" />
+    <Property Name="Throttle" Type="float" Nullable="false" />
     <Property Name="UAVId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="CMD_ACK">
@@ -467,33 +467,33 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Altitude" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Latitude" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Longitude" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Throttle" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="UAVId" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Altitude" Type="float" Nullable="false" />
+    <Property Name="Latitude" Type="float" Nullable="false" />
+    <Property Name="Longitude" Type="float" Nullable="false" />
+    <Property Name="Throttle" Type="float" Nullable="false" />
+    <Property Name="UAVId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="CMD_NAV_Hold">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Altitude" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Latitude" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Longitude" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="UAVId" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Time" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Altitude" Type="float" Nullable="false" />
+    <Property Name="Latitude" Type="float" Nullable="false" />
+    <Property Name="Longitude" Type="float" Nullable="false" />
+    <Property Name="UAVId" Type="int" Nullable="false" />
+    <Property Name="Time" Type="float" Nullable="false" />
   </EntityType>
   <EntityType Name="CMD_NAV_Adjust">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Altitude" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Latitude" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Longitude" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Throttle" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="UAVId" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Altitude" Type="float" Nullable="false" />
+    <Property Name="Latitude" Type="float" Nullable="false" />
+    <Property Name="Longitude" Type="float" Nullable="false" />
+    <Property Name="Throttle" Type="float" Nullable="false" />
+    <Property Name="UAVId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="CMD_NAV_Waypoint_CMD_NAV_Hover">
     <Key>
@@ -1270,10 +1270,10 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Altitude" Type="String" Nullable="false" />
-          <Property Name="Latitude" Type="String" Nullable="false" />
-          <Property Name="Longitude" Type="String" Nullable="false" />
-          <Property Name="Throttle" Type="String" Nullable="false" />
+          <Property Name="Altitude" Type="Double" Nullable="false" />
+          <Property Name="Latitude" Type="Double" Nullable="false" />
+          <Property Name="Longitude" Type="Double" Nullable="false" />
+          <Property Name="Throttle" Type="Double" Nullable="false" />
           <Property Name="UAVId" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="CMD_ACK">
@@ -1435,33 +1435,33 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Altitude" Type="String" Nullable="false" />
-          <Property Name="Latitude" Type="String" Nullable="false" />
-          <Property Name="Longitude" Type="String" Nullable="false" />
-          <Property Name="Throttle" Type="String" Nullable="false" />
-          <Property Name="UAVId" Type="String" Nullable="false" />
+          <Property Name="Altitude" Type="Double" Nullable="false" />
+          <Property Name="Latitude" Type="Double" Nullable="false" />
+          <Property Name="Longitude" Type="Double" Nullable="false" />
+          <Property Name="Throttle" Type="Double" Nullable="false" />
+          <Property Name="UAVId" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="CMD_NAV_Hold">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Altitude" Type="String" Nullable="false" />
-          <Property Name="Latitude" Type="String" Nullable="false" />
-          <Property Name="Longitude" Type="String" Nullable="false" />
-          <Property Name="UAVId" Type="String" Nullable="false" />
-          <Property Name="Time" Type="String" Nullable="false" />
+          <Property Name="Altitude" Type="Double" Nullable="false" />
+          <Property Name="Latitude" Type="Double" Nullable="false" />
+          <Property Name="Longitude" Type="Double" Nullable="false" />
+          <Property Name="UAVId" Type="Int32" Nullable="false" />
+          <Property Name="Time" Type="Double" Nullable="false" />
         </EntityType>
         <EntityType Name="CMD_NAV_Adjust">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Altitude" Type="String" Nullable="false" />
-          <Property Name="Latitude" Type="String" Nullable="false" />
-          <Property Name="Longitude" Type="String" Nullable="false" />
-          <Property Name="Throttle" Type="String" Nullable="false" />
-          <Property Name="UAVId" Type="String" Nullable="false" />
+          <Property Name="Altitude" Type="Double" Nullable="false" />
+          <Property Name="Latitude" Type="Double" Nullable="false" />
+          <Property Name="Longitude" Type="Double" Nullable="false" />
+          <Property Name="Throttle" Type="Double" Nullable="false" />
+          <Property Name="UAVId" Type="Int32" Nullable="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
