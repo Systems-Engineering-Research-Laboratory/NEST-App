@@ -9,16 +9,15 @@ var uavCommands = {
 
     //Return to base
     BackToBase: function (uav, coords) {
-        var cmd = {
-            Id: 0,
-            Latitude: coords.lat(),
-            Longitude: coords.lng(),
-            UAVId: uad.Id,
-        }
         $.ajax({
             type: "POST",
             url: "/api/command/return/" + uid,
-            data: cmd,
+            data: {
+                Id: 0,
+                Latitude: coords.lat(),
+                Longitude: coords.lng(),
+                UAVId: uad.Id,
+            }
         });
         //clear all waypoints
         //change mission phase to "returning"
@@ -76,18 +75,17 @@ var uavCommands = {
 
     //Immediately force a landing
     ForceLand: function (uid, uav, coords, alt, throttle) {
-        var cmd = {
-            Id: 0,
-            Altitude: alt,
-            Latitude: coords.lat(),
-            Longitude: coords.lng(),
-            Throttle: throttle,
-            UAVId: uad.Id
-        }
         $.ajax({
             type: "POST",
             url: "/api/command/land/" + uid,
-            data: cmd,
+            data: {
+                Id: 0,
+                Altitude: alt,
+                Latitude: coords.lat(),
+                Longitude: coords.lng(),
+                Throttle: throttle,
+                UAVId: uad.Id
+            }
         });
         //specify a location to land, maybe by click?
         //set mission phase to "landing"
@@ -103,32 +101,30 @@ var uavCommands = {
 
     //Send UAV to these coordinates
     GoTo: function (uid, uav, coords, alt) {
-        var cmd = {
-            Id: 0,
-            Altitude: alt,
-            Latitude: coords.lat(),
-            Longitude: coords.lng(),
-            UAVId: uav.Id
-        };
         $.ajax({
             type: "POST",
             url: "/api/command/goto/"+uid,
-            data: cmd,
+            data: {
+                Id: 0,
+                Altitude: alt,
+                Latitude: coords.lat(),
+                Longitude: coords.lng(),
+                UAVId: uav.Id
+            }
         });
     },
 
     //Pass direct control to a pilot
     SurrenderControl: function (uid, uav, alt, throttle) {
-        var cmd = {
-            Id: 0,
-            Altitude: alt,
-            Throttle: throttle,
-            UAVId: uav.Id
-        }
         $.ajax({
             type: "POST",
             url: "/api/command/goto/" + uid,
-            data: cmd,
+            data: {
+                Id: 0,
+                Altitude: alt,
+                Throttle: throttle,
+                UAVId: uav.Id
+            }
         });
 
     },
