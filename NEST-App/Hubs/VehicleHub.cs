@@ -12,6 +12,15 @@ namespace NEST_App.Hubs
 {
     public class VehicleHub : Hub
     {
+        public void UavWasAssigned(UAV uav)
+        {
+            Clients.All.uavWasAssigned(uav);
+        }
+
+        public void UavWasRejected(UAV uav)
+        {
+            Clients.All.uavWasRejected(uav);
+        }
 
         public Task JoinGroup(string groupName){
             return Groups.Add(Context.ConnectionId, groupName);
