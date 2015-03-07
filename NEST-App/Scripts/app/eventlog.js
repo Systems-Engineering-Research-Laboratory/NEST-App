@@ -20,12 +20,71 @@ eventlogapp
         //set up events list
         $scope.events = [];
 
+        // begin uav hub and connect
+        $scope.uavHub = new Hub("VehicleHub", {
+            listeners: {
+                'uavWasAssigned': function (uav) {
+                    if (typeof uav.Id != "undefined") {
+                        var assignmentEvt = {
+                            uav_id: uav.Id,
+                            uav_callsign: uav.Callsign,
+                            message: "Operator " + uav.User.username + " has been assigned.",
+                            operator_screen_name: uav.User.username,
+                            create_date: uav.create_date
+                        };
+                        $scope.events.push(assignmentEvt);
+                        $scope.$apply();
+                    }
+                },
+                'uavWasRejected': function (uav) {
+                    if (typeof uav.Id != "undefined") {
+                        var assignmentEvt = {
+                            uav_id: uav.Id,
+                            uav_callsign: uav.Callsign,
+                            message: "Operator " + uav.User.username + " has rejected assignment.",
+                            operator_screen_name: uav.User.username,
+                            create_date: uav.create_date
+                        };
+                        $scope.events.push(assignmentEvt);
+                        $scope.$apply();
+                    }
+                }
+            },
+            methods: ["uavWasAssigned", "uavWasRejected"],
+            errorHandler: function (err) {
+                console.log(err);
+            }
+        });
+        $scope.fakeEmitAsmt = function () {
+            var fakeUav = {
+                Id: 1
+                , Callsign: "BRAVO195"
+                , create_date: "10/22/1993"
+                , User: {
+                    username: "varatep"
+                }
+            };
+            $scope.uavHub.uavWasAssigned(fakeUav);
+        };
+        $scope.fakeEmitRjct = function () {
+            var fakeUav = {
+                Id: 1
+                , Callsign: "BRAVO195"
+                , create_date: "10/22/1993"
+                , User: {
+                    username: "varatep"
+                }
+            };
+            $scope.uavHub.uavWasRejected(fakeUav);
+        };
         // begin hub and connect
         $scope.hub = new Hub('eventLogHub', {
             listeners: {
                 'newEvent': function (evt) {
                     console.log(evt);
                     if (typeof evt.uav_id != "undefined") {
+                        console.log(evt);
+
                         $scope.events.push(evt);
                         $scope.$apply();
                     }
@@ -34,7 +93,7 @@ eventlogapp
                     console.log(msg);
                 }
             },
-            methods: ['emit', 'hello'],
+            methods: ["emit", "hello"],
             errorHandler: function (err) {
                 console.log(err);
             }

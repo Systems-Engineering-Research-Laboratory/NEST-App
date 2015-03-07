@@ -60,7 +60,7 @@ function WaypointManager() {
         if (miss) {
             if (marker.selected) {
                 //This was a selection, we need to display the waypoints
-                this.displayWaypointsPerMission(miss)
+                this.displayWaypointsPerMission(miss);
             }
             else {
                 //This was a deslection, we need to hide the waypoints.
@@ -105,7 +105,7 @@ function WaypointManager() {
 
     //This function displays the waypoints. There's three cases to address: 
     //1. We don't have the waypoints stored in the mission
-    //2. The waypoints are stored, but we created the drawings yet
+    //2. The waypoints are stored, but we haven't created the drawings yet
     //3. The drawings were created already.
     this.displayWaypointsPerMission = function (mission) {
         if (!mission.Waypoints) {

@@ -361,11 +361,3 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].Id].marker.setMap(map);
     }
 }
-
-function Simulation() {
-    window.open("localhost:53130/Sim");
-}
-
-function Adminview() {
-    window.open("localhost:53130/adminview");
-}
