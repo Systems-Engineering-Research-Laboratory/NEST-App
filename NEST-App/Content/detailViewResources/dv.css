@@ -184,3 +184,75 @@
         img[src="http://www.google.com/intl/en_us/mapfiles/close.gif"] {
         display: none;
     }
+
+        .drop_ul_outside{
+  border: none;
+  text-align: center;
+  display: inline;
+  margin: 0;
+  padding: 15px 4px 17px 0;
+  list-style: none;
+  border-radius: 8px;
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+}
+
+.drop_li_outside{
+  font-family: 'Arvo', sans-serif;
+  font-size: 18px;
+  display: inline-block;
+  position: relative;
+  padding: 11px 20px;
+  cursor: pointer;
+  background-color: #0a074a;
+  color: #fff;
+  border-radius: 8px;
+}
+
+.drop_ul_inside{
+  padding: 0;
+  position: absolute;
+  top: 48px;
+  left: 0;
+  width: 342px;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transiton: opacity 0.4s;
+}
+
+.drop_li_inside { 
+  text-align: center;
+  padding: 5px;
+  border-radius: 8px;
+  background: #0a074a; 
+  display: block; 
+  color: #fff;
+  text-shadow: 0 -1px 0 #000;
+  /*border: 1px solid white;*/
+  border-bottom: none;
+}
+
+.drop_li_outside:hover {
+  background: #fff;
+  color: #0a074a;
+  border: 2px solid #0a074a;
+}
+
+.drop_li_inside:hover { 
+    background: rgba(233, 233, 234, 0.95);
+    -webkit-transition: all 0.4s;
+     border: 2px solid #0a074a;
+     color: black;
+}
+
+.drop_li_outside:hover ul {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  -webkit-transiton: all 0.4s;
+}
+
+
