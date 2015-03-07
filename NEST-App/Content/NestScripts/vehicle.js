@@ -643,12 +643,13 @@ function PathGenerator(areaContainer, reporter) {
                 var cands = this.checkPath(wps[i], wps[i + 1]);
                 if (cands) {
                     insertMultiPointsIntoList(wps, cands, i);
+                    i--; //Recheck the old first point with the new first point
                 }
             }
         }
     }
 
-    
+
 
     this.movePointsOutOfAreas = function (wps) {
         for (var i = 0; i < wps.length; i++) {
@@ -698,30 +699,55 @@ function PathGenerator(areaContainer, reporter) {
 
     //candidates is an array of arrays of points (max 1 or 2)
     this.checkCandidates = function (p1, p2, candidates) {
-        var goodCandidate = -1;
         var areas = this.areaContainer.restrictedAreas;
-        for (var i = 0; i < candidates.length; i++) {
-            var pts = candidates[i];
-            for (var j = 0; j < areas.length; j++) {
-                var area = areas[j];
-                var runningBool = true;
-                runningBool = runningBool && !this.checkIfIntersect(p1, pts[0], area);
-                if (pts.length == 2) {
-                    runningBool = runningBool && !this.checkIfIntersect(pts[0], pts[1], area);
-                    runningBool = runningBool && !this.checkIfIntersect(pts[1], p2, area);
-                }
-                else {
-                    runningBool = runningBool && !this.checkIfIntersect(pts[0], p2, area);
-                }
-                if (!runningBool) {
-                    break;
-                }
+        var candPerms = permute(candidates);
+        for (var i = 0; i < candPerms.length; i++) {
+            perm = candPerms[i];
+            var path = [];
+            for (var j = 0; j < perm.length; j++) {
+                path = path.concat(perm[j]);
             }
-            if (runningBool) {
-                return pts;
-            }
+            var isPathGood = this.checkCandidatePath(p1, p2, path);
+            if (isPathGood) return path;
         }
         return null;
+    }
+
+    this.checkCandidatePath = function (p1, p2, pts) {
+        var areas = this.areaContainer.restrictedAreas;
+        for (var j = 0; j < areas.length; j++) {
+            var area = areas[j];
+            var runningBool = true;
+            runningBool = runningBool && !this.checkIfIntersect(p1, pts[0], area);
+            for (var i = 0; i < pts.length - 1; i++) {
+                runningBool = runningBool && !this.checkIfIntersect(pts[i], pts[i + 1], area);
+            }
+            runningBool = runningBool && !this.checkIfIntersect(pts[pts.length - 1], p2, area);
+            if (!runningBool) {
+                break;
+            }
+        }
+        return runningBool;
+    }
+
+    function permute(input) {
+        var permArr = [],
+        usedChars = [];
+        function main() {
+            var i, ch;
+            for (i = 0; i < input.length; i++) {
+                ch = input.splice(i, 1)[0];
+                usedChars.push(ch);
+                if (input.length == 0) {
+                    permArr.push(usedChars.slice());
+                }
+                main();
+                input.splice(i, 0, ch);
+                usedChars.pop();
+            }
+            return permArr;
+        }
+        return main();
     }
 
     this.fixPoints = function (p1, p2, area) {
@@ -735,12 +761,12 @@ function PathGenerator(areaContainer, reporter) {
             intersectsSide(area.SouthWestX, area.NorthEastX, area.SouthWestY, p1.X, p1.Y, p2.X, p2.Y),
         ];
         var sides = [];
-        for (var i = 0; i < ints.length; i++){
-            if(ints[i]){
+        for (var i = 0; i < ints.length; i++) {
+            if (ints[i]) {
                 sides.push(i);
             }
         }
-        if (sides[1] - sides[0] == 1 || sides[0] == 0 && sides[1] == 1) {
+        if (sides[1] - sides[0] == 1 || sides[0] == 0 && sides[1] == 3) {
             //two adjacent sides that share a corner
             if (sides[1] % 2 == 0) {
                 //Make sure that sides[0] is always an x 
@@ -1014,8 +1040,8 @@ appendLonLatFromDbPoint = function (obj, point) {
 }
 
 function findWaypointById(wps, id) {
-    for(var i = 0; i < wps.length; i++ ){
-        if(wps[i].Id == id) {
+    for (var i = 0; i < wps.length; i++) {
+        if (wps[i].Id == id) {
             return wps[i];
         }
     }
