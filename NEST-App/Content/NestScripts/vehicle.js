@@ -614,6 +614,13 @@ function PathGenerator(areaContainer, reporter) {
         }
     }
 
+    function insertMultiPointsIntoList(wps, cands, after) {
+        for (var i = 0; i < cands.length; i++) {
+            wps.splice(after + 1, 0, cands[i]);
+            after++;
+        }
+    }
+
 
     this.validatePoint = function (testPoint) {
         return true;
@@ -633,10 +640,15 @@ function PathGenerator(areaContainer, reporter) {
         this.movePointsOutOfAreas(wps);
         if (this.areaContainer.newRestrictedArea) {
             for (var i = 0; i < wps.length - 1; i++) {
-                this.checkPath(wps[i], wps[i + 1]);
+                var cands = this.checkPath(wps[i], wps[i + 1]);
+                if (cands) {
+                    insertMultiPointsIntoList(wps, cands, i);
+                }
             }
         }
     }
+
+    
 
     this.movePointsOutOfAreas = function (wps) {
         for (var i = 0; i < wps.length; i++) {
@@ -670,22 +682,101 @@ function PathGenerator(areaContainer, reporter) {
 
     this.checkPath = function (p1, p2) {
         var areas = this.areaContainer.restrictedAreas;
+        var candidates = [];
         for (var i = 0; i < areas.length; i++) {
             var area = areas[i];
             if (this.checkIfIntersect(p1, p2, area)) {
                 toInsert = this.fixPoints(p1, p2, area);
+                candidates.push(toInsert);
             }
         }
+        var goodCands = this.checkCandidates(p1, p2, candidates);
+        if (goodCands) {
+            return goodCands;
+        }
+    }
+
+    //candidates is an array of arrays of points (max 1 or 2)
+    this.checkCandidates = function (p1, p2, candidates) {
+        var goodCandidate = -1;
+        var areas = this.areaContainer.restrictedAreas;
+        for (var i = 0; i < candidates.length; i++) {
+            var pts = candidates[i];
+            for (var j = 0; j < areas.length; j++) {
+                var area = areas[j];
+                var runningBool = true;
+                runningBool = runningBool && !this.checkIfIntersect(p1, pts[0], area);
+                if (pts.length == 2) {
+                    runningBool = runningBool && !this.checkIfIntersect(pts[0], pts[1], area);
+                    runningBool = runningBool && !this.checkIfIntersect(pts[1], p2, area);
+                }
+                else {
+                    runningBool = runningBool && !this.checkIfIntersect(pts[0], p2, area);
+                }
+                if (!runningBool) {
+                    break;
+                }
+            }
+            if (runningBool) {
+                return pts;
+            }
+        }
+        return null;
     }
 
     this.fixPoints = function (p1, p2, area) {
         //Idea:
         //case 1: intersect two sides that share a corner, set a new waypoint on that corner
         //case 2: intersects two opposite sides, deal with that somehow
-        console.log(intersectsSide(area.SouthWestX, area.NorthEastX, area.SouthWestY, p1.X, p1.Y, p2.X, p2.Y));
-        console.log(intersectsSide(area.SouthWestX, area.NorthEastX, area.NorthEastY, p1.X, p1.Y, p2.X, p2.Y));
-        console.log(intersectsSide(area.SouthWestY, area.NorthEastY, area.SouthWestX, p1.Y, p1.X, p2.Y, p2.X));
-        console.log(intersectsSide(area.SouthWestY, area.NorthEastY, area.NorthEastX, p1.Y, p1.X, p2.Y, p2.X));
+        var ints = [
+            intersectsSide(area.SouthWestY, area.NorthEastY, area.NorthEastX, p1.Y, p1.X, p2.Y, p2.X),
+            intersectsSide(area.SouthWestX, area.NorthEastX, area.NorthEastY, p1.X, p1.Y, p2.X, p2.Y),
+            intersectsSide(area.SouthWestY, area.NorthEastY, area.SouthWestX, p1.Y, p1.X, p2.Y, p2.X),
+            intersectsSide(area.SouthWestX, area.NorthEastX, area.SouthWestY, p1.X, p1.Y, p2.X, p2.Y),
+        ];
+        var sides = [];
+        for (var i = 0; i < ints.length; i++){
+            if(ints[i]){
+                sides.push(i);
+            }
+        }
+        if (sides[1] - sides[0] == 1 || sides[0] == 0 && sides[1] == 1) {
+            //two adjacent sides that share a corner
+            if (sides[1] % 2 == 0) {
+                //Make sure that sides[0] is always an x 
+                var tmp = sides[1];
+                sides[1] = sides[0];
+                sides[0] = tmp;
+            }
+            var xys = [area.NorthEastX + 1, area.NorthEastY + 1, area.SouthWestX - 1, area.SouthWestY - 1];
+            var selectedCorner = {
+                X: xys[sides[0]],
+                Y: xys[sides[1]],
+            }
+            XYToLatLong(selectedCorner);
+            return [new Waypoint(selectedCorner)];
+        }
+        else {
+            var pt1 = {
+                X: area.NorthEastX + 1,
+                Y: area.NorthEastY + 1,
+            }
+            if (sides[0] == 0) {
+                var pt2 = {
+                    X: area.SouthWestX - 1,
+                    Y: area.NorthEastY + 1,
+                }
+            }
+            else {
+                var pt2 = {
+                    X: area.NorthEastX + 1,
+                    Y: area.SouthWestY - 1,
+                }
+            }
+            XYToLatLong(pt1);
+            XYToLatLong(pt2);
+            return [new Waypoint(pt1), new Waypoint(pt2)];
+        }
     }
 
     function intersectsSide(axMin, axMax, y, px1, py1, px2, py2) {
@@ -920,4 +1011,13 @@ appendLonLatFromDbPoint = function (obj, point) {
     obj.Altitude = parseFloat(results[2]);
     //Append the XY mercator values
     LatLongToXY(obj);
+}
+
+function findWaypointById(wps, id) {
+    for(var i = 0; i < wps.length; i++ ){
+        if(wps[i].Id == id) {
+            return wps[i];
+        }
+    }
+    return null;
 }

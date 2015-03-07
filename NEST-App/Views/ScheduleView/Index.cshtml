@@ -37,17 +37,15 @@
         </tr>
       @foreach (var sched in Model)
       {
-         <tr>
-             <td>  @(sched.UAV.Callsign.ToString()+":")</td>
+          <tr>
              @foreach (var mission in sched.Missions)
              {
-             <tr>
+                 <td>  @(sched.UAV.Callsign.ToString() + ":")</td>
                  <td>  @(mission.EstimatedCompletionTime) </td>
                  <td>  @(mission.ScheduledCompletionTime) </td>
                  <td>  @(mission.Latitude + "," + mission.Longitude) </td>
                  <td>  @(mission.Phase)</td>
                  <td>  @(mission.Payload)</td>
-             </tr>
              }
         </tr>
       }
@@ -71,12 +69,13 @@
            </tr>
     @foreach (var sched in Model)
     { 
-           <tr>
+            <tr>
                @foreach (var maintenance in sched.Maintenances)
                {
+                   <td> @(sched.UAV.Callsign.ToString() + ":")</td>
                    <td> @(maintenance.last_maintenance)</td>
-                   <td> @(maintenance.next_maintenance)</td>
-                   <td> @(maintenance.time_remaining)</td>
+                   <td> @(maintenance.last_maintenance.AddMonths(1))</td>
+                   <td> @((maintenance.last_maintenance.AddMonths(1) - DateTime.Today).ToString() + " days")</td>
                }
             </tr>
         }

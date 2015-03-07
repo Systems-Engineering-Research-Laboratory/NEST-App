@@ -186,7 +186,6 @@ namespace NEST_App.Controllers.Api
             return line;
         }
 
-
         //GET: api/uavs/getuavinfo
         [HttpGet]
         [Route("api/uavs/getuavinfo")]
@@ -306,6 +305,15 @@ namespace NEST_App.Controllers.Api
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
+        DateTime RandomDay()
+        {
+            DateTime init = DateTime.Today.AddMonths(-1);
+            Random gen = new Random();
+
+            int range = (DateTime.Today - init).Days;
+            return init.AddDays(gen.Next(range));
+        }
+
         [HttpPut]
         [ResponseType(typeof(HttpResponseMessage))]
         [Route("api/uavs/createmaintenance/{num}")]
@@ -318,12 +326,14 @@ namespace NEST_App.Controllers.Api
             {
                 var maint = new Maintenance
                 {
-                    last_maintenance = DateTime.Now,
-                    next_maintenance = DateTime.Now,
-                    time_remaining = "5 days",
-                    create_date = DateTime.Now,
-                    modified_date = DateTime.Now
+                    ScheduleId = i,
+                    last_maintenance = RandomDay(),
+                    next_maintenance = DateTime.Today,
+                    time_remaining = DateTime.Today.ToString(),
+                    create_date = DateTime.Today,
+                    modified_date = DateTime.Today,
                 };
+
                 var sched = maintQ.Dequeue();
                 sched.Maintenances.Add(maint);
                 db.Entry(sched).State = System.Data.Entity.EntityState.Modified;
@@ -332,7 +342,7 @@ namespace NEST_App.Controllers.Api
             db.Maintenances.AddRange(maintenance);
 
             await db.SaveChangesAsync();
-
+             
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 

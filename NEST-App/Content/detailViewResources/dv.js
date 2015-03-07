@@ -197,13 +197,14 @@ $(document).ready(function () {
 
             document.getElementById(evt.uav_id).style.backgroundColor = "red";
             uavs[evt.uav_id].CurrentEvent = evt;
+            uavs[evt.uav_id].setEventOnce = 0;
         }
     }
-    
+
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         
-        uavs[vehicle.Id] = UpdateVehicle(uavs[vehicle.Id], vehicle);
+        
         uavs[vehicle.Id].Id = vehicle.Id;
         uavs[vehicle.Id].Battery = vehicle.BatteryLevel;
         uavs[vehicle.Id].Alt = vehicle.Altitude;
@@ -217,11 +218,16 @@ $(document).ready(function () {
             document.getElementById("curr_alt").innerHTML = '　ALT:　　 ' + vehicle.Altitude;
             document.getElementById("battery").innerHTML = 'Battery: ' + vehicle.BatteryLevel.toFixed(3) + "%";
             var latlng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
-            uavs[vehicle.Id].marker.setMap(map);
-            uavs[vehicle.Id].marker.setVisible(true);
-            if (uavs[vehicle.Id].CurrentEvent != null) {
+            if (uavs[vehicle.Id].setMapOnce == 0) {
+                uavs[vehicle.Id].marker.setMap(map);
+                uavs[vehicle.Id].marker.setVisible(true);
+                uavs[vehicle.Id].setMapOnce = 1;
+            }
+            uavs[vehicle.Id] = UpdateVehicle(uavs[vehicle.Id], vehicle);
+            if (uavs[vehicle.Id].CurrentEvent != null && uavs[vehicle.Id].setEventOnce == 0) {
                 infoboxContainer[vehicle.Id].infobox.open(map, uavs[vehicle.Id].marker);
                 infoboxContainer[vehicle.Id].infoboxAlert.open(map, uavs[vehicle.Id].marker);
+                uavs[vehicle.Id].setEventOnce = 1;
             }
           
             if (uavs[vehicle.Id].Id != previous_id && previous_id != null) {
@@ -229,14 +235,22 @@ $(document).ready(function () {
                     var selector = parseInt(previous_id);
                     uavs[selector].marker.setMap(null);
                     uavs[selector].marker.setVisible(false);
-                    infoboxContainer[selector].infobox.close();
-                    infoboxContainer[selector].infoboxAlert.close();
+                    if (uavs[selector].CurrentEvent != null) {
+                        infoboxContainer[selector].infobox.close();
+                        infoboxContainer[selector].infoboxAlert.close();
+                        uavs[selector].setEventOnce = 0;
+                    }
+                    uavs[selector].setMapOnce = 0;
                 }
                 else {
                     uavs[previous_id].marker.setMap(null);
                     uavs[previous_id].marker.setVisible(false);
-                    infoboxContainer[previous_id].infobox.close();
-                    infoboxContainer[previous_id].infoboxAlert.close();
+                    if(uavs[previous_id].CurrentEvent != null) {
+                        infoboxContainer[previous_id].infobox.close();
+                        infoboxContainer[previous_id].infoboxAlert.close();
+                        uavs[previous_id].setEventOnce = 0;
+                    }
+                    uavs[previous_id].setMapOnce = 0;
                 }
             }
             map.setCenter(latlng);
@@ -292,6 +306,8 @@ function SetUAV(uavData) {
     var mis = uav.Mission;
     uav.Destination = new google.maps.LatLng(mis.Latitude, mis.Longitude);
     uav.CurrentEvent = null;
+    uav.setMapOnce = 0;
+    uav.setEventOnce = 0;
     return uav;
 };
 
@@ -344,12 +360,4 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].Id].flightPath = flightLines[data[i].Id];
         uavs[data[i].Id].marker.setMap(map);
     }
-}
-
-function Simulation() {
-    window.open("localhost:53130/Sim");
-}
-
-function Adminview() {
-    window.open("localhost:53130/adminview");
 }
