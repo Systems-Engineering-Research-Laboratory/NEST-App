@@ -594,7 +594,6 @@
     <Content Include="Scripts\angular.min.js.map" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\DrawingLibrary.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-er.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-et.js" />
