@@ -21,7 +21,7 @@ namespace NEST_App.Controllers
         // GET: /Map/GoogleMap
         public ActionResult GoogleMap()
         {
-            string name = (string)System.Web.HttpContext.Current.Cache["current_user"];
+            string name = (string)Session["current_user"];
 
             if(name != null)
             {
