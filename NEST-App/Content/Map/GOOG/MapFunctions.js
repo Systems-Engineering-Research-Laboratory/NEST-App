@@ -349,11 +349,7 @@
     RR_button_decline: function () {
         $.ajax({
             type: 'POST',
-            url: '/api/uavs/rejectassignment',
-            data: {
-                uavid: warningUavId,
-                userid: assignment.getUserId()
-            },
+            url: '/api/uavs/rejectassignment?uavid=' + warningUavId + '&userid=' + assignment.getUserId(),
             success: function () {
                 $(".RoundRobin_popup").fadeOut("slow", function () { });
                 document.getElementById('RR_choice_p').innerHTML = "You have declined UAV";
