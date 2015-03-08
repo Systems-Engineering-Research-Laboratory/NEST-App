@@ -19,11 +19,50 @@ $(document).ready(function () {
         }]
     };
 
+    var priorityfilter_value = {
+        display_all_text: "Show all",
+        col_0: "none",
+        col_1: "none",
+        col_2: "select"
+    }
+    setFilterGrid("priority_table", priorityfilter_value);
+
+    var operatorfilter_value = {
+        display_all_text: "Show all",
+        col_0: "select",
+        col_1: "select",
+        col_2: "none",
+        col_3: "none"
+    }
+    setFilterGrid("operator_table", operatorfilter_value);
+
+
     var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
     var table = document.getElementById("UAV_table");
+    var table2 = document.getElementById("priority_table");
+    var table3 = document.getElementById("operator_table")
+ 
+    if (table2 != null) {
+        for (var i = 2; i < table2.rows.length; i++)
+        {
+            table2.rows[i].onclick = function () {
+                document.getElementById("choose_uav_table").style.display = 'block';
+            }
+        }
+    }
+
+    if (table3 != null) {
+        for (var i = 2; i < table3.rows.length; i++) {
+            table3.rows[i].onclick = function () {
+                document.getElementById("choose_uav_table").style.display = 'block';
+            }
+        }
+    }
+
     var presentMarker, lastMarker;
 
+    
 
     if (table != null) {
         for (var i = 1; i < table.rows.length; i++) {
@@ -32,7 +71,6 @@ $(document).ready(function () {
                     var uavid = this.cells[0];
                     previous_id = current_id;
                     current_id = this.cells[0].innerHTML;
-                    
                     var callsign = this.cells[1];
                     var numDelivery = this.cells[2];
                     var mile = this.cells[3];
@@ -47,11 +85,10 @@ $(document).ready(function () {
                     var current_alt = this.cells[12];
                     var dest_lat = this.cells[13];
                     var dest_long = this.cells[14];
-                    var total_delivery = this.cells[15];
-                    var payload = this.cells[16];
-                    var cost = this.cells[17];
+                    var payload = this.cells[15];
+                    var cost = this.cells[16];
                     var uav_lat_long = new google.maps.LatLng(this.cells[10].innerHTML, this.cells[11].innerHTML);
-                    var total_num = total_delivery.innerHTML;
+                    var total_num = numDelivery.innerHTML;
                     var final_total = total_num - 1;
                     var bat = battery.innerHTML;
                     var final_battery = bat * 100;
@@ -101,6 +138,13 @@ $(document).ready(function () {
             }
         }
     }
+
+    else
+    {
+        alert("There is no generated UAVs, or UAVs do not have missions. Go to the Admin View page to fix this issue.");
+    }
+
+
 
     function UpdateVehicle(uav, updatedUAV) {
         var LatLng = new google.maps.LatLng(updatedUAV.Latitude, updatedUAV.Longitude);
