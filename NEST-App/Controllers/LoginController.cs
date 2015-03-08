@@ -22,7 +22,7 @@ namespace NEST_App.Controllers
         [System.Web.Http.HttpPost]
         public ActionResult Login(string username)
         {
-            System.Web.HttpContext.Current.Cache["current_user"] = username;
+            Session["current_user"] = username;
             return RedirectToAction("Index", "Home");
         }
     }
