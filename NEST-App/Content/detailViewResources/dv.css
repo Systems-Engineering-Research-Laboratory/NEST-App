@@ -1,191 +1,195 @@
-﻿ .outside {
-            border: none;
-            padding: 0px;
-            height: 700px;
-            width: 100%;
-        }
+﻿@import url(http://fonts.googleapis.com/css?family=Arvo);
 
-        .table {
-            border: none;
-            width: 38%;
-            /*height: 695px;*/
-            /*overflow: auto;
-            overflow-x: hidden;*/
-        }
+* {
+    font-family: 'Arvo', sans-serif;
+}
 
-        .UAV_table {
-            width: 100%;
-            /*height: 695px;*/
-            float: left;
-            padding: 10px;
-            margin: 0px;
-        }
+.outside {
+    border: none;
+    padding: 0px;
+    height: 700px;
+    width: 100%;
+}
 
-        .UAV_table tr {
-            background-color: #ffffff;
-            border: none;
-            border-radius: 3px;
-            padding-top: 3px;
-            padding-bottom: 3px;
-            padding-left: 6px;
-            padding-right: 6px;
-        }
 
-        .UAV_table tr:hover {
-            background-color: #e9e9ea;
-        }
+.table {
+    border: none;
+    width: 38%;
+    margin: 0px;
+    /*overflow: auto;
+    overflow-x: hidden;
+    height: 695px;*/
+}
 
-        .UAV_table th {
-            background-color: #0a074a;
-            border-radius: 8px;
-            border: 1px solid white;
-            text-align: center;
-            padding-top: 3px;
-            padding-bottom: 3px;
-            padding-left: 6px;
-            padding-right: 6px;
-            color: white;
-            font-size: 15px;
-        }
+.UAV_table {
+    width: 100%;
+    float: left;
+    padding: 10px;
+    margin: 0px;
+    height: 100%;
+}
 
-        .UAV_table td {
-            border: 1px solid white;
-            text-align: center;
-            padding-top: 3px;
-            padding-bottom: 3px;
-            padding-left: 6px;
-            padding-right: 6px;
-            border-radius: 5px;
-        }
+.UAV_table tr {
+    background-color: #ffffff;
+    border: none;
+    border-radius: 3px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
 
-        .UAV_table td:hover {
-            cursor: pointer;
-        }
+.UAV_table tr:hover {
+    background-color: #e9e9ea;
+}
 
-        .outer_detail_div {
-            margin: 0px;
-            padding-top: 12px;
-            padding-bottom: 8px;
-            padding-right: 8px;
-            padding-left: 8px;
-            border: none;
-            border-radius: 8px;
-            width: 58%;
-            float: right;
-            background-color: #e9e9ea;
-        }
+.UAV_table th {
+    background-color: #0a074a;
+    border-radius: 8px;
+    border: 1px solid white;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    color: white;
+    font-size: 15px;
+}
 
-        .detail_title {
-            font-size: 25px;
-            font-weight: bold;
-            line-height: 90%;
-            font-family: Verdana;
-            color: #0b0769;
-        }
+.UAV_table td {
+    border: 1px solid white;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    border-radius: 5px;
+}
 
-        .detail_statue_metrics_div {
-            border: none;
-            padding: 2px;
-            width: 43%;
-            float: left;
-            margin-right: 2px;
-        }
+.UAV_table td:hover {
+    cursor: pointer;
+}
 
-        .title {
-            font-size: 18px;
-            font-weight: bold;
-            line-height: 80%;
-            font-family: Verdana;
-            padding-top: 3px;
-            color: #0a074a;
-            text-decoration: underline;
-        }
+.outer_detail_div {
+    margin: 0px;
+    padding-top: 12px;
+    padding-bottom: 8px;
+    padding-right: 8px;
+    padding-left: 8px;
+    border: none;
+    border-radius: 8px;
+    width: 58%;
+    float: right;
+    background-color: #e9e9ea;
+    display: inline-block
+}
 
-        .details {
-            font-size: 15px;
-            line-height: 100%;
-            font-family: Verdana;
-            padding-bottom: 0;
-            color: #0a074a;
-            margin: 1px;
-        }
+.detail_title {
+    font-size: 25px;
+    font-weight: bold;
+    line-height: 90%;
+    color: #0b0769;
+}
 
-        .detail_statue {
-            border: 1px solid #0b0769;
-            margin-bottom: 6px;
-            border-radius: 8px;
-            padding: 5px;
-            padding-left: 8px;
-            background-color: #fafbeb;
-        }
+.detail_statue_metrics_div {
+    border: none;
+    padding: 2px;
+    width: 43%;
+    float: left;
+    margin-right: 2px;
+}
 
-        .detail_metrics {
-            border: 1px solid #0b0769;
-            margin-top: 6px;
-            border-radius: 8px;
-            padding: 5px;
-            padding-left: 8px;
-            background-color: #fafbeb;
-        }
+.title {
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 80%;
+    padding-top: 3px;
+    color: #0a074a;
+    text-decoration: underline;
+}
 
-        .detail_acitivity {
-            border: 1px solid #0b0769;
-            margin-top: 6px;
-            border-radius: 8px;
-            padding: 5px;
-            padding-left: 8px;
-            background-color: #fafbeb;
-        }
+.details {
+    font-size: 15px;
+    line-height: 100%;
+    padding-bottom: 0;
+    color: #0a074a;
+    margin: 1px;
+}
 
-        .UAV_time_tr {
-            line-height: 100%;
-        }
+.detail_statue {
+    border: 1px solid #0b0769;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    padding: 5px;
+    padding-left: 8px;
+    background-color: #fafbeb;
+}
 
-        .UAV_time_td {
-            font-size: 15px;
-            font-family: Verdana;
-        }
+.detail_metrics {
+    border: 1px solid #0b0769;
+    margin-top: 6px;
+    border-radius: 8px;
+    padding: 5px;
+    padding-left: 8px;
+    background-color: #fafbeb;
+}
 
-        .UAV_time_td_2nd {
-            font-size: 15px;
-            font-family: Verdana;
-            padding-left: 15px;
-        }
+.detail_acitivity {
+    border: 1px solid #0b0769;
+    margin-top: 6px;
+    border-radius: 8px;
+    padding: 5px;
+    padding-left: 8px;
+    background-color: #fafbeb;
+}
 
-        .map {
-            border: none;
-            width: 56%;
-            margin: 2px;
-            margin-left: 0;
-            float: right;
-            height: 100%;
-        }
+.UAV_time_tr {
+    line-height: 100%;
+}
 
-        #map-canvas {
-            width: auto;
-            height: 350px;
-            margin: auto;
-            padding: 0px;
-            border: 1px solid #0b0769;
-            border-radius: 8px;
-        }
+.UAV_time_td {
+    font-size: 15px;
+}
 
-        .detail_package {
-            border: 1px solid #0b0769;
-            margin-top: 6px;
-            border-radius: 8px;
-            padding: 5px;
-            padding-left: 8px;
-            background-color: #fafbeb;
-            width: auto;
-            height: auto;
-        }
+.UAV_time_td_2nd {
+    font-size: 15px;
+    padding-left: 15px;
+}
 
-        img[src="http://www.google.com/intl/en_us/mapfiles/close.gif"] {
-        display: none;
-    }
+.map {
+    border: none;
+    width: 56%;
+    margin: 2px;
+    margin-left: 0;
+    float: right;
+    height: 100%;
+}
 
-        .drop_ul_outside{
+#map-canvas {
+    width: auto;
+    height: 350px;
+    margin: auto;
+    padding: 0px;
+    border: 1px solid #0b0769;
+    border-radius: 8px;
+}
+
+.detail_package {
+    border: 1px solid #0b0769;
+    margin-top: 6px;
+    border-radius: 8px;
+    padding: 5px;
+    padding-left: 8px;
+    background-color: #fafbeb;
+    width: auto;
+    height: auto;
+}
+
+img[src="http://www.google.com/intl/en_us/mapfiles/close.gif"] {
+display: none;
+}
+
+.drop_ul_outside{
   border: none;
   text-align: center;
   display: inline;
@@ -213,7 +217,7 @@
   position: absolute;
   top: 48px;
   left: 0;
-  width: 342px;
+  width: 305px;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
