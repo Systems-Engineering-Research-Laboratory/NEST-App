@@ -241,7 +241,7 @@ html, body, #map-canvas {
     border-radius: 10px;
     background-color: white;
     overflow: hidden;
-    display: block;
+    display: none;
     font-size: 15px;
 
     -webkit-animation-name: RR;

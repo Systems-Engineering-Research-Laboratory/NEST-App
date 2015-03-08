@@ -347,10 +347,21 @@
 
 
     RR_button_decline: function () {
-        $(".RoundRobin_popup").fadeOut("slow", function () { });
-        document.getElementById('RR_choice_p').innerHTML = "You have declined UAV";
-        document.getElementById('RR_choice_p').style.color = "red";
-        document.getElementById('RR_outer_result').style.display = "block";
-        $(".RR_outer_result").fadeOut("slow", function () { });
+        $.ajax({
+            type: 'POST',
+            url: '/api/uavs/rejectassignment',
+            data: {
+                uavid: warningUavId,
+                userid: assignment.getUserId()
+            },
+            success: function () {
+                $(".RoundRobin_popup").fadeOut("slow", function () { });
+                document.getElementById('RR_choice_p').innerHTML = "You have declined UAV";
+                document.getElementById('RR_choice_p').style.color = "red";
+                document.getElementById('RR_outer_result').style.display = "block";
+                $(".RR_outer_result").fadeOut("slow", function () { });
+            }
+        });
+        
     }
 };

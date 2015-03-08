@@ -2,6 +2,7 @@
 var homeBase = new google.maps.LatLng(34.2417, -118.529);
 var uavs = {};
 var vehicleHub;
+var warningUavId;
 
 //DroneSelection
 var selectedDrones = []; //store drones selected from any method here
@@ -158,6 +159,8 @@ $(document).ready(function () {
                         data: eventLog
                     });
                 }
+
+                warningUavId = uavs[vehicle.Id].Id;
             }
         }
 
@@ -199,7 +202,7 @@ $(document).ready(function () {
 
                 var alertText = document.createElement("div");
                 alertText.style.cssText = "border: 1px solid red;height: 40px;background: #333;color: #FFF;padding: 0px 0px 15px 4px;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;"
-                alertText.innerHTML = "<span style='color: red; font-size: 30px;'>!</span";
+                alertText.innerHTML = "<span style='color: red; font-size: 30px;'>!</span>";
 
                 var infobox = new InfoBox({
                     content: boxText,
@@ -254,6 +257,12 @@ $(document).ready(function () {
 
                     }
                 });
+
+                //warning popup showing
+                mapFunctions.goTo_RR_show();
+                document.getElementById('warningUavId').innerHTML = "UAV ID: " + uavs[evt.UAVId].Id + "<br />";
+                document.getElementById('warningUavCallsign').innerHTML = "Callsign: " + uavs[evt.UAVId].Callsign + "<br />";
+                document.getElementById('warningReason').innerHTML = "Reason: " + evt.message;
             }
         }
 
@@ -274,7 +283,7 @@ $(document).ready(function () {
                 ctrlDown = true;
             }
             if (evt.which === 69) {
-                console.log("User is: "+assignment.getUsername());
+                console.log("User is: "+ assignment.getUsername());
             }
                 //console.log("Shift key down");
             }
