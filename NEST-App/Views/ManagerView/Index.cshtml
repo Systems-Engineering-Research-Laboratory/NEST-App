@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>View</h2>
+<div ng-app="adminApp" ng-controller="AdminCtrl">
+    <div>
+
+        <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-expanded="true" ng-model="selectedUser">
+                <span ng-show="selectedUser">@*{{selectedUser.username}}*@</span>
+                <span ng-hide="selectedUser">Select a user</span>
+                <span class="caret"></span>
+            </button>
+            <input type="number" ng-model="numberToAssign" /><button ng-click="assignMultipleUAVs()" ng-model="numberToAssign">Assign @*{{numberToAssign}}*@ UAVs</button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                <li role="presentation" ng-repeat="operator in allUsers">
+                    <a role="menuitem" tabindex="-1" ng-click="userSelected(operator)">@*{{operator.username}}*@</a>
+                </li>
+            </ul>
+        </div>
+        <div class="assignmentWrapper">
+            <div class="assignedWrapper">
+                <div>Assigned</div>
+                <div class="list-group">
+                    <a class="list-group-item" ng-repeat="uav in selectedUser.UAVs">
+                        @*{{uav.Callsign}}*@
+                    </a>
+                </div>
+            </div>
+            <div class="unassignedWrapper">
+                <div>Unassigned</div>
+                <div class="list-group">
+                    <a class="list-group-item" ng-dblclick="assignUser(uav.Id, selectedUser.user_id)" ng-repeat="uav in unassignedUavs">
+                        @*{{uav.Callsign}}*@
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
