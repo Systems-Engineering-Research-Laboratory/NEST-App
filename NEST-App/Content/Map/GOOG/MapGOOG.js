@@ -47,9 +47,9 @@ function uavMarkers(data, textStatus, jqXHR) {
 
         ///////UAV Marker listeners/////////
         //When fired, the UAV is marked as 'selected'
-        google.maps.event.addListener(marker, 'click', (function () {droneSelection.CtrlSelect(this, selectedDrones, selectedUAV)}));
+        google.maps.event.addListener(marker, 'click', (function () {droneSelection.CtrlSelect(this, selectedDrones)}));
         //Events to ccur when a UAV's marker icon has changed (ie the marker's been clicked)
-        google.maps.event.addListener(marker, 'selection_changed', function () { droneSelection.SelectionStateChanged(this, selectedDrones, selectedUAV, flightLines, droneTrails.uavTrails, selectedTrail) });
+        google.maps.event.addListener(marker, 'selection_changed', function () { droneSelection.SelectionStateChanged(this, selectedDrones, flightLines, droneTrails.uavTrails, selectedTrail) });
         //UAV Context Menu
         var UAVContext = mapFunctions.UAVContext(map);
         google.maps.event.addListener(marker, 'rightclick', function (event) {
@@ -114,6 +114,15 @@ $(document).ready(function () {
         //SignalR callbacks must be set before the call to connect!
         /* Vehicle Movement */
         vehicleHub = $.connection.vehicleHub;
+
+        vehicleHub.client.WaypointInserted = function (id) {
+            console.log("Waypoint Successfully Inserted\nMission Id: " + id);
+            if (selectedUAV != null) {
+                droneTrails.displayWaypointsPerMission(selectedUAV.Mission);
+            }
+            
+        }
+
         vehicleHub.client.flightStateUpdate = function (vehicle) {
             //console.log(vehicle.Latitude, vehicle.Longitude);
 

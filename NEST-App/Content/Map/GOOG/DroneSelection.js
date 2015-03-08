@@ -53,7 +53,7 @@
     },
 
     //This fires when a drone turns green or black, ie it has either been selected or de-selected
-    SelectionStateChanged: function (marker, selectedDrones, selectedUAV, flightLines, uavTrails, selectedTrail) {
+    SelectionStateChanged: function (marker, selectedDrones, flightLines, uavTrails, selectedTrail) {
         //console.log("Selection change event fired");
 
         //*******************SELECTED*********************//
@@ -94,6 +94,7 @@
             //Turn off drone's flightpath
             flightLines[marker.uav.Id].setMap(null);
 
+            selectedUAV = null;
             
             //TURN OFF TRAIL 
             //droneTrails.deleteTrails(selectedUAV.Id);
