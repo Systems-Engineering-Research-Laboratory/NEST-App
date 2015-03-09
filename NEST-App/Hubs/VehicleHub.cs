@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using NEST_App.Models;
 using NEST_App.DAL;
+using System.Data.Entity;
 
 
 namespace NEST_App.Hubs
@@ -63,6 +64,8 @@ namespace NEST_App.Hubs
         public int HoldCommand(CMD_NAV_Hold cmd)
         {  
                 Clients.Group("vehicles").sendHoldCommand(cmd, Context.ConnectionId);
+                System.Diagnostics.Debug.WriteLine("ID is: " + cmd.Id);
+                System.Diagnostics.Debug.WriteLine("Context ID is: " + Context.ConnectionId);
                 return cmd.Id;
          }
         
@@ -104,15 +107,48 @@ namespace NEST_App.Hubs
 
         public async Task BroadcastAcceptedCommand(CMD_ACK ack)
         {
-            using (var context = new NestDbContext())
+            NestContainer db = new NestContainer();
             {
                 switch (ack.CommandType)
                 {
                     case "CMD_NAV_Target":
-                        CMD_NAV_Target target = await context.CMD_NAV_Target.FindAsync(ack.CommandId);
-                        if (target != null)
+                        CMD_NAV_Target target = await db.CMD_NAV_Target.FindAsync(ack.CommandId);
+                        if (target != null && ack.Accepted == true)
                         {
+                            target.Acked = true;
                             Clients.All.targetCommandAccepted(target);
+                            db.Entry(target).State = EntityState.Modified;
+                            await db.SaveChangesAsync();
+                        }
+                        break;
+                    case "CMD_NAV_Hold":
+                        CMD_NAV_Hold hold = await db.CMD_NAV_Hold.FindAsync(ack.CommandId);
+                        if (hold != null && ack.Accepted == true)
+                        {
+                            hold.Acked = true;
+                            Clients.All.targetCommandAccepted(hold);
+                            db.Entry(hold).State = EntityState.Modified;
+                            await db.SaveChangesAsync();
+                        }
+                        break;
+                    case "CMD_NAV_Return":
+                        CMD_NAV_Return goBack = await db.CMD_NAV_Return.FindAsync(ack.CommandId);
+                        if (goBack != null && ack.Accepted == true)
+                        {
+                            goBack.Acked = true;
+                            Clients.All.targetCommandAccepted(goBack);
+                            db.Entry(goBack).State = EntityState.Modified;
+                            await db.SaveChangesAsync();
+                        }
+                        break;
+                    case "CMD_NAV_Land":
+                        CMD_NAV_Land land = await db.CMD_NAV_Land.FindAsync(ack.CommandId);
+                        if (land != null && ack.Accepted == true)
+                        {
+                            land.Acked = true;
+                            Clients.All.targetCommandAccepted(land);
+                            db.Entry(land).State = EntityState.Modified;
+                            await db.SaveChangesAsync();
                         }
                         break;
                     default:

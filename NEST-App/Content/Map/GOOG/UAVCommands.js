@@ -1,23 +1,32 @@
 ﻿/*Build each command type with the necessary data here and send it to the controller*/
 /*User input is gathered and defined here, where required; the controller should just be in charge of data*/
 var uavCommands = {
+     cmdID: null,
 
     /**********NAVIGATIONAL COMMANDS**********/
 
     //Return to base
-    BackToBase: function (uav, coords) {
+     BackToBase: function (uav, coords) {
+         var cmd = {
+             Id: 0,
+             Latitude: coords.lat(),
+             Longitude: coords.lng(),
+             UAVId: uad.Id,
+         };
         $.ajax({
             type: "POST",
             url: "/api/command/return/" + uid,
-            data: {
-                Latitude: coords.lat(),
-                Longitude: coords.lng(),
-                UAVId: uad.Id,
-            },
+            data: cmd,
             success: function (data, textStatus, jqXHR) {
-                vehicleHub.server.returnCommand(data);
+                cmdID = vehicleHub.server.returnCommand(cmd);
             }
         });
+
+
+        //$.ajax({
+        //    type: "PUT",
+        //    url: "/api/command/"
+        //})
         //clear all waypoints
         //change mission phase to "returning"
         //set new waypoint for base
@@ -26,19 +35,21 @@ var uavCommands = {
     //Hold position
     HoldPos: function (uid, uav, coords, alt, throttle) {
         var time = 0 /*= user input*/;
+        var cmd = {
+            //Id: 0,
+            Altitude: alt,
+            Latitude: coords.lat(),
+            Longitude: coords.lng(),
+            UAVId: uav.Id,
+            Time: time,
+            Throttle: throttle
+        };
         $.ajax({
             type: "POST",
             url: "/api/command/hold/" + uid,
-            data: {
-                
-                Altitude: alt,
-                Latitude: coords.lat(),
-                Longitude: coords.lng(),
-                UAVId: uav.Id,
-                Time: time
-            },
+            data: cmd,
             success: function (data, textStatus, jqXHR) {
-                vehicleHub.server.holdCommand(data);
+                cmdID = vehicleHub.server.holdCommand(cmd);
                 //locate uav by uav.id
                 //push values returned by data
                 ////wait for ack
@@ -75,18 +86,20 @@ var uavCommands = {
 
     //Immediately force a landing
     ForceLand: function (uid, uav, coords, alt, throttle) {
+        var cmd = {
+            Id: 0,
+            Altitude: alt,
+            Latitude: coords.lat(),
+            Longitude: coords.lng(),
+            Throttle: throttle,
+            UAVId: uad.Id
+        };
         $.ajax({
             type: "POST",
             url: "/api/command/land/" + uid,
-            data: {
-                Altitude: alt,
-                Latitude: coords.lat(),
-                Longitude: coords.lng(),
-                Throttle: throttle,
-                UAVId: uad.Id
-            },
+            data: cmd,
             success: function (data, textStatus, jqXHR) {
-                vehicleHub.server.landCommand(data);
+                cmdID = vehicleHub.server.landCommand(cmd);
             }
         });
         //specify a location to land, maybe by click?
@@ -103,32 +116,35 @@ var uavCommands = {
 
     //Send UAV to these coordinates
     GoTo: function (uid, uav, coords, alt) {
+        var cmd = {
+            Id: 0,
+            Altitude: alt,
+            Latitude: coords.lat(),
+            Longitude: coords.lng(),
+            UAVId: uav.Id
+        }
         $.ajax({
             type: "POST",
             url: "/api/command/goto/"+uid,
-            data: {
-                Altitude: alt,
-                Latitude: coords.lat(),
-                Longitude: coords.lng(),
-                UAVId: uav.Id
-            },
+            data: cmd,
             success: function (data, textStatus, jqXHR) {
-                vehicleHub.server.gotoCommand(data);
+                cmdID = vehicleHub.server.gotoCommand(cmd);
             }
         });
     },
 
     //Pass direct control to a pilot
     SurrenderControl: function (uid, uav, alt, throttle) {
+        var cmd = {
+            Id: 0,
+            Altitude: alt,
+            Throttle: throttle,
+            UAVId: uav.Id
+        };
         $.ajax({
             type: "POST",
             url: "/api/command/pass/" + uid,
-            data: {
-                
-                Altitude: alt,
-                Throttle: throttle,
-                UAVId: uav.Id
-            }
+            data: cmd
         });
 
     },
@@ -136,18 +152,20 @@ var uavCommands = {
 
     /*****NON-NAVIGATIONAL COMMAND*****/
     NonNav: function (uid, uav, coords, alt, throttle) {
+        cmd = {
+            Id: 0,
+            Altitude: alt,
+            Latitude: coords.lat(),
+            Longitude: coords.lng(),
+            Throttle: throttle,
+            UAVId: uad.Id
+        };
         $.ajax({
             type: "POST",
             url: "/api/command/adjust/" + uid,
-            data: {
-                Altitude: alt,
-                Latitude: coords.lat(),
-                Longitude: coords.lng(),
-                Throttle: throttle,
-                UAVId: uad.Id
-            },
+            data: cmd,
             success: function (data, textStatus, jqXHR) {
-                vehicleHub.server.adjustCommand(data);
+                cmdID = vehicleHub.server.adjustCommand(cmd);
             }
         });
         //adjust parameters

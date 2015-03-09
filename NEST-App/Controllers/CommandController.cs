@@ -62,6 +62,7 @@ namespace NEST_App.Controllers
             cmd_nav_hold.Longitude = jsObject.Longitude;
             cmd_nav_hold.UAVId = jsObject.UAVId;
             cmd_nav_hold.Time = jsObject.Time;
+            cmd_nav_hold.Throttle = jsObject.Throttle;
             
             if (!ModelState.IsValid)
             {
@@ -165,6 +166,7 @@ namespace NEST_App.Controllers
 
             return Ok();
         }
+
 
 
         // GET api/command

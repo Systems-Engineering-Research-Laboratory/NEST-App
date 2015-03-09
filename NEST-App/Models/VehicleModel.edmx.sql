@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 03/04/2015 12:22:10
+-- Date Created: 03/09/2015 05:15:30
 -- Generated from EDMX file: C:\Users\draxi_000\Documents\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
@@ -331,7 +331,7 @@ CREATE TABLE [dbo].[Maintenances] (
     [last_maintenance] datetime  NOT NULL,
     [next_maintenance] datetime  NOT NULL,
     [time_remaining] nvarchar(max)  NOT NULL,
-    [id] int  NOT NULL,
+    [id] int IDENTITY(1,1) NOT NULL,
     [ScheduleId] int  NOT NULL,
     [create_date] datetime  NOT NULL,
     [modified_date] datetime  NOT NULL

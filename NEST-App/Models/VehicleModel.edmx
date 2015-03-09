@@ -1255,6 +1255,7 @@
           <Property Name="Latitude" Type="Double" Nullable="false" />
           <Property Name="Longitude" Type="Double" Nullable="false" />
           <Property Name="UAVId" Type="Int32" Nullable="false" />
+          <Property Name="Acked" Type="Boolean" Nullable="false" DefaultValue="false" />
         </EntityType>
         <EntityType Name="CMD_NAV_Set_Base">
           <Key>
@@ -1275,6 +1276,7 @@
           <Property Name="Longitude" Type="Double" Nullable="false" />
           <Property Name="Throttle" Type="Double" Nullable="false" />
           <Property Name="UAVId" Type="Int32" Nullable="false" />
+          <Property Name="Acked" Type="Boolean" Nullable="false" DefaultValue="false" />
         </EntityType>
         <EntityType Name="CMD_ACK">
           <Key>
@@ -1440,6 +1442,7 @@
           <Property Name="Longitude" Type="Double" Nullable="false" />
           <Property Name="Throttle" Type="Double" Nullable="false" />
           <Property Name="UAVId" Type="Int32" Nullable="false" />
+          <Property Name="Acked" Type="Boolean" Nullable="false" DefaultValue="false" />
         </EntityType>
         <EntityType Name="CMD_NAV_Hold">
           <Key>
@@ -1451,6 +1454,8 @@
           <Property Name="Longitude" Type="Double" Nullable="false" />
           <Property Name="UAVId" Type="Int32" Nullable="false" />
           <Property Name="Time" Type="Double" Nullable="false" />
+          <Property Name="Acked" Type="Boolean" Nullable="false" DefaultValue="false" />
+          <Property Name="Throttle" Type="Double" Nullable="false" />
         </EntityType>
         <EntityType Name="CMD_NAV_Adjust">
           <Key>
@@ -1462,6 +1467,7 @@
           <Property Name="Longitude" Type="Double" Nullable="false" />
           <Property Name="Throttle" Type="Double" Nullable="false" />
           <Property Name="UAVId" Type="Int32" Nullable="false" />
+          <Property Name="Acked" Type="Boolean" Nullable="false" DefaultValue="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>

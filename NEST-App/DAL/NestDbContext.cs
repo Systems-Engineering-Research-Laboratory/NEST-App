@@ -33,6 +33,8 @@ namespace NEST_App.DAL
         public virtual DbSet<CMD_NAV_Set_Base> CMD_NAV_Set_Base { get; set; }
         public virtual DbSet<CMD_NAV_Land> CMD_NAV_Land { get; set; }
         public virtual DbSet<CMD_ACK> CMD_ACK { get; set; }
+        public virtual DbSet<CMD_NAV_Hold> CMD_NAV_Hold { get; set; }
+        public virtual DbSet<CMD_NAV_Return> CMD_NAV_Return { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
