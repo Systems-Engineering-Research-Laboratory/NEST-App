@@ -90,7 +90,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         if (this.currentWaypoint && this.reporter.pendingResult) {
             return;
         }
-        if (this.waypoints) {
+        if (this.pathGen.gotNewRestrictedArea() && this.waypoints) {
             this.pathGen.checkPathValidity(this.waypoints);
         }
         //Process this waypoint if we have one
@@ -336,6 +336,9 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                     //TODO: Assign the path back to the base.
                     update = true;
                     //this.pathGen.generateBackToBaseWaypoints(this.FlightState, this.Base);
+                    var baseWp = new Waypoint(base);
+                    this.waypoints.push(baseWp);
+                    this.pathGen.checkPathValidity(this.waypoints);
                 }
                 break;
             case "done":
@@ -638,7 +641,6 @@ function PathGenerator(areaContainer, reporter) {
 
     this.checkPathValidity = function (wps) {
         this.movePointsOutOfAreas(wps);
-        if (this.areaContainer.newRestrictedArea) {
             for (var i = 0; i < wps.length - 1; i++) {
                 var cands = this.checkPath(wps[i], wps[i + 1]);
                 if (cands) {
@@ -646,7 +648,6 @@ function PathGenerator(areaContainer, reporter) {
                     i--; //Recheck the old first point with the new first point
                 }
             }
-        }
     }
 
 

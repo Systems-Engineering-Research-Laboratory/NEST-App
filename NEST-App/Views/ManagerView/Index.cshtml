@@ -3,20 +3,19 @@
     ViewBag.Title = "Index";
 }
 
-<h2>View</h2>
-<div ng-app="adminApp" ng-controller="AdminCtrl">
+<h2>Manager</h2>
+<div ng-app="managerApp" ng-controller="managerControl">
     <div>
-
         <div class="dropdown">
             <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-expanded="true" ng-model="selectedUser">
-                <span ng-show="selectedUser">@*{{selectedUser.username}}*@</span>
+                <span ng-show="selectedUser">{{selectedUser.username}}</span>
                 <span ng-hide="selectedUser">Select a user</span>
                 <span class="caret"></span>
             </button>
-            <input type="number" ng-model="numberToAssign" /><button ng-click="assignMultipleUAVs()" ng-model="numberToAssign">Assign @*{{numberToAssign}}*@ UAVs</button>
+            <input type="number" ng-model="numberToAssign" /><button ng-click="assignMultipleUAVs()" ng-model="numberToAssign">Assign {{numberToAssign}} UAVs</button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
                 <li role="presentation" ng-repeat="operator in allUsers">
-                    <a role="menuitem" tabindex="-1" ng-click="userSelected(operator)">@*{{operator.username}}*@</a>
+                    <a role="menuitem" tabindex="-1" ng-click="userSelected(operator)">{{operator.username}}</a>
                 </li>
             </ul>
         </div>
@@ -25,7 +24,7 @@
                 <div>Assigned</div>
                 <div class="list-group">
                     <a class="list-group-item" ng-repeat="uav in selectedUser.UAVs">
-                        @*{{uav.Callsign}}*@
+                        {{uav.Callsign}}
                     </a>
                 </div>
             </div>
@@ -33,10 +32,49 @@
                 <div>Unassigned</div>
                 <div class="list-group">
                     <a class="list-group-item" ng-dblclick="assignUser(uav.Id, selectedUser.user_id)" ng-repeat="uav in unassignedUavs">
-                        @*{{uav.Callsign}}*@
+                        {{uav.Callsign}}
                     </a>
                 </div>
             </div>
+        </div>
+        <h4>Current Emergencies:</h4>
+        <div class= "UAVEmergencyEvents">
+            <table class="table table-hover">
+                <tr>
+                    <td>
+                        <strong>UAV ID</strong>
+                    </td>
+                    <td>
+                        <strong>UAV Callsign</strong>
+                    </td>
+                    <td>
+                        <strong>Message</strong>
+                    </td>
+                    <td>
+                        <strong>Operator</strong>
+                    </td>
+                    <td>
+                        <strong>Time</strong>
+                    </td>
+                </tr>
+                <tr ng-repeat="evt in events" ng-style="getRowStyle(evt.criticality)">
+                    <td>
+                        {{evt.uav_id}}
+                    </td>
+                    <td>
+                        {{evt.uav_callsign}}
+                    </td>
+                    <td>
+                        {{evt.message}}
+                    </td>
+                    <td>
+                        {{evt.operator_screen_name}}
+                    </td>
+                    <td>
+                        {{evt.create_date}}
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>
