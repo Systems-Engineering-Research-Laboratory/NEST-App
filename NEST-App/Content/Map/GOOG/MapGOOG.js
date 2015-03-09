@@ -306,22 +306,25 @@ $(document).ready(function () {
                         }
                     });
                 }
+                if (uavs[evt.UAVId].alertOnce != 1) {
+                    var infoboxAlert = new InfoBox({
+                        content: alertText,
+                        disableAutoPan: false,
+                        maxWidth: 20,
+                        pixelOffset: new google.maps.Size(-10, -80),
+                        zIndex: null,
+                        boxStyle: {
+                            opacity: 0.75,
+                            width: "20px",
+                        },
+                    })
 
-                var infoboxAlert = new InfoBox({
-                    content: alertText,
-                    disableAutoPan: false,
-                    maxWidth: 20,
-                    pixelOffset: new google.maps.Size(-10, -80),
-                    zIndex: null,
-                    boxStyle: {
-                        opacity: 0.75,
-                        width: "20px",
-                    },
-                })
-
-
-                //infobox.open(map, uavs[evt.UAVId].marker);
-                infoboxAlert.open(map, uavs[evt.UAVId].marker);
+                    infoboxAlert.open(map, uavs[evt.UAVId].marker);
+                    var i = uavs[evt.UAVId].alertOnce;
+                    i++;
+                    uavs[evt.UAVId].alertOnce = i;
+                }
+               
                 
                 //warning popup showing
                 mapFunctions.goTo_RR_show();
