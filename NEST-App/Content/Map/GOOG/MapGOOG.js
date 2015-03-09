@@ -196,6 +196,10 @@ $(document).ready(function () {
             var checkMessage = evt.message.split(" ");
             if (checkMessage[0] != "Acknowledged:") {
 
+                var i = uavs[evt.UAVId].Events;
+                i++;
+                uavs[evt.UAVId].Events = i;
+
                 var boxText = document.createElement("div");
                 boxText.style.cssText = "border: 1px solid black;margin-top: 8px;background: #333;color: #FFF;font-size: 10px;padding: .5em 2em;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;";
                 boxText.innerHTML = "<span style='color: red;'>Warning: </span>" + evt.message;
@@ -204,20 +208,95 @@ $(document).ready(function () {
                 alertText.style.cssText = "border: 1px solid red;height: 40px;background: #333;color: #FFF;padding: 0px 0px 15px 4px;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;"
                 alertText.innerHTML = "<span style='color: red; font-size: 30px;'>!</span>";
 
-                var infobox = new InfoBox({
-                    content: boxText,
-                    disableAutoPan: false,
-                    maxWidth: 100,
-                    pixelOffset: new google.maps.Size(-75, 30),
-                    zIndex: null,
-                    enableEventPropagation: true,
-                    pane: "floatPane",
-                    boxStyle: {
-                        opacity: 0.75,
-                        width: "150px"
-                    },
-                    closeBoxMargin: "9px 1px 2px 2px"
-                })
+                var multipleText = document.createElement("div");
+                multipleText.style.cssText = "border: 1px solid black;margin-top: 8px;background: #333;color: #FFF;font-size: 10px;padding: .5em 2em;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;";
+                multipleText.innerHTML = "<span style='color: red;'>Warning: </span>" + "multiple errors, check logs!";
+                console.log(uavs[evt.UAVId].Events);
+                if (uavs[evt.UAVId].Events > 1) {
+                    var infobox = new InfoBox({
+                        content: multipleText,
+                        disableAutoPan: false,
+                        maxWidth: 100,
+                        pixelOffset: new google.maps.Size(-75, 30),
+                        zIndex: null,
+                        enableEventPropagation: true,
+                        pane: "floatPane",
+                        boxStyle: {
+                            opacity: 0.75,
+                            width: "150px"
+                        },
+                        closeBoxMargin: "9px 1px 2px 2px"
+                    })
+                 
+                    infobox.open(map, uavs[evt.UAVId].marker);
+                    google.maps.event.addDomListener(multipleText, 'click', function () {
+                        if (infobox.open) {
+                            infobox.close();
+
+                            var eventACK = {
+                                uav_id: uavs[evt.UAVId].Id,
+                                message: "Acknowledged: " + evt.message,
+                                criticality: "normal",
+                                uav_callsign: uavs[evt.UAVId].Callsign,
+                                operator_screen_name: evt.operator_screen_name,
+                                UAVId: uavs[evt.UAVId].Id
+                            };
+                            var i = uavs[evt.UAVId].Events;
+                            i--;
+                            uavs[evt.UAVId].Events = i;
+                            emitHub.server.emit(eventACK);
+                            $.ajax({
+                                type: "POST",
+                                url: "/api/uavs/postuavevent",
+                                success: function () { },
+                                data: eventACK
+                            });
+
+                        }
+                    });
+                }
+                else {
+                    var infobox = new InfoBox({
+                        content: boxText,
+                        disableAutoPan: false,
+                        maxWidth: 100,
+                        pixelOffset: new google.maps.Size(-75, 30),
+                        zIndex: null,
+                        enableEventPropagation: true,
+                        pane: "floatPane",
+                        boxStyle: {
+                            opacity: 0.75,
+                            width: "150px"
+                        },
+                        closeBoxMargin: "9px 1px 2px 2px"
+                    })
+
+                    google.maps.event.addDomListener(boxText, 'click', function () {
+                        if (infobox.open) {
+                            infobox.close();
+
+                            var eventACK = {
+                                uav_id: uavs[evt.UAVId].Id,
+                                message: "Acknowledged: " + evt.message,
+                                criticality: "normal",
+                                uav_callsign: uavs[evt.UAVId].Callsign,
+                                operator_screen_name: evt.operator_screen_name,
+                                UAVId: uavs[evt.UAVId].Id
+                            };
+                            var i = uavs[evt.UAVId].Events;
+                            i--;
+                            uavs[evt.UAVId].Events = i;
+                            emitHub.server.emit(eventACK);
+                            $.ajax({
+                                type: "POST",
+                                url: "/api/uavs/postuavevent",
+                                success: function () { },
+                                data: eventACK
+                            });
+
+                        }
+                    });
+                }
 
                 var infoboxAlert = new InfoBox({
                     content: alertText,
@@ -233,30 +312,6 @@ $(document).ready(function () {
 
                 infobox.open(map, uavs[evt.UAVId].marker);
                 infoboxAlert.open(map, uavs[evt.UAVId].marker);
-
-                google.maps.event.addDomListener(boxText, 'click', function () {
-                    if (infobox.open) {
-                        infobox.close();
-
-                        var eventACK = {
-                            uav_id: uavs[evt.UAVId].Id,
-                            message: "Acknowledged: " + evt.message,
-                            criticality: "normal",
-                            uav_callsign: uavs[evt.UAVId].Callsign,
-                            operator_screen_name: evt.operator_screen_name,
-                            UAVId: uavs[evt.UAVId].Id
-                        };
-
-                        emitHub.server.emit(eventACK);
-                        $.ajax({
-                            type: "POST",
-                            url: "/api/uavs/postuavevent",
-                            success: function () { },
-                            data: eventACK
-                        });
-
-                    }
-                });
 
                 //warning popup showing
                 mapFunctions.goTo_RR_show();

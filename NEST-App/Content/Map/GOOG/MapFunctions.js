@@ -233,7 +233,7 @@
         uav.Orientation = uavData.FlightState.Yaw;
         var mis = uav.Mission;
         uav.Destination = new google.maps.LatLng(mis.Latitude, mis.Longitude);
-        
+        uav.Events = 0;
         return uav;
     },
 
