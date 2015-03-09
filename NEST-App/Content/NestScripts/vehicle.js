@@ -91,7 +91,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             return;
         }
         if (this.pathGen.gotNewRestrictedArea() && this.waypoints) {
-            this.pathGen.checkPathValidity(this.waypoints);
+            this.pathGen.buildSafeRoute(this.waypoints);
         }
         //Process this waypoint if we have one
         if (this.currentWaypoint) {
@@ -225,13 +225,14 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     //This only works on the XY plane, not for vertical velocity.
     this.approachSpeed = function (desiredSpeed, heading, dt) {
-        desiredSpeed = 1000;
+        desiredSpeed = 400;
         var velocity = this.getVelocity();
         if (Math.abs(velocity - desiredSpeed) < 0.005) {
             return true;
         }
 
         var maxAcc = this.MaxAcceleration;
+        maxAcc = 10000;
         if (velocity > desiredSpeed) {
             //Accelerate vs Deccelerate
             maxAcc = -maxAcc;
@@ -495,6 +496,12 @@ function VehicleContainer() {
         areaToEuclidean(area);
         this.restrictedAreas.push(area);
         this.newRestrictedArea = true;
+        this.buildGraph();
+    }
+
+    this.addRestrictedAreas = function (areas) {
+        this.restrictedAreas.concat(areas);
+        this.buildGraph();
     }
 
     this.makeStale = function () {
@@ -509,6 +516,73 @@ function VehicleContainer() {
             $this.addRestrictedArea(data[i]);
         }
     })
+
+    this.buildGraph = function () {
+        var areas = this.restrictedAreas;
+        prepareAreas(this.restrictedAreas);
+        for (var i = 0; i < areas.length; i++) {
+            area = areas[i];
+            area.edges = [];
+            for (var j = i; j < areas.length; j++) {
+                var neighbor = areas[j];
+                this.getEdges(area, neighbor);
+            }
+        }
+    }
+
+    this.getEdges = function (area1, area2) {
+        var areas = this.restrictedAreas;
+
+        for (var j = 0; j < area1.corners.length; j++) {
+            var c1 = area1.corners[j];
+            for (var k = 0; k < area2.corners.length; k++) {
+                var c2 = area2.corners[k];
+                var int = false;
+                for (var i = 0; i < areas.length && !int; i++) {
+                    var a = areas[i];
+                    int = checkPathIntersectsRectangle(a.SouthWestX, a.SouthWestY, a.NorthEastX, a.NorthEastY,
+                        c1.X, c1.Y, c2.X, c2.Y);
+
+                }
+                if (!int) {
+                    var cDistance = d(c1.X, c1.Y, c2.X, c2.Y);
+                    c1.edges.push({
+                        vertex: c2,
+                        distance: cDistance
+                    });
+                    c2.edges.push({
+                        vertex: c1,
+                        distance: cDistance
+                    });
+                }
+            }
+        }
+    }
+}
+
+
+function prepareAreas(areas) {
+    for (var i = 0; i < areas.length; i++) {
+        addCornersToArea(areas[i]);
+        areas[i].edges = [];
+    }
+}
+
+function addCornersToArea(area) {
+    var xs = [area.NorthEastX + 1, area.SouthWestX - 1];
+    var ys = [area.NorthEastY + 1, area.SouthWestY - 1];
+    area.corners = [];
+    for (var i = 0; i < 2; i++) {
+        for (var j = 0; j < 2; j++) {
+            var corner = {
+                X: xs[j],
+                Y: ys[i]
+            };
+            XYToLatLong(corner);
+            area.corners.push(corner);
+            corner.edges = [];
+        }
+    }
 }
 
 // The waypoint creation logic container so that there isn't logic all over the vehicle code
@@ -641,13 +715,13 @@ function PathGenerator(areaContainer, reporter) {
 
     this.checkPathValidity = function (wps) {
         this.movePointsOutOfAreas(wps);
-            for (var i = 0; i < wps.length - 1; i++) {
-                var cands = this.checkPath(wps[i], wps[i + 1]);
-                if (cands) {
-                    insertMultiPointsIntoList(wps, cands, i);
-                    i--; //Recheck the old first point with the new first point
-                }
+        for (var i = 0; i < wps.length - 1; i++) {
+            var cands = this.checkPath(wps[i], wps[i + 1]);
+            if (cands && cands.length > 0) {
+                insertMultiPointsIntoList(wps, cands, i);
+                i--; //Recheck the old first point with the new first point
             }
+        }
     }
 
 
@@ -717,6 +791,7 @@ function PathGenerator(areaContainer, reporter) {
             sol = sol.concat(nP);
             if (this.checkCandidatePath(p1, p2, sol)) return sol;
         }
+        return sol;
         //var goodCands = this.checkCandidates(p1, p2, candidates);
         //if (goodCands) {
         //    return goodCands;
@@ -934,77 +1009,231 @@ function PathGenerator(areaContainer, reporter) {
         return intersects;
     }
 
-    //Check if the line between two x,y points falls within a rectangle. Found on stack overflow.
-    function checkPathIntersectsRectangle(a_rectangleMinX,
-                                 a_rectangleMinY,
-                                 a_rectangleMaxX,
-                                 a_rectangleMaxY,
-                                 a_p1x,
-                                 a_p1y,
-                                 a_p2x,
-                                 a_p2y) {
-        // Find min and max X for the segment
-
-        minX = a_p1x;
-        maxX = a_p2x;
-
-        if (a_p1x > a_p2x) {
-            minX = a_p2x;
-            maxX = a_p1x;
+    this.buildSafeRoute = function (wps) {
+        var areas = this.areaContainer.restrictedAreas;
+        for (var i = 0; i < wps.length - 1; i++) {
+            if (checkPathIntersectsArea(wps[i], wps[i] + 1, areas)) {
+                var newwps = this.connectSafely(wps[i], wps[i + 1]);
+                insertMultiPointsIntoList(wps, newwps, i);
+                i += newwps.length;
+            }
         }
-
-        // Find the intersection of the segment's and rectangle's x-projections
-
-        if (maxX > a_rectangleMaxX) {
-            maxX = a_rectangleMaxX;
-        }
-
-        if (minX < a_rectangleMinX) {
-            minX = a_rectangleMinX;
-        }
-
-        if (minX > maxX) // If their projections do not intersect return false
-        {
-            return false;
-        }
-
-        // Find corresponding min and max Y for min and max X we found before
-
-        minY = a_p1y;
-        maxY = a_p2y;
-
-        dx = a_p2x - a_p1x;
-
-        if (Math.abs(dx) > 0.0000001) {
-            a = (a_p2y - a_p1y) / dx;
-            b = a_p1y - a * a_p1x;
-            minY = a * minX + b;
-            maxY = a * maxX + b;
-        }
-
-        if (minY > maxY) {
-            tmp = maxY;
-            maxY = minY;
-            minY = tmp;
-        }
-
-        // Find the intersection of the segment's and rectangle's y-projections
-
-        if (maxY > a_rectangleMaxY) {
-            maxY = a_rectangleMaxY;
-        }
-
-        if (minY < a_rectangleMinY) {
-            minY = a_rectangleMinY;
-        }
-
-        if (minY > maxY) // If Y-projections do not intersect return false
-        {
-            return false;
-        }
-
-        return true;
     }
+
+    this.connectSafely = function (p1, p2) {
+        var result = this.dijkstra(p1, p2);
+        var wps = buildWpsFromArray(result);
+        return wps;
+    }
+
+    //Check if the line between two x,y points falls within a rectangle. Found on stack overflow.
+    this.dijkstra = function (p1, p2) {
+        var areas = this.areaContainer.restrictedAreas;
+        var foundInt = false;
+        for (var i = 0; i < areas.length && !foundInt; i++) {
+            var area = areas[i];
+            foundInt = checkPathIntersectsRectangle(area.SouthWestX, area.SouthWestY, area.NorthEastX, area.NorthEastY,
+            p1.X, p1.Y, p2.X, p2.Y);
+        }
+        if (!foundInt) {
+            return [];
+        }
+        this.appendPointEdges(p2);
+        this.appendPointEdges(p1);
+        var result = this.doDijkstras(p1, p2);
+        return result;
+    }
+
+    function buildWpsFromArray(arr) {
+        var wps = [];
+        for (var i = 0 ; i < arr.length; i++) {
+            wps.push(new Waypoint(arr[i]));
+        }
+        return wps;
+    }
+
+    this.appendPointEdges = function (p) {
+        var areas = this.areaContainer.restrictedAreas;
+        p.edges = [];
+        for (var i = 0; i < areas.length; i++) {
+            var area = areas[i];
+            for (var j = 0; j < area.corners.length; j++) {
+                this.checkIfConnected(p, area.corners[j]);
+            }
+        }
+    }
+
+    this.checkIfConnected = function (p, c) {
+        var areas = this.areaContainer.restrictedAreas;
+        var isConnected = true;
+        for (var i = 0; i < areas.length; i++) {
+            var a = areas[i];
+            for (var j = 0; j < a.corners.length; j++) {
+
+                isConnected = !checkPathIntersectsRectangle(a.SouthWestX, a.SouthWestY, a.NorthEastX, a.NorthEastY,
+                                c.X, c.Y, p.X, p.Y);
+                if (!isConnected) {
+                    return;
+                }
+            }
+        }
+        if (isConnected) {
+            var cDistance = d(c.X, c.Y, p.X, p.Y);
+            p.edges.push({
+                vertex: c,
+                distance: cDistance
+            });
+            c.edges.push({
+                vertex: p,
+                distance: cDistance
+            });
+        }
+    }
+
+    this.doDijkstras = function (p1, p2, edges) {
+        var verts = this.buildGraph(p2);
+        p1.algoDist = 0;
+        verts.push(p1);
+        while (verts.length > 0) {
+
+            var u = popArrayMin(verts);
+            for (var i = 0; i < u.edges.length; i++) {
+                var edge = u.edges[i];
+                var v = edge.vertex;
+                var alt = u.algoDist + edge.distance;
+                if (alt < v.algoDist) {
+                    v.algoDist = alt;
+                    v.prev = u;
+                }
+            }
+        }
+        return getDijkstrasResult(p1, p2);
+    }
+
+    function getDijkstrasResult(p1, p2) {
+        var result = [];
+        var current = p2;
+        while (current.prev != p1) {
+            result.push(current.prev);
+            current = current.prev;
+        }
+        result.reverse();
+        return result;
+    }
+
+    function popArrayMin(arr) {
+        var minValue = Infinity;
+        var minIndex = -1;
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i].algoDist < minValue) {
+                minIndex = i;
+                minValue = arr[i].algoDist;
+            }
+        }
+        return arr.splice(minIndex, 1)[0];
+    }
+
+
+    this.buildGraph = function (endPoint) {
+        var areas = this.areaContainer.restrictedAreas;
+        var edges = [];
+        for (var i = 0; i < areas.length; i++) {
+            var area = areas[i];
+            edges = edges.concat(area.corners);
+        }
+        for (var i = 0; i < edges.length; i++) {
+            edges[i].algoDist = Infinity
+            edges[i].prev = null;
+        }
+        endPoint.algoDist = Infinity;
+        edges.push(endPoint);
+        return edges;
+    }
+
+}
+
+
+
+function checkPathIntersectsRectangle(a_rectangleMinX,
+                             a_rectangleMinY,
+                             a_rectangleMaxX,
+                             a_rectangleMaxY,
+                             a_p1x,
+                             a_p1y,
+                             a_p2x,
+                             a_p2y) {
+    // Find min and max X for the segment
+
+    minX = a_p1x;
+    maxX = a_p2x;
+
+    if (a_p1x > a_p2x) {
+        minX = a_p2x;
+        maxX = a_p1x;
+    }
+
+    // Find the intersection of the segment's and rectangle's x-projections
+
+    if (maxX > a_rectangleMaxX) {
+        maxX = a_rectangleMaxX;
+    }
+
+    if (minX < a_rectangleMinX) {
+        minX = a_rectangleMinX;
+    }
+
+    if (minX > maxX) // If their projections do not intersect return false
+    {
+        return false;
+    }
+
+    // Find corresponding min and max Y for min and max X we found before
+
+    minY = a_p1y;
+    maxY = a_p2y;
+
+    dx = a_p2x - a_p1x;
+
+    if (Math.abs(dx) > 0.0000001) {
+        a = (a_p2y - a_p1y) / dx;
+        b = a_p1y - a * a_p1x;
+        minY = a * minX + b;
+        maxY = a * maxX + b;
+    }
+
+    if (minY > maxY) {
+        tmp = maxY;
+        maxY = minY;
+        minY = tmp;
+    }
+
+    // Find the intersection of the segment's and rectangle's y-projections
+
+    if (maxY > a_rectangleMaxY) {
+        maxY = a_rectangleMaxY;
+    }
+
+    if (minY < a_rectangleMinY) {
+        minY = a_rectangleMinY;
+    }
+
+    if (minY > maxY) // If Y-projections do not intersect return false
+    {
+        return false;
+    }
+
+    return true;
+}
+
+function checkPathIntersectsArea(p1, p2, areas) {
+    for (var i = 0; i < areas.length; i++) {
+        var int = checkPathIntersectsRectangle(area.SouthWestX, area.SouthWestY, area.NorthEastX, area.NorthEastY,
+            p1.X, p1.Y, p2.X, p2.Y);
+        if (int) {
+            return int;
+        }
+    }
+    return false;
 }
 
 
