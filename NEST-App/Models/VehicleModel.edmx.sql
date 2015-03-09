@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 03/09/2015 05:15:30
+-- Date Created: 03/09/2015 10:39:48
 -- Generated from EDMX file: C:\Users\draxi_000\Documents\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
@@ -417,7 +417,8 @@ CREATE TABLE [dbo].[CMD_NAV_Target] (
     [Altitude] float  NOT NULL,
     [Latitude] float  NOT NULL,
     [Longitude] float  NOT NULL,
-    [UAVId] int  NOT NULL
+    [UAVId] int  NOT NULL,
+    [Acked] bit  NOT NULL
 );
 GO
 
@@ -437,7 +438,8 @@ CREATE TABLE [dbo].[CMD_NAV_Land] (
     [Latitude] float  NOT NULL,
     [Longitude] float  NOT NULL,
     [Throttle] float  NOT NULL,
-    [UAVId] int  NOT NULL
+    [UAVId] int  NOT NULL,
+    [Acked] bit  NOT NULL
 );
 GO
 
@@ -535,7 +537,8 @@ CREATE TABLE [dbo].[CMD_NAV_Return] (
     [Latitude] float  NOT NULL,
     [Longitude] float  NOT NULL,
     [Throttle] float  NOT NULL,
-    [UAVId] int  NOT NULL
+    [UAVId] int  NOT NULL,
+    [Acked] bit  NOT NULL
 );
 GO
 
@@ -546,7 +549,9 @@ CREATE TABLE [dbo].[CMD_NAV_Hold] (
     [Latitude] float  NOT NULL,
     [Longitude] float  NOT NULL,
     [UAVId] int  NOT NULL,
-    [Time] float  NOT NULL
+    [Time] float  NOT NULL,
+    [Acked] bit  NOT NULL,
+    [Throttle] float  NOT NULL
 );
 GO
 
@@ -557,7 +562,8 @@ CREATE TABLE [dbo].[CMD_NAV_Adjust] (
     [Latitude] float  NOT NULL,
     [Longitude] float  NOT NULL,
     [Throttle] float  NOT NULL,
-    [UAVId] int  NOT NULL
+    [UAVId] int  NOT NULL,
+    [Acked] bit  NOT NULL
 );
 GO
 

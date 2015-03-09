@@ -90,8 +90,8 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         if (this.currentWaypoint && this.reporter.pendingResult) {
             return;
         }
-        if (this.waypoints) {
-            this.pathGen.checkPathValidity(this.waypoints);
+        if (this.pathGen.gotNewRestrictedArea() && this.waypoints) {
+            this.pathGen.buildSafeRoute(this.waypoints);
         }
         //Process this waypoint if we have one
         if (this.currentWaypoint) {
@@ -225,13 +225,14 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     //This only works on the XY plane, not for vertical velocity.
     this.approachSpeed = function (desiredSpeed, heading, dt) {
-        desiredSpeed = 1000;
+        desiredSpeed = 400;
         var velocity = this.getVelocity();
         if (Math.abs(velocity - desiredSpeed) < 0.005) {
             return true;
         }
 
         var maxAcc = this.MaxAcceleration;
+        maxAcc = 10000;
         if (velocity > desiredSpeed) {
             //Accelerate vs Deccelerate
             maxAcc = -maxAcc;
@@ -336,6 +337,9 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                     //TODO: Assign the path back to the base.
                     update = true;
                     //this.pathGen.generateBackToBaseWaypoints(this.FlightState, this.Base);
+                    var baseWp = new Waypoint(base);
+                    this.waypoints.push(baseWp);
+                    this.pathGen.checkPathValidity(this.waypoints);
                 }
                 break;
             case "done":
@@ -492,6 +496,12 @@ function VehicleContainer() {
         areaToEuclidean(area);
         this.restrictedAreas.push(area);
         this.newRestrictedArea = true;
+        this.buildGraph();
+    }
+
+    this.addRestrictedAreas = function (areas) {
+        this.restrictedAreas.concat(areas);
+        this.buildGraph();
     }
 
     this.makeStale = function () {
@@ -506,6 +516,73 @@ function VehicleContainer() {
             $this.addRestrictedArea(data[i]);
         }
     })
+
+    this.buildGraph = function () {
+        var areas = this.restrictedAreas;
+        prepareAreas(this.restrictedAreas);
+        for (var i = 0; i < areas.length; i++) {
+            area = areas[i];
+            area.edges = [];
+            for (var j = i; j < areas.length; j++) {
+                var neighbor = areas[j];
+                this.getEdges(area, neighbor);
+            }
+        }
+    }
+
+    this.getEdges = function (area1, area2) {
+        var areas = this.restrictedAreas;
+
+        for (var j = 0; j < area1.corners.length; j++) {
+            var c1 = area1.corners[j];
+            for (var k = 0; k < area2.corners.length; k++) {
+                var c2 = area2.corners[k];
+                var int = false;
+                for (var i = 0; i < areas.length && !int; i++) {
+                    var a = areas[i];
+                    int = checkPathIntersectsRectangle(a.SouthWestX, a.SouthWestY, a.NorthEastX, a.NorthEastY,
+                        c1.X, c1.Y, c2.X, c2.Y);
+
+                }
+                if (!int) {
+                    var cDistance = d(c1.X, c1.Y, c2.X, c2.Y);
+                    c1.edges.push({
+                        vertex: c2,
+                        distance: cDistance
+                    });
+                    c2.edges.push({
+                        vertex: c1,
+                        distance: cDistance
+                    });
+                }
+            }
+        }
+    }
+}
+
+
+function prepareAreas(areas) {
+    for (var i = 0; i < areas.length; i++) {
+        addCornersToArea(areas[i]);
+        areas[i].edges = [];
+    }
+}
+
+function addCornersToArea(area) {
+    var xs = [area.NorthEastX + 1, area.SouthWestX - 1];
+    var ys = [area.NorthEastY + 1, area.SouthWestY - 1];
+    area.corners = [];
+    for (var i = 0; i < 2; i++) {
+        for (var j = 0; j < 2; j++) {
+            var corner = {
+                X: xs[j],
+                Y: ys[i]
+            };
+            XYToLatLong(corner);
+            area.corners.push(corner);
+            corner.edges = [];
+        }
+    }
 }
 
 // The waypoint creation logic container so that there isn't logic all over the vehicle code
@@ -638,17 +715,16 @@ function PathGenerator(areaContainer, reporter) {
 
     this.checkPathValidity = function (wps) {
         this.movePointsOutOfAreas(wps);
-        if (this.areaContainer.newRestrictedArea) {
-            for (var i = 0; i < wps.length - 1; i++) {
-                var cands = this.checkPath(wps[i], wps[i + 1]);
-                if (cands) {
-                    insertMultiPointsIntoList(wps, cands, i);
-                }
+        for (var i = 0; i < wps.length - 1; i++) {
+            var cands = this.checkPath(wps[i], wps[i + 1]);
+            if (cands && cands.length > 0) {
+                insertMultiPointsIntoList(wps, cands, i);
+                i--; //Recheck the old first point with the new first point
             }
         }
     }
 
-    
+
 
     this.movePointsOutOfAreas = function (wps) {
         for (var i = 0; i < wps.length; i++) {
@@ -683,67 +759,121 @@ function PathGenerator(areaContainer, reporter) {
     this.checkPath = function (p1, p2) {
         var areas = this.areaContainer.restrictedAreas;
         var candidates = [];
+        var ints = [];
         for (var i = 0; i < areas.length; i++) {
             var area = areas[i];
             if (this.checkIfIntersect(p1, p2, area)) {
-                toInsert = this.fixPoints(p1, p2, area);
-                candidates.push(toInsert);
+                //toInsert = this.fixPoints(p1, p2, area);
+                //candidates.push(toInsert);
+                var filt = getAreaIntersectionsFiltered(p1, p2, area);
+                var container = {
+                    filt: filt,
+                    area: area
+                }
+                ints.push(container);
             }
         }
-        var goodCands = this.checkCandidates(p1, p2, candidates);
-        if (goodCands) {
-            return goodCands;
+        ints.sort(function (a, b) {
+            var ax = a.filt[0].X;
+            var ay = a.filt[0].Y;
+            var bx = b.filt[0].X;
+            var by = b.filt[0].Y;
+            return d(p1.X, p1.Y, ax, ay) - d(p1.X, p1.Y, bx, by);
+        });
+        var sol = []
+        for (var i = 0; i < ints.length; i++) {
+            var ar = ints[i].area;
+            if (sol.length == 0) {
+                var nP = this.fixPoints(p1, p2, ar);
+            } else {
+                var nP = this.checkPath(sol[sol.length - 1], p2);
+            }
+            sol = sol.concat(nP);
+            if (this.checkCandidatePath(p1, p2, sol)) return sol;
         }
+        return sol;
+        //var goodCands = this.checkCandidates(p1, p2, candidates);
+        //if (goodCands) {
+        //    return goodCands;
+        //}
     }
 
-    //candidates is an array of arrays of points (max 1 or 2)
+
     this.checkCandidates = function (p1, p2, candidates) {
-        var goodCandidate = -1;
         var areas = this.areaContainer.restrictedAreas;
-        for (var i = 0; i < candidates.length; i++) {
-            var pts = candidates[i];
-            for (var j = 0; j < areas.length; j++) {
-                var area = areas[j];
-                var runningBool = true;
-                runningBool = runningBool && !this.checkIfIntersect(p1, pts[0], area);
-                if (pts.length == 2) {
-                    runningBool = runningBool && !this.checkIfIntersect(pts[0], pts[1], area);
-                    runningBool = runningBool && !this.checkIfIntersect(pts[1], p2, area);
-                }
-                else {
-                    runningBool = runningBool && !this.checkIfIntersect(pts[0], p2, area);
-                }
-                if (!runningBool) {
-                    break;
-                }
+        var candPerms = permute(candidates);
+        for (var i = 0; i < candPerms.length; i++) {
+            perm = candPerms[i];
+            var path = [];
+            for (var j = 0; j < perm.length; j++) {
+                path = path.concat(perm[j]);
             }
-            if (runningBool) {
-                return pts;
-            }
+            var isPathGood = this.checkCandidatePath(p1, p2, path);
+            if (isPathGood) return path;
         }
         return null;
+    }
+
+    //Checks to see if the proposed path hits an areas. If it doesn't, then it returns true. Else returns false.
+    this.checkCandidatePath = function (p1, p2, pts) {
+        var areas = this.areaContainer.restrictedAreas;
+        for (var j = 0; j < areas.length; j++) {
+            var area = areas[j];
+            var runningBool = true;
+            runningBool = runningBool && !this.checkIfIntersect(p1, pts[0], area);
+            for (var i = 0; i < pts.length - 1; i++) {
+                runningBool = runningBool && !this.checkIfIntersect(pts[i], pts[i + 1], area);
+            }
+            runningBool = runningBool && !this.checkIfIntersect(pts[pts.length - 1], p2, area);
+            if (!runningBool) {
+                break;
+            }
+        }
+        return runningBool;
+    }
+
+    //Creates an array of all the permutations of the input array.
+    function permute(input) {
+        var permArr = [],
+        usedChars = [];
+        function main() {
+            var i, ch;
+            for (i = 0; i < input.length; i++) {
+                ch = input.splice(i, 1)[0];
+                usedChars.push(ch);
+                if (input.length == 0) {
+                    permArr.push(usedChars.slice());
+                }
+                main();
+                input.splice(i, 0, ch);
+                usedChars.pop();
+            }
+            return permArr;
+        }
+        return main();
     }
 
     this.fixPoints = function (p1, p2, area) {
         //Idea:
         //case 1: intersect two sides that share a corner, set a new waypoint on that corner
         //case 2: intersects two opposite sides, deal with that somehow
-        var ints = [
-            intersectsSide(area.SouthWestY, area.NorthEastY, area.NorthEastX, p1.Y, p1.X, p2.Y, p2.X),
-            intersectsSide(area.SouthWestX, area.NorthEastX, area.NorthEastY, p1.X, p1.Y, p2.X, p2.Y),
-            intersectsSide(area.SouthWestY, area.NorthEastY, area.SouthWestX, p1.Y, p1.X, p2.Y, p2.X),
-            intersectsSide(area.SouthWestX, area.NorthEastX, area.SouthWestY, p1.X, p1.Y, p2.X, p2.Y),
-        ];
+        var ints = getAreaIntersections(p1, p2, area);
         var sides = [];
-        for (var i = 0; i < ints.length; i++){
-            if(ints[i]){
+        for (var i = 0; i < ints.length; i++) {
+            if (ints[i]) {
                 sides.push(i);
             }
         }
-        if (sides[1] - sides[0] == 1 || sides[0] == 0 && sides[1] == 1) {
+        //Sides now contains an array of which sides have been intersected
+        //Side 0: East side
+        //Side 1: North side
+        //etc...
+
+        //We intersected two sides which share a corner
+        if (sides[1] - sides[0] == 1 || sides[0] == 0 && sides[1] == 3) {
             //two adjacent sides that share a corner
             if (sides[1] % 2 == 0) {
-                //Make sure that sides[0] is always an x 
+                //Make sure that sides[0] intersects the x axis
                 var tmp = sides[1];
                 sides[1] = sides[0];
                 sides[0] = tmp;
@@ -756,37 +886,118 @@ function PathGenerator(areaContainer, reporter) {
             XYToLatLong(selectedCorner);
             return [new Waypoint(selectedCorner)];
         }
+            //Two opposite edges were intersects
         else {
-            var pt1 = {
-                X: area.NorthEastX + 1,
-                Y: area.NorthEastY + 1,
-            }
-            if (sides[0] == 0) {
-                var pt2 = {
-                    X: area.SouthWestX - 1,
-                    Y: area.NorthEastY + 1,
+            var isNorthSouthInt = sides[0] == 1;
+            var int1 = ints[isNorthSouthInt ? 1 : 0];
+            var int2 = ints[isNorthSouthInt ? 3 : 2];
+            var fix = fixOppositeEdgeIntersection(area, int1, int2, isNorthSouthInt);
+            var heading = calculateHeading(p1.X, p1.Y, p2.X, p2.Y);
+            if (isNorthSouthInt) {
+                if (heading < Math.PI / 2 || heading > 3 * Math.PI / 2) {
+                    fix.reverse();
                 }
             }
-            else {
-                var pt2 = {
-                    X: area.NorthEastX + 1,
-                    Y: area.SouthWestY - 1,
-                }
+            else if (heading > Math.PI / 2 && heading < 3 * Math.PI / 2) {
+                fix.reverse();
             }
-            XYToLatLong(pt1);
-            XYToLatLong(pt2);
-            return [new Waypoint(pt1), new Waypoint(pt2)];
+            return fix;
         }
     }
 
-    function intersectsSide(axMin, axMax, y, px1, py1, px2, py2) {
+    function getAreaIntersectionsFiltered(p1, p2, area) {
+        ints = getAreaIntersections(p1, p2, area);
+        var filt = [];
+        for (var i = 0; i < ints.length; i++) {
+            var int = ints[i];
+            if (int) {
+                filt.push(int);
+            }
+        }
+        if (d(p1.X, p1.Y, filt[0].X, filt[0].Y) > d(p1.X, p1.Y, filt[1].X, filt[1].Y)) {
+            filt.reverse();
+        }
+        return filt;
+    }
+
+    function getAreaIntersections(p1, p2, area) {
+        var ints = [
+            intersectsSide(area.SouthWestY, area.NorthEastY, area.NorthEastX, p1.Y, p1.X, p2.Y, p2.X, true),
+            intersectsSide(area.SouthWestX, area.NorthEastX, area.NorthEastY, p1.X, p1.Y, p2.X, p2.Y),
+            intersectsSide(area.SouthWestY, area.NorthEastY, area.SouthWestX, p1.Y, p1.X, p2.Y, p2.X, true),
+            intersectsSide(area.SouthWestX, area.NorthEastX, area.SouthWestY, p1.X, p1.Y, p2.X, p2.Y),
+        ];
+        return ints;
+    }
+
+    function fixOppositeEdgeIntersection(area, int1, int2, isNorthSouthInt) {
+        if (!isNorthSouthInt) {
+            //The two points intersect through the east and west edges
+            var edgeCenter = (area.NorthEastY + area.SouthWestY) / 2;
+            var vertical = int1.Y - edgeCenter + int2.Y - edgeCenter;
+            var pt1 = {
+                X: area.NorthEastX + 1
+            }
+            var pt2 = {
+                X: area.SouthWestX - 1
+            }
+            if (vertical < 0) {
+                //The points average out to being closer to the bottom
+                pt1.Y = area.SouthWestY - 1;
+                pt2.Y = area.SouthWestY - 1;
+            } else {
+                pt1.Y = area.NorthEastY + 1;
+                pt2.Y = area.NorthEastY + 1;
+            }
+        }
+        else {
+            var edgeCenter = (area.NorthEastX + area.SouthWestX) / 2;
+            var horizontal = int1.X - edgeCenter + int2.X - edgeCenter;
+            var pt1 = {
+                Y: area.NorthEastY
+            };
+            var pt2 = {
+                Y: area.SouthWestY
+            };
+            if (horizontal < 0) {
+                //Average out to being more west
+                pt1.X = area.SouthWestX - 1;
+                pt2.X = area.SouthWestX - 1;
+            } else {
+                pt1.X = area.NorthEastX + 1;
+                pt2.X = area.NorthEastX + 1;
+            }
+        }
+        XYToLatLong(pt1);
+        XYToLatLong(pt2);
+        return [new Waypoint(pt1), new Waypoint(pt2)];
+    }
+
+    function intersectsSide(axMin, axMax, y, px1, py1, px2, py2, reverse) {
         if (Math.abs(py1 - py2) < .00001) {
             return false;
         }
         var num = (px2 - px1);
         var denom = (py2 - py1);
         var xInt = num / denom * (y - py1) + px1;
-        return xInt <= axMax && xInt >= axMin;
+        var intersects = xInt <= axMax && xInt >= axMin;
+        if (!intersects) {
+            return null;
+        }
+        else {
+            if (reverse) {
+                return {
+                    Y: xInt,
+                    X: y,
+                }
+            }
+            else {
+                return {
+                    X: xInt,
+                    Y: y
+                }
+            }
+        }
 
     }
 
@@ -798,77 +1009,231 @@ function PathGenerator(areaContainer, reporter) {
         return intersects;
     }
 
-    //Check if the line between two x,y points falls within a rectangle. Found on stack overflow.
-    function checkPathIntersectsRectangle(a_rectangleMinX,
-                                 a_rectangleMinY,
-                                 a_rectangleMaxX,
-                                 a_rectangleMaxY,
-                                 a_p1x,
-                                 a_p1y,
-                                 a_p2x,
-                                 a_p2y) {
-        // Find min and max X for the segment
-
-        minX = a_p1x;
-        maxX = a_p2x;
-
-        if (a_p1x > a_p2x) {
-            minX = a_p2x;
-            maxX = a_p1x;
+    this.buildSafeRoute = function (wps) {
+        var areas = this.areaContainer.restrictedAreas;
+        for (var i = 0; i < wps.length - 1; i++) {
+            if (checkPathIntersectsArea(wps[i], wps[i] + 1, areas)) {
+                var newwps = this.connectSafely(wps[i], wps[i + 1]);
+                insertMultiPointsIntoList(wps, newwps, i);
+                i += newwps.length;
+            }
         }
-
-        // Find the intersection of the segment's and rectangle's x-projections
-
-        if (maxX > a_rectangleMaxX) {
-            maxX = a_rectangleMaxX;
-        }
-
-        if (minX < a_rectangleMinX) {
-            minX = a_rectangleMinX;
-        }
-
-        if (minX > maxX) // If their projections do not intersect return false
-        {
-            return false;
-        }
-
-        // Find corresponding min and max Y for min and max X we found before
-
-        minY = a_p1y;
-        maxY = a_p2y;
-
-        dx = a_p2x - a_p1x;
-
-        if (Math.abs(dx) > 0.0000001) {
-            a = (a_p2y - a_p1y) / dx;
-            b = a_p1y - a * a_p1x;
-            minY = a * minX + b;
-            maxY = a * maxX + b;
-        }
-
-        if (minY > maxY) {
-            tmp = maxY;
-            maxY = minY;
-            minY = tmp;
-        }
-
-        // Find the intersection of the segment's and rectangle's y-projections
-
-        if (maxY > a_rectangleMaxY) {
-            maxY = a_rectangleMaxY;
-        }
-
-        if (minY < a_rectangleMinY) {
-            minY = a_rectangleMinY;
-        }
-
-        if (minY > maxY) // If Y-projections do not intersect return false
-        {
-            return false;
-        }
-
-        return true;
     }
+
+    this.connectSafely = function (p1, p2) {
+        var result = this.dijkstra(p1, p2);
+        var wps = buildWpsFromArray(result);
+        return wps;
+    }
+
+    //Check if the line between two x,y points falls within a rectangle. Found on stack overflow.
+    this.dijkstra = function (p1, p2) {
+        var areas = this.areaContainer.restrictedAreas;
+        var foundInt = false;
+        for (var i = 0; i < areas.length && !foundInt; i++) {
+            var area = areas[i];
+            foundInt = checkPathIntersectsRectangle(area.SouthWestX, area.SouthWestY, area.NorthEastX, area.NorthEastY,
+            p1.X, p1.Y, p2.X, p2.Y);
+        }
+        if (!foundInt) {
+            return [];
+        }
+        this.appendPointEdges(p2);
+        this.appendPointEdges(p1);
+        var result = this.doDijkstras(p1, p2);
+        return result;
+    }
+
+    function buildWpsFromArray(arr) {
+        var wps = [];
+        for (var i = 0 ; i < arr.length; i++) {
+            wps.push(new Waypoint(arr[i]));
+        }
+        return wps;
+    }
+
+    this.appendPointEdges = function (p) {
+        var areas = this.areaContainer.restrictedAreas;
+        p.edges = [];
+        for (var i = 0; i < areas.length; i++) {
+            var area = areas[i];
+            for (var j = 0; j < area.corners.length; j++) {
+                this.checkIfConnected(p, area.corners[j]);
+            }
+        }
+    }
+
+    this.checkIfConnected = function (p, c) {
+        var areas = this.areaContainer.restrictedAreas;
+        var isConnected = true;
+        for (var i = 0; i < areas.length; i++) {
+            var a = areas[i];
+            for (var j = 0; j < a.corners.length; j++) {
+
+                isConnected = !checkPathIntersectsRectangle(a.SouthWestX, a.SouthWestY, a.NorthEastX, a.NorthEastY,
+                                c.X, c.Y, p.X, p.Y);
+                if (!isConnected) {
+                    return;
+                }
+            }
+        }
+        if (isConnected) {
+            var cDistance = d(c.X, c.Y, p.X, p.Y);
+            p.edges.push({
+                vertex: c,
+                distance: cDistance
+            });
+            c.edges.push({
+                vertex: p,
+                distance: cDistance
+            });
+        }
+    }
+
+    this.doDijkstras = function (p1, p2, edges) {
+        var verts = this.buildGraph(p2);
+        p1.algoDist = 0;
+        verts.push(p1);
+        while (verts.length > 0) {
+
+            var u = popArrayMin(verts);
+            for (var i = 0; i < u.edges.length; i++) {
+                var edge = u.edges[i];
+                var v = edge.vertex;
+                var alt = u.algoDist + edge.distance;
+                if (alt < v.algoDist) {
+                    v.algoDist = alt;
+                    v.prev = u;
+                }
+            }
+        }
+        return getDijkstrasResult(p1, p2);
+    }
+
+    function getDijkstrasResult(p1, p2) {
+        var result = [];
+        var current = p2;
+        while (current.prev != p1) {
+            result.push(current.prev);
+            current = current.prev;
+        }
+        result.reverse();
+        return result;
+    }
+
+    function popArrayMin(arr) {
+        var minValue = Infinity;
+        var minIndex = -1;
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i].algoDist < minValue) {
+                minIndex = i;
+                minValue = arr[i].algoDist;
+            }
+        }
+        return arr.splice(minIndex, 1)[0];
+    }
+
+
+    this.buildGraph = function (endPoint) {
+        var areas = this.areaContainer.restrictedAreas;
+        var edges = [];
+        for (var i = 0; i < areas.length; i++) {
+            var area = areas[i];
+            edges = edges.concat(area.corners);
+        }
+        for (var i = 0; i < edges.length; i++) {
+            edges[i].algoDist = Infinity
+            edges[i].prev = null;
+        }
+        endPoint.algoDist = Infinity;
+        edges.push(endPoint);
+        return edges;
+    }
+
+}
+
+
+
+function checkPathIntersectsRectangle(a_rectangleMinX,
+                             a_rectangleMinY,
+                             a_rectangleMaxX,
+                             a_rectangleMaxY,
+                             a_p1x,
+                             a_p1y,
+                             a_p2x,
+                             a_p2y) {
+    // Find min and max X for the segment
+
+    minX = a_p1x;
+    maxX = a_p2x;
+
+    if (a_p1x > a_p2x) {
+        minX = a_p2x;
+        maxX = a_p1x;
+    }
+
+    // Find the intersection of the segment's and rectangle's x-projections
+
+    if (maxX > a_rectangleMaxX) {
+        maxX = a_rectangleMaxX;
+    }
+
+    if (minX < a_rectangleMinX) {
+        minX = a_rectangleMinX;
+    }
+
+    if (minX > maxX) // If their projections do not intersect return false
+    {
+        return false;
+    }
+
+    // Find corresponding min and max Y for min and max X we found before
+
+    minY = a_p1y;
+    maxY = a_p2y;
+
+    dx = a_p2x - a_p1x;
+
+    if (Math.abs(dx) > 0.0000001) {
+        a = (a_p2y - a_p1y) / dx;
+        b = a_p1y - a * a_p1x;
+        minY = a * minX + b;
+        maxY = a * maxX + b;
+    }
+
+    if (minY > maxY) {
+        tmp = maxY;
+        maxY = minY;
+        minY = tmp;
+    }
+
+    // Find the intersection of the segment's and rectangle's y-projections
+
+    if (maxY > a_rectangleMaxY) {
+        maxY = a_rectangleMaxY;
+    }
+
+    if (minY < a_rectangleMinY) {
+        minY = a_rectangleMinY;
+    }
+
+    if (minY > maxY) // If Y-projections do not intersect return false
+    {
+        return false;
+    }
+
+    return true;
+}
+
+function checkPathIntersectsArea(p1, p2, areas) {
+    for (var i = 0; i < areas.length; i++) {
+        var int = checkPathIntersectsRectangle(area.SouthWestX, area.SouthWestY, area.NorthEastX, area.NorthEastY,
+            p1.X, p1.Y, p2.X, p2.Y);
+        if (int) {
+            return int;
+        }
+    }
+    return false;
 }
 
 
@@ -997,6 +1362,8 @@ function calculateDistance(x1, y1, x2, y2) {
     return distance;
 }
 
+var d = calculateDistance;
+
 
 
 //Takes the well formed geography and appends the lat and long as doubles, then appends the X and Y we get from the lat and long
@@ -1014,8 +1381,8 @@ appendLonLatFromDbPoint = function (obj, point) {
 }
 
 function findWaypointById(wps, id) {
-    for(var i = 0; i < wps.length; i++ ){
-        if(wps[i].Id == id) {
+    for (var i = 0; i < wps.length; i++) {
+        if (wps[i].Id == id) {
             return wps[i];
         }
     }

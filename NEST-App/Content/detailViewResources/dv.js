@@ -19,11 +19,50 @@ $(document).ready(function () {
         }]
     };
 
+    var priorityfilter_value = {
+        display_all_text: "Show all",
+        col_0: "none",
+        col_1: "none",
+        col_2: "select"
+    }
+    setFilterGrid("priority_table", priorityfilter_value);
+
+    var operatorfilter_value = {
+        display_all_text: "Show all",
+        col_0: "select",
+        col_1: "select",
+        col_2: "none",
+        col_3: "none"
+    }
+    setFilterGrid("operator_table", operatorfilter_value);
+
+
     var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
     var table = document.getElementById("UAV_table");
+    var table2 = document.getElementById("priority_table");
+    var table3 = document.getElementById("operator_table")
+ 
+    if (table2 != null) {
+        for (var i = 2; i < table2.rows.length; i++)
+        {
+            table2.rows[i].onclick = function () {
+                document.getElementById("choose_uav_table").style.display = 'block';
+            }
+        }
+    }
+
+    if (table3 != null) {
+        for (var i = 2; i < table3.rows.length; i++) {
+            table3.rows[i].onclick = function () {
+                document.getElementById("choose_uav_table").style.display = 'block';
+            }
+        }
+    }
+
     var presentMarker, lastMarker;
 
+    
 
     if (table != null) {
         for (var i = 1; i < table.rows.length; i++) {
@@ -32,7 +71,6 @@ $(document).ready(function () {
                     var uavid = this.cells[0];
                     previous_id = current_id;
                     current_id = this.cells[0].innerHTML;
-                    
                     var callsign = this.cells[1];
                     var numDelivery = this.cells[2];
                     var mile = this.cells[3];
@@ -47,11 +85,10 @@ $(document).ready(function () {
                     var current_alt = this.cells[12];
                     var dest_lat = this.cells[13];
                     var dest_long = this.cells[14];
-                    var total_delivery = this.cells[15];
-                    var payload = this.cells[16];
-                    var cost = this.cells[17];
+                    var payload = this.cells[15];
+                    var cost = this.cells[16];
                     var uav_lat_long = new google.maps.LatLng(this.cells[10].innerHTML, this.cells[11].innerHTML);
-                    var total_num = total_delivery.innerHTML;
+                    var total_num = numDelivery.innerHTML;
                     var final_total = total_num - 1;
                     var bat = battery.innerHTML;
                     var final_battery = bat * 100;
@@ -101,6 +138,13 @@ $(document).ready(function () {
             }
         }
     }
+
+    else
+    {
+        alert("There is no generated UAVs, or UAVs do not have missions. Go to the Admin View page to fix this issue.");
+    }
+
+
 
     function UpdateVehicle(uav, updatedUAV) {
         var LatLng = new google.maps.LatLng(updatedUAV.Latitude, updatedUAV.Longitude);
@@ -197,13 +241,14 @@ $(document).ready(function () {
 
             document.getElementById(evt.uav_id).style.backgroundColor = "red";
             uavs[evt.uav_id].CurrentEvent = evt;
+            uavs[evt.uav_id].setEventOnce = 0;
         }
     }
-    
+
     var vehicleHub = $.connection.vehicleHub;
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         
-        uavs[vehicle.Id] = UpdateVehicle(uavs[vehicle.Id], vehicle);
+        
         uavs[vehicle.Id].Id = vehicle.Id;
         uavs[vehicle.Id].Battery = vehicle.BatteryLevel;
         uavs[vehicle.Id].Alt = vehicle.Altitude;
@@ -217,11 +262,16 @@ $(document).ready(function () {
             document.getElementById("curr_alt").innerHTML = '　ALT:　　 ' + vehicle.Altitude;
             document.getElementById("battery").innerHTML = 'Battery: ' + vehicle.BatteryLevel.toFixed(3) + "%";
             var latlng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
-            uavs[vehicle.Id].marker.setMap(map);
-            uavs[vehicle.Id].marker.setVisible(true);
-            if (uavs[vehicle.Id].CurrentEvent != null) {
+            if (uavs[vehicle.Id].setMapOnce == 0) {
+                uavs[vehicle.Id].marker.setMap(map);
+                uavs[vehicle.Id].marker.setVisible(true);
+                uavs[vehicle.Id].setMapOnce = 1;
+            }
+            uavs[vehicle.Id] = UpdateVehicle(uavs[vehicle.Id], vehicle);
+            if (uavs[vehicle.Id].CurrentEvent != null && uavs[vehicle.Id].setEventOnce == 0) {
                 infoboxContainer[vehicle.Id].infobox.open(map, uavs[vehicle.Id].marker);
                 infoboxContainer[vehicle.Id].infoboxAlert.open(map, uavs[vehicle.Id].marker);
+                uavs[vehicle.Id].setEventOnce = 1;
             }
           
             if (uavs[vehicle.Id].Id != previous_id && previous_id != null) {
@@ -229,14 +279,22 @@ $(document).ready(function () {
                     var selector = parseInt(previous_id);
                     uavs[selector].marker.setMap(null);
                     uavs[selector].marker.setVisible(false);
-                    infoboxContainer[selector].infobox.close();
-                    infoboxContainer[selector].infoboxAlert.close();
+                    if (uavs[selector].CurrentEvent != null) {
+                        infoboxContainer[selector].infobox.close();
+                        infoboxContainer[selector].infoboxAlert.close();
+                        uavs[selector].setEventOnce = 0;
+                    }
+                    uavs[selector].setMapOnce = 0;
                 }
                 else {
                     uavs[previous_id].marker.setMap(null);
                     uavs[previous_id].marker.setVisible(false);
-                    infoboxContainer[previous_id].infobox.close();
-                    infoboxContainer[previous_id].infoboxAlert.close();
+                    if(uavs[previous_id].CurrentEvent != null) {
+                        infoboxContainer[previous_id].infobox.close();
+                        infoboxContainer[previous_id].infoboxAlert.close();
+                        uavs[previous_id].setEventOnce = 0;
+                    }
+                    uavs[previous_id].setMapOnce = 0;
                 }
             }
             map.setCenter(latlng);
@@ -292,6 +350,8 @@ function SetUAV(uavData) {
     var mis = uav.Mission;
     uav.Destination = new google.maps.LatLng(mis.Latitude, mis.Longitude);
     uav.CurrentEvent = null;
+    uav.setMapOnce = 0;
+    uav.setEventOnce = 0;
     return uav;
 };
 
@@ -344,12 +404,4 @@ function uavMarkers(data, textStatus, jqXHR) {
         uavs[data[i].Id].flightPath = flightLines[data[i].Id];
         uavs[data[i].Id].marker.setMap(map);
     }
-}
-
-function Simulation() {
-    window.open("localhost:53130/Sim");
-}
-
-function Adminview() {
-    window.open("localhost:53130/adminview");
 }

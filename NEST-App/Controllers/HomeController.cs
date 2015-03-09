@@ -16,7 +16,7 @@ namespace NEST_App.Controllers
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
-            ViewData["current_user"] = (string)System.Web.HttpContext.Current.Cache["current_user"];
+            ViewData["current_user"] = Session["current_user"]; //(string)System.Web.HttpContext.Current.Cache["current_user"];
             return View();
         }
 

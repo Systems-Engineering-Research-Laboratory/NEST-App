@@ -233,7 +233,9 @@
         uav.Orientation = uavData.FlightState.Yaw;
         var mis = uav.Mission;
         uav.Destination = new google.maps.LatLng(mis.Latitude, mis.Longitude);
-        
+        uav.Events = 0;
+        uav.infobox = null;
+        uav.alertOnce = 0;
         return uav;
     },
 
@@ -347,10 +349,17 @@
 
 
     RR_button_decline: function () {
-        $(".RoundRobin_popup").fadeOut("slow", function () { });
-        document.getElementById('RR_choice_p').innerHTML = "You have declined UAV";
-        document.getElementById('RR_choice_p').style.color = "red";
-        document.getElementById('RR_outer_result').style.display = "block";
-        $(".RR_outer_result").fadeOut("slow", function () { });
+        $.ajax({
+            type: 'POST',
+            url: '/api/uavs/rejectassignment?uavid=' + warningUavId + '&userid=' + assignment.getUserId(),
+            success: function () {
+                $(".RoundRobin_popup").fadeOut("slow", function () { });
+                document.getElementById('RR_choice_p').innerHTML = "You have declined UAV";
+                document.getElementById('RR_choice_p').style.color = "red";
+                document.getElementById('RR_outer_result').style.display = "block";
+                $(".RR_outer_result").fadeOut("slow", function () { });
+            }
+        });
+        
     }
 };

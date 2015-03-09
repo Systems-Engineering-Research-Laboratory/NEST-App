@@ -119,9 +119,6 @@
             Longitude: lng,
             Altitude: 400,
             UAVID: selectedUAV.Id
-        });
-
-        console.log("new waypoints");
-        console.log(selectedUAV.Mission.Waypoints);
+        });   
     }
 };

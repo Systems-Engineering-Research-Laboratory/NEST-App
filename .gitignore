@@ -76,3 +76,4 @@ _[Ss]cripts
 *.ldf
 .travis.yml.orig
 NEST-App/App_Data/NEST_DB.mdf
+NEST-App/Scripts/DrawingLibrary.js

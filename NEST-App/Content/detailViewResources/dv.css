@@ -1,186 +1,304 @@
-﻿ .outside {
-            border: none;
-            padding: 0px;
-            height: 700px;
-            width: 100%;
-        }
+﻿@import url(http://fonts.googleapis.com/css?family=Arvo);
 
-        .table {
-            border: none;
-            width: 38%;
-            /*height: 695px;*/
-            /*overflow: auto;
-            overflow-x: hidden;*/
-        }
+* {
+    font-family: 'Arvo', sans-serif;
+}
 
-        .UAV_table {
-            width: 100%;
-            /*height: 695px;*/
-            float: left;
-            padding: 10px;
-            margin: 0px;
-        }
+.outside {
+    border: none;
+    padding: 0px;
+    height: 700px;
+    width: 100%;
+    display: inline-block;
+}
 
-        .UAV_table tr {
-            background-color: #ffffff;
-            border: none;
-            border-radius: 3px;
-            padding-top: 3px;
-            padding-bottom: 3px;
-            padding-left: 6px;
-            padding-right: 6px;
-        }
 
-        .UAV_table tr:hover {
-            background-color: #e9e9ea;
-        }
+.table {
+    border: none;
+    width: 38%;
+    margin: 0px;
+}
 
-        .UAV_table th {
-            background-color: #0a074a;
-            border-radius: 8px;
-            border: 1px solid white;
-            text-align: center;
-            padding-top: 3px;
-            padding-bottom: 3px;
-            padding-left: 6px;
-            padding-right: 6px;
-            color: white;
-            font-size: 15px;
-        }
+.UAV_table {
+    width: 100%;
+    float: left;
+    padding: 10px;
+    margin: 0px;
+    height: 100%;
+    overflow-y: auto;
+    height: 695px;
+    
+}
 
-        .UAV_table td {
-            border: 1px solid white;
-            text-align: center;
-            padding-top: 3px;
-            padding-bottom: 3px;
-            padding-left: 6px;
-            padding-right: 6px;
-            border-radius: 5px;
-        }
+/*.UAV_table::-webkit-scrollbar-track{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+	border-radius: 10px;
+}
 
-        .UAV_table td:hover {
-            cursor: pointer;
-        }
+.UAV_table::-webkit-scrollbar
+{
+	width: 10px;
+	background-color: #F5F5F5;
+}
 
-        .outer_detail_div {
-            margin: 0px;
-            padding-top: 12px;
-            padding-bottom: 8px;
-            padding-right: 8px;
-            padding-left: 8px;
-            border: none;
-            border-radius: 8px;
-            width: 58%;
-            float: right;
-            background-color: #e9e9ea;
-        }
+.UAV_table::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	background-image: -webkit-gradient(linear,
+									   left bottom,
+									   left top,
+									   color-stop(0.44, rgb(122,153,217)),
+									   color-stop(0.72, rgb(73,125,189)),
+									   color-stop(0.86, rgb(28,58,148)));
+}*/
 
-        .detail_title {
-            font-size: 25px;
-            font-weight: bold;
-            line-height: 90%;
-            font-family: Verdana;
-            color: #0b0769;
-        }
 
-        .detail_statue_metrics_div {
-            border: none;
-            padding: 2px;
-            width: 43%;
-            float: left;
-            margin-right: 2px;
-        }
+.UAV_table::-webkit-scrollbar-track
+{
+	border: 1px solid black;
+	background-color: #F5F5F5;
+}
 
-        .title {
-            font-size: 18px;
-            font-weight: bold;
-            line-height: 80%;
-            font-family: Verdana;
-            padding-top: 3px;
-            color: #0a074a;
-            text-decoration: underline;
-        }
+.UAV_table::-webkit-scrollbar
+{
+	width: 10px;
+	background-color: #0a074a;
+}
 
-        .details {
-            font-size: 15px;
-            line-height: 100%;
-            font-family: Verdana;
-            padding-bottom: 0;
-            color: #0a074a;
-            margin: 1px;
-        }
+.UAV_table::-webkit-scrollbar-thumb
+{
+	background-color: #0b0769;	
+}
 
-        .detail_statue {
-            border: 1px solid #0b0769;
-            margin-bottom: 6px;
-            border-radius: 8px;
-            padding: 5px;
-            padding-left: 8px;
-            background-color: #fafbeb;
-        }
+.UAV_table tr {
+    background-color: #ffffff;
+    border: none;
+    border-radius: 3px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
 
-        .detail_metrics {
-            border: 1px solid #0b0769;
-            margin-top: 6px;
-            border-radius: 8px;
-            padding: 5px;
-            padding-left: 8px;
-            background-color: #fafbeb;
-        }
+.UAV_table tr:hover {
+    background-color: #e9e9ea;
+}
 
-        .detail_acitivity {
-            border: 1px solid #0b0769;
-            margin-top: 6px;
-            border-radius: 8px;
-            padding: 5px;
-            padding-left: 8px;
-            background-color: #fafbeb;
-        }
+.UAV_table th {
+    background-color: #0a074a;
+    border-radius: 8px;
+    border: 1px solid white;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    color: white;
+    font-size: 15px;
+}
 
-        .UAV_time_tr {
-            line-height: 100%;
-        }
+.UAV_table td {
+    border: 1px solid white;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    border-radius: 5px;
+}
 
-        .UAV_time_td {
-            font-size: 15px;
-            font-family: Verdana;
-        }
+.UAV_table td:hover {
+    cursor: pointer;
+}
 
-        .UAV_time_td_2nd {
-            font-size: 15px;
-            font-family: Verdana;
-            padding-left: 15px;
-        }
+.outer_detail_div {
+    margin: 0px;
+    padding-top: 12px;
+    padding-bottom: 8px;
+    padding-right: 8px;
+    padding-left: 8px;
+    border: none;
+    border-radius: 8px;
+    width: 58%;
+    float: right;
+    background-color: #e9e9ea;
+    /*display: inline-block*/
+}
 
-        .map {
-            border: none;
-            width: 56%;
-            margin: 2px;
-            margin-left: 0;
-            float: right;
-            height: 100%;
-        }
+.detail_title {
+    font-size: 25px;
+    font-weight: bold;
+    line-height: 90%;
+    color: #0b0769;
+}
 
-        #map-canvas {
-            width: auto;
-            height: 350px;
-            margin: auto;
-            padding: 0px;
-            border: 1px solid #0b0769;
-            border-radius: 8px;
-        }
+.detail_statue_metrics_div {
+    border: none;
+    padding: 2px;
+    width: 43%;
+    float: left;
+    margin-right: 2px;
+}
 
-        .detail_package {
-            border: 1px solid #0b0769;
-            margin-top: 6px;
-            border-radius: 8px;
-            padding: 5px;
-            padding-left: 8px;
-            background-color: #fafbeb;
-            width: auto;
-            height: auto;
-        }
+.title {
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 80%;
+    padding-top: 3px;
+    color: #0a074a;
+    text-decoration: underline;
+}
 
-        img[src="http://www.google.com/intl/en_us/mapfiles/close.gif"] {
-        display: none;
-    }
+.details {
+    font-size: 15px;
+    line-height: 100%;
+    padding-bottom: 0;
+    color: #0a074a;
+    margin: 1px;
+}
+
+.detail_statue {
+    border: 1px solid #0b0769;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    padding: 5px;
+    padding-left: 8px;
+    background-color: #fafbeb;
+}
+
+.detail_metrics {
+    border: 1px solid #0b0769;
+    margin-top: 6px;
+    border-radius: 8px;
+    padding: 5px;
+    padding-left: 8px;
+    background-color: #fafbeb;
+}
+
+.detail_acitivity {
+    border: 1px solid #0b0769;
+    margin-top: 6px;
+    border-radius: 8px;
+    padding: 5px;
+    padding-left: 8px;
+    background-color: #fafbeb;
+}
+
+.UAV_time_tr {
+    line-height: 100%;
+}
+
+.UAV_time_td {
+    font-size: 15px;
+}
+
+.UAV_time_td_2nd {
+    font-size: 15px;
+    padding-left: 15px;
+}
+
+.map {
+    border: none;
+    width: 56%;
+    margin: 2px;
+    margin-left: 0;
+    float: right;
+    height: 100%;
+}
+
+#map-canvas {
+    width: auto;
+    height: 350px;
+    margin: auto;
+    padding: 0px;
+    border: 1px solid #0b0769;
+    border-radius: 8px;
+}
+
+.detail_package {
+    border: 1px solid #0b0769;
+    margin-top: 6px;
+    border-radius: 8px;
+    padding: 5px;
+    padding-left: 8px;
+    background-color: #fafbeb;
+    width: auto;
+    height: auto;
+}
+
+img[src="http://www.google.com/intl/en_us/mapfiles/close.gif"] {
+display: none;
+}
+
+.drop_ul_outside{
+  border: none;
+  text-align: center;
+  display: inline;
+  margin: 0;
+  padding: 15px 4px 17px 0;
+  list-style: none;
+  border-radius: 8px;
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+}
+
+.drop_li_outside{
+  font-family: 'Arvo', sans-serif;
+  font-size: 18px;
+  display: inline-block;
+  position: relative;
+  padding: 11px 20px;
+  cursor: pointer;
+  background-color: #0a074a;
+  color: #fff;
+  border-radius: 8px;
+}
+
+.drop_ul_inside{
+  padding: 0;
+  position: absolute;
+  top: 48px;
+  left: 0;
+  width: 305px;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transiton: opacity 0.4s;
+}
+
+.drop_li_inside { 
+  text-align: center;
+  padding: 5px;
+  border-radius: 8px;
+  background: #0a074a; 
+  display: block; 
+  color: #fff;
+  text-shadow: 0 -1px 0 #000;
+  /*border: 1px solid white;*/
+  border-bottom: none;
+}
+
+.drop_li_outside:hover {
+  background: #fff;
+  color: #0a074a;
+  border: 2px solid #0a074a;
+}
+
+.drop_li_inside:hover { 
+    background: rgba(233, 233, 234, 0.95);
+    -webkit-transition: all 0.4s;
+     border: 2px solid #0a074a;
+     color: black;
+}
+
+.drop_li_outside:hover ul {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  -webkit-transiton: all 0.4s;
+}
+
+
