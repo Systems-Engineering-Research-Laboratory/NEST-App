@@ -1,9 +1,6 @@
 ﻿/*Build each command type with the necessary data here and send it to the controller*/
 /*User input is gathered and defined here, where required; the controller should just be in charge of data*/
 var uavCommands = {
- 
-
-    //TODO*********FIgure out how to handle ID
 
     /**********NAVIGATIONAL COMMANDS**********/
 
@@ -13,10 +10,12 @@ var uavCommands = {
             type: "POST",
             url: "/api/command/return/" + uid,
             data: {
-                Id: 0,
                 Latitude: coords.lat(),
                 Longitude: coords.lng(),
                 UAVId: uad.Id,
+            },
+            success: function (data, textStatus, jqXHR) {
+                vehicleHub.server.returnCommand(data);
             }
         });
         //clear all waypoints
@@ -27,27 +26,28 @@ var uavCommands = {
     //Hold position
     HoldPos: function (uid, uav, coords, alt, throttle) {
         var time = 0 /*= user input*/;
-        console.log("Latitude is: " + coords.lat());
-       /* var cmd = JSON.stringify(
-            {
-                "Id": 0,
-                "Altitude": alt,
-                "Latitude": coords.lat(),
-                "Longitude": coords.lng(),
-                "UAVId": uav.Id,
-                "Time": time
-            });
-            */
         $.ajax({
             type: "POST",
             url: "/api/command/hold/" + uid,
             data: {
-                Id: 0,
+                
                 Altitude: alt,
                 Latitude: coords.lat(),
                 Longitude: coords.lng(),
                 UAVId: uav.Id,
                 Time: time
+            },
+            success: function (data, textStatus, jqXHR) {
+                vehicleHub.server.holdCommand(data);
+                //locate uav by uav.id
+                //push values returned by data
+                ////wait for ack
+                //if (ack) {
+                //    put ack success in cmd entity
+                //}
+                //else {
+                //    notify user that no ack was recieved
+                //}
             }
         });
 
@@ -79,12 +79,14 @@ var uavCommands = {
             type: "POST",
             url: "/api/command/land/" + uid,
             data: {
-                Id: 0,
                 Altitude: alt,
                 Latitude: coords.lat(),
                 Longitude: coords.lng(),
                 Throttle: throttle,
                 UAVId: uad.Id
+            },
+            success: function (data, textStatus, jqXHR) {
+                vehicleHub.server.landCommand(data);
             }
         });
         //specify a location to land, maybe by click?
@@ -105,11 +107,13 @@ var uavCommands = {
             type: "POST",
             url: "/api/command/goto/"+uid,
             data: {
-                Id: 0,
                 Altitude: alt,
                 Latitude: coords.lat(),
                 Longitude: coords.lng(),
                 UAVId: uav.Id
+            },
+            success: function (data, textStatus, jqXHR) {
+                vehicleHub.server.gotoCommand(data);
             }
         });
     },
@@ -118,9 +122,9 @@ var uavCommands = {
     SurrenderControl: function (uid, uav, alt, throttle) {
         $.ajax({
             type: "POST",
-            url: "/api/command/goto/" + uid,
+            url: "/api/command/pass/" + uid,
             data: {
-                Id: 0,
+                
                 Altitude: alt,
                 Throttle: throttle,
                 UAVId: uav.Id
@@ -132,14 +136,20 @@ var uavCommands = {
 
     /*****NON-NAVIGATIONAL COMMAND*****/
     NonNav: function (uid, uav, coords, alt, throttle) {
-        var cmd = {
-            Id: 0,
-            Altitude: alt,
-            Latitude: coords.lat(),
-            Longitude: coords.lng(),
-            Throttle: throttle,
-            UAVId: uad.Id
-        }
+        $.ajax({
+            type: "POST",
+            url: "/api/command/adjust/" + uid,
+            data: {
+                Altitude: alt,
+                Latitude: coords.lat(),
+                Longitude: coords.lng(),
+                Throttle: throttle,
+                UAVId: uad.Id
+            },
+            success: function (data, textStatus, jqXHR) {
+                vehicleHub.server.adjustCommand(data);
+            }
+        });
         //adjust parameters
     },
 };

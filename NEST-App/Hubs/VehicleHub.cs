@@ -51,6 +51,41 @@ namespace NEST_App.Hubs
             }
         }
 
+        public int GotoCommand(CMD_NAV_Target cmd)
+        {
+            using (var db = new NestContainer())
+            {
+                Clients.Group("vehicles").sendTargetCommand(cmd, Context.ConnectionId);
+                return cmd.Id;
+            }
+        }
+
+        public int HoldCommand(CMD_NAV_Hold cmd)
+        {  
+                Clients.Group("vehicles").sendHoldCommand(cmd, Context.ConnectionId);
+                return cmd.Id;
+         }
+        
+
+        public int LandCommand(CMD_NAV_Land cmd)
+        {
+                Clients.Group("vehicles").sendLandCommand(cmd, Context.ConnectionId);
+                return cmd.Id;   
+        }
+
+        public int ReturnCommand(CMD_NAV_Return cmd)
+        {
+            Clients.Group("vehicles").sendReturnCommand(cmd, Context.ConnectionId);
+                return cmd.Id;
+        }
+
+        public int AdjustCommand(CMD_NAV_Adjust cmd)
+        {
+                Clients.Group("vehicles").sendAdjustCommand(cmd, Context.ConnectionId);
+                return cmd.Id;
+        }
+
+
         public async void AckCommand(CMD_ACK ack, string connectionId)
         {
             Clients.Client(connectionId).Acknowledgement(ack);

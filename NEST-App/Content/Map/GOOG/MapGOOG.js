@@ -115,11 +115,8 @@ $(document).ready(function () {
         /* Vehicle Movement */
         vehicleHub = $.connection.vehicleHub;
         vehicleHub.client.flightStateUpdate = function (vehicle) {
-            //console.log(vehicle.Latitude, vehicle.Longitude);
-
             uavs[vehicle.Id] = mapFunctions.UpdateVehicle(uavs[vehicle.Id], vehicle);
 
-            //console.log(vehicle);
             // draw trail
             if (selectedUAV && selectedTrail != undefined) {
                 if (selectedTrail.length < 2)
