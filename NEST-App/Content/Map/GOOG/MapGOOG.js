@@ -212,6 +212,7 @@ $(document).ready(function () {
                 multipleText.style.cssText = "border: 1px solid black;margin-top: 8px;background: #333;color: #FFF;font-size: 10px;padding: .5em 2em;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;";
                 multipleText.innerHTML = "<span style='color: red;'>Warning: </span>" + "multiple errors, check logs!";
                 console.log(uavs[evt.UAVId].Events);
+                
                 if (uavs[evt.UAVId].Events > 1) {
                     var infobox = new InfoBox({
                         content: multipleText,
@@ -227,8 +228,14 @@ $(document).ready(function () {
                         },
                         closeBoxMargin: "9px 1px 2px 2px"
                     })
-                 
+                    if (uavs[evt.UAVId].infobox != null) {
+                        var ibox = new InfoBox();
+                        ibox = uavs[evt.UAVId].infobox;
+                        ibox.close();
+                    }
+                    uavs[evt.UAVId].infobox = infobox;
                     infobox.open(map, uavs[evt.UAVId].marker);
+
                     google.maps.event.addDomListener(multipleText, 'click', function () {
                         if (infobox.open) {
                             infobox.close();
@@ -270,6 +277,8 @@ $(document).ready(function () {
                         },
                         closeBoxMargin: "9px 1px 2px 2px"
                     })
+                    uavs[evt.UAVId].infobox = infobox;
+                    infobox.open(map, uavs[evt.UAVId].marker);
 
                     google.maps.event.addDomListener(boxText, 'click', function () {
                         if (infobox.open) {
@@ -310,9 +319,10 @@ $(document).ready(function () {
                     },
                 })
 
-                infobox.open(map, uavs[evt.UAVId].marker);
-                infoboxAlert.open(map, uavs[evt.UAVId].marker);
 
+                //infobox.open(map, uavs[evt.UAVId].marker);
+                infoboxAlert.open(map, uavs[evt.UAVId].marker);
+                
                 //warning popup showing
                 mapFunctions.goTo_RR_show();
                 document.getElementById('warningUavId').innerHTML = "UAV ID: " + uavs[evt.UAVId].Id + "<br />";
