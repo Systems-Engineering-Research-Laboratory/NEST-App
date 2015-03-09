@@ -147,7 +147,7 @@ $(document).ready(function () {
                         message: "Low Battery",
                         criticality: "critical",
                         uav_callsign: uavs[vehicle.Id].Callsign,
-                        operator_screen_name: "Test Operator",
+                        operator_screen_name: assignment.getUsername(),
                         UAVId: uavs[vehicle.Id].Id
                     };
 
