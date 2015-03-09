@@ -9,6 +9,7 @@
     padding: 0px;
     height: 700px;
     width: 100%;
+    display: inline-block;
 }
 
 
@@ -16,9 +17,7 @@
     border: none;
     width: 38%;
     margin: 0px;
-    /*overflow: auto;
-    overflow-x: hidden;
-    height: 695px;*/
+   
 }
 
 .UAV_table {
@@ -27,6 +26,9 @@
     padding: 10px;
     margin: 0px;
     height: 100%;
+     overflow: auto;
+    overflow-x: hidden;
+    height: 695px;
 }
 
 .UAV_table tr {
@@ -81,7 +83,7 @@
     width: 58%;
     float: right;
     background-color: #e9e9ea;
-    display: inline-block
+    /*display: inline-block*/
 }
 
 .detail_title {
