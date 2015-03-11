@@ -91,13 +91,13 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             return;
         }
         if (this.pathGen.gotNewRestrictedArea() && this.waypoints) {
-            this.pathGen.buildSafeRoute(this.waypoints);
+            this.pathGen.buildSafeRoute(this.waypoints, this.FlightState, this.currentWpIndex);
+            this.currentWaypoint = this.waypoints[this.currentWpIndex];
         }
         //Process this waypoint if we have one
         if (this.currentWaypoint) {
             if (this.performWaypoint(dt)) {
                 console.log("Finished with waypoint " + this.currentWaypoint.WaypointName);
-                //this.updateCurrentWaypoint();
                 this.getNextWaypoint();
             }
         }
@@ -227,16 +227,17 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     this.approachSpeed = function (desiredSpeed, heading, dt) {
         desiredSpeed = 400;
         var velocity = this.getVelocity();
-        if (Math.abs(velocity - desiredSpeed) < 0.005) {
-            return true;
-        }
 
         var maxAcc = this.MaxAcceleration;
         maxAcc = 10000;
-        if (velocity > desiredSpeed) {
+        if (Math.abs(velocity - desiredSpeed) < 0.005) {
+            maxAcc = 0;
+        }
+        else if (velocity > desiredSpeed) {
             //Accelerate vs Deccelerate
             maxAcc = -maxAcc;
         }
+        
 
         var changeInSpeed = maxAcc * dt;
         var newSpeed = changeInSpeed + velocity;
@@ -473,6 +474,11 @@ function VehicleContainer() {
     this.vehicles = [];
     this.restrictedAreas = [];
     this.newRestrictedArea = false;
+
+    var $this = this;
+    $.connection.vehicleHub.client.newRestrictedArea = function (area) {
+        $this.addRestrictedArea(area);
+    }
 
     this.hasVehicleById = function (id) {
         return this.ids.indexOf(id) != -1;
@@ -1009,11 +1015,23 @@ function PathGenerator(areaContainer, reporter) {
         return intersects;
     }
 
-    this.buildSafeRoute = function (wps) {
+    this.buildSafeRoute = function (wps, curPos, startIndex) {
+        if (!startIndex) {
+            startIndex = 0;
+        }
         var areas = this.areaContainer.restrictedAreas;
-        for (var i = 0; i < wps.length - 1; i++) {
+        //Do initial algorithm form the aircraft position
+        if (checkPathIntersectsArea(curPos, wps[startIndex], areas)) {
+            var newWps = this.connectSafely(curPos, wps[startIndex]);
+            insertMultiPointsIntoList(wps, newWps, startIndex-1);
+            curPos.prev = null; //avoid circular reference complaints from signalr
+            curPos.edges = null;
+        }
+        for (var i = startIndex; i < wps.length - 1; i++) {
             if (checkPathIntersectsArea(wps[i], wps[i] + 1, areas)) {
                 var newwps = this.connectSafely(wps[i], wps[i + 1]);
+                wps[i].prev = null;
+                wps[i + 1].prev = null;
                 insertMultiPointsIntoList(wps, newwps, i);
                 i += newwps.length;
             }
