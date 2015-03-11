@@ -90,7 +90,7 @@ var uavCommands = {
             Latitude: coords.lat(),
             Longitude: coords.lng(),
             Throttle: throttle,
-            UAVId: uad.Id
+            UAVId: uav.Id
         };
         $.ajax({
             type: "POST",
@@ -156,7 +156,7 @@ var uavCommands = {
             Latitude: coords.lat(),
             Longitude: coords.lng(),
             Throttle: throttle,
-            UAVId: uad.Id
+            UAVId: uav.Id
         };
         $.ajax({
             type: "POST",

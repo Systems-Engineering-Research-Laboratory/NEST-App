@@ -136,7 +136,8 @@
                         console.log("You're not the owner");
                     } else {
                         //create ui
-                        uavCommands.ForceLand(uid, uav, latLng, alt, throttle);
+                        document.getElementById("land_click").onclick = function () { uavCommands.ForceLand(uid, uav, latLng, alt, throttle); mapFunctions.land_hide() };
+                        mapFunctions.land_show(marker.uav.Callsign);
                     }
                     break;
                 case 'return':
