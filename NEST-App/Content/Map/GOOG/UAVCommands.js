@@ -33,8 +33,8 @@ var uavCommands = {
     },
 
     //Hold position
-    HoldPos: function (uid, uav, coords, alt, throttle) {
-        var time = 0 /*= user input*/;
+    HoldPos: function (uid, uav, coords, alt, throttle, time) {
+        //var time = 0 /*= user input*/;
         var cmd = {
             //Id: 0,
             Altitude: alt,

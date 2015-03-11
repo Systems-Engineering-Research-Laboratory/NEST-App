@@ -56,7 +56,7 @@ namespace NEST_App.Controllers
 
             int result = 0;
             CMD_NAV_Hold cmd_nav_hold = new CMD_NAV_Hold();
-            cmd_nav_hold.Id = jsObject.Id;
+            //cmd_nav_hold.Id = jsObject.Id;
             cmd_nav_hold.Altitude = jsObject.Altitude;
             cmd_nav_hold.Latitude = jsObject.Latitude;
             cmd_nav_hold.Longitude = jsObject.Longitude;

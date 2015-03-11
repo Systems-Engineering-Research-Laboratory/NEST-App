@@ -82,7 +82,7 @@ html, body, #map-canvas {
     border-radius: 1px;
 }
 
-    #infoboxAlert p {
+#infoboxAlert p {
         color: #ff0000;
         margin: 0 1px;
         font-weight: bold;
@@ -173,6 +173,21 @@ html, body, #map-canvas {
 }
 
 #waypoint_popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 600px;
+    min-width: 250px;
+    padding: 10px 50px;
+    border: 2px solid gray;
+    border-radius: 10px;
+    background-color: white;
+    overflow: hidden;
+    display: none;
+}
+
+#hold_popup {
     position: fixed;
     top: 50%;
     left: 50%;

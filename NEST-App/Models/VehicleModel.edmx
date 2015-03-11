@@ -354,6 +354,7 @@
     <Property Name="Latitude" Type="float" Nullable="false" />
     <Property Name="Longitude" Type="float" Nullable="false" />
     <Property Name="UAVId" Type="int" Nullable="false" />
+    <Property Name="Acked" Type="bit" Nullable="false" DefaultValue="false" />
   </EntityType>
   <EntityType Name="CMD_NAV_Set_Base">
     <Key>
@@ -374,6 +375,7 @@
     <Property Name="Longitude" Type="float" Nullable="false" />
     <Property Name="Throttle" Type="float" Nullable="false" />
     <Property Name="UAVId" Type="int" Nullable="false" />
+    <Property Name="Acked" Type="bit" Nullable="false" DefaultValue="false" />
   </EntityType>
   <EntityType Name="CMD_ACK">
     <Key>
@@ -472,6 +474,7 @@
     <Property Name="Longitude" Type="float" Nullable="false" />
     <Property Name="Throttle" Type="float" Nullable="false" />
     <Property Name="UAVId" Type="int" Nullable="false" />
+    <Property Name="Acked" Type="bit" Nullable="false" DefaultValue="false" />
   </EntityType>
   <EntityType Name="CMD_NAV_Hold">
     <Key>
@@ -483,6 +486,8 @@
     <Property Name="Longitude" Type="float" Nullable="false" />
     <Property Name="UAVId" Type="int" Nullable="false" />
     <Property Name="Time" Type="float" Nullable="false" />
+    <Property Name="Acked" Type="bit" Nullable="false" DefaultValue="false" />
+    <Property Name="Throttle" Type="float" Nullable="false" />
   </EntityType>
   <EntityType Name="CMD_NAV_Adjust">
     <Key>
@@ -494,6 +499,7 @@
     <Property Name="Longitude" Type="float" Nullable="false" />
     <Property Name="Throttle" Type="float" Nullable="false" />
     <Property Name="UAVId" Type="int" Nullable="false" />
+    <Property Name="Acked" Type="bit" Nullable="false" DefaultValue="false" />
   </EntityType>
   <EntityType Name="CMD_NAV_Waypoint_CMD_NAV_Hover">
     <Key>
@@ -1733,6 +1739,7 @@
           <ScalarProperty Name="Latitude" ColumnName="Latitude" />
           <ScalarProperty Name="Longitude" ColumnName="Longitude" />
           <ScalarProperty Name="UAVId" ColumnName="UAVId" />
+          <ScalarProperty Name="Acked" ColumnName="Acked" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -1761,6 +1768,7 @@
           <ScalarProperty Name="Longitude" ColumnName="Longitude" />
           <ScalarProperty Name="Throttle" ColumnName="Throttle" />
           <ScalarProperty Name="UAVId" ColumnName="UAVId" />
+          <ScalarProperty Name="Acked" ColumnName="Acked" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -1885,6 +1893,7 @@
           <ScalarProperty Name="Longitude" ColumnName="Longitude" />
           <ScalarProperty Name="Throttle" ColumnName="Throttle" />
           <ScalarProperty Name="UAVId" ColumnName="UAVId" />
+          <ScalarProperty Name="Acked" ColumnName="Acked" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -1897,6 +1906,8 @@
           <ScalarProperty Name="Longitude" ColumnName="Longitude" />
           <ScalarProperty Name="UAVId" ColumnName="UAVId" />
           <ScalarProperty Name="Time" ColumnName="Time" />
+          <ScalarProperty Name="Acked" ColumnName="Acked" />
+          <ScalarProperty Name="Throttle" ColumnName="Throttle" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -1909,6 +1920,7 @@
           <ScalarProperty Name="Longitude" ColumnName="Longitude" />
           <ScalarProperty Name="Throttle" ColumnName="Throttle" />
           <ScalarProperty Name="UAVId" ColumnName="UAVId" />
+          <ScalarProperty Name="Acked" ColumnName="Acked" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

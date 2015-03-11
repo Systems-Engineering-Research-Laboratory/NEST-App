@@ -85,6 +85,7 @@
     // still working on it
     clickToGo: function () {
         if (selectedUAV != null) {
+            console.log("hit click");
             mapFunctions.goTo_hide();
             var that = this;
 
