@@ -36,12 +36,26 @@ $(document).ready(function () {
     }
     setFilterGrid("operator_table", operatorfilter_value);
 
+    //var eventlogfilter_value = {
+    //    display_all_text: "All",
+    //    col_0: "select",
+    //    col_1: "select",
+    //    col_2: "select",
+    //    col_3: "none",
+    //    col_4: "select"
+    //}
+
+    //if (document.getElementById("event_log_table") != null)
+    //    setFilterGrid("event_log_table", eventlogfilter_value);
+
+
 
     var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
     var table = document.getElementById("UAV_table");
     var table2 = document.getElementById("priority_table");
-    var table3 = document.getElementById("operator_table")
+    var table3 = document.getElementById("operator_table");
+    var table4 = document.getElementById("event_log_table");
  
     if (table2 != null) {
         for (var i = 2; i < table2.rows.length; i++)
@@ -59,6 +73,15 @@ $(document).ready(function () {
             }
         }
     }
+
+    if (table4 != null) {
+        for (var i = 2; i < table4.rows.length; i++) {
+            table4.rows[i].onclick = function () {
+                document.getElementById("choose_uav_table").style.display = 'block';
+            }
+        }
+    }
+
 
     var presentMarker, lastMarker;
 
@@ -104,7 +127,6 @@ $(document).ready(function () {
                     document.getElementById("route").innerHTML                  = 'Route: '                 + route.innerHTML;
                     document.getElementById("avail").innerHTML                  = 'Availability: '          + availability.innerHTML;
                     document.getElementById("conf").innerHTML                   = 'Configuration: '         + confiugration.innerHTML;
-                    document.getElementById("UAV_time_td").innerHTML            = 'Delivered # '            + numDelivery.innerHTML;
                     document.getElementById("curr_lat").innerHTML               = '　LAT:　　 '             + current_lat.innerHTML;
                     document.getElementById("curr_long").innerHTML              = '　LONG:　'               + current_long.innerHTML;
                     document.getElementById("curr_alt").innerHTML               = '　ALT:　　 '             + current_alt.innerHTML;
@@ -112,32 +134,173 @@ $(document).ready(function () {
                     document.getElementById("dest_long").innerHTML              = '　LONG:　'               + dest_long.innerHTML;
                     document.getElementById("payload").innerHTML                = 'Package Contents: '      + payload.innerHTML;
                     document.getElementById("cost").innerHTML                   = 'Total Cost of Package: $' + cost.innerHTML;
-                    document.getElementById("UAV_time_td2").innerHTML           = STA.innerHTML;
 
-                    //if (presentMarker == null) {
-                    //    presentMarker = new google.maps.Marker({
-                    //        position: uav_lat_long,
-                    //        map: map,
-                    //        icon: uavSymbolGreen,
-                    //        zIndex: 100000000000,
-                    //        animation: google.maps.Animation.DROP
-                    //    });
-                    //    map.setCenter(uav_lat_long);
+                    //alert(this.cells[0].innerText);
+
+                    //var event_uav_id = [];
+
+                    //for (var k = 2; k < table4.rows.length; k++)
+                    //{
+                    //    event_uav_id.push(table4.rows[k].cells[0].innerText);
                     //}
 
-                    //else {
-                    //    last_lat_long = presentMarker.getPosition();
-                    //    lastMarker = new google.maps.Marker({
-                    //        position: last_lat_long,
-                    //        map: map,
-                    //        icon: uavSymbolBlack,
-                    //    })
-                    //    moveMarker(map, presentMarker, uav_lat_long);
+
+                    //for (var i = 2; i < event_uav_id.length; i++)
+                    //{
+                    //    console.log("event id: " + event_uav_id[i].innerText);
+
+                    //    if (this.cells[0].innerText === event_uav_id[i])
+                    //        console.log("yes" + " uav_id = " + this.cells[0].innerText + " event_uav_id = " + event_uav_id[i].innerText);
+                    //    else
+                    //        console.log("no" + " uav_id = " + this.cells[0].innerText + " event_uav_id = " + event_uav_id[i].innerText);
+                    //}
+                    //console.log("uav id: !!" + uav_id_for_event + "!!!!!!!!!!!");
+                    //console.log("event table: !!" + table4.rows[2].cells[0].innerHTML + "!!!!!!!!!!!");
+
+
+
+                    //for (var i = 2; i < table4.rows.length; i++)
+                    //{
+                    //    alert(i);
+                    //    $('#event_log_table').find("td:nth-child(1)").each(function (index) {
+                    //        //var event_uav_id = $('event_log_table tr:nth-child(i) td:nth-child(2)').text();
+                    //        // alert(event_uav_id);
+                    //        var event_uav_id = $(this).text();
+                    //        //console.log(event_uav_id);
+                    //        if (uav_id_for_event === event_uav_id)
+                    //            console.log("yes" + " uav_id = " + uav_id_for_event + " event_uav_id = " + event_uav_id);
+                    //        else
+                    //            console.log("no" + " uav_id = " + uav_id_for_event + " event_uav_id = " + event_uav_id);
+                    //    });
+
+                    //var event_uav_id = table4.rows[i].cells[0].innerText;
+                    //table4.rows[i].cells[0].innerText = uav_id_for_event;
+
+
+
+                    //}
+
+
+
+                    //for (var k = 2; k < table4.rows.length; k++)
+                    //{
+
+                    //    var event_uav_id = table4.rows[k].cells[1].innerHTML;
+
+                    //    //alert("event table: " + table4.rows[k].cells[0].innerHTML + ", uav id: " + uavid.innerHTML);
+                    //    if (uav_callsign_for_event != event_uav_id) {
+                    //        alert("no");
+                    //        alert("trial: " + k + ", event table: " + event_uav_id + ", uav id: " + uav_callsign_for_event);
+                    //    }
+                    //    else {
+                    //        alert("yes");
+                    //        alert("trial: " + k + ", event table: " + event_uav_id + ", uav id: " + uav_callsign_for_event);
+                    //    }
+                    //}
+
+                    //for (var j = event_table_in_detail.rows.length; j > 0; j--)
+                    //    
+
+
+                    //for (var i = 2; i < table4.rows.length; i++)
+                    //{
+                    //    var event_uav_id = table4.rows[i].cells[0].firstChild.nodeValue;
+                    //    var event_criticality = table4.rows[i].cells[2].firstChild.nodeValue;
+                    //    var event_create = table4.rows[i].cells[3].firstChild.nodeValue;
+                    //    var event_msg = table4.rows[i].cells[4].firstChild.nodeValue;
+
+                    //    var event_table_in_detail = document.getElementById('eventLog_table');
+
+                    //    if (uav_id_for_event == event_uav_id) {
+                    //        //console.log("yes // event table: " + event_uav_id + ", uav id: " + uav_id_for_event);
+                    //        var row = event_table_in_detail.insertRow(1);
+                    //        var cell0 = row.insertCell(0);
+                    //        var cell1 = row.insertCell(1);
+                    //        var cell2 = row.insertCell(2);
+                    //        var cell3 = row.insertCell(3);
+
+                    //        cell0.innerHTML = event_uav_id;
+                    //        cell1.innerHTML = event_create;
+                    //        cell2.innerHTML = event_msg;
+                    //        cell3.innerHTML = event_criticality;
+
+                    //        cell0.style.textAlign = "center";
+                    //        cell1.style.textAlign = "center";
+                    //        cell2.style.textAlign = "center";
+                    //        cell3.style.textAlign = "center";
+                    //    }
+                    //}
+
+                    
+
+
+
+                    var event_table_in_detail = document.getElementById('eventLog_table');
+
+                    for (var k = 1; k < event_table_in_detail.rows.length; k++) {
+                        document.getElementById("eventLog_table").deleteRow(k);
+                    }
+
+                    for (var j = 1; j < event_table_in_detail.rows.length; j++)
+                    {
+                        var inner_event_uavid = event_table_in_detail.rows[j].cells[0].innerText;
+                        //alert(j + ": " + inner_event_uavid);
+
+                        if (inner_event_uavid != uav_id_for_event)
+                            document.getElementById("eventLog_table").deleteRow(j);
+                    }
+
+
+
+                    for (var i = 2; i < table4.rows.length; i++)
+                    {
+                        var event_uav_id = table4.rows[i].cells[0].firstChild.nodeValue;
+                        var event_criticality = table4.rows[i].cells[2].firstChild.nodeValue;
+                        var event_create = table4.rows[i].cells[3].firstChild.nodeValue;
+                        var event_msg = table4.rows[i].cells[4].firstChild.nodeValue;
+
+                        var event_table_in_detail = document.getElementById('eventLog_table');
+
+                        if (uav_id_for_event == event_uav_id) {
+                            //console.log("yes // event table: " + event_uav_id + ", uav id: " + uav_id_for_event);
+                            var row = event_table_in_detail.insertRow(1);
+                            var cell0 = row.insertCell(0);
+                            var cell1 = row.insertCell(1);
+                            var cell2 = row.insertCell(2);
+                            var cell3 = row.insertCell(3);
+
+                            cell0.innerHTML = event_uav_id;
+                            cell1.innerHTML = event_create;
+                            cell2.innerHTML = event_msg;
+                            cell3.innerHTML = event_criticality;
+
+                            cell0.style.textAlign = "center";
+                            cell1.style.textAlign = "center";
+                            cell2.style.textAlign = "center";
+                            cell3.style.textAlign = "center";
+
+                            alert("hello");
+                        }
+                    }
+
+
+                    //document.getElementById("eventLog_table").deleteRow(1);
+
+
+                    //for (var j = 1; j < event_table_in_detail.rows.length; j++)
+                    //{
+                        
+                    //    var inner_event_uavid = event_table_in_detail.rows[j].cells[0].innerText;
+                    //    alert("inner event uavid " + inner_event_uavid + "   // trial: " + j);
+                    //    if (inner_event_uavid != uav_id_for_event) {
+                    //        console.log(event_table_in_detail.rows[j].innerHTML + " no!!!!");
+                    //    }
                     //}
                 };
             }
         }
     }
+
 
     else
     {
