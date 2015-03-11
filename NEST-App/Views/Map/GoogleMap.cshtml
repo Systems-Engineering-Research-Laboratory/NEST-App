@@ -45,15 +45,25 @@
     </div>
 
     <!-- hold command window -->
-    <div id="hold_popup">
+    <div id="hold_popup" class="commandWindow">
         <div class="closeBtn"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.hold_hide()"></span></div>
-        <h3 id="HoldId">Select an UAV first</h3>
-        <h3>Hold Position</h3>
+        <h3 class="UAVId">Select an UAV first</h3>
+        <h4>Hold Position:</h4>
         <p>
-            (<input type="text" name="hold_time_amount" id="hold_time" placeholder="Time (in minutes)" />)
+            <input type="text" name="hold_time_amount" id="hold_time" placeholder="Time (in minutes)" />
         </p>
-        <button class="btn btn-default" id="hold_click" onclick=" mapFunctions.hold_hide(); console.log('time is' +hold_time.value)">Ok</button>
+        <button class="btn btn-default" id="hold_click" onclick="">Ok</button>
         <button class="btn btn-default" onclick="mapFunctions.hold_hide()">Cancel</button>
+    </div>
+
+    <!--Return to base command window-->
+    <div id="return_popup" class="commandWindow">
+        <div class="closeBtn"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.return_hide()"></span></div>
+        <h3 class="UAVId">Select an UAV first</h3>
+        <h3>Returning to base</h3>
+        <p>Please confirm</p>
+        <button class="btn btn-default" id="return_click" onclick="">Ok</button>
+        <button class="btn btn-default" onclick="mapFunctions.return_hide()">Cancel</button>
     </div>
 
 

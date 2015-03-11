@@ -187,7 +187,7 @@ html, body, #map-canvas {
     display: none;
 }
 
-#hold_popup {
+.commandWindow {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -200,6 +200,9 @@ html, body, #map-canvas {
     background-color: white;
     overflow: hidden;
     display: none;
+}
+
+.UAVId {
 }
 
 .sendBtn {
