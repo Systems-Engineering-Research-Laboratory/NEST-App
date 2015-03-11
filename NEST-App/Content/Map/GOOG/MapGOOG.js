@@ -119,7 +119,7 @@ $(document).ready(function () {
         vehicleHub.client.WaypointInserted = function (id) {
             console.log("Waypoint Successfully Inserted\nMission Id: " + id);
             if (selectedUAV != null) {
-                droneTrails.displayWaypointsPerMission(selectedUAV.Mission);
+                wpm.updateFlightPath(id);
             }
             
         }

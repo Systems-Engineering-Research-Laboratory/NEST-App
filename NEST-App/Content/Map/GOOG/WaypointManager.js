@@ -211,6 +211,16 @@ function WaypointManager() {
     this.getWaypointById = function(id, wps){
         return findElemInArrayById(id, wps);
     }
+
+    this.updateFlightPath = function (id) {
+        var thisMission = this.getMissionByMissionId(id);
+
+        thisMission.flightPath.setMap(null);
+        thisMission.Waypoints = null;
+        thisMission.flightPath = null;
+
+        this.displayWaypointsPerMission(thisMission);
+    }
 }
 
 function findElemInArrayById(id, array) {
@@ -224,3 +234,4 @@ function findElemInArrayById(id, array) {
         }
     }
 }
+
