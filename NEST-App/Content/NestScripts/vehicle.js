@@ -128,6 +128,13 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         this.reporter.retrieveWaypointsByMissionId(mission.id, this, this.gotNewWaypoints);
     }
 
+    this.isMissionCompleted = function() {
+        if (this.Mission) {
+            this.Mission.Phase === "done" || this.Mission.Phase === "back to base";
+        }
+        return false;
+    }
+
     this.hasScheduledMissions = function () {
         return this.Schedule.Missions.length > 0;
     }
@@ -605,7 +612,11 @@ function PathGenerator(areaContainer, reporter) {
         var pts = [new Waypoint({ Latitude: begin.Latitude, Longitude: begin.Longitude }),
             new Waypoint({ Latitude: end.Latitude, Longitude: end.Longitude })];
         if (isMission) {
-            this.reporter.addNewRouteToMission(end.id, pts);
+            var promise = this.reporter.addNewRouteToMission(end.id, pts);
+            promise.success(function (data, textStatus, jqXHR) {
+                pts[0].updateInfo(data[0]);
+                pts[1].updateInfo(data[1]);
+            });
         }
         return pts;
     }
@@ -1258,25 +1269,30 @@ function checkPathIntersectsArea(p1, p2, areas) {
 //Convenience constructor for the waypoint. Can construct itself from information from the server, but
 //also with minimal knowledge so that the path generator has a better time building one.
 function Waypoint(info) {
-    this.WaypointName = info.WaypointName ? info.WaypointName : "";
-    this.TimeCompleted = info.TimeCompleted ? info.TimeCompleted : null;
-    this.Action = info.Action ? info.Action : "fly through";
-    this.GeneratedBy = info.GeneratedBy ? info.GeneratedBy : "vehicle";
-    this.Altitude = info.Altitude || 400;
-    this.IsActive = info.IsActive || true;
-    this.MissionId = info.MissionId || null;
-    this.WasSkipped = info.WasSkipped || false;
-    this.NextWaypointId = info.NextWaypointId || null;
-    if (info.Position) {
-        appendLonLatFromDbPoint(this, info.Position);
+
+    this.updateInfo = function (info) {
+        this.WaypointName = info.WaypointName ? info.WaypointName : "";
+        this.TimeCompleted = info.TimeCompleted ? info.TimeCompleted : null;
+        this.Action = info.Action ? info.Action : "fly through";
+        this.GeneratedBy = info.GeneratedBy ? info.GeneratedBy : "vehicle";
+        this.Altitude = info.Altitude || 400;
+        this.IsActive = info.IsActive || true;
+        this.MissionId = info.MissionId || null;
+        this.WasSkipped = info.WasSkipped || false;
+        this.NextWaypointId = info.NextWaypointId || null;
+        if (info.Position) {
+            appendLonLatFromDbPoint(this, info.Position);
+            LatLongToXY(this);
+            this.Position = info.Position;
+        }
+
+        this.Latitude = info.Latitude;
+        this.Longitude = info.Longitude;
         LatLongToXY(this);
-        this.Position = info.Position;
+        this.Id = info.Id;
     }
 
-    this.Latitude = info.Latitude;
-    this.Longitude = info.Longitude;
-    LatLongToXY(this);
-    this.Id = info.Id;
+    this.updateInfo(info);
 }
 
 //Helper functions and globals.
