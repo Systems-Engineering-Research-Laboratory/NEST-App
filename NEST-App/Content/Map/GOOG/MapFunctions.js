@@ -104,6 +104,8 @@
                       console.log("You're not the owner");
                 } else {
                     //create ui
+                    time = document.getElementById("hold_time");
+                    document.getElementById("hold_click").addEventListener("click", uavCommands.HoldPos(uid, uav, latLng, alt, throttle, time.value),false);
                     mapFunctions.hold_show(marker.uav.Callsign);
                 }
                 break;

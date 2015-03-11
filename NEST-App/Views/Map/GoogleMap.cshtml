@@ -40,20 +40,20 @@
             <input type="text" name="go_longitude" id="go_long" placeholder="Longitude" />
             )<button class="btn btn-default disabled" id="clickToGoBtn" onclick="droneTrails.clickToGo()"><span class="glyphicon glyphicon-hand-down"></span></button>
         </p>
-        <button class="btn btn-default disabled sendBtn" id="goBtn">Ok</button>
-        <button class="btn btn-default clear" id="clearBtn">Cancel</button>
+        <button class="btn btn-default disabled sendBtn" id="goBtn">GO</button>
+        <button class="btn btn-default clear" id="clearBtn">CLEAR</button>
     </div>
+
     <!-- hold command window -->
     <div id="hold_popup">
         <div class="closeBtn"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.hold_hide()"></span></div>
         <h3 id="HoldId">Select an UAV first</h3>
         <h3>Hold Position</h3>
         <p>
-            (<input type="text" name="hold_time_amount" id="hold_time" placeholder="Time (in minutes)" />
-            )<button class="btn btn-default disabled" id="clickToGoBtn" onclick="uavCommands.HoldPos(uid, uav, latLng, alt, throttle, this.time);"><span class="glyphicon glyphicon-hand-down"></span></button>
+            (<input type="text" name="hold_time_amount" id="hold_time" placeholder="Time (in minutes)" />)
         </p>
-        <button class="btn btn-default disabled sendBtn" id="goBtn">GO</button>
-        <button class="btn btn-default clear" id="clearBtn">CLEAR</button>
+        <button class="btn btn-default" id="hold_click" onclick=" mapFunctions.hold_hide(); console.log('time is' +hold_time.value)">Ok</button>
+        <button class="btn btn-default" onclick="mapFunctions.hold_hide()">Cancel</button>
     </div>
 
 
