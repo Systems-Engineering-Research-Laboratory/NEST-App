@@ -569,8 +569,8 @@ function prepareAreas(areas) {
 }
 
 function addCornersToArea(area) {
-    var xs = [area.NorthEastX + 1, area.SouthWestX - 1];
-    var ys = [area.NorthEastY + 1, area.SouthWestY - 1];
+    var xs = [area.NorthEastX + 20, area.SouthWestX - 20];
+    var ys = [area.NorthEastY + 20, area.SouthWestY - 20];
     area.corners = [];
     for (var i = 0; i < 2; i++) {
         for (var j = 0; j < 2; j++) {
