@@ -42,17 +42,17 @@ $(document).ready(function () {
     }
     setFilterGrid("operator_table", operatorfilter_value);
 
-    //var eventlogfilter_value = {
-    //    display_all_text: "All",
-    //    col_0: "select",
-    //    col_1: "select",
-    //    col_2: "select",
-    //    col_3: "none",
-    //    col_4: "select"
-    //}
+    var eventlogfilter_value = {
+        display_all_text: "All",
+        col_0: "select",
+        col_1: "select",
+        col_2: "select",
+        col_3: "none",
+        col_4: "select"
+    }
 
-    //if (document.getElementById("event_log_table") != null)
-    //    setFilterGrid("event_log_table", eventlogfilter_value);
+    if (document.getElementById("event_log_table") != null)
+        setFilterGrid("event_log_table", eventlogfilter_value);
 
 
 
@@ -222,20 +222,31 @@ $(document).ready(function () {
 
     var vehicleHub = $.connection.vehicleHub;
 
-    vehicleHub.client.flightStateUpdate = function (vehicle) {
-        
-        
+    vehicleHub.client.flightStateUpdate = function (vehicle)
+    {
         uavs[vehicle.Id].Id = vehicle.Id;
         uavs[vehicle.Id].Battery = vehicle.BatteryLevel;
         uavs[vehicle.Id].Alt = vehicle.Altitude;
         uavs[vehicle.Id].BatteryCheck = parseFloat(Math.round(vehicle.BatteryLevel * 100)).toFixed(2);
+        
+        for (var i = 1; i < table.rows.length; i++)
+        {
+            if (table.rows[i].cells[0].innerHTML == uavs[vehicle.Id].Id) {
+                table.rows[i].cells[4].innerHTML = (vehicle.BatteryLevel * 100).toFixed(2) + "%";
+
+                if (vehicle.BatteryLevel < 0.2) {
+                    table.rows[i].style.backgroundColor = "#FF0000";
+                    table.rows[i].style.color = "#FFFFFF"
+                }
+            }
+        }
 
         if (current_id == uavs[vehicle.Id].Id) {
             var battery_percent = vehicle.BatteryLevel
             document.getElementById("curr_lat").innerHTML = '　LAT:　　 ' + vehicle.Latitude.toFixed(10);
             document.getElementById("curr_long").innerHTML = '　LONG:　' + vehicle.Longitude.toFixed(10);
             document.getElementById("curr_alt").innerHTML = '　ALT:　　 ' + vehicle.Altitude;
-            document.getElementById("battery").innerHTML = 'Battery: ' + vehicle.BatteryLevel.toFixed(3) + "%";
+            document.getElementById("battery").innerHTML = 'Battery: ' + (vehicle.BatteryLevel * 100).toFixed(3) + "%";
 
             var latlng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
             if (uavs[vehicle.Id].setMapOnce == 0) {
