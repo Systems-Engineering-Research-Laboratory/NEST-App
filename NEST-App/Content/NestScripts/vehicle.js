@@ -4,6 +4,10 @@
 * The vehicle doesn't need to have more than that to run the simulation (for now at least). It comes with the
 * functins that allow it to behave kind of autonomously. It just goes straight to it's destination.
 */
+
+var skipBattery = false;
+var globalMaxVelocity;
+var globalMaxAcceleration;
 function Vehicle(vehicleInfo, reporter, pathGen) {
     //Model stuff
     this.Id = vehicleInfo.Id;
@@ -28,6 +32,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     //This is the current mission the vehicle is on.
     this.Mission = vehicleInfo.Schedule.Missions[0];
     this.Schedule = vehicleInfo.Schedule;
+    
 
     //The current base of the vehicle.
     this.Base = base;
@@ -59,10 +64,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     }
 
     //If the mission is defined, get the waypoints associated with it
-    if (this.Mission) {
-        LatLongToXY(this.Mission);
-        this.reporter.retrieveWaypointsByMissionId(this.Mission.id, this, this.gotNewWaypoints);
-    }
+
 
 
     this.setReporter = function (reporter) {
@@ -82,7 +84,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     //Functions. Careful not to add global helper functions here.
     this.process = function (dt) {
         //If the current waypoint is null but the reporter is pending, just return.
-        if (this.isAtBase() && this.battery < 1) {
+        if (this.isAtBase() && this.FlightState.BatteryLevel < 1) {
             this.chargeBattery(dt);
             reporter.updateFlightState(this.FlightState);
             return;
@@ -92,6 +94,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         }
         if (this.pathGen.gotNewRestrictedArea() && this.waypoints) {
             this.pathGen.buildSafeRoute(this.waypoints, this.FlightState, this.currentWpIndex);
+            this.currentWpIndex += 1;
             this.currentWaypoint = this.waypoints[this.currentWpIndex];
         }
         //Process this waypoint if we have one
@@ -101,7 +104,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                 this.getNextWaypoint();
             }
         }
-        else if (this.hasScheduledMissions() && this.battery >= .9) {
+        else if (this.hasScheduledMissions() && this.FlightState.BatteryLevel >= .9) {
             this.getNextMission();
         }
             //Well, I guess we have nothing better to do!
@@ -124,13 +127,20 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     this.getNextMission = function () {
         var missions = this.Schedule.Missions;
         this.Mission = missions.shift();
-        LatLongToXY(this.Mission);
-        this.reporter.retrieveWaypointsByMissionId(mission.id, this, this.gotNewWaypoints);
+        while (this.Mission && this.isMissionCompleted()) {
+            this.Mission = missions.shift();
+        }
+        if (this.Mission) {
+            LatLongToXY(this.Mission);
+            //Ignore stuff in the database for now.
+            that.generateWaypoints();
+        }
     }
+    
 
     this.isMissionCompleted = function() {
         if (this.Mission) {
-            this.Mission.Phase === "done" || this.Mission.Phase === "back to base";
+            return this.Mission.Phase === "done" || this.Mission.Phase === "back to base";
         }
         return false;
     }
@@ -141,13 +151,16 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     this.chargeBattery = function (dt) {
         this.FlightState.BatteryLevel += 5 * dt / 18000;
-        if (this.FlightState.BatteryLevel > 1) {
+        if (skipBattery || this.FlightState.BatteryLevel > 1) {
             this.FlightState.BatteryLevel = 1;
         }
     }
 
     this.performWaypoint = function (dt) {
         var wp = this.currentWaypoint;
+        if (!this.flyToAltitude(dt, this.currentWaypoint.Altitude)) {
+            return false;
+        }
         //Get the original object, call the callback to perform the object specific functions
         if (wp.obj) {
             switch (wp.objType) {
@@ -163,7 +176,9 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         }
         else {
             //Just go to, this is just a navigational point.
-            return this.deadReckon(dt, wp.X, wp.Y);
+            if (this.flyToAltitude(dt, this.currentWaypoint.Altitude)) {
+                return this.deadReckon(dt, wp.X, wp.Y);
+            }
         }
     }
 
@@ -213,6 +228,10 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         }
     }
 
+    this.flyToAltitude = function (dt, alt) {
+        return this.targetAltitude(dt, alt, this.MaxVerticalVelocty);
+    }
+
     //Flies to the designated altitude at the given speed.
     this.targetAltitude = function (dt, alt, speed) {
         if (this.FlightState.Altitude > alt) {
@@ -232,11 +251,10 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     //This only works on the XY plane, not for vertical velocity.
     this.approachSpeed = function (desiredSpeed, heading, dt) {
-        desiredSpeed = 400;
+        desiredSpeed = globalMaxVelocity || desiredSpeed;
         var velocity = this.getVelocity();
 
-        var maxAcc = this.MaxAcceleration;
-        maxAcc = 10000;
+        var maxAcc = globalMaxAcceleration || this.MaxAcceleration;
         if (Math.abs(velocity - desiredSpeed) < 0.005) {
             maxAcc = 0;
         }
@@ -416,7 +434,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     this.flyToAndLand = function (dt, destX, destY) {
         var thisX = this.FlightState.X;
         var thisY = this.FlightState.Y;
-        if (calculateDistance(thisX, thisY, destX, destY) > 10) {
+        if (calculateDistance(thisX, thisY, destX, destY) > .1) {
             this.deadReckon(dt, destX, destY);
             return false;
         }
@@ -435,15 +453,16 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         var thisX = this.FlightState.X;
         var thisY = this.FlightState.Y;
         return this.FlightState.Altitude == 0
-            && calculateDistance(thisX, thisY, base.X, base.Y) < 5;
+            && calculateDistance(thisX, thisY, this.Base.X, this.Base.Y) < 5;
     }
 
     this.generateWaypoints = function () {
         var target = this.Command || this.Mission;
         var type = this.Command ? "command" : "mission";
         this.waypoints = this.pathGen.brandNewTarget(this.FlightState, target, true, this);
-        this.waypoints[1].obj = target;
-        this.waypoints[1].objType = type;
+        var n = this.waypoints.length;
+        this.waypoints[n-1].obj = target;
+        this.waypoints[n-1].objType = type;
         this.currentWaypoint = this.waypoints[0];
         this.currentWpIndex = 0;
     }
@@ -472,7 +491,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         wp.TimeCompleted = curTime.toISOString();
         this.reporter.updateWaypoint(wp);
     }
-
+    this.getNextMission();
 }
 
 
@@ -609,13 +628,14 @@ function PathGenerator(areaContainer, reporter) {
     }
 
     this.brandNewTarget = function (begin, end, isMission, veh) {
-        var pts = [new Waypoint({ Latitude: begin.Latitude, Longitude: begin.Longitude }),
-            new Waypoint({ Latitude: end.Latitude, Longitude: end.Longitude })];
+        var pts = [new Waypoint({ Latitude: end.Latitude, Longitude: end.Longitude })];
+        this.buildSafeRoute(pts, begin, 0);
         if (isMission) {
             var promise = this.reporter.addNewRouteToMission(end.id, pts);
             promise.success(function (data, textStatus, jqXHR) {
-                pts[0].updateInfo(data[0]);
-                pts[1].updateInfo(data[1]);
+                for (var i = 0; i < pts.length; i++) {
+                    pts[i].updateInfo(data[i]);
+                }
             });
         }
         return pts;
@@ -1030,19 +1050,22 @@ function PathGenerator(areaContainer, reporter) {
         if (!startIndex) {
             startIndex = 0;
         }
+        wps.splice(0, 0, new Waypoint(curPos));
         var areas = this.areaContainer.restrictedAreas;
-        //Do initial algorithm form the aircraft position
-        if (checkPathIntersectsArea(curPos, wps[startIndex], areas)) {
-            var newWps = this.connectSafely(curPos, wps[startIndex]);
-            insertMultiPointsIntoList(wps, newWps, startIndex-1);
-            curPos.prev = null; //avoid circular reference complaints from signalr
-            curPos.edges = null;
-        }
+        //Do initial algorithm form the aircraft position if it exists
+        //if (checkPathIntersectsArea(curPos, wps[startIndex], areas)) {
+        //    var newWps = this.connectSafely(curPos, wps[startIndex]);
+        //    insertMultiPointsIntoList(wps, newWps, startIndex-1);
+        //    curPos.prev = null; //avoid circular reference complaints from signalr
+        //    curPos.edges = null;
+        //}
         for (var i = startIndex; i < wps.length - 1; i++) {
             if (checkPathIntersectsArea(wps[i], wps[i] + 1, areas)) {
                 var newwps = this.connectSafely(wps[i], wps[i + 1]);
                 wps[i].prev = null;
+                wps[i].edges = null;
                 wps[i + 1].prev = null;
+                wps[i + 1].edges = null;
                 insertMultiPointsIntoList(wps, newwps, i);
                 i += newwps.length;
             }
