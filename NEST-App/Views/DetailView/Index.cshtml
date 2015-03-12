@@ -77,9 +77,6 @@
                 </ul>
             </li>
         </ul>
-
-
-
     </div>
 
     <div class="outside">
@@ -302,63 +299,70 @@
             <p class="detail_title" id="detail_title">
                 UAV #
             </p>
-            <div class="detail_statue_metrics_div">
-                <div class="detail_statue">
-                    <p class="title">Status</p>
-                    <p class="details" id="ETA">ETA: </p>
-                    <p class="details" id="STA">STA: </p>
-                    <p class="details" id="route">Route:  </p>
-                    <p class="details" id="avail">Availability: </p>
-                    <p class="details" id="conf">Configuration:
-                    <p class="details"> Current Coord: </p>
-                    <p class="details" id="curr_lat"> &nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp; </p>
-                    <p class="details" id="curr_long"> &nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;</p>
-                    <p class="details" id="curr_alt"> &nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                    <p class="details"> Destination Coord:</p>
-                    <p class="details" id="dest_lat"> &nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp; </p>
-                    <p class="details" id="dest_long"> &nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;</p>
+            <div class="status_metrics_map">
+                <div class="detail_statue_metrics_div">
+                    <div class="detail_statue">
+                        <p class="title">Status</p>
+                        <p class="details" id="ETA">ETA: </p>
+                        <p class="details" id="STA">STA: </p>
+                        <p class="details" id="route">Route:  </p>
+                        <p class="details" id="avail">Availability: </p>
+                        <p class="details" id="conf">Configuration:
+                        <p class="details"> Current Coord: </p>
+                        <p class="details" id="curr_lat"> &nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp; </p>
+                        <p class="details" id="curr_long"> &nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;</p>
+                        <p class="details" id="curr_alt"> &nbsp;&nbsp;&nbsp;&nbsp;ALT:&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                        <p class="details"> Destination Coord:</p>
+                        <p class="details" id="dest_lat"> &nbsp;&nbsp;&nbsp;&nbsp;LAT:&nbsp;&nbsp;&nbsp;&nbsp; </p>
+                        <p class="details" id="dest_long"> &nbsp;&nbsp;&nbsp;&nbsp;LONG:&nbsp;</p>
+                    </div>
+                    <div class="detail_metrics">
+                        <p class="title">Metrics</p>
+                        <p class="details" id="battery"> Battery: </p>
+                        <p class="details" id="mileage"> Total Miles: </p>
+                        <p class="details" id="numdeliveries"> Current Delivery: </p>
+                        <p class="details" id="total_deliveries"> Total Delivery: </p>
+                    </div>
+                    
                 </div>
-                <div class="detail_metrics">
-                    <p class="title">Metrics</p>
-                    <p class="details" id="battery"> Battery: </p>
-                    <p class="details" id="mileage"> Total Miles: </p>
-                    <p class="details" id="numdeliveries"> Current Delivery: </p>
-                    <p class="details" id="total_deliveries"> Total Delivery: </p>
+
+                <div class="map">
+                    <div id="map-canvas"></div>
+
                 </div>
+           </div>
+           
+            <div class="package_event_div">
                 <div class="detail_package">
                     <p class="title">Package</p>
                     <p class="details">
-                        Dest. Addr: 3550 Nordhoff St, <br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Northridge, CA 91330 <br />
+                        Dest. Addr: 3550 Nordhoff St, Northridge, CA 91330 <br />
                     </p>
                     <p class="details" id="payload" style="margin-bottom: 2px;">Package Contents: </p>
                     <p class="details" id="cost"> Total Cost of Package: $</p>
                     <p class="details">Customer Notes: Please do not leave package by front door.</p>
                 </div>
-            </div>
 
-            <div class="map">
-                <div id="map-canvas"></div>
                 <div class="detail_eventLog">
                     <p class="title">Event Log History</p>
                     <p class="details">
                         @*<table class="UAV_table" id="eventLog_table" style="width:100%; margin: 0px;">
-                                <tr class="eventlog_tr" id="eventlog_tr">
-                                    <th class="eventlog_th" id="eventlog_th">ID</th>
-                                    <th class="eventlog_th" id="eventlog_th">Date</th>
-                                    <th class="eventlog_th" id="eventlog_th">Message</th>
-                                    <th class="eventlog_th" id="eventlog_th">Level</th>
-                                </tr>
-                                @foreach (EventLog eventlog in Model.Eventlog)
-                                {
-                                    <tr class="eventlog_tr">
-                                        <td>@Html.DisplayFor(modelItem => eventlog.uav_id)</td>
-                                        <td>@Html.DisplayFor(modelItem => eventlog.create_date)</td>
-                                        <td>@Html.DisplayFor(modelItem => eventlog.message)</td>
-                                        <td>@Html.DisplayFor(modelItem => eventlog.criticality)</td>
-                                    </tr>
-                                }
-                            </table>*@
+                    <tr class="eventlog_tr" id="eventlog_tr">
+                        <th class="eventlog_th" id="eventlog_th">ID</th>
+                        <th class="eventlog_th" id="eventlog_th">Date</th>
+                        <th class="eventlog_th" id="eventlog_th">Message</th>
+                        <th class="eventlog_th" id="eventlog_th">Level</th>
+                    </tr>
+                    @foreach (EventLog eventlog in Model.Eventlog)
+                    {
+                        <tr class="eventlog_tr">
+                            <td>@Html.DisplayFor(modelItem => eventlog.uav_id)</td>
+                            <td>@Html.DisplayFor(modelItem => eventlog.create_date)</td>
+                            <td>@Html.DisplayFor(modelItem => eventlog.message)</td>
+                            <td>@Html.DisplayFor(modelItem => eventlog.criticality)</td>
+                        </tr>
+                    }
+                </table>*@
 
 
 
@@ -382,8 +386,8 @@
                     </p>
                 </div>
             </div>
+            </div>
         </div>
-    </div>
     <p><a class="btn btn-default" href="~/Sim/Index">Go to Simulation Page &raquo;</a>  <a class="btn btn-default" href="~/adminview/Index">Go to Admin View Page &raquo;</a></p>
 </body>
 

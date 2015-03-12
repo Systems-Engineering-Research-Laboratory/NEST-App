@@ -108,8 +108,8 @@ $(document).ready(function () {
                     var current_alt = this.cells[12];
                     var dest_lat = this.cells[13];
                     var dest_long = this.cells[14];
-                    var payload = this.cells[15];
-                    var cost = this.cells[16];
+                    var payload = this.cells[16];
+                    var cost = this.cells[17];
                     var uav_lat_long = new google.maps.LatLng(this.cells[10].innerHTML, this.cells[11].innerHTML);
                     var total_num = numDelivery.innerHTML;
                     var final_total = total_num - 1;
