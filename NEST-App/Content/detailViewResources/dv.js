@@ -1,6 +1,12 @@
 ﻿var marker;
 var previous_id = null;
 var current_id = 1;
+var evt_id;
+var evt_operator;
+var evt_date;
+var evt_msg;
+var evt_level;
+
 $(document).ready(function () {
     mapOptions = {
         zoom: 17,
@@ -82,11 +88,203 @@ $(document).ready(function () {
         }
     }
 
-
     var presentMarker, lastMarker;
 
-    
+    function UpdateVehicle(uav, updatedUAV) {
+        var LatLng = new google.maps.LatLng(updatedUAV.Latitude, updatedUAV.Longitude);
 
+        //SetUAVMarker(uav);
+        uav.marker.setPosition(LatLng);
+        uav.Battery = updatedUAV.BatteryLevel;
+        uav.Alt = updatedUAV.Altitude;
+        uav.BatteryCheck = parseFloat(Math.round(updatedUAV.BatteryLevel * 100) / 100).toFixed(2);
+        uav.Yaw = updatedUAV.Yaw;
+
+        //Check drone heading and adjust as necessary
+        if ((Math.round((10000000 * uav.Orientation)) / 10000000) != (Math.round((10000000 * uav.Yaw)) / 10000000)) {
+
+            uav.Orientation = uav.Yaw;
+
+            uav.marker.uavSymbolBlack.rotation = uav.Yaw;
+            uav.marker.uavSymbolGreen.rotation = uav.Yaw;
+
+            if (uav.marker.selected == true)
+                uav.marker.setOptions({
+                    icon: uav.marker.uavSymbolGreen
+                });
+            else
+                uav.marker.setOptions({
+                    icon: uav.marker.uavSymbolBlack
+                })
+        }
+
+        uav.marker.setOptions({
+            labelContent: uav.Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uav.Alt + '<br/><b>Bat: </b>' + uav.BatteryCheck + '</div>'
+        });
+
+        return uav;
+    };
+
+    $.connection.hub.start().done(function () {
+        console.log("connection for signalR...success");
+    });
+
+    var emitHub = $.connection.eventLogHub;
+    emitHub.client.newEvent = function (evt) {
+
+        console.log(evt);
+        var checkMessage = evt.message.split(" ");
+        if (checkMessage[0] != "Acknowledged:") {
+
+            console.log(evt);
+            
+            //var eventObj = JSON.stringify(evt);
+            //alert(eventObj);
+
+            evt_id = evt.uav_id;
+            evt_operator = evt.operator_screen_name;
+            evt_date = evt.create_date;
+            evt_msg = evt.message;
+            evt_level = evt.criticality;
+
+            //console.log(evt_id + ", " + evt_operator + ", " + evt_date + ", " + evt_msg + ", " + evt_level);
+            
+            if (current_id == uavs[evt.uav_id].Id) {
+                //alert("current id: " + current_id + ",   evt.uav_id: " + uavs[evt.uav_id].Id);
+
+                document.getElementById('eventlog_td1').innerHTML = evt.uav_id;
+                document.getElementById('eventlog_td2').innerHTML = evt.operator_screen_name;
+                document.getElementById('eventlog_td3').innerHTML = evt.create_date;
+                document.getElementById('eventlog_td4').innerHTML = evt.message;
+                document.getElementById('eventlog_td5').innerHTML = evt.criticality;
+            }
+
+            else if (current_id != uavs[evt.uav_id].Id) {
+                //alert("current id: " + current_id + ",   evt.uav_id: " + uavs[evt.uav_id].Id);
+                document.getElementById('eventlog_td1').innerHTML = "NO";
+                document.getElementById('eventlog_td2').innerHTML = "EVENT";
+                document.getElementById('eventlog_td3').innerHTML = "FOR";
+                document.getElementById('eventlog_td4').innerHTML = "UAV";
+                document.getElementById('eventlog_td5').innerHTML = evt.uav_callsign;
+            }
+            
+
+
+            var boxText = document.createElement("div");
+            boxText.style.cssText = "border: 1px solid black;margin-top: 8px;background: #333;color: #FFF;font-size: 10px;padding: .5em 2em;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;";
+            boxText.innerHTML = "<span style='color: red;'>Warning: </span>" + evt.message;
+
+            var alertText = document.createElement("div");
+            alertText.style.cssText = "border: 1px solid red;height: 40px;background: #333;color: #FFF;padding: 0px 0px 15px 4px;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;"
+            alertText.innerHTML = "<span style='color: red; font-size: 30px;'>!</span";
+
+            var infobox = new InfoBox({
+                content: boxText,
+                disableAutoPan: false,
+                maxWidth: 100,
+                pixelOffset: new google.maps.Size(-75, 30),
+                zIndex: null,
+                enableEventPropagation: true,
+                pane: "floatPane",
+                boxStyle: {
+                    opacity: 0.75,
+                    width: "150px"
+                },
+                closeBoxMargin: "9px 1px 2px 2px",
+                uav_id: null
+            })
+
+            var infoboxAlert = new InfoBox({
+                content: alertText,
+                disableAutoPan: false,
+                maxWidth: 20,
+                pixelOffset: new google.maps.Size(-10, -80),
+                zIndex: null,
+                boxStyle: {
+                    opacity: 0.75,
+                    width: "20px",
+                },
+                uav_id: null
+            })
+
+            //infobox.open(map, uavs[evt.uav_id].marker);
+            infobox.uav_id = uavs[evt.uav_id].Id;
+            //infoboxAlert.open(map, uavs[evt.uav_id].marker);
+            infoboxAlert.uav_id = uavs[evt.uav_id].Id;
+            
+            infoboxContainer[evt.uav_id] = containBox(infobox, infoboxAlert);
+
+            document.getElementById(evt.uav_id).style.backgroundColor = "red";
+            uavs[evt.uav_id].CurrentEvent = evt;
+            uavs[evt.uav_id].setEventOnce = 0;
+        }
+    }
+
+    var vehicleHub = $.connection.vehicleHub;
+
+    vehicleHub.client.flightStateUpdate = function (vehicle) {
+        
+        
+        uavs[vehicle.Id].Id = vehicle.Id;
+        uavs[vehicle.Id].Battery = vehicle.BatteryLevel;
+        uavs[vehicle.Id].Alt = vehicle.Altitude;
+        uavs[vehicle.Id].BatteryCheck = parseFloat(Math.round(vehicle.BatteryLevel * 100)).toFixed(2);
+
+        if (current_id == uavs[vehicle.Id].Id) {
+            var battery_percent = vehicle.BatteryLevel
+            document.getElementById("curr_lat").innerHTML = '　LAT:　　 ' + vehicle.Latitude.toFixed(10);
+            document.getElementById("curr_long").innerHTML = '　LONG:　' + vehicle.Longitude.toFixed(10);
+            document.getElementById("curr_alt").innerHTML = '　ALT:　　 ' + vehicle.Altitude;
+            document.getElementById("battery").innerHTML = 'Battery: ' + vehicle.BatteryLevel.toFixed(3) + "%";
+
+            var latlng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
+            if (uavs[vehicle.Id].setMapOnce == 0) {
+                uavs[vehicle.Id].marker.setMap(map);
+                uavs[vehicle.Id].marker.setVisible(true);
+                uavs[vehicle.Id].setMapOnce = 1;
+            }
+            uavs[vehicle.Id] = UpdateVehicle(uavs[vehicle.Id], vehicle);
+            if (uavs[vehicle.Id].CurrentEvent != null && uavs[vehicle.Id].setEventOnce == 0) {
+                infoboxContainer[vehicle.Id].infobox.open(map, uavs[vehicle.Id].marker);
+                infoboxContainer[vehicle.Id].infoboxAlert.open(map, uavs[vehicle.Id].marker);
+                uavs[vehicle.Id].setEventOnce = 1;
+            }
+          
+            if (uavs[vehicle.Id].Id != previous_id && previous_id != null) {
+                if (typeof previous_id == "string") {
+                    var selector = parseInt(previous_id);
+                    uavs[selector].marker.setMap(null);
+                    uavs[selector].marker.setVisible(false);
+                    if (uavs[selector].CurrentEvent != null) {
+                        infoboxContainer[selector].infobox.close();
+                        infoboxContainer[selector].infoboxAlert.close();
+                        uavs[selector].setEventOnce = 0;
+                    }
+                    uavs[selector].setMapOnce = 0;
+                }
+                else {
+                    uavs[previous_id].marker.setMap(null);
+                    uavs[previous_id].marker.setVisible(false);
+                    if(uavs[previous_id].CurrentEvent != null) {
+                        infoboxContainer[previous_id].infobox.close();
+                        infoboxContainer[previous_id].infoboxAlert.close();
+                        uavs[previous_id].setEventOnce = 0;
+                    }
+                    uavs[previous_id].setMapOnce = 0;
+                }
+            }
+            map.setCenter(latlng);
+        }
+    }
+
+
+    $.ajax({
+        url: '/api/uavs/getuavinfo',
+        success: function (data, textStatus, req) {
+            uavMarkers(data, textStatus, req);
+        }
+    });
+    
     if (table != null) {
         for (var i = 1; i < table.rows.length; i++) {
             for (var j = 0; j < table.rows[i].cells.length; j++) {
@@ -108,6 +306,7 @@ $(document).ready(function () {
                     var current_alt = this.cells[12];
                     var dest_lat = this.cells[13];
                     var dest_long = this.cells[14];
+                    //this.cells[15] is current delivery number
                     var payload = this.cells[16];
                     var cost = this.cells[17];
                     var uav_lat_long = new google.maps.LatLng(this.cells[10].innerHTML, this.cells[11].innerHTML);
@@ -117,23 +316,42 @@ $(document).ready(function () {
                     var final_battery = bat * 100;
                     var low_battery = "LOW BATTERY!";
 
-                    document.getElementById("detail_title").innerHTML           = 'UAV #'                   + uavid.innerHTML + '(' + callsign.innerHTML + ') Detail';
-                    document.getElementById("numdeliveries").innerHTML          = 'Current Delivery: '      + numDelivery.innerHTML;
-                    document.getElementById("total_deliveries").innerHTML       = 'Total Delivery: '        + final_total;
-                    document.getElementById("mileage").innerHTML                = 'Total Miles: '           + mile.innerHTML + ' miles';
-                    document.getElementById("battery").innerHTML                = 'Battery: '               + final_battery + "%";
-                    document.getElementById("ETA").innerHTML                    = 'ETA: '                   + ETA.innerHTML;
-                    document.getElementById("STA").innerHTML                    = 'STA: '                   + STA.innerHTML;
-                    document.getElementById("route").innerHTML                  = 'Route: '                 + route.innerHTML;
-                    document.getElementById("avail").innerHTML                  = 'Availability: '          + availability.innerHTML;
-                    document.getElementById("conf").innerHTML                   = 'Configuration: '         + confiugration.innerHTML;
-                    document.getElementById("curr_lat").innerHTML               = '　LAT:　　 '             + current_lat.innerHTML;
-                    document.getElementById("curr_long").innerHTML              = '　LONG:　'               + current_long.innerHTML;
-                    document.getElementById("curr_alt").innerHTML               = '　ALT:　　 '             + current_alt.innerHTML;
-                    document.getElementById("dest_lat").innerHTML               = '　LAT:　　 '             + dest_lat.innerHTML;
-                    document.getElementById("dest_long").innerHTML              = '　LONG:　'               + dest_long.innerHTML;
-                    document.getElementById("payload").innerHTML                = 'Package Contents: '      + payload.innerHTML;
-                    document.getElementById("cost").innerHTML                   = 'Total Cost of Package: $' + cost.innerHTML;
+                    document.getElementById("detail_title").innerHTML = 'UAV #' + uavid.innerHTML + '(' + callsign.innerHTML + ') Detail';
+                    document.getElementById("numdeliveries").innerHTML = 'Current Delivery: ' + numDelivery.innerHTML;
+                    document.getElementById("total_deliveries").innerHTML = 'Total Delivery: ' + final_total;
+                    document.getElementById("mileage").innerHTML = 'Total Miles: ' + mile.innerHTML + ' miles';
+                    document.getElementById("battery").innerHTML = 'Battery: ' + final_battery + "%";
+                    document.getElementById("ETA").innerHTML = 'ETA: ' + ETA.innerHTML;
+                    document.getElementById("STA").innerHTML = 'STA: ' + STA.innerHTML;
+                    document.getElementById("route").innerHTML = 'Route: ' + route.innerHTML;
+                    document.getElementById("avail").innerHTML = 'Availability: ' + availability.innerHTML;
+                    document.getElementById("conf").innerHTML = 'Configuration: ' + confiugration.innerHTML;
+                    document.getElementById("curr_lat").innerHTML = '　LAT:　　 ' + current_lat.innerHTML;
+                    document.getElementById("curr_long").innerHTML = '　LONG:　' + current_long.innerHTML;
+                    document.getElementById("curr_alt").innerHTML = '　ALT:　　 ' + current_alt.innerHTML;
+                    document.getElementById("dest_lat").innerHTML = '　LAT:　　 ' + dest_lat.innerHTML;
+                    document.getElementById("dest_long").innerHTML = '　LONG:　' + dest_long.innerHTML;
+                    document.getElementById("payload").innerHTML = 'Package Contents: ' + payload.innerHTML;
+                    document.getElementById("cost").innerHTML = 'Total Cost of Package: $' + cost.innerHTML;
+
+                    if (current_id == evt_id) {
+                        //alert("current id: " + current_id + ",   evt.uav_id: " + evt_id);
+
+                        document.getElementById('eventlog_td1').innerHTML = evt_id;
+                        document.getElementById('eventlog_td2').innerHTML = evt_operator;
+                        document.getElementById('eventlog_td3').innerHTML = evt_date;
+                        document.getElementById('eventlog_td4').innerHTML = evt_msg;
+                        document.getElementById('eventlog_td5').innerHTML = evt_level;
+                    }
+
+                    else if (current_id != evt_id) {
+                        //alert("current id: " + current_id + ",   evt.uav_id: " + evt_id);
+                        document.getElementById('eventlog_td1').innerHTML = "NO";
+                        document.getElementById('eventlog_td2').innerHTML = "EVENT";
+                        document.getElementById('eventlog_td3').innerHTML = "FOR";
+                        document.getElementById('eventlog_td4').innerHTML = "UAV";
+                        document.getElementById('eventlog_td5').innerHTML = callsign.innerHTML;
+                    }
 
                     //alert(this.cells[0].innerText);
 
@@ -231,57 +449,57 @@ $(document).ready(function () {
                     //    }
                     //}
 
-                    
 
 
 
-                    var event_table_in_detail = document.getElementById('eventLog_table');
+                    /////////////////////////////////////////////////
+                    //var event_table_in_detail = document.getElementById('eventLog_table');
 
-                    for (var k = 1; k < event_table_in_detail.rows.length; k++) {
-                        document.getElementById("eventLog_table").deleteRow(k);
-                    }
+                    //for (var k = 1; k < event_table_in_detail.rows.length; k++) {
+                    //    document.getElementById("eventLog_table").deleteRow(k);
+                    //}
 
-                    for (var j = 1; j < event_table_in_detail.rows.length; j++)
-                    {
-                        var inner_event_uavid = event_table_in_detail.rows[j].cells[0].innerText;
-                        //alert(j + ": " + inner_event_uavid);
+                    //for (var j = 1; j < event_table_in_detail.rows.length; j++)
+                    //{
+                    //    var inner_event_uavid = event_table_in_detail.rows[j].cells[0].innerText;
+                    //    //alert(j + ": " + inner_event_uavid);
 
-                        if (inner_event_uavid != uav_id_for_event)
-                            document.getElementById("eventLog_table").deleteRow(j);
-                    }
+                    //    if (inner_event_uavid != uav_id_for_event)
+                    //        document.getElementById("eventLog_table").deleteRow(j);
+                    //}
 
 
 
-                    for (var i = 2; i < table4.rows.length; i++)
-                    {
-                        var event_uav_id = table4.rows[i].cells[0].firstChild.nodeValue;
-                        var event_criticality = table4.rows[i].cells[2].firstChild.nodeValue;
-                        var event_create = table4.rows[i].cells[3].firstChild.nodeValue;
-                        var event_msg = table4.rows[i].cells[4].firstChild.nodeValue;
+                    //for (var i = 2; i < table4.rows.length; i++)
+                    //{
+                    //    var event_uav_id = table4.rows[i].cells[0].firstChild.nodeValue;
+                    //    var event_criticality = table4.rows[i].cells[2].firstChild.nodeValue;
+                    //    var event_create = table4.rows[i].cells[3].firstChild.nodeValue;
+                    //    var event_msg = table4.rows[i].cells[4].firstChild.nodeValue;
 
-                        var event_table_in_detail = document.getElementById('eventLog_table');
+                    //    var event_table_in_detail = document.getElementById('eventLog_table');
 
-                        if (uav_id_for_event == event_uav_id) {
-                            //console.log("yes // event table: " + event_uav_id + ", uav id: " + uav_id_for_event);
-                            var row = event_table_in_detail.insertRow(1);
-                            var cell0 = row.insertCell(0);
-                            var cell1 = row.insertCell(1);
-                            var cell2 = row.insertCell(2);
-                            var cell3 = row.insertCell(3);
+                    //    if (uav_id_for_event == event_uav_id) {
+                    //        //console.log("yes // event table: " + event_uav_id + ", uav id: " + uav_id_for_event);
+                    //        var row = event_table_in_detail.insertRow(1);
+                    //        var cell0 = row.insertCell(0);
+                    //        var cell1 = row.insertCell(1);
+                    //        var cell2 = row.insertCell(2);
+                    //        var cell3 = row.insertCell(3);
 
-                            cell0.innerHTML = event_uav_id;
-                            cell1.innerHTML = event_create;
-                            cell2.innerHTML = event_msg;
-                            cell3.innerHTML = event_criticality;
+                    //        cell0.innerHTML = event_uav_id;
+                    //        cell1.innerHTML = event_create;
+                    //        cell2.innerHTML = event_msg;
+                    //        cell3.innerHTML = event_criticality;
 
-                            cell0.style.textAlign = "center";
-                            cell1.style.textAlign = "center";
-                            cell2.style.textAlign = "center";
-                            cell3.style.textAlign = "center";
+                    //        cell0.style.textAlign = "center";
+                    //        cell1.style.textAlign = "center";
+                    //        cell2.style.textAlign = "center";
+                    //        cell3.style.textAlign = "center";
 
-                            alert("hello");
-                        }
-                    }
+                    //        alert("hello");
+                    //    }
+                    //}
 
 
                     //document.getElementById("eventLog_table").deleteRow(1);
@@ -289,7 +507,7 @@ $(document).ready(function () {
 
                     //for (var j = 1; j < event_table_in_detail.rows.length; j++)
                     //{
-                        
+
                     //    var inner_event_uavid = event_table_in_detail.rows[j].cells[0].innerText;
                     //    alert("inner event uavid " + inner_event_uavid + "   // trial: " + j);
                     //    if (inner_event_uavid != uav_id_for_event) {
@@ -302,177 +520,9 @@ $(document).ready(function () {
     }
 
 
-    else
-    {
+    else {
         alert("There is no generated UAVs, or UAVs do not have missions. Go to the Admin View page to fix this issue.");
     }
-
-
-
-    function UpdateVehicle(uav, updatedUAV) {
-        var LatLng = new google.maps.LatLng(updatedUAV.Latitude, updatedUAV.Longitude);
-
-        //SetUAVMarker(uav);
-        uav.marker.setPosition(LatLng);
-        uav.Battery = updatedUAV.BatteryLevel;
-        uav.Alt = updatedUAV.Altitude;
-        uav.BatteryCheck = parseFloat(Math.round(updatedUAV.BatteryLevel * 100) / 100).toFixed(2);
-        uav.Yaw = updatedUAV.Yaw;
-
-        //Check drone heading and adjust as necessary
-        if ((Math.round((10000000 * uav.Orientation)) / 10000000) != (Math.round((10000000 * uav.Yaw)) / 10000000)) {
-
-            uav.Orientation = uav.Yaw;
-
-            uav.marker.uavSymbolBlack.rotation = uav.Yaw;
-            uav.marker.uavSymbolGreen.rotation = uav.Yaw;
-
-            if (uav.marker.selected == true)
-                uav.marker.setOptions({
-                    icon: uav.marker.uavSymbolGreen
-                });
-            else
-                uav.marker.setOptions({
-                    icon: uav.marker.uavSymbolBlack
-                })
-        }
-
-        uav.marker.setOptions({
-            labelContent: uav.Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uav.Alt + '<br/><b>Bat: </b>' + uav.BatteryCheck + '</div>'
-        });
-
-        return uav;
-    };
-
-    $.connection.hub.start().done(function () {
-        console.log("connection for signalR...success");
-    });
-
-    var emitHub = $.connection.eventLogHub;
-    emitHub.client.newEvent = function (evt) {
-
-        console.log(evt);
-        var checkMessage = evt.message.split(" ");
-        if (checkMessage[0] != "Acknowledged:") {
-
-            console.log(evt);
-
-
-            var boxText = document.createElement("div");
-            boxText.style.cssText = "border: 1px solid black;margin-top: 8px;background: #333;color: #FFF;font-size: 10px;padding: .5em 2em;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;";
-            boxText.innerHTML = "<span style='color: red;'>Warning: </span>" + evt.message;
-
-            var alertText = document.createElement("div");
-            alertText.style.cssText = "border: 1px solid red;height: 40px;background: #333;color: #FFF;padding: 0px 0px 15px 4px;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;"
-            alertText.innerHTML = "<span style='color: red; font-size: 30px;'>!</span";
-
-            var infobox = new InfoBox({
-                content: boxText,
-                disableAutoPan: false,
-                maxWidth: 100,
-                pixelOffset: new google.maps.Size(-75, 30),
-                zIndex: null,
-                enableEventPropagation: true,
-                pane: "floatPane",
-                boxStyle: {
-                    opacity: 0.75,
-                    width: "150px"
-                },
-                closeBoxMargin: "9px 1px 2px 2px",
-                uav_id: null
-            })
-
-            var infoboxAlert = new InfoBox({
-                content: alertText,
-                disableAutoPan: false,
-                maxWidth: 20,
-                pixelOffset: new google.maps.Size(-10, -80),
-                zIndex: null,
-                boxStyle: {
-                    opacity: 0.75,
-                    width: "20px",
-                },
-                uav_id: null
-            })
-
-            //infobox.open(map, uavs[evt.uav_id].marker);
-            infobox.uav_id = uavs[evt.uav_id].Id;
-            //infoboxAlert.open(map, uavs[evt.uav_id].marker);
-            infoboxAlert.uav_id = uavs[evt.uav_id].Id;
-            
-            infoboxContainer[evt.uav_id] = containBox(infobox, infoboxAlert);
-
-            document.getElementById(evt.uav_id).style.backgroundColor = "red";
-            uavs[evt.uav_id].CurrentEvent = evt;
-            uavs[evt.uav_id].setEventOnce = 0;
-        }
-    }
-
-    var vehicleHub = $.connection.vehicleHub;
-    vehicleHub.client.flightStateUpdate = function (vehicle) {
-        
-        
-        uavs[vehicle.Id].Id = vehicle.Id;
-        uavs[vehicle.Id].Battery = vehicle.BatteryLevel;
-        uavs[vehicle.Id].Alt = vehicle.Altitude;
-        uavs[vehicle.Id].BatteryCheck = parseFloat(Math.round(vehicle.BatteryLevel * 100)).toFixed(2);
-        //console.log("　UAV ID: #" + vehicle.Id + "　　Current coordinates: " + vehicle.Latitude + ", " + vehicle.Longitude);
-        //console.log("　UAV Battery using battery level: " + uavs[vehicle.Id].Battery);
-        if (current_id == uavs[vehicle.Id].Id) {
-            var battery_percent = vehicle.BatteryLevel
-            document.getElementById("curr_lat").innerHTML = '　LAT:　　 ' + vehicle.Latitude.toFixed(10);
-            document.getElementById("curr_long").innerHTML = '　LONG:　' + vehicle.Longitude.toFixed(10);
-            document.getElementById("curr_alt").innerHTML = '　ALT:　　 ' + vehicle.Altitude;
-            document.getElementById("battery").innerHTML = 'Battery: ' + vehicle.BatteryLevel.toFixed(3) + "%";
-            var latlng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
-            if (uavs[vehicle.Id].setMapOnce == 0) {
-                uavs[vehicle.Id].marker.setMap(map);
-                uavs[vehicle.Id].marker.setVisible(true);
-                uavs[vehicle.Id].setMapOnce = 1;
-            }
-            uavs[vehicle.Id] = UpdateVehicle(uavs[vehicle.Id], vehicle);
-            if (uavs[vehicle.Id].CurrentEvent != null && uavs[vehicle.Id].setEventOnce == 0) {
-                infoboxContainer[vehicle.Id].infobox.open(map, uavs[vehicle.Id].marker);
-                infoboxContainer[vehicle.Id].infoboxAlert.open(map, uavs[vehicle.Id].marker);
-                uavs[vehicle.Id].setEventOnce = 1;
-            }
-          
-            if (uavs[vehicle.Id].Id != previous_id && previous_id != null) {
-                if (typeof previous_id == "string") {
-                    var selector = parseInt(previous_id);
-                    uavs[selector].marker.setMap(null);
-                    uavs[selector].marker.setVisible(false);
-                    if (uavs[selector].CurrentEvent != null) {
-                        infoboxContainer[selector].infobox.close();
-                        infoboxContainer[selector].infoboxAlert.close();
-                        uavs[selector].setEventOnce = 0;
-                    }
-                    uavs[selector].setMapOnce = 0;
-                }
-                else {
-                    uavs[previous_id].marker.setMap(null);
-                    uavs[previous_id].marker.setVisible(false);
-                    if(uavs[previous_id].CurrentEvent != null) {
-                        infoboxContainer[previous_id].infobox.close();
-                        infoboxContainer[previous_id].infoboxAlert.close();
-                        uavs[previous_id].setEventOnce = 0;
-                    }
-                    uavs[previous_id].setMapOnce = 0;
-                }
-            }
-            map.setCenter(latlng);
-        }
-    }
-
-
-    $.ajax({
-        url: '/api/uavs/getuavinfo',
-        success: function (data, textStatus, req) {
-            uavMarkers(data, textStatus, req);
-        }
-    });
-    
-    
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

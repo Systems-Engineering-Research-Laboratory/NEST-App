@@ -170,9 +170,7 @@
                         <th style="display: none;">payload</th>                     @*15*@
                         <th style="display: none;">Cost</th>                        @*16*@
                         <th style="display: none;">Priority</th>                    @*17*@
-                        <th style="display: none;">User name</th>
-                        <th style="display: none;">User id</th>
-                        <th style="display: none;">uav_userid</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -364,16 +362,22 @@
                     }
                 </table>*@
 
-
-
                         <table class="eventLog_table" id="eventLog_table" style="width:100%; margin: 0px;">
                             <tr class="eventlog_tr" id="eventlog_tr">
                                 <th class="eventlog_th" id="eventlog_th">ID</th>
+                                <th class="eventlog_th" id="eventlog_th">Operator</th>
                                 <th class="eventlog_th" id="eventlog_th">Date</th>
                                 <th class="eventlog_th" id="eventlog_th">Message</th>
                                 <th class="eventlog_th" id="eventlog_th">Level</th>
                             </tr>
-                            @foreach (EventLog eventlog in Model.Eventlog)
+                            <tr class="eventlog_tr">
+                                <td class="inner_eventlog_td" id="eventlog_td1">&nbsp;</td>
+                                <td class="inner_eventlog_td" id="eventlog_td2">&nbsp;</td>
+                                <td class="inner_eventlog_td" id="eventlog_td3">&nbsp;</td>
+                                <td class="inner_eventlog_td" id="eventlog_td4">&nbsp;</td>
+                                <td class="inner_eventlog_td" id="eventlog_td5">&nbsp;</td>
+                            </tr>
+                            @*@foreach (EventLog eventlog in Model.Eventlog)
                             {
                                 <tr class="eventlog_tr">
                                     <td class="inner_eventlog_td" id="eventlog_td1">@Html.DisplayFor(modelItem => eventlog.uav_id)</td>
@@ -381,7 +385,7 @@
                                     <td class="inner_eventlog_td" id="eventlog_td3">@Html.DisplayFor(modelItem => eventlog.message)</td>
                                     <td class="inner_eventlog_td" id="eventlog_td4">@Html.DisplayFor(modelItem => eventlog.criticality)</td>
                                 </tr>
-                            }
+                            }*@
                         </table>
                     </p>
                 </div>
@@ -401,6 +405,9 @@
 @Styles.Render("~/bundles/detailsCSS")
 @Scripts.Render("~/bundles/bootstrap")
 
+@section scripts {
+    @Scripts.Render("~/bundles/angular")
+}
 
 <script src="~/Scripts/MarkerWithLabel.js"></script>
 <script src="~/Scripts/InfoBox.js"></script>
