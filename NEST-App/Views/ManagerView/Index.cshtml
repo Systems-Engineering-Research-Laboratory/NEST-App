@@ -21,7 +21,7 @@
     <div class="outer">
         <div id="ass">
             <h4>Assigned UAVs</h4>
-            <table class="assigned" id="assigned" style="border: 1px solid black;">
+            <table class="assigned" id="assigned">
                 <tr>
                     <th>UAV ID</th>
                     <th>Callsign</th>
@@ -32,10 +32,10 @@
                 @foreach (UAV uavs_user_user_id in Model.UAVs)
                 {
                     <tr>
-                        <td style="padding: 5px;">@Html.DisplayFor(modelItem => uavs_user_user_id.Id)</td>
-                        <td style="padding: 5px;">@Html.DisplayFor(modelItem => uavs_user_user_id.Callsign)</td>
-                        <td style="padding: 5px;">@Html.DisplayFor(modelItem => uavs_user_user_id.User_user_id)</td>
-                        <td style="padding: 5px;">@Html.DisplayFor(modelItem => uavs_user_user_id.User.username)</td>
+                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Id)</td>
+                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Callsign)</td>
+                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User_user_id)</td>
+                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User.username)</td>
                     </tr>
                 }
 
@@ -43,7 +43,7 @@
         </div>
         <div id="unass">
             <h4>Unassigned UAVs</h4>
-            <table class="unassigned" id="unassigned" style="border: 1px solid black;">
+            <table class="unassigned" id="unassigned">
                 <tr>
                     <th>UAV ID</th>
                     <th>Callsign</th>
@@ -54,10 +54,10 @@
                 @foreach (UAV uavs_user_user_id in Model.UAVs)
                 {
                     <tr>
-                        <td style="padding: 5px;">@Html.DisplayFor(modelItem => uavs_user_user_id.Id)</td>
-                        <td style="padding: 5px;">@Html.DisplayFor(modelItem => uavs_user_user_id.Callsign)</td>
-                        <td style="padding: 5px;">@Html.DisplayFor(modelItem => uavs_user_user_id.User_user_id)</td>
-                        <td style="padding: 5px;">@Html.DisplayFor(modelItem => uavs_user_user_id.User.username)</td>
+                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Id)</td>
+                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Callsign)</td>
+                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User_user_id)</td>
+                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User.username)</td>
                     </tr>
                 }
 
@@ -65,12 +65,26 @@
         </div> 
         <div id="curr">
             <h4>Current Emergencies:</h4>
-            <table class="curr_emergen" id="curr_emergen" style="border: 1px solid black;">
-                <tr>
-                    <th>UAV ID</th>
-                    <th>Callsign</th>
-                    <th>Current State</th>
-                </tr>
+            <table class="curr_emergen" id="curr_emergen">
+                <thead>
+                    <tr>
+                        <th>UAV</th>
+                        <th>Callsign</th>
+                        <th>Criticality</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (EventLog eventlog in Model.Eventlog)
+                    {
+                        <tr class="eventlog">
+                            <td>@Html.DisplayFor(modelItem => eventlog.uav_id)</td>
+                            <td>@Html.DisplayFor(modelItem => eventlog.UAV.Callsign)</td>
+                            <td>@Html.DisplayFor(modelItem => eventlog.criticality)</td>
+                            <td>@Html.DisplayFor(modelItem => eventlog.message)</td>
+                        </tr>
+                    }
+                </tbody>
             </table>
         </div>
     </div>
