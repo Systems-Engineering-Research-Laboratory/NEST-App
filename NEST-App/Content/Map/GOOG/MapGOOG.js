@@ -136,8 +136,8 @@ $(document).ready(function () {
             }
 
             if (uavs[vehicle.Id].BatteryCheck < .2) {
-                if (warningMessageCounter == 0) {
-                    warningMessageCounter++;
+                if (uavs[vehicle.Id].BatteryWarning == 0) {
+                    uavs[vehicle.Id].BatteryWarning++;
 
                     var eventLog = {
                         uav_id: uavs[vehicle.Id].Id,
@@ -208,7 +208,7 @@ $(document).ready(function () {
                 var multipleText = document.createElement("div");
                 multipleText.style.cssText = "border: 1px solid black;margin-top: 8px;background: #333;color: #FFF;font-size: 10px;padding: .5em 2em;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;";
                 multipleText.innerHTML = "<span style='color: red;'>Warning: </span>" + "multiple errors, check logs!";
-                console.log(uavs[evt.UAVId].Events);
+               
                 
                 if (uavs[evt.UAVId].Events > 1) {
                     var infobox = new InfoBox({
@@ -331,7 +331,6 @@ $(document).ready(function () {
             }
         }
 
-        var warningMessageCounter = 0;
 
         
         //Make sure to set all SignalR callbacks BEFORE the call to connect
