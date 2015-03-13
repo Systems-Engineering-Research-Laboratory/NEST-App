@@ -236,6 +236,7 @@
         uav.Events = 0;
         uav.infobox = null;
         uav.alertOnce = 0;
+        uav.BatteryWarning = 0;
         return uav;
     },
 
