@@ -14,7 +14,11 @@ namespace NEST_App.Controllers
         // GET: ManagerView
         public ActionResult Index()
         {
-            return View();
+            dynamic uavManagerList = new System.Dynamic.ExpandoObject();
+            uavManagerList.UAVs = db.UAVs.ToList();
+
+            return View(uavManagerList);
+
         }
         // GET: AdminView/ManageUAVs
         public ActionResult ManageUAVs()

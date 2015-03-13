@@ -444,6 +444,7 @@
     <Content Include="Content\img\white.jpg" />
     <Content Include="Content\img\yellow.jpg" />
     <Content Include="Content\img\yun_kim.png" />
+    <Content Include="Content\ManagerView\managerCSS.css" />
     <Content Include="Content\Map\GOOG\ContextMenu.js" />
     <Content Include="Content\Map\GOOG\DroneSelection.js" />
     <Content Include="Content\Map\GOOG\DroneTrails.js" />
@@ -1395,6 +1396,7 @@
     <Content Include="Content\NestScripts\vehicle.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Scripts\app\eventlog.js" />
+    <Content Include="Content\ManagerView\managerJS.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
