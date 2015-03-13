@@ -161,6 +161,10 @@ $(document).ready(function () {
             }
         }
 
+        vehicleHub.client.vehicleHasNewMission = function (uavid, schedid, missionid) {
+            wpm.vehicleHasNewMission(uavid, schedid, missionid);
+        }
+
         mapDraw.InitDrawingManager();
         mapDraw.drawingManager.setMap(map);
         mapDraw.drawingManager.setDrawingMode(null);

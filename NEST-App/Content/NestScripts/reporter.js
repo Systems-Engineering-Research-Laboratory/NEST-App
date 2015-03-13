@@ -137,4 +137,8 @@ function Reporter() {
         });
         return promise;
     }
+
+    this.broadcastNewMission = function(uavid, schedid, missionid) {
+        this.hub.server.vehicleHasNewMission(uavid, schedid, missionid);
+    }
 }
