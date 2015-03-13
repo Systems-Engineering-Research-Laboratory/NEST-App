@@ -138,7 +138,7 @@ namespace NEST_App.Controllers
             mission.Waypoints.Add(wps.Last());
             db.Entry(mission).State = System.Data.Entity.EntityState.Modified;
             await db.SaveChangesAsync();
-            return Ok();
+            return Ok(wps);
         }
 
         // GET: api/Missions/5

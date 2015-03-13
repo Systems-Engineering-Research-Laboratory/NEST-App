@@ -244,6 +244,20 @@ function setSignalrCallbacks(map) {
         receivedCommand(map, target, "CMD_NAV_Target", { connId: connId });
     }
 
+    vehicleHub.client.sendReturnCommand = function (cmd, connId) {
+        receivedCommand(map, cmd, "CMD_NAV_Return", { connId: connId });
+    }
+
+    vehicleHub.client.sendHoldCommand = function (cmd, connId) {
+        receivedCommand(map, cmd, "CMD_NAV_Hold", { connId: connId });
+    }
+    vehicleHub.client.sendAdjustCommand = function (cmd, connId) {
+        receivedCommand(map, cmd, "CMD_NAV_Adjust", { connId: connId });
+    }
+    vehicleHub.client.sendLandCommand = function (cmd, connId) {
+        receivedCommand(map, cmd, "CMD_NAV_Land", { connId: connId });
+    }
+
     vehicleHub.waypointCommand = function (wp, connId) {
         receivedCommand(map, wp, "CMD_NAV_Waypoint", {});
     }

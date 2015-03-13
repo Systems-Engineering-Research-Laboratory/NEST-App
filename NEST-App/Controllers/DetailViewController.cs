@@ -22,7 +22,7 @@ namespace NEST_App.Controllers
             uavDetailList.FlightStates = db.FlightStates.ToList();
             uavDetailList.missions = db.Missions.ToList();
             uavDetailList.Configurations = db.Configurations.ToList();
-            
+            uavDetailList.Eventlog = db.EventLogs.ToList();
             return View(uavDetailList);
         }
     }

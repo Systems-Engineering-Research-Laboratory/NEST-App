@@ -54,6 +54,7 @@ namespace NEST_App.Controllers
         public IHttpActionResult PostCMD_NAV_HOLD(int uid, CMD_NAV_Hold jsObject)
         {
 
+            int result = 0;
             CMD_NAV_Hold cmd_nav_hold = new CMD_NAV_Hold();
             cmd_nav_hold.Id = jsObject.Id;
             cmd_nav_hold.Altitude = jsObject.Altitude;
@@ -61,6 +62,7 @@ namespace NEST_App.Controllers
             cmd_nav_hold.Longitude = jsObject.Longitude;
             cmd_nav_hold.UAVId = jsObject.UAVId;
             cmd_nav_hold.Time = jsObject.Time;
+            cmd_nav_hold.Throttle = jsObject.Throttle;
             
             if (!ModelState.IsValid)
             {
@@ -72,7 +74,7 @@ namespace NEST_App.Controllers
             {
 
                 db.CMD_NAV_Hold.Add(cmd_nav_hold);
-                db.SaveChanges();
+               result = db.SaveChanges();
             }
             catch (DbEntityValidationException e)
             {
@@ -86,7 +88,14 @@ namespace NEST_App.Controllers
                 }
                 throw;
             }
-            return Ok();
+            if (result == 1)
+            {
+                return Ok();
+            }
+            else
+            {
+                return NotFound();
+            }
         }
         
         // POST
@@ -137,9 +146,9 @@ namespace NEST_App.Controllers
         }
 
         [HttpPost]
-        [Route("api/command/return/{uid}")]
+        [Route("api/command/adjust/{uid}")]
         [ResponseType(typeof(CMD_NAV_Adjust))]
-        public IHttpActionResult PostCMD_DO_RETURN(int uid, CMD_NAV_Adjust jsObject)
+        public IHttpActionResult PostCMD_DO_ADJUST(int uid, CMD_NAV_Adjust jsObject)
         {
             CMD_NAV_Adjust cmd_nav_adjust = new CMD_NAV_Adjust();
             cmd_nav_adjust.Id = jsObject.Id;
@@ -157,6 +166,7 @@ namespace NEST_App.Controllers
 
             return Ok();
         }
+
 
 
         // GET api/command

@@ -68,7 +68,7 @@ namespace NEST_App.Controllers
                         Waypoint prevWp = (from wp in mission.Waypoints
                                            //Make sure we don't accidentally get the wp we just inserted
                                            where wp.NextWaypointId == nextPointId && wp.Id != newWp.Id && wp.IsActive
-                                           select wp).First();
+                                           select wp).FirstOrDefault();
                         if (prevWp != null) //If this new WP is not at the beginning of the list
                         {
                             prevWp.NextWaypointId = newWp.Id;

@@ -30,7 +30,26 @@ function Reporter() {
     }
 
     this.updateFlightState = function (fs, opts) {
-        this.hub.server.pushFlightStateUpdate(fs);
+        this.hub.server.pushFlightStateUpdate({
+            Id: fs.Id,
+            Timestamp: fs.Timestamp,
+            VelocityX: fs.VelocityX,
+            VelocityY: fs.VelocityY,
+            VelocityZ: fs.VelocityZ,
+            Yaw: fs.Yaw,
+            Roll: fs.Roll,
+            Pitch: fs.Pitch,
+            YawRate: fs.YawRate,
+            RollRate: fs.RollRate,
+            PitchRate: fs.PitchRate,
+            BatteryLevel: fs.BatteryLevel,
+            UAVId: fs.UAVId,
+            create_date: fs.create_date,
+            modified_date: fs.modified_date,
+            Latitude: fs.Latitude,
+            Longitude: fs.Longitude,
+            Altitude: fs.Altitude
+        });
     }
 
     this.putToServer = function (url, data, opts, success) {

@@ -7,18 +7,15 @@
 .outside {
     border: none;
     padding: 0px;
-    height: 700px;
+    height: 542px;
     width: 100%;
+    display: inline-block;
 }
-
 
 .table {
     border: none;
-    width: 38%;
+    width: 40%;
     margin: 0px;
-    /*overflow: auto;
-    overflow-x: hidden;
-    height: 695px;*/
 }
 
 .UAV_table {
@@ -27,6 +24,28 @@
     padding: 10px;
     margin: 0px;
     height: 100%;
+    overflow-y: auto;
+    height: 539px;
+}
+
+.UAV_table::-webkit-scrollbar-track
+{
+	border: 1px solid black;
+	background-color: #F5F5F5;
+    border-radius: 20px;
+}
+
+.UAV_table::-webkit-scrollbar
+{
+	width: 10px;
+	background-color: #0a074a;
+    border-radius: 20px;
+}
+
+.UAV_table::-webkit-scrollbar-thumb
+{
+	background-color: #0b0769;
+    border-radius: 20px;
 }
 
 .UAV_table tr {
@@ -78,10 +97,9 @@
     padding-left: 8px;
     border: none;
     border-radius: 8px;
-    width: 58%;
+    width: 59%;
     float: right;
     background-color: #e9e9ea;
-    display: inline-block
 }
 
 .detail_title {
@@ -91,12 +109,27 @@
     color: #0b0769;
 }
 
+.status_metrics_map {
+    width: 100%;
+    border: none;
+}
+
 .detail_statue_metrics_div {
     border: none;
     padding: 2px;
     width: 43%;
     float: left;
     margin-right: 2px;
+}
+
+.package_event_div {
+    border: none;
+    padding: 2px;
+    padding-top: 3px;
+    width: 100%;
+    float: left;
+    margin-right: 2px;
+    margin-top: 1px;
 }
 
 .title {
@@ -114,6 +147,11 @@
     padding-bottom: 0;
     color: #0a074a;
     margin: 1px;
+}
+
+.inner_eventlog_td {
+    font-size: 15px;
+    height: 25px;
 }
 
 .detail_statue {
@@ -134,7 +172,7 @@
     background-color: #fafbeb;
 }
 
-.detail_acitivity {
+.detail_eventLog {
     border: 1px solid #0b0769;
     margin-top: 6px;
     border-radius: 8px;
@@ -143,17 +181,28 @@
     background-color: #fafbeb;
 }
 
-.UAV_time_tr {
+.eventlog_tr {
     line-height: 100%;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 3px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
 }
 
-.UAV_time_td {
+.eventlog_th {
+    background-color: #0a074a; 
+    border-radius: 8px;
+    border: 1px solid white;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    color: white;
     font-size: 15px;
-}
-
-.UAV_time_td_2nd {
-    font-size: 15px;
-    padding-left: 15px;
 }
 
 .map {
@@ -167,7 +216,7 @@
 
 #map-canvas {
     width: auto;
-    height: 350px;
+    height: 340px;
     margin: auto;
     padding: 0px;
     border: 1px solid #0b0769;
@@ -176,17 +225,17 @@
 
 .detail_package {
     border: 1px solid #0b0769;
-    margin-top: 6px;
+    margin-top: 0px;
     border-radius: 8px;
     padding: 5px;
     padding-left: 8px;
     background-color: #fafbeb;
-    width: auto;
+    width: 100%;
     height: auto;
 }
 
 img[src="http://www.google.com/intl/en_us/mapfiles/close.gif"] {
-display: none;
+    display: none;
 }
 
 .drop_ul_outside{
@@ -217,7 +266,7 @@ display: none;
   position: absolute;
   top: 48px;
   left: 0;
-  width: 305px;
+  width: 340px;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
@@ -235,7 +284,6 @@ display: none;
   display: block; 
   color: #fff;
   text-shadow: 0 -1px 0 #000;
-  /*border: 1px solid white;*/
   border-bottom: none;
 }
 
@@ -259,4 +307,12 @@ display: none;
   -webkit-transiton: all 0.4s;
 }
 
+#event_log_table {
+    width: 100%;
+}
+
+.inner_eventlog_td {
+    background-color: #fafbeb;
+    text-align: center;
+}
 

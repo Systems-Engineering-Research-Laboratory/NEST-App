@@ -14,11 +14,17 @@ namespace NEST_App.Models
     
     public partial class CMD_NAV_Land
     {
+        public CMD_NAV_Land()
+        {
+            this.Acked = false;
+        }
+    
         public int Id { get; set; }
         public double Altitude { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public double Throttle { get; set; }
         public int UAVId { get; set; }
+        public bool Acked { get; set; }
     }
 }
