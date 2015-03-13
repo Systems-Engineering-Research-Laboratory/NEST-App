@@ -124,7 +124,8 @@
 
 .package_event_div {
     border: none;
-    padding: 3px;
+    padding: 2px;
+    padding-top: 3px;
     width: 100%;
     float: left;
     margin-right: 2px;
@@ -146,6 +147,11 @@
     padding-bottom: 0;
     color: #0a074a;
     margin: 1px;
+}
+
+.inner_eventlog_td {
+    font-size: 15px;
+    height: 25px;
 }
 
 .detail_statue {
@@ -187,7 +193,7 @@
 }
 
 .eventlog_th {
-    background-color: #0a074a;
+    background-color: #0a074a; 
     border-radius: 8px;
     border: 1px solid white;
     text-align: center;
@@ -224,12 +230,12 @@
     padding: 5px;
     padding-left: 8px;
     background-color: #fafbeb;
-    width: auto;
+    width: 100%;
     height: auto;
 }
 
 img[src="http://www.google.com/intl/en_us/mapfiles/close.gif"] {
-display: none;
+    display: none;
 }
 
 .drop_ul_outside{

@@ -170,70 +170,31 @@
                         <th style="display: none;">payload</th>                     @*15*@
                         <th style="display: none;">Cost</th>                        @*16*@
                         <th style="display: none;">Priority</th>                    @*17*@
-                        <th style="display: none;">User name</th>
-                        <th style="display: none;">User id</th>
-                        <th style="display: none;">uav_userid</th>
+
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (Mission miss in Model.missions)
                     {
                         <tr id="uavtable_tr" @*id=@miss.Schedule.UAV.Id.ToString()*@>
-                            <td>
-                                @Html.DisplayFor(modelItem => miss.Schedule.UAV.Id)                                         @*0*@
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => miss.Schedule.UAV.Callsign)                                   @*1*@
-                            </td>
-                            <td style="display: none;">
-                                @Html.DisplayFor(modelItem => miss.Schedule.UAV.NumDeliveries)                              @*2*@
-                            </td>
-                            <td style="display: none;">
-                                @Html.DisplayFor(modelItem => miss.Schedule.UAV.Mileage)                                    @*3*@
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => miss.Schedule.UAV.FlightStates.FirstOrDefault().BatteryLevel) @*4*@
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => miss.EstimatedCompletionTime)                                 @*5*@
-                            </td>
-                            <td style="display: none;">
-                                @Html.DisplayFor(modelItem => miss.ScheduledCompletionTime)                                 @*6*@
-                            </td>
-                            <td style="display: none;">
-                                @Html.DisplayFor(modelItem => miss.Phase)                                                   @*7*@
-                            </td>
-                            <td style="display: none;">
-                                @Html.DisplayFor(modelItem => miss.FlightPattern)                                           @*8*@
-                            </td>
-                            <td style="display: none;">
-                                @Html.DisplayFor(modelItem => miss.Schedule.UAV.Configurations.Classification)              @*9*@
-                            </td>
-                            <td style="display: none;">
-                                @Html.DisplayFor(modelItem => miss.Schedule.UAV.FlightStates.FirstOrDefault().Latitude)     @*10*@
-                            </td>
-                            <td style="display: none;">
-                                @Html.DisplayFor(modelItem => miss.Schedule.UAV.FlightStates.FirstOrDefault().Longitude)    @*11*@
-                            </td>
-                            <td style="display: none;">
-                                @Html.DisplayFor(modelItem => miss.Schedule.UAV.FlightStates.FirstOrDefault().Altitude)     @*12*@
-                            </td>
-                            <td style="display: none;">
-                                @Html.DisplayFor(modelItem => miss.Latitude)                                                @*13*@
-                            </td>
-                            <td style="display: none;">
-                                @Html.DisplayFor(modelItem => miss.Longitude)                                               @*14*@
-                            </td>
-                            <td style="display: none;">
-                                @Html.DisplayFor(modelItem => miss.Schedule.UAV.NumDeliveries)                              @*15*@
-                            </td>
-                            <td style="display: none">
-                                @Html.DisplayFor(modelItem => miss.Payload)                                                 @*16*@
-                            </td>
-                            <td style="display: none;">
-                                @Html.DisplayFor(modelItem => miss.FinancialCost)                                           @*17*@
-                            </td>
-
+                            <td>@Html.DisplayFor(modelItem => miss.Schedule.UAV.Id)</td>
+                            <td>@Html.DisplayFor(modelItem => miss.Schedule.UAV.Callsign)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Schedule.UAV.NumDeliveries)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Schedule.UAV.Mileage)</td>
+                            <td id="battery_for_regular_table">@Html.DisplayFor(modelItem => miss.Schedule.UAV.FlightStates.FirstOrDefault().BatteryLevel)</td>
+                            <td>@Html.DisplayFor(modelItem => miss.EstimatedCompletionTime)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.ScheduledCompletionTime)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Phase)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.FlightPattern)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Schedule.UAV.Configurations.Classification)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Schedule.UAV.FlightStates.FirstOrDefault().Latitude)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Schedule.UAV.FlightStates.FirstOrDefault().Longitude)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Schedule.UAV.FlightStates.FirstOrDefault().Altitude)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Latitude)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Longitude)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Schedule.UAV.NumDeliveries)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Payload)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.FinancialCost)</td>
                         </tr>
                     }
                 </tbody>
@@ -364,16 +325,22 @@
                     }
                 </table>*@
 
-
-
                         <table class="eventLog_table" id="eventLog_table" style="width:100%; margin: 0px;">
                             <tr class="eventlog_tr" id="eventlog_tr">
                                 <th class="eventlog_th" id="eventlog_th">ID</th>
+                                <th class="eventlog_th" id="eventlog_th">Operator</th>
                                 <th class="eventlog_th" id="eventlog_th">Date</th>
                                 <th class="eventlog_th" id="eventlog_th">Message</th>
                                 <th class="eventlog_th" id="eventlog_th">Level</th>
                             </tr>
-                            @foreach (EventLog eventlog in Model.Eventlog)
+                            <tr class="eventlog_tr">
+                                <td class="inner_eventlog_td" id="eventlog_td1">&nbsp;</td>
+                                <td class="inner_eventlog_td" id="eventlog_td2">&nbsp;</td>
+                                <td class="inner_eventlog_td" id="eventlog_td3">&nbsp;</td>
+                                <td class="inner_eventlog_td" id="eventlog_td4">&nbsp;</td>
+                                <td class="inner_eventlog_td" id="eventlog_td5">&nbsp;</td>
+                            </tr>
+                            @*@foreach (EventLog eventlog in Model.Eventlog)
                             {
                                 <tr class="eventlog_tr">
                                     <td class="inner_eventlog_td" id="eventlog_td1">@Html.DisplayFor(modelItem => eventlog.uav_id)</td>
@@ -381,7 +348,7 @@
                                     <td class="inner_eventlog_td" id="eventlog_td3">@Html.DisplayFor(modelItem => eventlog.message)</td>
                                     <td class="inner_eventlog_td" id="eventlog_td4">@Html.DisplayFor(modelItem => eventlog.criticality)</td>
                                 </tr>
-                            }
+                            }*@
                         </table>
                     </p>
                 </div>
@@ -401,6 +368,9 @@
 @Styles.Render("~/bundles/detailsCSS")
 @Scripts.Render("~/bundles/bootstrap")
 
+@section scripts {
+    @Scripts.Render("~/bundles/angular")
+}
 
 <script src="~/Scripts/MarkerWithLabel.js"></script>
 <script src="~/Scripts/InfoBox.js"></script>
