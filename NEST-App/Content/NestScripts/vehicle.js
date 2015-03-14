@@ -15,7 +15,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     this.Mileage = vehicleInfo.Mileage;
     this.NumDeliveries = vehicleInfo.NumDeliveries;
     this.MaxVelocity = vehicleInfo.MaxVelocity;
-    this.MaxVerticalVelocty = vehicleInfo.MaxVerticalVelocity;
+    this.MaxVerticalVelocity = vehicleInfo.MaxVerticalVelocity;
     this.MaxAcceleration = vehicleInfo.MaxAcceleration;
     this.UpdateRate = vehicleInfo.UpdateRate;
 
@@ -134,6 +134,8 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             LatLongToXY(this.Mission);
             //Ignore stuff in the database for now.
             that.generateWaypoints();
+            reporter.broadcastNewMission(this.Id, this.Schedule.Id, this.Mission.id);
+            console.log(this.Callsign + " moved on to mission " + this.Mission.id);
         }
     }
     
@@ -158,9 +160,6 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     this.performWaypoint = function (dt) {
         var wp = this.currentWaypoint;
-        if (!this.flyToAltitude(dt, this.currentWaypoint.Altitude)) {
-            return false;
-        }
         //Get the original object, call the callback to perform the object specific functions
         if (wp.obj) {
             switch (wp.objType) {
@@ -229,7 +228,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     }
 
     this.flyToAltitude = function (dt, alt) {
-        return this.targetAltitude(dt, alt, this.MaxVerticalVelocty);
+        return this.targetAltitude(dt, alt, this.MaxVerticalVelocity);
     }
 
     //Flies to the designated altitude at the given speed.
@@ -357,7 +356,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                 }
                 break;
             case "delivering":
-                if (this.deliver(dt, 200, 400, this.MaxVelocity)) {
+                if (this.deliver(dt, 200, 400, this.MaxVerticalVelocity)) {
                     mis.Phase = "back to base";
                     wpComplete = true;
                     //TODO: Assign the path back to the base.
@@ -411,7 +410,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         switch (target.CommandType) {
             case "CMD_DO_Change_Speed":
                 this.MaxVelocity = this.target.HorizontalVelocity || this.MaxVelocity;
-                this.MaxVerticalVelocty = this.target.VelocityZ || this.MaxVerticalVelocty;
+                this.MaxVerticalVelocity = this.target.VelocityZ || this.MaxVerticalVelocity;
                 //TODO: Report UAV changes
                 break;
             case "CMD_NAV_Set_Base":
@@ -439,7 +438,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             return false;
         }
         else {
-            return this.targetAltitude(dt, 0, this.MaxVerticalVelocty);
+            return this.targetAltitude(dt, 0, this.MaxVerticalVelocity);
         }
     }
 

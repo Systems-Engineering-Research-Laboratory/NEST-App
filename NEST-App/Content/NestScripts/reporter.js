@@ -139,6 +139,10 @@ function Reporter() {
     }
 
     this.broadcastNewMission = function(uavid, schedid, missionid) {
-        this.hub.server.vehicleHasNewMission(uavid, schedid, missionid);
+        //this.hub.server.vehicleHasNewMission(uavid, schedid, missionid);
+        return $.ajax({
+            method: 'PUT',
+            url: 'api/schedule/' + schedid + '/setCurrentMission/' + missionid,
+        });
     }
 }
