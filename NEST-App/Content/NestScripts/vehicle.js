@@ -131,6 +131,10 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             this.Mission = missions.shift();
         }
         if (this.Mission) {
+            if (this.Mission.Phase === "delivering") {
+                this.Mission.Phase = "enroute";
+                reporter.updateMission(this.Mission);
+            }
             LatLongToXY(this.Mission);
             //Ignore stuff in the database for now.
             that.generateWaypoints();
