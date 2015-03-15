@@ -11,43 +11,57 @@
     <button class="btn btn-primary" ng-click="fakeEmit()">Fake Emit</button>
     <button class="btn btn-primary" ng-click="fakeEmitAsmt()">Emit asmt</button>
     <button class="btn btn-primary" ng-click="fakeEmitRjct()">Emit rjct</button>
-<table class="table table-hover">
-    <tr>
-        <td>
-            <strong>UAV ID</strong>
-        </td>
-        <td>
-            <strong>UAV Callsign</strong>
-        </td>
-        <td>
-            <strong>Message</strong>
-        </td>
-        <td>
-            <strong>Operator</strong>
-        </td>
-        <td>
-            <strong>Time</strong>
-        </td>
-    </tr>
-    <tr ng-repeat="evt in events" ng-style="getRowStyle(evt.criticality)">
-        <td>
-            {{evt.uav_id}}
-        </td>
-        <td>
-            {{evt.uav_callsign}}
-        </td>
-        <td>
-            <span ng-show="evt.criticality == 'warning'" class="glyphicon glyphicon-warning-sign" style="color:black;background-color:yellow;"></span>
-            {{evt.message}}
-        </td>
-        <td>
-            {{evt.operator_screen_name}}
-        </td>
-        <td>
-            {{evt.create_date}}
-        </td>
-    </tr>
-</table>
+
+    <div class="row">
+        <div class="col-xs-6 col-md-4">
+            <ul>
+
+                <li><label><input type="checkbox" />Regular</label></li>
+                <li><label><input type="checkbox" />Warning</label></li>
+                <li><label><input type="checkbox" />Critical</label></li>
+            </ul>
+        </div>
+
+        <div class="col-xs-12 col-md-8">
+            <table class="table table-hover">
+                <tr>
+                    <td>
+                        <strong>UAV ID</strong>
+                    </td>
+                    <td>
+                        <strong>UAV Callsign</strong>
+                    </td>
+                    <td>
+                        <strong>Message</strong>
+                    </td>
+                    <td>
+                        <strong>Operator</strong>
+                    </td>
+                    <td>
+                        <strong>Time</strong>
+                    </td>
+                </tr>
+                <tr ng-repeat="evt in events" ng-style="getRowStyle(evt.criticality)">
+                    <td>
+                        {{evt.uav_id}}
+                    </td>
+                    <td>
+                        {{evt.uav_callsign}}
+                    </td>
+                    <td>
+                        <span ng-show="evt.criticality == 'warning'" class="glyphicon glyphicon-warning-sign" style="color: black; background-color: yellow;"></span>
+                        {{evt.message}}
+                    </td>
+                    <td>
+                        {{evt.operator_screen_name}}
+                    </td>
+                    <td>
+                        {{evt.create_date}}
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
+</div>
 
 @*<script src="~/Views/EventLog/eventlog.js"></script>*@
