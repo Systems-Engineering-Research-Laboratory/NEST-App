@@ -3,7 +3,7 @@ var homeBase = new google.maps.LatLng(34.2417, -118.529);
 var uavs = {};
 var vehicleHub;
 var warningUavId;
-var mapUavId = null;
+var mapUavId;
 //DroneSelection
 var selectedDrones = []; //store drones selected from any method here
 var storedGroups = []; //keep track of different stored groupings of UAVs
@@ -66,12 +66,15 @@ function uavMarkers(data, textStatus, jqXHR) {
 
 $(document).ready(function () {
     function init() {
+        //Used for communication and map.setCenter()
+        mapUavId = null;
+        localStorage.clear();
         //Communication via local storage changes
         if (window.addEventListener) {
             window.addEventListener("storage", handler, false);
         }
         function handler(e) {
-            console.log('Successfully communicate with other tab');
+            console.log('Successfully communicated with the other tab');
             console.log('Received data: ' + JSON.parse(localStorage.getItem('uavid')));
             mapUavId = JSON.parse(localStorage.getItem('uavid'));
         }
