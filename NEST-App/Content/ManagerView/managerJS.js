@@ -5,7 +5,7 @@ $(document).ready(function () {
     var unassign_table = document.getElementById('unassigned');
     var emitHub = $.connection.eventLogHub;
 
-    for (var i = assign_table.rows.length; i > 0; i--) {
+    for (var i = assign_table.rows.length; i > 1; i--) {
         var assign_id = assign_table.rows[i - 1].cells[1].innerText;
         if (assign_table.rows[i - 1].cells[2].innerHTML == "") {
             console.log(i + " unassigned");
@@ -13,11 +13,11 @@ $(document).ready(function () {
         }
     }
 
-    for (var i = unassign_table.rows.length; i > 0; i--) {
+    for (var i = unassign_table.rows.length; i > 1; i--) {
         var assign_id = unassign_table.rows[i - 1].cells[1].innerText;
         if (unassign_table.rows[i - 1].cells[2].innerHTML != "") {
             console.log(i + " assigned");
-            document.getElementById('unassigned').deleteRow(i - 1);
+            document.getElementById('unassigned').deleteRow(i - 1)
         }
     }
 

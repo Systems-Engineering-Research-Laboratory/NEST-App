@@ -19,13 +19,6 @@ namespace NEST_App.Controllers
             uavManagerList.Eventlog = db.EventLogs.ToList();
 
             return View(uavManagerList);
-
         }
-        //// GET: AdminView/ManageUAVs
-        //public ActionResult ManageUAVs()
-        //    {
-        //        var UAVs = (from uav in db.UAVs select uav).ToList();
-        //        return View(UAVs);
-        //    }
     }
 }
