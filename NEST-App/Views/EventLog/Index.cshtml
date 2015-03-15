@@ -14,11 +14,16 @@
 
     <div class="row">
         <div class="col-xs-6 col-md-4">
-            <ul>
-
-                <li><label><input type="checkbox" />Regular</label></li>
-                <li><label><input type="checkbox" />Warning</label></li>
-                <li><label><input type="checkbox" />Critical</label></li>
+            <strong>Criticality</strong>
+            <ul style="list-style-type: none;">
+                <li><label><input type="checkbox"/>&nbsp;Regular</label></li>
+                <li><label><input type="checkbox"/>&nbsp;Warning</label></li>
+                <li><label><input type="checkbox"/>&nbsp;Critical</label></li>
+            </ul>
+            <strong>Date (omit To field if single day)</strong>
+            <ul style="list-style-type: none;">
+                <li><input type="datetime" placeholder="From: mm/dd/yyyy"/></li>
+                <li><input type="datetime" placeholder="To: mm/dd/yyyy" /></li>
             </ul>
         </div>
 
