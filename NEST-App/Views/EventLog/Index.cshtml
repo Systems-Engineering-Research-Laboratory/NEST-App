@@ -11,43 +11,62 @@
     <button class="btn btn-primary" ng-click="fakeEmit()">Fake Emit</button>
     <button class="btn btn-primary" ng-click="fakeEmitAsmt()">Emit asmt</button>
     <button class="btn btn-primary" ng-click="fakeEmitRjct()">Emit rjct</button>
-<table class="table table-hover">
-    <tr>
-        <td>
-            <strong>UAV ID</strong>
-        </td>
-        <td>
-            <strong>UAV Callsign</strong>
-        </td>
-        <td>
-            <strong>Message</strong>
-        </td>
-        <td>
-            <strong>Operator</strong>
-        </td>
-        <td>
-            <strong>Time</strong>
-        </td>
-    </tr>
-    <tr ng-repeat="evt in events" ng-style="getRowStyle(evt.criticality)">
-        <td>
-            {{evt.uav_id}}
-        </td>
-        <td>
-            {{evt.uav_callsign}}
-        </td>
-        <td>
-            <span ng-show="evt.criticality == 'warning'" class="glyphicon glyphicon-warning-sign" style="color:black;background-color:yellow;"></span>
-            {{evt.message}}
-        </td>
-        <td>
-            {{evt.operator_screen_name}}
-        </td>
-        <td>
-            {{evt.create_date}}
-        </td>
-    </tr>
-</table>
+
+    <div class="row">
+        <div class="col-xs-6 col-md-4">
+            <strong>Criticality</strong>
+            <ul style="list-style-type: none;">
+                <li><label><input type="checkbox" ng-model="search.regular"/>&nbsp;Regular</label></li>
+                <li><label><input type="checkbox" ng-model="search.warning" />&nbsp;Warning</label></li>
+                <li><label><input type="checkbox" ng-model="search.critical" />&nbsp;Critical</label></li>
+            </ul>
+            <strong>Date @*(omit To field if single day)*@</strong>
+            <ul style="list-style-type: none;">
+                <li><input type="datetime-local" placeholder="From: mm/dd/yyyy" ng-model="search.create_date"/></li>
+                @*<li><input type="datetime-local" placeholder="To: mm/dd/yyyy" /></li>*@
+            </ul>
+        </div>
+
+        <div class="col-xs-12 col-md-8">
+            <table class="table table-hover">
+                <tr>
+                    <td>
+                        <strong>UAV ID</strong>
+                    </td>
+                    <td>
+                        <strong>UAV Callsign</strong>
+                    </td>
+                    <td>
+                        <strong>Message</strong>
+                    </td>
+                    <td>
+                        <strong>Operator</strong>
+                    </td>
+                    <td>
+                        <strong>Time</strong>
+                    </td>
+                </tr>
+                <tr ng-repeat="evt in events | filter:criticalityFilter | filter:dateFilter" ng-style="getRowStyle(evt.criticality)">
+                    <td>
+                        {{evt.uav_id}}
+                    </td>
+                    <td>
+                        {{evt.uav_callsign}}
+                    </td>
+                    <td>
+                        <span ng-show="evt.criticality == 'warning'" class="glyphicon glyphicon-warning-sign" style="color: black; background-color: yellow;"></span>
+                        {{evt.message}}
+                    </td>
+                    <td>
+                        {{evt.operator_screen_name}}
+                    </td>
+                    <td>
+                        {{evt.create_date}}
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
+</div>
 
 @*<script src="~/Views/EventLog/eventlog.js"></script>*@

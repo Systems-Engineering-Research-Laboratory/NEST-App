@@ -25,7 +25,7 @@ assignment = {
         //Gets the username, string
         this.getUsername = function () {
             return this.user.username;
-        },
+        }
 
         //Gets the user id, int
         this.getUserId = function () {
@@ -37,6 +37,28 @@ assignment = {
             return this.assignments;
         }
     },
+
+    uavAccepted: function (uavId) {
+        if (!this.isUavAssignedToUser(uavId)) {
+            this.assignments.push(uavId);
+        }
+        
+        console.log("uav ACCEPTED, now uav ");
+        console.log(this.assignments);
+        console.log("is/are assigned to user " + this.user.username);
+        
+    },
+    
+    uavRejected: function (uavId) {
+        if (this.isUavAssignedToUser(uavId)) {
+            var where = this.assignments.indexOf(uavId);
+            this.assignments.splice(where, 1);
+
+            console.log("uav REJECTED, now uav ");
+            console.log(this.assignments);
+            console.log("is/are assigned to user " + this.user.username);
+        }
+    }
 }
 //Start it up
 assignment.init();

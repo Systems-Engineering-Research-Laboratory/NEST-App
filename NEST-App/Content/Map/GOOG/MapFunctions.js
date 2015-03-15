@@ -341,11 +341,12 @@
     },
 
     RR_button_accept: function () {
-        $(".RoundRobin_popup").fadeOut("slow", function () { });
+        assignment.uavAccepted(warningUavId);
+        $("#RoundRobin_popup").fadeOut("slow", function () { });
         document.getElementById('RR_choice_p').innerHTML = "You have accepted UAV";
         document.getElementById('RR_choice_p').style.color = "green";
         document.getElementById('RR_outer_result').style.display = "block";
-        $(".RR_outer_result").fadeOut("slow", function () {});
+        $("#RR_outer_result").fadeOut("slow", function () {});
     },
 
 
@@ -354,11 +355,11 @@
             type: 'POST',
             url: '/api/uavs/rejectassignment?uavid=' + warningUavId + '&userid=' + assignment.getUserId(),
             success: function () {
-                $(".RoundRobin_popup").fadeOut("slow", function () { });
+                $("#RoundRobin_popup").fadeOut("slow", function () { });
                 document.getElementById('RR_choice_p').innerHTML = "You have declined UAV";
                 document.getElementById('RR_choice_p').style.color = "red";
                 document.getElementById('RR_outer_result').style.display = "block";
-                $(".RR_outer_result").fadeOut("slow", function () { });
+                $("#RR_outer_result").fadeOut("slow", function () { });
             }
         });
         
