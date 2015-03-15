@@ -66,6 +66,15 @@ function uavMarkers(data, textStatus, jqXHR) {
 
 $(document).ready(function () {
     function init() {
+        //Communication via local storage changes
+        if (window.addEventListener) {
+            window.addEventListener("storage", handler, false);
+        }
+        function handler(e) {
+            console.log('Successfully communicate with other tab');
+            console.log('Received data: ' + localStorage.getItem('data'));
+        }
+
         wpm = new WaypointManager(map);
         map = new google.maps.Map(document.getElementById('map-canvas'), mapStyles.mapOptions);
         /*map = new GMaps({

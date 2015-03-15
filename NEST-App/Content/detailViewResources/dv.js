@@ -8,6 +8,7 @@ var evt_msg;
 var evt_level;
 var selectedDrones = [];
 var ctrlDown = false;
+var selectedUAV;
 
 $(document).ready(function () {
 
@@ -108,15 +109,9 @@ $(document).ready(function () {
 
                 uav.marker.uavSymbolBlack.rotation = uav.Yaw;
                 uav.marker.uavSymbolGreen.rotation = uav.Yaw;
-
-                if (uav.marker.selected == true)
-                    uav.marker.setOptions({
-                        icon: uav.marker.uavSymbolGreen
-                    });
-                else
-                    uav.marker.setOptions({
-                        icon: uav.marker.uavSymbolBlack
-                    })
+                uav.marker.setOptions({
+                      icon: uav.marker.uavSymbolBlack
+                })
             }
 
             uav.marker.setOptions({
@@ -541,6 +536,16 @@ $(document).ready(function () {
                 uavs[key].marker.setIcon(uavs[key].marker.uavSymbolBlack);
             }
         });
+
+
+        //Communication via local storage changes
+        if (window.addEventListener) {
+            window.addEventListener("storage", handler, false);
+        }
+        function handler(e) {
+            console.log('Successfully communicate with other tab');
+            console.log('Received data: ' + localStorage.getItem('data'));
+        }
   
 });
 
@@ -633,7 +638,10 @@ function uavMarkers(data, textStatus, jqXHR) {
         marker = SetUAVMarker(uavs[data[i].Id]);
 
         //When fired, the UAV is marked as 'selected'
-        google.maps.event.addListener(marker, 'click', (function () { droneSelection.CtrlSelect(this, selectedDrones) }));
+        google.maps.event.addListener(marker, 'click', (function () {
+            droneSelection.CtrlSelect(this, selectedDrones);
+ 
+        }));
 
         uavs[data[i].Id].marker = marker;
         uavs[data[i].Id].flightPath = flightLines[data[i].Id];
