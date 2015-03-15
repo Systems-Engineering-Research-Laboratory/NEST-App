@@ -116,12 +116,17 @@ $(document).ready(function () {
         /* Vehicle Movement */
         vehicleHub = $.connection.vehicleHub;
 
+        //insert waypoint
         vehicleHub.client.WaypointInserted = function (id) {
             console.log("Waypoint Successfully Inserted\nMission Id: " + id);
             if (selectedUAV != null) {
                 wpm.updateFlightPath(id);
             }
-            
+        }
+        
+        //setup client callback function
+        vehicleHub.client.UavRejected = function (uavId) {
+            assignment.uavRejected(uavId);
         }
 
         vehicleHub.client.flightStateUpdate = function (vehicle) {
@@ -183,7 +188,6 @@ $(document).ready(function () {
         //show the notification for every one
         emitHub.client.showNote = function (lat, lng, notifier, message) {
             mapFunctions.ConsNotifier(map, lat, lng, notifier, message);
-
         }
 
         emitHub.client.newEvent = function (evt) {

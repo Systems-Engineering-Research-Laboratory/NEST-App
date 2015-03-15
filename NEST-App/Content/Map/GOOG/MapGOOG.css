@@ -266,7 +266,7 @@ html, body, #map-canvas {
     100% {opacity: 1; -webkit-transform: none;}*/
 }
 
-.RR_button_accept {
+#RR_button_accept {
     background-color: #46d914;
     color: white;
     cursor: pointer;
@@ -283,7 +283,7 @@ html, body, #map-canvas {
     margin-right: 1%;
 }
 
-.RR_button_decline {
+#RR_button_decline {
     background-color: #ee3f3f;
     color: white;
     cursor: pointer;
@@ -299,17 +299,17 @@ html, body, #map-canvas {
     margin-right: 0;
 }
 
-.RR_button_accept:hover {
+#RR_button_accept:hover {
     text-shadow: 0 -1px 1px rgba(175, 49, 95, .9), 0 0 5px rgba(37, 152, 240, .8);
     background-color: #7CF259;
 }
 
-.RR_button_decline:hover {
+#RR_button_decline:hover {
     text-shadow: 0 -1px 1px rgba(175, 49, 95, .9), 0 0 5px rgba(37, 152, 240, .8);
     background-color: #FA8383;
 }
 
-.RR_close {
+#RR_close {
     position: absolute;
     font-size: 1.5em;
     right: 11px;
@@ -317,7 +317,7 @@ html, body, #map-canvas {
     cursor: pointer;
 }
 
-.RR_outer_result {
+#RR_outer_result {
     border: 5px solid black;
     position: fixed;
     margin: auto;
@@ -338,7 +338,7 @@ html, body, #map-canvas {
     -webkit-animation-play-state: running;
 }
 
-.RR_choice_p {
+#RR_choice_p {
     font-size: 35px;
     font-weight: bold;
     text-align: center;
