@@ -16,14 +16,14 @@
         <div class="col-xs-6 col-md-4">
             <strong>Criticality</strong>
             <ul style="list-style-type: none;">
-                <li><label><input type="checkbox"/>&nbsp;Regular</label></li>
-                <li><label><input type="checkbox"/>&nbsp;Warning</label></li>
-                <li><label><input type="checkbox"/>&nbsp;Critical</label></li>
+                <li><label><input type="checkbox" ng-model="search.regular"/>&nbsp;Regular</label></li>
+                <li><label><input type="checkbox" ng-model="search.warning" />&nbsp;Warning</label></li>
+                <li><label><input type="checkbox" ng-model="search.critical" />&nbsp;Critical</label></li>
             </ul>
-            <strong>Date (omit To field if single day)</strong>
+            <strong>Date @*(omit To field if single day)*@</strong>
             <ul style="list-style-type: none;">
-                <li><input type="datetime-local" placeholder="From: mm/dd/yyyy"/></li>
-                <li><input type="datetime-local" placeholder="To: mm/dd/yyyy" /></li>
+                <li><input type="datetime-local" placeholder="From: mm/dd/yyyy" ng-model="search.create_date"/></li>
+                @*<li><input type="datetime-local" placeholder="To: mm/dd/yyyy" /></li>*@
             </ul>
         </div>
 
@@ -46,7 +46,7 @@
                         <strong>Time</strong>
                     </td>
                 </tr>
-                <tr ng-repeat="evt in events" ng-style="getRowStyle(evt.criticality)">
+                <tr ng-repeat="evt in events | filter:criticalityFilter | filter:dateFilter" ng-style="getRowStyle(evt.criticality)">
                     <td>
                         {{evt.uav_id}}
                     </td>
