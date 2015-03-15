@@ -3,7 +3,7 @@ var homeBase = new google.maps.LatLng(34.2417, -118.529);
 var uavs = {};
 var vehicleHub;
 var warningUavId;
-
+var mapUavId = null;
 //DroneSelection
 var selectedDrones = []; //store drones selected from any method here
 var storedGroups = []; //keep track of different stored groupings of UAVs
@@ -72,7 +72,8 @@ $(document).ready(function () {
         }
         function handler(e) {
             console.log('Successfully communicate with other tab');
-            console.log('Received data: ' + localStorage.getItem('data'));
+            console.log('Received data: ' + JSON.parse(localStorage.getItem('uavid')));
+            mapUavId = JSON.parse(localStorage.getItem('uavid'));
         }
 
         wpm = new WaypointManager(map);
@@ -135,7 +136,10 @@ $(document).ready(function () {
 
         vehicleHub.client.flightStateUpdate = function (vehicle) {
             uavs[vehicle.Id] = mapFunctions.UpdateVehicle(uavs[vehicle.Id], vehicle);
-
+            if (mapUavId != null && mapUavId === vehicle.Id) {
+                var latlng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
+                map.setCenter(latlng);
+            }
             // draw trail
             if (selectedUAV && selectedTrail != undefined) {
                 if (selectedTrail.length < 2)
@@ -392,6 +396,7 @@ $(document).ready(function () {
         google.maps.event.addListener(mapListeners, 'mouseup', function (e) { droneSelection.AreaSelect(this, e, mapFunctions.mouseIsDown, mapFunctions.shiftPressed, mapFunctions.gridBoundingBox, selectedDrones, uavs) });
         google.maps.event.addListener(mapListeners, 'dblclick', function (e) {
             console.log("double clicked");
+            mapUavId = null;
             for (var key in uavs) {
                 uavs[key].marker.setIcon(uavs[key].marker.uavSymbolBlack);
             }

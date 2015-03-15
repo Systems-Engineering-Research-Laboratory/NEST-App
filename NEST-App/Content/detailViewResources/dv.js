@@ -544,7 +544,7 @@ $(document).ready(function () {
         }
         function handler(e) {
             console.log('Successfully communicate with other tab');
-            console.log('Received data: ' + localStorage.getItem('data'));
+            console.log('Received data: ' + localStorage.getItem('uavid'));
         }
   
 });
@@ -640,7 +640,8 @@ function uavMarkers(data, textStatus, jqXHR) {
         //When fired, the UAV is marked as 'selected'
         google.maps.event.addListener(marker, 'click', (function () {
             droneSelection.CtrlSelect(this, selectedDrones);
- 
+            var uav = selectedDrones[0];
+            localStorage.setItem('uavid', uav.Id);
         }));
 
         uavs[data[i].Id].marker = marker;
