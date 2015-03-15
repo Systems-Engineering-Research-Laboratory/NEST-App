@@ -93,9 +93,12 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             return;
         }
         if (this.pathGen.gotNewRestrictedArea() && this.waypoints) {
-            this.pathGen.buildSafeRoute(this.waypoints, this.FlightState, this.currentWpIndex);
+            var resolved = this.pathGen.buildSafeRoute(this.waypoints, this.FlightState, this.currentWpIndex);
             this.currentWpIndex += 1;
             this.currentWaypoint = this.waypoints[this.currentWpIndex];
+            if (resolved) {
+                reporter.reportReroute(this.Id, this.Callsign);
+            }
         }
         //Process this waypoint if we have one
         if (this.currentWaypoint) {
@@ -1055,13 +1058,7 @@ function PathGenerator(areaContainer, reporter) {
         }
         wps.splice(0, 0, new Waypoint(curPos));
         var areas = this.areaContainer.restrictedAreas;
-        //Do initial algorithm form the aircraft position if it exists
-        //if (checkPathIntersectsArea(curPos, wps[startIndex], areas)) {
-        //    var newWps = this.connectSafely(curPos, wps[startIndex]);
-        //    insertMultiPointsIntoList(wps, newWps, startIndex-1);
-        //    curPos.prev = null; //avoid circular reference complaints from signalr
-        //    curPos.edges = null;
-        //}
+        var addedPoints = false;
         for (var i = startIndex; i < wps.length - 1; i++) {
             if (checkPathIntersectsArea(wps[i], wps[i] + 1, areas)) {
                 var newwps = this.connectSafely(wps[i], wps[i + 1]);
@@ -1071,8 +1068,10 @@ function PathGenerator(areaContainer, reporter) {
                 wps[i + 1].edges = null;
                 insertMultiPointsIntoList(wps, newwps, i);
                 i += newwps.length;
+                addedPoints = addedPoints || newwps.length > 0;
             }
         }
+        return addedPoints;
     }
 
     this.connectSafely = function (p1, p2) {
