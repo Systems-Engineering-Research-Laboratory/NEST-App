@@ -114,6 +114,11 @@ namespace NEST_App.Hubs
             Clients.All.newRestrictedArea(res);
         }
 
+        public void vehicleHasNewMission(int uavId, int schedId, int missionId)
+        {
+            Clients.All.vehicleHasNewMission(uavId, schedId, missionId);
+        }
+
         public async Task BroadcastAcceptedCommand(CMD_ACK ack)
         {
             NestContainer db = new NestContainer();

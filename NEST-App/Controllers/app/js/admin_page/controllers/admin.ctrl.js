@@ -12,6 +12,14 @@
         $scope.unassignedUavs = [];
         $scope.emergencyEvents = [];
         $scope.numberToAssign = 0;
+        $scope.operatorToAdd =
+        {
+            operatorType: "Operator Type"
+        };
+        $scope.changeOperatorType = function(type) {
+            //$("#operatorTypeDropdown").attr("value", type);
+            $scope.operatorToAdd.operatorType = type;
+        };
         $scope.emergencySituations = [
             " Strong crosswinds detected",
             " Detected damage to rotary blades",
@@ -102,7 +110,11 @@
             var user = {
                 username: $("#operatorName").val(),
                 password: "test",
-                phone_number: "555-555-5555"
+                phone_number: "555-555-5555",
+                UserRole: {
+                    access_level: $scope.operatorToAdd.operatorType,
+                    role_type: $scope.operatorToAdd.operatorType
+                }
             };
             console.log(user);
             $http.post('/api/users', JSON.stringify(user))

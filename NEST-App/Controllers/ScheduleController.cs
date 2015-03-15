@@ -6,11 +6,14 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Routing;
 using System.Web.Http.Description;
-using System.Web.Mvc;
+using Microsoft.AspNet.SignalR;
 using NEST_App.Models;
 using NEST_App.DAL;
+using NEST_App.Hubs;
 
 namespace NEST_App.Controllers
 {
@@ -63,6 +66,24 @@ namespace NEST_App.Controllers
             }
 
             return sched;
+        }
+
+        [HttpPut]
+        [Route("api/schedule/{id}/setCurrentMission/{missionId}")]
+        public async Task<IHttpActionResult> setCurrentMission(int id, int missionId)
+        {
+            var sched = await db.Schedules.FindAsync(id);
+            var mission = await db.Missions.FindAsync(missionId);
+            mission.ScheduleId = sched.Id;
+            sched.CurrentMission = mission.id;
+            db.Entry(mission).State = System.Data.Entity.EntityState.Modified;
+            db.Entry(sched).State = System.Data.Entity.EntityState.Modified;
+            await db.SaveChangesAsync();
+
+            var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
+            hub.Clients.All.vehicleHasNewMission(sched.UAVId, id, missionId);
+
+            return Ok();
         }
 
 

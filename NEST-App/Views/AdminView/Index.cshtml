@@ -84,14 +84,24 @@
                 <td><div class="glyphicon glyphicon-remove" ng-click='deleteUAV(uav.Id)'></div></td>
             </tr>
         </table>
-        <input type="text" id="operatorName" />
+        <input type="text" id="operatorName"/>
+        <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="operatorTypeDropdown" data-toggle="dropdown" aria-expanded="true" ng-model="operatorToAdd">{{operatorToAdd.operatorType}}<span class="caret"></span></button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="operatorTypeDropdown">
+                <li role="presentation"><a role="menuitem" href="#" ng-click="changeOperatorType('Flight Dispatcher')">Flight Dispatcher</a></li>
+                <li role="presentation"><a role="menuitem" href="#" ng-click="changeOperatorType('Manager')">Manager</a></li>
+                <li role="presentation"><a role="menuitem" href="#" ng-click="changeOperatorType('Admin')">Admin</a></li>
+            </ul>
+        </div>
         <button ng-click="addOperator()">Add Operator</button>
         <table class="table">
             <tr>
                 <th>Operator Username</th>
+                <th>Role</th>
             </tr>
             <tr ng-repeat="operator in allUsers">
                 <td>{{operator.username}}</td>
+                <td>{{operator.UserRole.role_type}}</td>
             </tr>
         </table>
     </div>

@@ -50,6 +50,10 @@ function WaypointManager() {
         }
         var uav = marker.uav;
         var Id = uav.Id;
+        this.displayPathByUavId(Id);
+    }
+
+    this.displayPathByUavId = function (marker) {
         //Find the schedule corresponding to this uav. Ensure that the current mission is in it, or else we can't find
         //the path.
         var sched = this.getScheduleByUavId(Id);
@@ -220,6 +224,14 @@ function WaypointManager() {
         thisMission.flightPath = null;
 
         this.displayWaypointsPerMission(thisMission);
+    }
+
+    this.vehicleHasNewMission = function(uavid, schedid, missionid) {
+        var sched = this.getScheduleByUavId(uavid);
+        var mission = this.getMissionByMissionId(missionid);
+        if (sched) {
+            sched.CurrentMission = mission;
+        }
     }
 }
 
