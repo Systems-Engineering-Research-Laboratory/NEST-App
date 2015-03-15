@@ -23,4 +23,14 @@
 .curr_emergen {
     width:100%;
 }
+td {
+    padding: 5px;
+}
+
+table {
+    border: 1px solid black;
+}
+th {
+    border-bottom: 1px solid black;
+}
 

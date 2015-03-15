@@ -46,7 +46,7 @@
             }
         }
         console.log("Number of drones selected: " + selectedDrones.length);
-                 // enable waypoint buttons
+        // enable waypoint buttons
         $("#goBtn").removeClass("disabled");
         $("#clickToGoBtn").removeClass("disabled");
         
@@ -60,16 +60,16 @@
         if (marker.selected == true) {
 
             selectedUAV = marker.uav;
-            console.log(selectedUAV);
-            //Refresh current flightpath and display it
-            flightLines[marker.uav.Id] = new google.maps.Polyline({
-                path: [marker.uav.Position, marker.uav.Destination],
-                geodesic: true,
-                strokeColor: 'blue',
-                strokeOpacity: 1.0,
-                strokeWeight: 2
-            });
-            flightLines[marker.uav.Id].setMap(marker.map);
+            //console.log(selectedUAV);
+            ////Refresh current flightpath and display it
+            //flightLines[marker.uav.Id] = new google.maps.Polyline({
+            //    path: [marker.uav.Position, marker.uav.Destination],
+            //    geodesic: true,
+            //    strokeColor: 'blue',
+            //    strokeOpacity: 1.0,
+            //    strokeWeight: 2
+            //});
+            //flightLines[marker.uav.Id].setMap(marker.map);
 
             //TODO: ADJUST TRAIL TOGGLE SO IT FITS THE NEW SELECTION PARADIGM
             //NOTE: Maybe outsource it to a DroneTrails.js function?

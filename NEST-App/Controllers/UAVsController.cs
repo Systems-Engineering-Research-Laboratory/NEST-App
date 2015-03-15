@@ -16,6 +16,8 @@ using NEST_App.Models;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using System.Data.Entity.Validation;
+using Microsoft.AspNet.SignalR;
+using NEST_App.Hubs;
 
 namespace NEST_App.Controllers.Api
 {
@@ -57,6 +59,9 @@ namespace NEST_App.Controllers.Api
 
                 db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
                 db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                
+                var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
+                hub.Clients.All.UavRejected(uavid);
 
             }
             catch (Exception e)
