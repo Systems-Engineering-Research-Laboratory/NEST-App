@@ -150,6 +150,9 @@
     <br />
     <input type="number" value="0" id="desiredMaintenanceCount" />
     <button ng-click="createMaintenance($('#desiredMaintenanceCount').val())">Generate Maintenance</button>
+    <br />
+    <input type="number" value="0" id="desiredBatteryDrop" />
+    <button ng-click="batteryDrop($('#desiredBatteryDrop').val())">Random Battery Drop</button>
 </div>
 
 @section scripts {

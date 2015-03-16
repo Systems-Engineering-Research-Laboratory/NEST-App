@@ -157,6 +157,17 @@
                 alert(data + " " + status);
           });
         }
+        $scope.batteryDrop = function () {
+            $scope.blockUI();
+            var number = Math.floor((Math.random() * ($scope.uavs.length)) + 0);
+            var pickedUav = $scope.uavs[number];
+            var vehicleHub = $.connection.vehicleHub;
+            vehicleHub.connection.start().done(function () {
+                vehicleHub.server.emit();
+            });
+            console.log(pickedUav.Id);
+            $.unblockUI();
+        }
 
         $scope.createEmergencyEvent = function () {
             $scope.blockUI();
