@@ -5,81 +5,65 @@
 @{
     ViewBag.Title = "Index";
 }
-
-<style>
-</style>
-<div>
-    <h2><u>Schedule</u></h2>
-    <dl class="dl-horizontal"></dl>
-    </div>
-    <h3>Missions:</h3>
-
- <table class= "table">
-        <tr>
-            <th>
-                UAV Callsign:
-            </th>
-            <th>
-                Estimated Delivery Time:
-            </th>
-            <th>
-                Scheduled Delivery Time:
-            </th>
-            <th>
-                Destination Coordinates: (lat, long)
-            </th>
-            <th>
-                Mission Phase:
-            </th>
-            <th>
-                Delivery Package:
-            </th>
-        </tr>
-      @foreach (var sched in Model)
-      {
-          <tr>
-             @foreach (var mission in sched.Missions)
-             {
-                 <td>  @(sched.UAV.Callsign.ToString() + ":")</td>
-                 <td>  @(mission.EstimatedCompletionTime) </td>
-                 <td>  @(mission.ScheduledCompletionTime) </td>
-                 <td>  @(mission.Latitude + "," + mission.Longitude) </td>
-                 <td>  @(mission.Phase)</td>
-                 <td>  @(mission.Payload)</td>
-             }
-        </tr>
-      }
- </table>
-<h3>Maintenances:</h3>
-
- <table class="table">
-           <tr>
-               <th>
-                   UAV Callsign
-               </th>
-               <th>
-                   Last Maintenance:
-               </th>
-               <th>
-                   Next Maintenance:
-               </th>
-               <th>
-                   Time Remaining:
-               </th>
-           </tr>
-    @foreach (var sched in Model)
-    { 
+<head>
+    <title>Schedule</title>
+    <link rel="stylesheet" type="text/css" href="~/Content/ScheduleView/schedCSS.css" />
+</head>
+<div class="outer">
+    <div id="sched">
+        <h3>Missions:</h3>
+        <table class="schedule">
             <tr>
-               @foreach (var maintenance in sched.Maintenances)
-               {
-                   <td> @(sched.UAV.Callsign.ToString() + ":")</td>
-                   <td> @(maintenance.last_maintenance)</td>
-                   <td> @(maintenance.last_maintenance.AddMonths(1))</td>
-                   <td> @((maintenance.last_maintenance.AddMonths(1) - DateTime.Today).ToString() + " days")</td>
-               }
+                <th>UAV Callsign:</th>
+                <th>Estimated Delivery Time:</th>
+                <th>Scheduled Delivery Time:</th>
+                <th>Destination Coordinates: (lat, long)</th>
+                <th>Mission Phase:</th>
+                <th>Delivery Package:</th>
             </tr>
-        }
- </table>
+
+            @foreach (var sched in Model)
+            {
+                <tr>
+                    @foreach (var mission in sched.Missions)
+                    {
+                        <td>  @(sched.UAV.Callsign.ToString() + ":")</td>
+                        <td>  @(mission.EstimatedCompletionTime) </td>
+                        <td>  @(mission.ScheduledCompletionTime) </td>
+                        <td>  @(mission.Latitude + "," + mission.Longitude) </td>
+                        <td>  @(mission.Phase)</td>
+                        <td>  @(mission.Payload)</td>
+                    }
+                </tr>
+            }
+        </table>
+    </div>
+
+    <div id="maint">
+        <h3>Maintenances:</h3>
+        <table class="maintenance">
+            <tr>
+                <th>UAV Callsign</th>
+                <th>Last Maintenance:</th>
+                <th>Next Maintenance:</th>
+                <th>Time Remaining:</th>
+            </tr>
+
+            @foreach (var sched in Model)
+            {
+                <tr>
+                    @foreach (var maintenance in sched.Maintenances)
+                    {
+                        <td> @(sched.UAV.Callsign.ToString() + ":")</td>
+                        <td> @(maintenance.last_maintenance)</td>
+                        <td> @(maintenance.last_maintenance.AddMonths(1))</td>
+                        <td> @((maintenance.last_maintenance.AddMonths(1) - DateTime.Today).ToString() + " days")</td>
+                    }
+                </tr>
+            }
+        </table>
+    </div>
+</div>
 
 
 

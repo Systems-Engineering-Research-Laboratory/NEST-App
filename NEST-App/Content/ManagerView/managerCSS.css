@@ -1,0 +1,36 @@
+﻿.outer {
+    display:inline-block;
+    width: 100%
+}
+#ass {
+    float:left;
+    width:48%;
+}
+.assigned {
+    width:100%;
+}
+#unass {
+    float:right;
+    width:48%;
+}
+.unassigned {
+    width:100%;
+}
+#curr {
+    float:left;
+    width:98%;
+}
+.curr_emergen {
+    width:100%;
+}
+td {
+    padding: 5px;
+}
+
+table {
+    border: 1px solid black;
+}
+th {
+    border-bottom: 1px solid black;
+}
+

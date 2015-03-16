@@ -109,12 +109,27 @@
     color: #0b0769;
 }
 
+.status_metrics_map {
+    width: 100%;
+    border: none;
+}
+
 .detail_statue_metrics_div {
     border: none;
     padding: 2px;
     width: 43%;
     float: left;
     margin-right: 2px;
+}
+
+.package_event_div {
+    border: none;
+    padding: 2px;
+    padding-top: 3px;
+    width: 100%;
+    float: left;
+    margin-right: 2px;
+    margin-top: 1px;
 }
 
 .title {
@@ -132,6 +147,11 @@
     padding-bottom: 0;
     color: #0a074a;
     margin: 1px;
+}
+
+.inner_eventlog_td {
+    font-size: 15px;
+    height: 25px;
 }
 
 .detail_statue {
@@ -173,7 +193,7 @@
 }
 
 .eventlog_th {
-    background-color: #0a074a;
+    background-color: #0a074a; 
     border-radius: 8px;
     border: 1px solid white;
     text-align: center;
@@ -196,7 +216,7 @@
 
 #map-canvas {
     width: auto;
-    height: 350px;
+    height: 340px;
     margin: auto;
     padding: 0px;
     border: 1px solid #0b0769;
@@ -205,17 +225,17 @@
 
 .detail_package {
     border: 1px solid #0b0769;
-    margin-top: 6px;
+    margin-top: 0px;
     border-radius: 8px;
     padding: 5px;
     padding-left: 8px;
     background-color: #fafbeb;
-    width: auto;
+    width: 100%;
     height: auto;
 }
 
 img[src="http://www.google.com/intl/en_us/mapfiles/close.gif"] {
-display: none;
+    display: none;
 }
 
 .drop_ul_outside{
@@ -246,7 +266,7 @@ display: none;
   position: absolute;
   top: 48px;
   left: 0;
-  width: 305px;
+  width: 340px;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;

@@ -25,13 +25,13 @@ namespace NEST_App.Controllers
         public async Task<IHttpActionResult> Waypoints(int id)
         {
             Mission mission = await db.Missions.FindAsync(id);
-            if(mission == null)
+            if (mission == null)
             {
                 return BadRequest();
             }
             var wps = mission.Waypoints;
             List<Waypoint> wpsInOrder = new List<Waypoint>();
-            if(wps.Count == 0)
+            if (wps.Count == 0)
             {
                 return Ok(wpsInOrder.AsQueryable());
             }
@@ -39,14 +39,14 @@ namespace NEST_App.Controllers
             wpsInOrder.Add(tail);
             foreach (var wp in wps)
             {
-                if(wp.Id == tail.Id)
+                if (wp.Id == tail.Id)
                 {
                     //This is already in the list we don't want to insert it.
                     continue;
                 }
                 var next = wp.NextWaypoint;
-                int index =  next != null ? wpsInOrder.FindIndex(n => n.Id == next.Id) : -1;
-                if(index == -1)
+                int index = next != null ? wpsInOrder.FindIndex(n => n.Id == next.Id) : -1;
+                if (index == -1)
                 {
                     //The next waypoint of this waypoint is not in this list, just insert it behind the last waypoint.
                     int len = wpsInOrder.Count;
@@ -57,26 +57,26 @@ namespace NEST_App.Controllers
                     //Insert the waypoint behind its next waypoint.
                     wpsInOrder.Insert(index, wp);
                 }
-                
+
             }
-                
+
             var diffType = from wp in wpsInOrder.AsQueryable()
-                      select new
-                      {
-                          MissionId = wp.MissionId,
-                          NextWaypointId = wp.NextWaypointId,
-                          Latitude = wp.Latitude,
-                          Longitude = wp.Longitude,
-                          Altitude = wp.Altitude,
-                          IsActive = wp.IsActive,
-                          Id = wp.Id,
-                          TimeCompleted = wp.TimeCompleted,
-                          WaypointName = wp.WaypointName,
-                          Action = wp.Action,
-                          GeneratedBy = wp.GeneratedBy,
-                      };
-                
-            
+                           select new
+                           {
+                               MissionId = wp.MissionId,
+                               NextWaypointId = wp.NextWaypointId,
+                               Latitude = wp.Latitude,
+                               Longitude = wp.Longitude,
+                               Altitude = wp.Altitude,
+                               IsActive = wp.IsActive,
+                               Id = wp.Id,
+                               TimeCompleted = wp.TimeCompleted,
+                               WaypointName = wp.WaypointName,
+                               Action = wp.Action,
+                               GeneratedBy = wp.GeneratedBy,
+                           };
+
+
             return Ok(diffType);
         }
 
@@ -119,26 +119,37 @@ namespace NEST_App.Controllers
         [HttpPost]
         public async Task<IHttpActionResult> NewRouteForMission(int id, Waypoint[] wps)
         {
-            Mission mission = await db.Missions.FindAsync(id);
-            if(mission == null)
+            using (var trans = db.Database.BeginTransaction())
             {
-                return NotFound();
+                Mission mission = await db.Missions.FindAsync(id);
+                if (mission == null)
+                {
+                    return NotFound();
+                }
+                if (wps == null || wps.Count() < 1)
+                {
+                    return BadRequest();
+                }
+                foreach (var wp in mission.Waypoints)
+                {
+                    wp.IsActive = false;
+                    db.Entry(wp).State = System.Data.Entity.EntityState.Modified;
+                }
+                await db.SaveChangesAsync();
+                var wpLast = wps.Last();
+                wpLast = db.Waypoints.Add(wpLast);
+                await db.SaveChangesAsync();
+                for (int i = wps.Count() - 2; i >= 0; i--)
+                {
+                    var curWp = wps.ElementAt(i);
+                    curWp.NextWaypointId = wpLast.Id;
+                    wpLast = db.Waypoints.Add(curWp);
+                    await db.SaveChangesAsync();
+                }
+                db.Entry(mission).State = System.Data.Entity.EntityState.Modified;
+                await db.SaveChangesAsync();
+                return Ok(wps);
             }
-            if(mission.Waypoints.Count != 0 || wps == null || wps.Count() < 1)
-            {
-                return BadRequest();
-            }
-
-            for(int i = 0; i < wps.Count() - 1; i++)
-            {
-                var wp = wps.ElementAt(i);
-                wp.NextWaypoint = wps.ElementAt(i+1);
-                mission.Waypoints.Add(wp);
-            }
-            mission.Waypoints.Add(wps.Last());
-            db.Entry(mission).State = System.Data.Entity.EntityState.Modified;
-            await db.SaveChangesAsync();
-            return Ok();
         }
 
         // GET: api/Missions/5

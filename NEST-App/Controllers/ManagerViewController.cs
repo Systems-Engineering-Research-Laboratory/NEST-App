@@ -14,23 +14,11 @@ namespace NEST_App.Controllers
         // GET: ManagerView
         public ActionResult Index()
         {
-            return View();
-        }
-        // GET: AdminView/ManageUAVs
-        public ActionResult ManageUAVs()
-        {
-            var UAVs = (from uav in db.UAVs select uav).ToList();
-            return View(UAVs);
-        }
-        // GET: AdminView/Assignments
-        public ActionResult ManageAssignments()
-        {
-            return View();
-        }
-        // GET: AdminView/Assignments/{id}
-        public ActionResult EditAssignment()
-        {
-            return View();
+            dynamic uavManagerList = new System.Dynamic.ExpandoObject();
+            uavManagerList.UAVs = db.UAVs.ToList();
+            uavManagerList.Eventlog = db.EventLogs.ToList();
+
+            return View(uavManagerList);
         }
     }
 }

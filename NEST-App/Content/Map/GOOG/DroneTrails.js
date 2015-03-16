@@ -94,10 +94,6 @@
                 mapFunctions.ConsNotifier(this, event.latLng.lat(), event.latLng.lng(), "", "");
                 
             });
-
-            $("#UAVId").html("Select an UAV first");
-            $("#goBtn").addClass("disabled");
-            $("#clickToGoBtn").addClass("disabled");
         }
     },
 
@@ -110,9 +106,6 @@
         //    Reason: "OK",
         //    Accepted: true
         //}, cmd.connId);
-
-        console.log("original waypoints");
-        console.log(selectedUAV.Mission.Waypoints);
 
         vehicleHub.server.sendCommand({
             Latitude: lat,

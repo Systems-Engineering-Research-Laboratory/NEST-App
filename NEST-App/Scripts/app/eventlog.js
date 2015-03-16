@@ -2,7 +2,7 @@
 
 eventlogapp
 
-.controller('EventLogCtrl', ['$scope', 'Hub', function ($scope, Hub) {
+.controller('EventLogCtrl', ['$scope', 'Hub', 'filterFilter', function ($scope, Hub, filterFilter) {
     $scope.init = function () {
         //set up ViewModel
         var EventLog = function (event) {
@@ -17,9 +17,46 @@ eventlogapp
             };
             return EventLog;
         };
-        //set up events list
-        $scope.events = [];
+        // can improve speed on this. consider actual text of event criticality instead of checking all checkboxes
+        $scope.search = {
+            regular: false,
+            warning: false,
+            critical: false,
+            create_date: new Date()
+        };
+        $scope.criticalityFilter = function (evt) {
+            var crt = evt.criticality;
+            function checkRegular(crt) {
+                if (typeof $scope.search.regular != "undefined" && $scope.search.regular) {
+                    return crt.toLowerCase().indexOf('regular') >= 0;
+                }
+                return true;
+            }
+            function checkWarning(crt) {
+                if (typeof $scope.search.warning != "undefined" && $scope.search.warning) {
+                    return crt.toLowerCase().indexOf('warning') >= 0;
+                }
+                return true;
+            }
+            function checkCritical(crt) {
+                if (typeof $scope.search.critical != "undefined" && $scope.search.criticality) {
+                    return crt.toLowerCase().indexOf('critical') >= 0;
+                }
+                return true;
+            }
 
+            return checkRegular(crt) && checkWarning(crt) && checkCritical(crt);
+        };
+        $scope.dateFilter = function (evt) {
+            function checkSameDay(date) {
+                return date.getDate() === $scope.search.create_date.getDate()
+                    && date.getMonth() === $scope.search.create_date.getMonth()
+                    && date.getFullYear() === $scope.search.create_date.getFullYear();
+            }
+
+            return checkSameDay(new Date(evt.create_date));
+        };
+        $scope.events = [];
         // begin uav hub and connect
         $scope.uavHub = new Hub("VehicleHub", {
             listeners: {

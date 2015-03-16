@@ -2,8 +2,23 @@
 //Something require callbacks leaking the fact that values cannot be returned immediately. Oh well!
 function Reporter() {
     this.hub = $.connection.vehicleHub;
+    this.eventHub = $.connection.eventLogHub;
 
     this.pendingResult = false;
+
+    this.reportReroute = function (uavId, callsign) {
+        var curTime = new Date();
+        this.eventHub.server.emit({
+            message: "UAV " + callsign + " rerouted successfully around a restricted area",
+            uav_id: uavId,
+            UAVId: uavId,
+            uav_callsign: callsign,
+            operator_screen_name: "",
+            criticality: "advisory",
+            create_date: curTime.toUTCString(),
+            modified_date: curTime.toUTCString(),
+        });
+    }
 
     this.updateMission = function (mission, opts) {
         var jqXHR = this.putToServer(
@@ -30,6 +45,7 @@ function Reporter() {
     }
 
     this.updateFlightState = function (fs, opts) {
+        var curTime = new Date();
         this.hub.server.pushFlightStateUpdate({
             Id: fs.Id,
             Timestamp: fs.Timestamp,
@@ -44,8 +60,8 @@ function Reporter() {
             PitchRate: fs.PitchRate,
             BatteryLevel: fs.BatteryLevel,
             UAVId: fs.UAVId,
-            create_date: fs.create_date,
-            modified_date: fs.modified_date,
+            create_date: curTime.toUTCString(),
+            modified_date: curTime.toUTCString(),
             Latitude: fs.Latitude,
             Longitude: fs.Longitude,
             Altitude: fs.Altitude
@@ -136,5 +152,13 @@ function Reporter() {
             console.error("addNewRouteToMission failed!");
         });
         return promise;
+    }
+
+    this.broadcastNewMission = function(uavid, schedid, missionid) {
+        //this.hub.server.vehicleHasNewMission(uavid, schedid, missionid);
+        return $.ajax({
+            method: 'PUT',
+            url: 'api/schedule/' + schedid + '/setCurrentMission/' + missionid,
+        });
     }
 }

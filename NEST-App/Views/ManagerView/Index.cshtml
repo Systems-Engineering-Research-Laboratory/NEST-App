@@ -1,81 +1,93 @@
 ﻿
+@using NEST_App.Models
+@model dynamic
+
+<script src="~/Scripts/jquery-2.1.2.min.js"></script>
+<script src="~/Content/ManagerView/managerJS.js" type="text/javascript"></script>
+
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Manager</h2>
-<div ng-app="managerApp" ng-controller="managerControl">
-    <div>
-        <div class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-expanded="true" ng-model="selectedUser">
-                <span ng-show="selectedUser">{{selectedUser.username}}</span>
-                <span ng-hide="selectedUser">Select a user</span>
-                <span class="caret"></span>
-            </button>
-            <input type="number" ng-model="numberToAssign" /><button ng-click="assignMultipleUAVs()" ng-model="numberToAssign">Assign {{numberToAssign}} UAVs</button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-                <li role="presentation" ng-repeat="operator in allUsers">
-                    <a role="menuitem" tabindex="-1" ng-click="userSelected(operator)">{{operator.username}}</a>
-                </li>
-            </ul>
-        </div>
-        <div class="assignmentWrapper">
-            <div class="assignedWrapper">
-                <div>Assigned</div>
-                <div class="list-group">
-                    <a class="list-group-item" ng-repeat="uav in selectedUser.UAVs">
-                        {{uav.Callsign}}
-                    </a>
-                </div>
-            </div>
-            <div class="unassignedWrapper">
-                <div>Unassigned</div>
-                <div class="list-group">
-                    <a class="list-group-item" ng-dblclick="assignUser(uav.Id, selectedUser.user_id)" ng-repeat="uav in unassignedUavs">
-                        {{uav.Callsign}}
-                    </a>
-                </div>
-            </div>
-        </div>
-        <h4>Current Emergencies:</h4>
-        <div class= "UAVEmergencyEvents">
-            <table class="table table-hover">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manager</title>
+    <link rel="stylesheet" type="text/css" href="~/Content/ManagerView/managerCSS.css" />
+</head>
+<body>
+    <h2>Manager</h2>
+
+    <div class="outer">
+        <div id="ass">
+            <h4>Assigned UAVs</h4>
+            <table class="assigned" id="assigned">
                 <tr>
-                    <td>
-                        <strong>UAV ID</strong>
-                    </td>
-                    <td>
-                        <strong>UAV Callsign</strong>
-                    </td>
-                    <td>
-                        <strong>Message</strong>
-                    </td>
-                    <td>
-                        <strong>Operator</strong>
-                    </td>
-                    <td>
-                        <strong>Time</strong>
-                    </td>
+                    <th>UAV ID</th>
+                    <th>Callsign</th>
+                    <th>User ID</th>
+                    <th>User Name</th>
                 </tr>
-                <tr ng-repeat="evt in events" ng-style="getRowStyle(evt.criticality)">
-                    <td>
-                        {{evt.uav_id}}
-                    </td>
-                    <td>
-                        {{evt.uav_callsign}}
-                    </td>
-                    <td>
-                        {{evt.message}}
-                    </td>
-                    <td>
-                        {{evt.operator_screen_name}}
-                    </td>
-                    <td>
-                        {{evt.create_date}}
-                    </td>
+
+                @foreach (UAV uavs_user_user_id in Model.UAVs)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Id)</td>
+                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Callsign)</td>
+                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User_user_id)</td>
+                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User.username)</td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+        <div id="unass">
+            <h4>Unassigned UAVs</h4>
+            <table class="unassigned" id="unassigned">
+                <tr>
+                    <th>UAV ID</th>
+                    <th>Callsign</th>
+                    <th>User ID</th>
+                    <th>User Name</th>
                 </tr>
+
+                @foreach (UAV uavs_user_user_id in Model.UAVs)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Id)</td>
+                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Callsign)</td>
+                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User_user_id)</td>
+                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User.username)</td>
+                    </tr>
+                }
+
+            </table>
+        </div> 
+        <div id="curr">
+            <h4>Current Emergencies:</h4>
+            <table class="curr_emergen" id="curr_emergen">
+                <thead>
+                    <tr>
+                        <th>UAV</th>
+                        <th>Callsign</th>
+                        <th>Criticality</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (EventLog eventlog in Model.Eventlog)
+                    {
+                        <tr class="eventlog">
+                            <td>@Html.DisplayFor(modelItem => eventlog.uav_id)</td>
+                            <td>@Html.DisplayFor(modelItem => eventlog.UAV.Callsign)</td>
+                            <td>@Html.DisplayFor(modelItem => eventlog.criticality)</td>
+                            <td>@Html.DisplayFor(modelItem => eventlog.message)</td>
+                        </tr>
+                    }
+                </tbody>
             </table>
         </div>
     </div>
-</div>
+</body>
+</html>
 

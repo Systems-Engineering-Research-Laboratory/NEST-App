@@ -1,0 +1,19 @@
+﻿.outer {
+    display:inline-block;
+    width:100%;
+}
+.schedule {
+    width:98%;
+}
+#sched {
+    width:100%;
+}
+.maintenance{
+    width:98%;
+}
+#maint {
+    width:100%;
+}
+table {
+    border: 1px solid black;
+}
