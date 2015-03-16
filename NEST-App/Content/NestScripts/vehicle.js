@@ -107,7 +107,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             //Uh oh, loss of link. 
             this.FlightState.BatteryLevel -= dt / 1800;
             if (this.FlightState.BatteryLevel > .5) {
-                //So we don't report out
+                //So we don't report out or follow waypoints, just hover
                 return;
             } else if (!this.generatedContingency) {
                 this.generatedContingency = true;
@@ -137,18 +137,13 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         }
 
         this.FlightState.BatteryLevel -= dt / 1800;
-
-        reporter.updateFlightState(this.FlightState);
+        if (this.hasCommsLink) {
+            reporter.updateFlightState(this.FlightState);
+        }
     };
 
     this.setCommsLink = function (isConnected) {
         this.hasCommsLink = isConnected;
-        if (isConnected) {
-            //do something. Maybe resume mission? Not sure...
-        }
-        else {
-            //do something.
-        }
     }
 
     
