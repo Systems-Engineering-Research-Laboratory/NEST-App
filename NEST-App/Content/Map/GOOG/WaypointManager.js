@@ -35,7 +35,7 @@ function WaypointManager() {
     this.addMarker = function (marker) {
         google.maps.event.addListener(marker, 'selection_changed', function () {
             that.handleIconChanged(this);
-            console.log("Waypoint manager selection changed");
+            //console.log("Waypoint manager selection changed");
         });
         this.markers.push(marker);
     }
