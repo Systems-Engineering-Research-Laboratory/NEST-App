@@ -175,27 +175,27 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (Mission miss in Model.missions)
+                    @foreach (UAV uavs in Model.UAVs)
                     {
                         <tr id="uavtable_tr" @*id=@miss.Schedule.UAV.Id.ToString()*@>
-                            <td>@Html.DisplayFor(modelItem => miss.Schedule.UAV.Id)</td>
-                            <td>@Html.DisplayFor(modelItem => miss.Schedule.UAV.Callsign)</td>
-                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Schedule.UAV.NumDeliveries)</td>
-                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Schedule.UAV.Mileage)</td>
-                            <td id="battery_for_regular_table">@Html.DisplayFor(modelItem => miss.Schedule.UAV.FlightStates.FirstOrDefault().BatteryLevel)</td>
-                            <td>@Html.DisplayFor(modelItem => miss.EstimatedCompletionTime)</td>
-                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.ScheduledCompletionTime)</td>
-                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Phase)</td>
-                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.FlightPattern)</td>
-                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Schedule.UAV.Configurations.Classification)</td>
-                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Schedule.UAV.FlightStates.FirstOrDefault().Latitude)</td>
-                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Schedule.UAV.FlightStates.FirstOrDefault().Longitude)</td>
-                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Schedule.UAV.FlightStates.FirstOrDefault().Altitude)</td>
-                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Latitude)</td>
-                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Longitude)</td>
-                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Schedule.UAV.NumDeliveries)</td>
-                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.Payload)</td>
-                            <td style="display: none;">@Html.DisplayFor(modelItem => miss.FinancialCost)</td>
+                            <td>@Html.DisplayFor(modelItem => uavs.Id)</td>
+                            <td>@Html.DisplayFor(modelItem => uavs.Callsign)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs.NumDeliveries)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs.Mileage)</td>
+                            <td>@Html.DisplayFor(modelItem => uavs.FlightStates.FirstOrDefault().BatteryLevel)</td>
+                            <td>@Html.DisplayFor(modelItem => uavs.Schedules.FirstOrDefault().Missions.FirstOrDefault().EstimatedCompletionTime)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs.Schedules.FirstOrDefault().Missions.FirstOrDefault().ScheduledCompletionTime)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs.Schedules.FirstOrDefault().Missions.FirstOrDefault().Phase)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs.Schedules.FirstOrDefault().Missions.FirstOrDefault().FlightPattern)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs.Configurations.Classification)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs.FlightStates.FirstOrDefault().Latitude)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs.FlightStates.FirstOrDefault().Longitude)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs.FlightStates.FirstOrDefault().Altitude)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs.Schedules.FirstOrDefault().Missions.FirstOrDefault().Latitude)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs.Schedules.FirstOrDefault().Missions.FirstOrDefault().Longitude)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs.NumDeliveries)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs.Schedules.FirstOrDefault().Missions.FirstOrDefault().Payload)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs.Schedules.FirstOrDefault().Missions.FirstOrDefault().FinancialCost)</td>
                         </tr>
                     }
                 </tbody>

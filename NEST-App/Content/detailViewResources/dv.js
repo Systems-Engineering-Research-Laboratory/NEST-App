@@ -47,17 +47,17 @@ $(document).ready(function () {
         };
         setFilterGrid("operator_table", operatorfilter_value);
 
-        var eventlogfilter_value = {
-            display_all_text: "All",
-            col_0: "select",
-            col_1: "select",
-            col_2: "select",
-            col_3: "none",
-            col_4: "select"
-        };
+        //var eventlogfilter_value = {
+        //    display_all_text: "All",
+        //    col_0: "select",
+        //    col_1: "select",
+        //    col_2: "select",
+        //    col_3: "none",
+        //    col_4: "select"
+        //};
 
-        if (document.getElementById("event_log_table") != null)
-            setFilterGrid("event_log_table", eventlogfilter_value);
+        //if (document.getElementById("event_log_table") != null)
+        //    setFilterGrid("event_log_table", eventlogfilter_value);
 
 
 
