@@ -1088,7 +1088,7 @@ function PathGenerator(areaContainer, reporter) {
         if (!startIndex) {
             startIndex = 0;
         }
-        wps.splice(0, 0, new Waypoint(curPos));
+        wps.splice(startIndex, 0, new Waypoint(curPos));
         var areas = this.areaContainer.restrictedAreas;
         var addedPoints = false;
         for (var i = startIndex; i < wps.length - 1; i++) {
