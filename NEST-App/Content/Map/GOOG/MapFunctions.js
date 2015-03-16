@@ -50,7 +50,10 @@
                 });
                 break;
             case 'go_here':
+                document.getElementById("go_lat").value = latLng.lat();
+                document.getElementById("go_long").value = latLng.lng();
                 this.goTo_show();
+
                 break;
             case 'add_waypoint':
                 this.goTo_show();

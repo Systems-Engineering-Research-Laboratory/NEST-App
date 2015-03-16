@@ -411,6 +411,7 @@ $(document).ready(function () {
             mapUavId = null;
             for (var key in uavs) {
                 uavs[key].marker.setIcon(uavs[key].marker.uavSymbolBlack);
+                uavs[key].marker.selected = false;
             }
 
 
