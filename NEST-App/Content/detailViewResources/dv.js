@@ -640,8 +640,11 @@ function uavMarkers(data, textStatus, jqXHR) {
         //When fired, the UAV is marked as 'selected'
         google.maps.event.addListener(marker, 'click', (function () {
             droneSelection.CtrlSelect(this, selectedDrones);
-            var uav = selectedDrones[0];
-            localStorage.setItem('uavid', uav.Id);
+            if (selectedDrones.length == 0) { }
+            else {
+                var uav = selectedDrones[0];
+                localStorage.setItem('uavid', uav.Id);
+            }
         }));
 
         uavs[data[i].Id].marker = marker;
