@@ -676,6 +676,22 @@ function PathGenerator(areaContainer, reporter) {
         return pts;
     }
 
+    this.appendSafeRouteToMission = function (wps, curPos, target, missionId, reportOut) {
+        var tempRoute = [new Waypoint(wps[wps.length - 1]), new Waypoint(target)];
+        this.buildSafeRoute(tempRoute, curPos);
+        if (missionId && reportOut) {
+            //bug here, nothing being sent to server.
+            var jqxhr = reporter.appendRouteToMission(missionId, tempRoute);
+            var $this = this;
+            jqxhr.success(function (data, textStatus, jqXHR) {
+                for (var i = 0; i < tempRoute.length; i++) {
+                    tempRoute[i].updateInfo(data[i]);
+                }
+            });
+        }
+        insertMultiPointsIntoList(wps, tempRoute, wps.length - 1);
+    }
+
     this.generatePath = function (wps, veh) {
         if (this.gotNewRestrictedArea()) {
             var newWps = this.resolvePath(wps);
@@ -1078,23 +1094,7 @@ function PathGenerator(areaContainer, reporter) {
         }
     }
 
-    this.appendSafeRouteToMission = function (wps, curPos, target, missionId, reportOut) {
-        var tempRoute = [wps[wps.length - 1], new Waypoint(target)];
-        this.buildSafeRoute(tempRoute, curPos);
-        if (missionId && reportOut) {
-            //bug here, nothing being sent to server.
-            var jqxhr = reporter.appendRouteToMission(missionId, tempRoute);
-            var $this = this;
-            jqxhr.success(function (data, textStatus, jqXHR) {
-                for (var i = 0; i < tempRoute.length; i++) {
-                    tempRoute[i].updateInfo(data[i]);
-                }
-                $this.insertMultiPointsIntoList(wps, tempRoute, wps.length - 1);
-            })
-        } else {
-            this.insertMultiPointsIntoList(wps, tempRoute, wps.length - 1);
-        }
-    }
+    
 
     this.buildSafeRoute = function (wps, curPos, startIndex) {
         if (!startIndex) {
