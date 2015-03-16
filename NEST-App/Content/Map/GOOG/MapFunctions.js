@@ -327,6 +327,15 @@
         return uav;
     },
 
+    centerOnUAV: function (cs) {
+        for (var key in uavs) {
+            if (uavs[key].Callsign != cs) {}
+            else {
+                map.setCenter(uavs[key].Position);
+            }
+        }
+    },
+
     goTo_show: function () {
         document.getElementById("CommPopPlaceHolder").style.display = "block";
         document.getElementById("waypoint_popup").style.display = "block";

@@ -25,6 +25,11 @@
     <button id="delete-all-button">Delete All</button>
 </div>
 
+<div id="gotouav" style="display: block;">
+    <input type="text" id="enter_callsign" placeholder="UAV Callsign" />
+    <button class="btn-default" id="gotouavbtn" onclick="mapFunctions.centerOnUAV(document.getElementById('enter_callsign').value)">GO</button>
+
+</div>
 
 <!-- command pop up placeholder -->
 <div id="CommPopPlaceHolder">

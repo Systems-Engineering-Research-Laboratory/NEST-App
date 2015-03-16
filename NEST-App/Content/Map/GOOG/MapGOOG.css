@@ -187,6 +187,26 @@ html, body, #map-canvas {
     display: none;
 }
 
+#enter_callsign{
+    position: fixed;
+    top: 80%;
+    left: .5%;
+    max-width: 114px;
+    min-width: 70px;
+    max-height: 25px;
+    padding: 10px 10px;
+    display: block;
+    float: left;
+    margin:auto;
+}
+
+#gotouavbtn{
+    position: fixed;
+    top: 79.8%;
+    left: 9%;
+    float: right;
+}
+
 .commandWindow {
     position: fixed;
     top: 50%;
