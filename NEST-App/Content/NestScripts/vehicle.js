@@ -388,10 +388,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                     wpComplete = true;
                     //TODO: Assign the path back to the base.
                     update = true;
-                    //this.pathGen.generateBackToBaseWaypoints(this.FlightState, this.Base);
-                    var baseWp = new Waypoint(base);
-                    this.waypoints.push(baseWp);
-                    this.pathGen.checkPathValidity(this.waypoints);
+                    this.pathGen.appendSafeRouteToMission(this.waypoints, this.FlightState, this.Base, mis.id, this.hasCommsLink);
                 }
                 break;
             case "done":
@@ -482,14 +479,20 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             && calculateDistance(thisX, thisY, this.Base.X, this.Base.Y) < 5;
     }
 
-    this.generateWaypoints = function () {
-        var target = this.Command || this.Mission;
-        var type = this.Command ? "command" : "mission";
+    this.generateWaypoints = function (target) {
+        var target = target || this.Command || this.Mission;
+        var type = this.Command ? "command" : (this.Mission? "mission" : "target");
         //generates new waypoints
         this.brandNewTarget(target, true);
         var n = this.waypoints.length;
         this.waypoints[n - 1].obj = target;
         this.waypoints[n - 1].objType = type;
+    }
+
+    this.generateWaypointsAndAppend = function (target) {
+        var target = target || this.Command || this.Mission;
+        var type = this.Command ? "command" : (this.Mission ? "mission" : "target");
+
     }
 
     this.getNextWaypoint = function () {
@@ -673,6 +676,22 @@ function PathGenerator(areaContainer, reporter) {
         return pts;
     }
 
+    this.appendSafeRouteToMission = function (wps, curPos, target, missionId, reportOut) {
+        var tempRoute = [new Waypoint(wps[wps.length - 1]), new Waypoint(target)];
+        this.buildSafeRoute(tempRoute, curPos);
+        if (missionId && reportOut) {
+            //bug here, nothing being sent to server.
+            var jqxhr = reporter.appendRouteToMission(missionId, tempRoute);
+            var $this = this;
+            jqxhr.success(function (data, textStatus, jqXHR) {
+                for (var i = 0; i < tempRoute.length; i++) {
+                    tempRoute[i].updateInfo(data[i]);
+                }
+            });
+        }
+        insertMultiPointsIntoList(wps, tempRoute, wps.length - 1);
+    }
+
     this.generatePath = function (wps, veh) {
         if (this.gotNewRestrictedArea()) {
             var newWps = this.resolvePath(wps);
@@ -770,10 +789,6 @@ function PathGenerator(areaContainer, reporter) {
 
     this.validatePoint = function (testPoint) {
         return true;
-    }
-
-    this.generateBackToBaseWaypoints = function () {
-        this.waypoints = [];
     }
 
     this.checkPathValidity = function (wps) {
@@ -1079,6 +1094,8 @@ function PathGenerator(areaContainer, reporter) {
         }
     }
 
+    
+
     this.buildSafeRoute = function (wps, curPos, startIndex) {
         if (!startIndex) {
             startIndex = 0;
@@ -1107,7 +1124,6 @@ function PathGenerator(areaContainer, reporter) {
         return wps;
     }
 
-    //Check if the line between two x,y points falls within a rectangle. Found on stack overflow.
     this.dijkstra = function (p1, p2) {
         var areas = this.areaContainer.restrictedAreas;
         var foundInt = false;
