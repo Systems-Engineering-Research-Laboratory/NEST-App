@@ -101,7 +101,12 @@
                         console.log("You're not the owner");
                     } else {
                         //create ui
-                        uavCommands.NonNav(uid, uav, latLng, alt, throttle);
+                        alt = document.getElementById("adjust_alt");
+                        alt.value = uav.altitude;
+                        throttle = document.getElementById("adjust_throttle");
+                        throttle.value = uav.throttle;
+                        document.getElementById("adjust_click").onclick = function () { uavCommands.NonNav(uid, uav, latLng, alt.value, throttle.value); mapFunctions.adjust_hide() };
+                        mapFunctions.adjust_show(marker.uav.Callsign);
                     }
                     break;
                 case 'hold':
@@ -344,6 +349,12 @@
         $(".UAVId").html("UAV: " + callsign);
     },
 
+    adjust_show: function (callsign) {
+        document.getElementById("CommPopPlaceHolder").style.display = "block";
+        document.getElementById("adjust_popup").style.display = "block";
+        $(".UAVId").html("UAV: " + callsign);
+    },
+
     note_show: function () {
         document.getElementById("CommPopPlaceHolder").style.display = "block";
         document.getElementById("notification").style.display = "block";
@@ -367,6 +378,11 @@
     land_hide: function () {
         document.getElementById("CommPopPlaceHolder").style.display = "none";
         document.getElementById("land_popup").style.display = "none";
+    },
+
+    adjust_hide: function () {
+        document.getElementById("CommPopPlaceHolder").style.display = "none";
+        document.getElementById("adjust_popup").style.display = "none";
     },
 
     note_hide: function () {

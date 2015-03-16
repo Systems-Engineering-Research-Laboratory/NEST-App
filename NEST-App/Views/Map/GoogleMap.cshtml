@@ -56,6 +56,21 @@
         <button class="btn btn-default" onclick="mapFunctions.hold_hide()">Cancel</button>
     </div>
 
+    <!-- hold command window -->
+    <div id="adjust_popup" class="commandWindow">
+        <div class="closeBtn"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.adjust_hide()"></span></div>
+        <h3 class="UAVId">Select an UAV first</h3>
+        <h4>Hold Position:</h4>
+        <p>
+            Altitude: <input type="text" name="alt_amount" id="adjust_alt" placeholder="Altitude" />
+        </p>
+        <p>
+            Throttle: <input type="text" name="throt_amount" id="adjust_throttle" placeholder="Throttle" />
+        </p>
+        <button class="btn btn-default" id="adjust_click" onclick="">Ok</button>
+        <button class="btn btn-default" onclick="mapFunctions.adjust_hide()">Cancel</button>
+    </div>
+
     <!--Return to base command window-->
     <div id="return_popup" class="commandWindow">
         <div class="closeBtn"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.return_hide()"></span></div>
