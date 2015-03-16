@@ -141,26 +141,31 @@ namespace NEST_App.Controllers
                     db.Entry(wp).State = System.Data.Entity.EntityState.Modified;
                 }
                 await db.SaveChangesAsync();
-                var wpLast = wps.Last();
-                wpLast.MissionId = mission.id;
-                wpLast = db.Waypoints.Add(wpLast);
-                wpLast.IsActive = true;
-                await db.SaveChangesAsync();
-                for (int i = wps.Count() - 2; i >= 0; i--)
-                {
-                    var curWp = wps.ElementAt(i);
-                    curWp.NextWaypointId = wpLast.Id;
-                    curWp.MissionId = mission.id;
-                    curWp.IsActive = true;
-                    wpLast = db.Waypoints.Add(curWp);
-                    await db.SaveChangesAsync();
-                }
-                db.Entry(mission).State = System.Data.Entity.EntityState.Modified;
-                await db.SaveChangesAsync();
+                await this.addWaypointsToMission(id, wps);
+
                 trans.Commit();
                 var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
                 hub.Clients.All.newRouteForMission(mission.id);
-                
+
+                return Ok(wps);
+            }
+        }
+
+        [HttpPost]
+        [Route("api/missions/{id}/appendWaypoints")]
+        public async Task<IHttpActionResult> AppendWaypoints(int id, Waypoint[] wps)
+        {
+            if (wps.Count() == 0)
+            {
+                return Ok(wps);
+            }
+            using (var trans = db.Database.BeginTransaction())
+            {
+                var wp = await getLastWaypoint(id);
+                await this.addWaypointsToMission(id, wps);
+                wp.NextWaypointId = wps[0].Id;
+                db.Entry(wp).State = System.Data.Entity.EntityState.Modified;
+                await db.SaveChangesAsync();
                 return Ok(wps);
             }
         }
@@ -256,6 +261,34 @@ namespace NEST_App.Controllers
         private bool MissionExists(int id)
         {
             return db.Missions.Count(e => e.id == id) > 0;
+        }
+
+        private async Task addWaypointsToMission(int missionId, Waypoint[] wps)
+        {
+
+            var wpLast = wps.Last();
+            wpLast.MissionId = missionId;
+            wpLast = db.Waypoints.Add(wpLast);
+            wpLast.IsActive = true;
+            await db.SaveChangesAsync();
+            for (int i = wps.Count() - 2; i >= 0; i--)
+            {
+                var curWp = wps.ElementAt(i);
+                curWp.NextWaypointId = wpLast.Id;
+                curWp.MissionId = missionId;
+                curWp.IsActive = true;
+                wpLast = db.Waypoints.Add(curWp);
+                await db.SaveChangesAsync();
+            }
+        }
+
+        private async Task<Waypoint> getLastWaypoint(int missionId)
+        {
+            var mis = await db.Missions.FindAsync(missionId);
+            var last = (from wp in mis.Waypoints
+                        where wp.NextWaypoint == null && wp.IsActive
+                        select wp).FirstOrDefault();
+            return last;
         }
     }
 }
