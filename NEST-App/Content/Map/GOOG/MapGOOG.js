@@ -136,6 +136,11 @@ $(document).ready(function () {
                 wpm.updateFlightPath(id);
             }
         }
+        vehicleHub.client.newRouteForMission = function (id) {
+            if (selectedUAV != null) {
+                wpm.updateFlightPath(id);
+            }
+        }
         
         //setup client callback function
         vehicleHub.client.UavRejected = function (uavId) {
