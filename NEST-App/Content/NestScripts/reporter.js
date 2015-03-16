@@ -154,6 +154,23 @@ function Reporter() {
         return promise;
     }
 
+    this.appendRouteToMission = function (id, pts) {
+        var promise = $.ajax(
+            {
+                url: '/api/missions/' + id + '/appendWaypoints',
+                type: 'POST',
+                header: {
+                    'Content-Type' : 'application/json',
+                },
+                data: JSON.stringify(pts),
+            });
+        var $this = this;
+        promise.fail(function (jqXHR, textSTatus, errorThrown) {
+            console.error(errorThrown);
+        });
+        return promise;
+    }
+
     this.broadcastNewMission = function(uavid, schedid, missionid) {
         //this.hub.server.vehicleHasNewMission(uavid, schedid, missionid);
         return $.ajax({
