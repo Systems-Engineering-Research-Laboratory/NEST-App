@@ -25,6 +25,7 @@
         menuItems.push({ className: 'context_menu_item', eventName: 'send_note', label: 'Send Note' });
         menuItems.push({ className: 'context_menu_item', eventName: 'get_coords', label: 'Get Coords' });
         menuItems.push({});
+        menuItems.push({});
         menuItems.push({ className: 'context_menu_item', eventName: 'go_here', label: 'Go Here' });
         menuItems.push({ className: 'context_menu_item', eventName: 'add_waypoint', label: 'Add Waypoint' });
         contextMenuOptions.menuItems = menuItems;
@@ -65,6 +66,8 @@
         contextMenuOptions.classNames = { menu: 'context_menu', menuSeparator: 'context_menu_separator' };
         var menuItems = [];
         menuItems.push({ className: 'context_menu_item', eventName: 'get_details', label: 'UAV Details' });
+        menuItems.push({});
+        menuItems.push({});
         menuItems.push({ className: 'context_menu_item', eventName: 'non_nav', label: 'Adjust Parameters' });
         menuItems.push({ className: 'context_menu_item', eventName: 'hold', label: 'Hold Position' });
         menuItems.push({ className: 'context_menu_item', eventName: 'insert_waypoint', label: 'Insert Waypoint' });
@@ -78,65 +81,83 @@
     },
     //Controls context menu selection for UAVs
     UAVContextSelection: function (map, marker, latLng, eventName) {
-        var uid = assignment.getUserId();
-        var uav = marker.uav;
-        //placeholders until UI is implemented
-        var alt = 0;
-        var throttle = 0;
-        var time = 0;
-        /////////////////
-        switch (eventName) {
-            case 'get_details':
-                window.open("http://localhost:53130/detailview", "_blank");
-                //console.log("Trying to open window");
-                break;
-            case 'non_nav':
-                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
-                    console.log("You're not the owner");
-                } else {
-                    //create ui
-                    uavCommands.NonNav(uid, uav, latLng, alt, throttle);}
-                break;
-            case 'hold':
-                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
-                      console.log("You're not the owner");
-                } else {
-                    //create ui
-                    uavCommands.HoldPos(uid, uav, latLng, alt, throttle);
-                }
-                break;
-            case 'insert_waypoint':
-                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
-                    console.log("You're not the owner");
-                } else {
-                    //create ui
-                uavCommands.InsertWP(uid, marker.uav, latLng);}
-                break;
-            case 'go_to':
-                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
-                    console.log("You're not the owner");
-                } else {
-                    //create ui
-                    uavCommands.GoTo(uid, marker.uav, latLng, alt);}
-                break;
-            case 'force_land':
-                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
-                    console.log("You're not the owner");
-                }else{
-                    //create ui
-                    uavCommands.ForceLand(uid, marker.uav, latLng, alt, throttle);
-                }
-                break;
-            case 'return':
-                if (!assignment.isUavAssignedToUser(marker.uav.Id)) {
-                    console.log("You're not the owner");
-                }else{
-                    //create ui
-                    uavCommands.BackToBase(uid, marker.uav, latLng);
-                }
-                break;
-            default:
-                break;
+        if (typeof(assignment) == 'undefined') {
+            console.log("*********  Log in first!  **********");
+        }
+        else {
+            var uid = assignment.getUserId();
+            var uav = marker.uav;
+            //placeholders until UI is implemented
+            var alt = 0;
+            var throttle = 0;
+            var time = 0;
+            /////////////////
+            switch (eventName) {
+                case 'get_details':
+                    window.open("http://localhost:53130/detailview", "_blank");
+                    break;
+                case 'non_nav':
+                    if (!assignment.isUavAssignedToUser(uav.Id)) {
+                        console.log("You're not the owner");
+                    } else {
+                        //create ui
+                        alt = document.getElementById("adjust_alt");
+                        alt.value = uav.altitude;
+                        throttle = document.getElementById("adjust_throttle");
+                        throttle.value = uav.throttle;
+                        document.getElementById("adjust_click").onclick = function () { uavCommands.NonNav(uid, uav, latLng, alt.value, throttle.value); mapFunctions.adjust_hide() };
+                        mapFunctions.adjust_show(marker.uav.Callsign);
+                    }
+                    break;
+                case 'hold':
+                    if (!assignment.isUavAssignedToUser(uav.Id)) {
+                        console.log("You're not the owner");
+                    } else {
+                        time = document.getElementById("hold_time");
+                        time.value = "";
+                        document.getElementById("hold_click").onclick = function () { uavCommands.HoldPos(uid, uav, latLng, alt, 0, time.value); mapFunctions.hold_hide() };
+                        mapFunctions.hold_show(marker.uav.Callsign);
+                    }
+                    break;
+                case 'insert_waypoint':
+                    if (!assignment.isUavAssignedToUser(uav.Id)) {
+                        console.log("You're not the owner");
+                    } else {
+                        //create ui
+                        uavCommands.InsertWP(uid, uav, latLng);
+                    }
+                    break;
+                case 'go_to':
+                    if (!assignment.isUavAssignedToUser(uav.Id)) {
+                        console.log("You're not the owner");
+                    } else {
+                        //create ui
+                        this.goTo_show();
+                        //uavCommands.GoTo(uid, marker.uav, latLng, alt);
+                    }
+                    break;
+                case 'force_land':
+                    if (!assignment.isUavAssignedToUser(uav.Id)) {
+                        console.log("You're not the owner");
+                    } else {
+                        //create ui
+                        document.getElementById("land_click").onclick = function () { uavCommands.ForceLand(uid, uav, latLng, alt, throttle); mapFunctions.land_hide() };
+                        mapFunctions.land_show(marker.uav.Callsign);
+                    }
+                    break;
+                case 'return':
+                    if (!assignment.isUavAssignedToUser(uav.Id)) {
+                        console.log("You're not the owner");
+                    } else {
+                        //create ui
+                        document.getElementById("return_click").onclick = function () { uavCommands.BackToBase(uid, uav, latLng); mapFunctions.return_hide() };
+                        mapFunctions.return_show(marker.uav.Callsign);
+                        
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     },
 
@@ -306,9 +327,42 @@
         return uav;
     },
 
+    centerOnUAV: function (cs) {
+        for (var key in uavs) {
+            if (uavs[key].Callsign != cs) {}
+            else {
+                map.setCenter(uavs[key].Position);
+            }
+        }
+    },
+
     goTo_show: function () {
         document.getElementById("CommPopPlaceHolder").style.display = "block";
         document.getElementById("waypoint_popup").style.display = "block";
+    },
+
+    hold_show: function (callsign) {
+        document.getElementById("CommPopPlaceHolder").style.display = "block";
+        document.getElementById("hold_popup").style.display = "block";
+        $(".UAVId").html("UAV: " + callsign);
+    },
+
+    return_show: function (callsign) {
+        document.getElementById("CommPopPlaceHolder").style.display = "block";
+        document.getElementById("return_popup").style.display = "block";
+        $(".UAVId").html("UAV: " + callsign);
+    },
+
+    land_show: function (callsign) {
+        document.getElementById("CommPopPlaceHolder").style.display = "block";
+        document.getElementById("land_popup").style.display = "block";
+        $(".UAVId").html("UAV: " + callsign);
+    },
+
+    adjust_show: function (callsign) {
+        document.getElementById("CommPopPlaceHolder").style.display = "block";
+        document.getElementById("adjust_popup").style.display = "block";
+        $(".UAVId").html("UAV: " + callsign);
     },
 
     note_show: function () {
@@ -319,6 +373,26 @@
     goTo_hide: function () {
         document.getElementById("CommPopPlaceHolder").style.display = "none";
         document.getElementById("waypoint_popup").style.display = "none";
+    },
+
+    hold_hide: function () {
+        document.getElementById("CommPopPlaceHolder").style.display = "none";
+        document.getElementById("hold_popup").style.display = "none";
+    },
+
+    return_hide: function () {
+        document.getElementById("CommPopPlaceHolder").style.display = "none";
+        document.getElementById("return_popup").style.display = "none";
+    },
+
+    land_hide: function () {
+        document.getElementById("CommPopPlaceHolder").style.display = "none";
+        document.getElementById("land_popup").style.display = "none";
+    },
+
+    adjust_hide: function () {
+        document.getElementById("CommPopPlaceHolder").style.display = "none";
+        document.getElementById("adjust_popup").style.display = "none";
     },
 
     note_hide: function () {

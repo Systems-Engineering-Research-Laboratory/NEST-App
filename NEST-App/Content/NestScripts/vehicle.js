@@ -18,6 +18,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     this.MaxVerticalVelocity = vehicleInfo.MaxVerticalVelocity;
     this.MaxAcceleration = vehicleInfo.MaxAcceleration;
     this.UpdateRate = vehicleInfo.UpdateRate;
+    this.hasCommsLink = true;
 
     //Storing other entities related to UAV
     this.FlightState = vehicleInfo.FlightState;
@@ -32,7 +33,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     //This is the current mission the vehicle is on.
     this.Mission = vehicleInfo.Schedule.Missions[0];
     this.Schedule = vehicleInfo.Schedule;
-    
+
 
     //The current base of the vehicle.
     this.Base = base;
@@ -93,11 +94,26 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             return;
         }
         if (this.pathGen.gotNewRestrictedArea() && this.waypoints) {
-            this.pathGen.buildSafeRoute(this.waypoints, this.FlightState, this.currentWpIndex);
+            var resolved = this.pathGen.buildSafeRoute(this.waypoints, this.FlightState, this.currentWpIndex);
             this.currentWpIndex += 1;
             this.currentWaypoint = this.waypoints[this.currentWpIndex];
+            if (this.hasCommsLink && resolved) {
+                this.reporter.addNewRouteToMission(this.Mission.id, this.waypoints);
+                this.reporter.reportReroute(this.Id, this.Callsign);
+            }
         }
         //Process this waypoint if we have one
+        if (!this.hasCommsLink) {
+            //Uh oh, loss of link. 
+            this.FlightState.BatteryLevel -= dt / 1800;
+            if (this.FlightState.BatteryLevel > .5) {
+                //So we don't report out or follow waypoints, just hover
+                return;
+            } else if (!this.generatedContingency) {
+                this.generatedContingency = true;
+                this.brandNewTarget(this.Base, false);
+            }
+        }
         if (this.currentWaypoint) {
             if (this.performWaypoint(dt)) {
                 console.log("Finished with waypoint " + this.currentWaypoint.WaypointName);
@@ -121,9 +137,16 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         }
 
         this.FlightState.BatteryLevel -= dt / 1800;
-
-        reporter.updateFlightState(this.FlightState);
+        if (this.hasCommsLink) {
+            reporter.updateFlightState(this.FlightState);
+        }
     };
+
+    this.setCommsLink = function (isConnected) {
+        this.hasCommsLink = isConnected;
+    }
+
+    
     this.getNextMission = function () {
         var missions = this.Schedule.Missions;
         this.Mission = missions.shift();
@@ -142,9 +165,9 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             console.log(this.Callsign + " moved on to mission " + this.Mission.id);
         }
     }
-    
 
-    this.isMissionCompleted = function() {
+
+    this.isMissionCompleted = function () {
         if (this.Mission) {
             return this.Mission.Phase === "done" || this.Mission.Phase === "back to base";
         }
@@ -265,7 +288,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             //Accelerate vs Deccelerate
             maxAcc = -maxAcc;
         }
-        
+
 
         var changeInSpeed = maxAcc * dt;
         var newSpeed = changeInSpeed + velocity;
@@ -387,7 +410,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     }
 
     this.setCommand = function (target) {
-        if (!this.handleNonNavigationalCommand(target)) {
+        if (this.hasCommsLink && !this.handleNonNavigationalCommand(target)) {
             if (this.currentWaypoint) {
                 target.NextWaypointId = this.currentWaypoint.Id;
             }
@@ -462,12 +485,11 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     this.generateWaypoints = function () {
         var target = this.Command || this.Mission;
         var type = this.Command ? "command" : "mission";
-        this.waypoints = this.pathGen.brandNewTarget(this.FlightState, target, true, this);
+        //generates new waypoints
+        this.brandNewTarget(target, true);
         var n = this.waypoints.length;
-        this.waypoints[n-1].obj = target;
-        this.waypoints[n-1].objType = type;
-        this.currentWaypoint = this.waypoints[0];
-        this.currentWpIndex = 0;
+        this.waypoints[n - 1].obj = target;
+        this.waypoints[n - 1].objType = type;
     }
 
     this.getNextWaypoint = function () {
@@ -493,6 +515,13 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         var curTime = new Date();
         wp.TimeCompleted = curTime.toISOString();
         this.reporter.updateWaypoint(wp);
+    }
+
+    this.brandNewTarget = function(target, reportOut){
+        var wps = this.pathGen.brandNewTarget(this.FlightState, target, reportOut, this);
+        this.waypoints = wps;
+        this.currentWpIndex = 0;
+        this.currentWaypoint = this.waypoints[this.currentWpIndex];
     }
     this.getNextMission();
 }
@@ -630,10 +659,10 @@ function PathGenerator(areaContainer, reporter) {
         return this.areaContainer.newRestrictedArea;
     }
 
-    this.brandNewTarget = function (begin, end, isMission, veh) {
+    this.brandNewTarget = function (begin, end, reportOut, veh) {
         var pts = [new Waypoint({ Latitude: end.Latitude, Longitude: end.Longitude })];
         this.buildSafeRoute(pts, begin, 0);
-        if (isMission) {
+        if (reportOut) {
             var promise = this.reporter.addNewRouteToMission(end.id, pts);
             promise.success(function (data, textStatus, jqXHR) {
                 for (var i = 0; i < pts.length; i++) {
@@ -743,14 +772,8 @@ function PathGenerator(areaContainer, reporter) {
         return true;
     }
 
-    this.generateBackToBaseWaypoints = function (currentLoc, baseLocation, wps) {
-        newWps = this.getBeginningAndEnd(currentLoc, baseLocation);
-        var lastIndex = wps.length - 1;
-        this.insertWaypoint(wps[lastIndex], newWps[0]);
-        this.insertWaypoint(newWps[0], newWps[1]);
-        wps.push(newWps[0]);
-        wps.push(newWps[1]);
-        return wps;
+    this.generateBackToBaseWaypoints = function () {
+        this.waypoints = [];
     }
 
     this.checkPathValidity = function (wps) {
@@ -1049,19 +1072,20 @@ function PathGenerator(areaContainer, reporter) {
         return intersects;
     }
 
+    this.buildAndReportSafeRoute = function (wps, curPos, startIndex, missionId) {
+        var resolved = this.buildAndReportSafeRoute(wps, curPos, startIndex, missionId);
+        if (resolved) {
+            this.reporter.addNewRouteToMission(this.waypoints, missionId);
+        }
+    }
+
     this.buildSafeRoute = function (wps, curPos, startIndex) {
         if (!startIndex) {
             startIndex = 0;
         }
-        wps.splice(0, 0, new Waypoint(curPos));
+        wps.splice(startIndex, 0, new Waypoint(curPos));
         var areas = this.areaContainer.restrictedAreas;
-        //Do initial algorithm form the aircraft position if it exists
-        //if (checkPathIntersectsArea(curPos, wps[startIndex], areas)) {
-        //    var newWps = this.connectSafely(curPos, wps[startIndex]);
-        //    insertMultiPointsIntoList(wps, newWps, startIndex-1);
-        //    curPos.prev = null; //avoid circular reference complaints from signalr
-        //    curPos.edges = null;
-        //}
+        var addedPoints = false;
         for (var i = startIndex; i < wps.length - 1; i++) {
             if (checkPathIntersectsArea(wps[i], wps[i] + 1, areas)) {
                 var newwps = this.connectSafely(wps[i], wps[i + 1]);
@@ -1071,8 +1095,10 @@ function PathGenerator(areaContainer, reporter) {
                 wps[i + 1].edges = null;
                 insertMultiPointsIntoList(wps, newwps, i);
                 i += newwps.length;
+                addedPoints = addedPoints || newwps.length > 0;
             }
         }
+        return addedPoints;
     }
 
     this.connectSafely = function (p1, p2) {

@@ -9,9 +9,11 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Microsoft.AspNet.SignalR;
 using NEST_App.DAL;
 using NEST_App.Models;
 using NEST_App.Models.DTOs;
+using NEST_App.Hubs;
 
 namespace NEST_App.Controllers
 {
@@ -35,9 +37,12 @@ namespace NEST_App.Controllers
             {
                 return Ok(wpsInOrder.AsQueryable());
             }
-            var tail = wps.First(wp => wp.NextWaypoint == null);
+            var activeWps = from wp in mission.Waypoints
+                            where wp.IsActive
+                            select wp;
+            var tail = activeWps.First(wp => wp.NextWaypoint == null && wp.IsActive);
             wpsInOrder.Add(tail);
-            foreach (var wp in wps)
+            foreach (var wp in activeWps)
             {
                 if (wp.Id == tail.Id)
                 {
@@ -137,17 +142,25 @@ namespace NEST_App.Controllers
                 }
                 await db.SaveChangesAsync();
                 var wpLast = wps.Last();
+                wpLast.MissionId = mission.id;
                 wpLast = db.Waypoints.Add(wpLast);
+                wpLast.IsActive = true;
                 await db.SaveChangesAsync();
                 for (int i = wps.Count() - 2; i >= 0; i--)
                 {
                     var curWp = wps.ElementAt(i);
                     curWp.NextWaypointId = wpLast.Id;
+                    curWp.MissionId = mission.id;
+                    curWp.IsActive = true;
                     wpLast = db.Waypoints.Add(curWp);
                     await db.SaveChangesAsync();
                 }
                 db.Entry(mission).State = System.Data.Entity.EntityState.Modified;
                 await db.SaveChangesAsync();
+                trans.Commit();
+                var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
+                hub.Clients.All.newRouteForMission(mission.id);
+                
                 return Ok(wps);
             }
         }

@@ -6,12 +6,11 @@ var uavCommands = {
     /**********NAVIGATIONAL COMMANDS**********/
 
     //Return to base
-     BackToBase: function (uav, coords) {
+     BackToBase: function (uid, uav, coords) {
          var cmd = {
-             Id: 0,
              Latitude: coords.lat(),
              Longitude: coords.lng(),
-             UAVId: uad.Id,
+             UAVId: uav.Id,
          };
         $.ajax({
             type: "POST",
@@ -33,10 +32,9 @@ var uavCommands = {
     },
 
     //Hold position
-    HoldPos: function (uid, uav, coords, alt, throttle) {
-        var time = 0 /*= user input*/;
+    HoldPos: function (uid, uav, coords, alt, throttle, time) {
+        //var time = 0 /*= user input*/;
         var cmd = {
-            //Id: 0,
             Altitude: alt,
             Latitude: coords.lat(),
             Longitude: coords.lng(),
@@ -92,7 +90,7 @@ var uavCommands = {
             Latitude: coords.lat(),
             Longitude: coords.lng(),
             Throttle: throttle,
-            UAVId: uad.Id
+            UAVId: uav.Id
         };
         $.ajax({
             type: "POST",
@@ -158,7 +156,7 @@ var uavCommands = {
             Latitude: coords.lat(),
             Longitude: coords.lng(),
             Throttle: throttle,
-            UAVId: uad.Id
+            UAVId: uav.Id
         };
         $.ajax({
             type: "POST",

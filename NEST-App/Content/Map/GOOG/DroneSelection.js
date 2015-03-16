@@ -54,11 +54,11 @@
 
     //This fires when a drone turns green or black, ie it has either been selected or de-selected
     SelectionStateChanged: function (marker, selectedDrones, flightLines, uavTrails, selectedTrail) {
+        vehicleHub.server.notifySelected(marker.uav.Id, marker.selected);
         //console.log("Selection change event fired");
 
         //*******************SELECTED*********************//
         if (marker.selected == true) {
-
             selectedUAV = marker.uav;
             //console.log(selectedUAV);
             ////Refresh current flightpath and display it
@@ -89,8 +89,6 @@
         }
             //******************DE-SELECTED*******************//
         else if (marker.selected == false) {
-            //console.log("UAV De-selected");
-
             //Turn off drone's flightpath
             flightLines[marker.uav.Id].setMap(null);
 
@@ -164,15 +162,16 @@
                 var boundsSelectionArea = new google.maps.LatLngBounds(gridBoundingBox.getBounds().getSouthWest(), gridBoundingBox.getBounds().getNorthEast());
                 for (var key in uavs) {
                     if (gridBoundingBox.getBounds().contains(uavs[key].marker.getPosition())) {
-                        //selected = true; //Possibly deprecated since updating the selection paradigm
+                        uavs[key].marker.selected = true; //Possibly deprecated since updating the selection paradigm
                         uavs[key].marker.setIcon(uavs[key].marker.uavSymbolGreen);
                         selectedDrones.push(uavs[key]);//push the selected markers to an array
                         console.log("Number of selected drones: " + selectedDrones.length);
                     } else {
-                        //selected = false; //Possibly deprecated since updating the selection paradigm
+                        uavs[key].marker.selected = false; //Possibly deprecated since updating the selection paradigm
                         uavs[key].marker.setIcon(uavs[key].marker.uavSymbolBlack);
                         console.log("Number of selected drones: " + selectedDrones.length);
                     }
+                    google.maps.event.trigger(uavs[key].marker, 'selection_changed');
                 }
                 gridBoundingBox.setMap(null);
             }
@@ -185,6 +184,5 @@
             draggable: true
         });
         mapFunctions.ResetMouseDown();
-
     }
 };

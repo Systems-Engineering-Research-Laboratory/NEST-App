@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 03/11/2015 01:12:34
--- Generated from EDMX file: C:\Users\David Wu\Documents\GitHub\NEST-App\NEST-App\Models\VehicleModel.edmx
+-- Date Created: 03/11/2015 11:22:58
+-- Generated from EDMX file: C:\Users\draxi_000\Documents\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -822,7 +822,6 @@ ADD CONSTRAINT [FK_VehicleConfiguration]
     REFERENCES [dbo].[Configurations]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_VehicleConfiguration'
 CREATE INDEX [IX_FK_VehicleConfiguration]
@@ -837,7 +836,6 @@ ADD CONSTRAINT [FK_ConfigurationEquipmentList]
     REFERENCES [dbo].[Configurations]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_ConfigurationEquipmentList'
 CREATE INDEX [IX_FK_ConfigurationEquipmentList]
@@ -852,7 +850,6 @@ ADD CONSTRAINT [FK_EuipmentHealthEquipmentList]
     REFERENCES [dbo].[Equipments]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_EuipmentHealthEquipmentList'
 CREATE INDEX [IX_FK_EuipmentHealthEquipmentList]
@@ -867,7 +864,6 @@ ADD CONSTRAINT [FK_VehicleEuipmentHealth]
     REFERENCES [dbo].[UAVs]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_VehicleEuipmentHealth'
 CREATE INDEX [IX_FK_VehicleEuipmentHealth]
@@ -882,7 +878,6 @@ ADD CONSTRAINT [FK_UAVFlightState]
     REFERENCES [dbo].[UAVs]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_UAVFlightState'
 CREATE INDEX [IX_FK_UAVFlightState]
@@ -897,7 +892,6 @@ ADD CONSTRAINT [FK_UAVSchedule]
     REFERENCES [dbo].[UAVs]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_UAVSchedule'
 CREATE INDEX [IX_FK_UAVSchedule]
@@ -912,7 +906,6 @@ ADD CONSTRAINT [FK_MissionOrder]
     REFERENCES [dbo].[Missions]
         ([id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_MissionOrder'
 CREATE INDEX [IX_FK_MissionOrder]
@@ -927,7 +920,6 @@ ADD CONSTRAINT [FK_MissionSchedule]
     REFERENCES [dbo].[Schedules]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_MissionSchedule'
 CREATE INDEX [IX_FK_MissionSchedule]
@@ -942,7 +934,6 @@ ADD CONSTRAINT [FK_MaintenanceSchedule]
     REFERENCES [dbo].[Schedules]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_MaintenanceSchedule'
 CREATE INDEX [IX_FK_MaintenanceSchedule]
@@ -957,7 +948,6 @@ ADD CONSTRAINT [FK_MissionMissionLog]
     REFERENCES [dbo].[Missions]
         ([id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_MissionMissionLog'
 CREATE INDEX [IX_FK_MissionMissionLog]
@@ -972,7 +962,6 @@ ADD CONSTRAINT [FK_MissionLogMissionLogActivity]
     REFERENCES [dbo].[MissionLogs]
         ([id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_MissionLogMissionLogActivity'
 CREATE INDEX [IX_FK_MissionLogMissionLogActivity]
@@ -987,7 +976,6 @@ ADD CONSTRAINT [FK_UserUserRole]
     REFERENCES [dbo].[UserRoles]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_UserUserRole'
 CREATE INDEX [IX_FK_UserUserRole]
@@ -1002,7 +990,6 @@ ADD CONSTRAINT [FK_WaypointWaypoint]
     REFERENCES [dbo].[Waypoints]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_WaypointWaypoint'
 CREATE INDEX [IX_FK_WaypointWaypoint]
@@ -1017,7 +1004,6 @@ ADD CONSTRAINT [FK_WaypointMission]
     REFERENCES [dbo].[Missions]
         ([id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_WaypointMission'
 CREATE INDEX [IX_FK_WaypointMission]
@@ -1032,7 +1018,6 @@ ADD CONSTRAINT [FK_UAVEventLog]
     REFERENCES [dbo].[UAVs]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_UAVEventLog'
 CREATE INDEX [IX_FK_UAVEventLog]
@@ -1047,7 +1032,6 @@ ADD CONSTRAINT [FK_UserUAV]
     REFERENCES [dbo].[Users]
         ([user_id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_UserUAV'
 CREATE INDEX [IX_FK_UserUAV]

@@ -157,10 +157,18 @@
                 alert(data + " " + status);
           });
         }
+        $scope.batteryDrop = function () {
+            $scope.blockUI();
+            var number = Math.floor((Math.random() * ($scope.uavs.length)) + 0);
+            var pickedUav = $scope.uavs[number];
+            localStorage.setItem("uavBatteryID", pickedUav.Id);
+            localStorage.setItem("uavBatteryAmount", $('#desiredBatteryDrop').val());
+            $.unblockUI();
+        }
 
         $scope.createEmergencyEvent = function () {
             $scope.blockUI();
-            var number = Math.floor((Math.random() * ($scope.uavs.length - 1)) + 0);
+            var number = Math.floor((Math.random() * ($scope.uavs.length)) + 0);
             var number2 = Math.floor((Math.random() * ($scope.emergencySituations.length)) + 0);
             var pickedUav = $scope.uavs[number];
             var eEvent = {

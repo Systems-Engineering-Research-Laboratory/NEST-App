@@ -25,6 +25,11 @@
     <button id="delete-all-button">Delete All</button>
 </div>
 
+<div id="gotouav" style="display: block;">
+    <input type="text" id="enter_callsign" placeholder="UAV Callsign" />
+    <button class="btn-default" id="gotouavbtn" onclick="mapFunctions.centerOnUAV(document.getElementById('enter_callsign').value)">GO</button>
+
+</div>
 
 <!-- command pop up placeholder -->
 <div id="CommPopPlaceHolder">
@@ -42,6 +47,53 @@
         </p>
         <button class="btn btn-default disabled sendBtn" id="goBtn">GO</button>
         <button class="btn btn-default clear" id="clearBtn">CLEAR</button>
+    </div>
+
+    <!-- hold command window -->
+    <div id="hold_popup" class="commandWindow">
+        <div class="closeBtn"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.hold_hide()"></span></div>
+        <h3 class="UAVId">Select an UAV first</h3>
+        <h4>Hold Position:</h4>
+        <p>
+            <input type="text" name="hold_time_amount" id="hold_time" placeholder="Time (in minutes)" />
+        </p>
+        <button class="btn btn-default" id="hold_click" onclick="">Ok</button>
+        <button class="btn btn-default" onclick="mapFunctions.hold_hide()">Cancel</button>
+    </div>
+
+    <!-- hold command window -->
+    <div id="adjust_popup" class="commandWindow">
+        <div class="closeBtn"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.adjust_hide()"></span></div>
+        <h3 class="UAVId">Select an UAV first</h3>
+        <h4>Hold Position:</h4>
+        <p>
+            Altitude: <input type="text" name="alt_amount" id="adjust_alt" placeholder="Altitude" />
+        </p>
+        <p>
+            Throttle: <input type="text" name="throt_amount" id="adjust_throttle" placeholder="Throttle" />
+        </p>
+        <button class="btn btn-default" id="adjust_click" onclick="">Ok</button>
+        <button class="btn btn-default" onclick="mapFunctions.adjust_hide()">Cancel</button>
+    </div>
+
+    <!--Return to base command window-->
+    <div id="return_popup" class="commandWindow">
+        <div class="closeBtn"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.return_hide()"></span></div>
+        <h3 class="UAVId">Select an UAV first</h3>
+        <h3>Returning to base</h3>
+        <p>Please confirm</p>
+        <button class="btn btn-default" id="return_click" onclick="">Ok</button>
+        <button class="btn btn-default" onclick="mapFunctions.return_hide()">Cancel</button>
+    </div>
+
+    <!--Force landing command window-->
+    <div id="land_popup" class="commandWindow">
+        <div class="closeBtn"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.land_hide()"></span></div>
+        <h3 class="UAVId">Select an UAV first</h3>
+        <h3>Force Emergency Landing</h3>
+        <p>Please confirm</p>
+        <button class="btn btn-default" id="land_click" onclick="">Ok</button>
+        <button class="btn btn-default" onclick="mapFunctions.land_hide()">Cancel</button>
     </div>
 
     <!-- send notification window -->

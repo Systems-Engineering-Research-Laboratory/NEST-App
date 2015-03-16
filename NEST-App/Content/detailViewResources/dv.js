@@ -47,17 +47,17 @@ $(document).ready(function () {
         };
         setFilterGrid("operator_table", operatorfilter_value);
 
-        var eventlogfilter_value = {
-            display_all_text: "All",
-            col_0: "select",
-            col_1: "select",
-            col_2: "select",
-            col_3: "none",
-            col_4: "select"
-        };
+        //var eventlogfilter_value = {
+        //    display_all_text: "All",
+        //    col_0: "select",
+        //    col_1: "select",
+        //    col_2: "select",
+        //    col_3: "none",
+        //    col_4: "select"
+        //};
 
-        if (document.getElementById("event_log_table") != null)
-            setFilterGrid("event_log_table", eventlogfilter_value);
+        //if (document.getElementById("event_log_table") != null)
+        //    setFilterGrid("event_log_table", eventlogfilter_value);
 
 
 
@@ -218,11 +218,27 @@ $(document).ready(function () {
 
         var vehicleHub = $.connection.vehicleHub;
 
+        vehicleHub.client.changeSelected = function (uavId, selectionState) {
+            for (var i = 1; i < table.rows.length; i++) {
+                if (table.rows[i].cells[0].innerHTML == uavId) {
+                    if (selectionState == true) {
+                        table.rows[i].style.backgroundColor = "#5CD65C";
+                        table.rows[i].style.color = "#FFFFFF";
+                    }
+                    else {
+                        table.rows[i].style.backgroundColor = "#FFFFFF";
+                        table.rows[i].style.color = "#000000";
+                    }
+                }
+            }
+        }
+
         vehicleHub.client.flightStateUpdate = function (vehicle) {
             uavs[vehicle.Id].Id = vehicle.Id;
             uavs[vehicle.Id].Battery = vehicle.BatteryLevel;
             uavs[vehicle.Id].Alt = vehicle.Altitude;
             uavs[vehicle.Id].BatteryCheck = parseFloat(Math.round(vehicle.BatteryLevel * 100)).toFixed(2);
+            
 
             for (var i = 1; i < table.rows.length; i++) {
                 if (table.rows[i].cells[0].innerHTML == uavs[vehicle.Id].Id) {
@@ -640,11 +656,15 @@ function uavMarkers(data, textStatus, jqXHR) {
         //When fired, the UAV is marked as 'selected'
         google.maps.event.addListener(marker, 'click', (function () {
             droneSelection.CtrlSelect(this, selectedDrones);
-            var uav = selectedDrones[0];
-            localStorage.setItem('uavid', uav.Id);
+            if (selectedDrones.length == 0) { }
+            else {
+                var uav = selectedDrones[0];
+                localStorage.setItem('uavid', uav.Id);
+            }
         }));
 
         uavs[data[i].Id].marker = marker;
+        marker.set('selected', false);
         uavs[data[i].Id].flightPath = flightLines[data[i].Id];
         uavs[data[i].Id].marker.setMap(map);
 
