@@ -98,7 +98,8 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             this.currentWpIndex += 1;
             this.currentWaypoint = this.waypoints[this.currentWpIndex];
             if (this.hasCommsLink && resolved) {
-                reporter.reportReroute(this.Id, this.Callsign);
+                this.reporter.addNewRouteToMission(this.Mission.id, this.waypoints);
+                this.reporter.reportReroute(this.Id, this.Callsign);
             }
         }
         //Process this waypoint if we have one
@@ -1074,6 +1075,13 @@ function PathGenerator(areaContainer, reporter) {
             p1.X, p1.Y, p2.X, p2.Y);
         if (intersects) console.log("checkIfIntersect found an intersection!");
         return intersects;
+    }
+
+    this.buildAndReportSafeRoute = function (wps, curPos, startIndex, missionId) {
+        var resolved = this.buildAndReportSafeRoute(wps, curPos, startIndex, missionId);
+        if (resolved) {
+            this.reporter.addNewRouteToMission(this.waypoints, missionId);
+        }
     }
 
     this.buildSafeRoute = function (wps, curPos, startIndex) {
