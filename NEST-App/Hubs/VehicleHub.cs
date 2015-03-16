@@ -119,6 +119,11 @@ namespace NEST_App.Hubs
             Clients.All.vehicleHasNewMission(uavId, schedId, missionId);
         }
 
+        public void NotifySelected(int uavId, bool selected)
+        {
+            Clients.All.changeSelected(uavId, selected);
+        }
+
         public async Task BroadcastAcceptedCommand(CMD_ACK ack)
         {
             NestContainer db = new NestContainer();
