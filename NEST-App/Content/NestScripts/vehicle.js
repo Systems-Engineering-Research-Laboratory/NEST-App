@@ -98,7 +98,8 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             this.currentWpIndex += 1;
             this.currentWaypoint = this.waypoints[this.currentWpIndex];
             if (this.hasCommsLink && resolved) {
-                reporter.reportReroute(this.Id, this.Callsign);
+                this.reporter.addNewRouteToMission(this.Mission.id, this.waypoints);
+                this.reporter.reportReroute(this.Id, this.Callsign);
             }
         }
         //Process this waypoint if we have one
@@ -106,7 +107,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             //Uh oh, loss of link. 
             this.FlightState.BatteryLevel -= dt / 1800;
             if (this.FlightState.BatteryLevel > .5) {
-                //So we don't report out
+                //So we don't report out or follow waypoints, just hover
                 return;
             } else if (!this.generatedContingency) {
                 this.generatedContingency = true;
@@ -136,18 +137,13 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         }
 
         this.FlightState.BatteryLevel -= dt / 1800;
-
-        reporter.updateFlightState(this.FlightState);
+        if (this.hasCommsLink) {
+            reporter.updateFlightState(this.FlightState);
+        }
     };
 
     this.setCommsLink = function (isConnected) {
         this.hasCommsLink = isConnected;
-        if (isConnected) {
-            //do something. Maybe resume mission? Not sure...
-        }
-        else {
-            //do something.
-        }
     }
 
     
@@ -1076,11 +1072,18 @@ function PathGenerator(areaContainer, reporter) {
         return intersects;
     }
 
+    this.buildAndReportSafeRoute = function (wps, curPos, startIndex, missionId) {
+        var resolved = this.buildAndReportSafeRoute(wps, curPos, startIndex, missionId);
+        if (resolved) {
+            this.reporter.addNewRouteToMission(this.waypoints, missionId);
+        }
+    }
+
     this.buildSafeRoute = function (wps, curPos, startIndex) {
         if (!startIndex) {
             startIndex = 0;
         }
-        wps.splice(0, 0, new Waypoint(curPos));
+        wps.splice(startIndex, 0, new Waypoint(curPos));
         var areas = this.areaContainer.restrictedAreas;
         var addedPoints = false;
         for (var i = startIndex; i < wps.length - 1; i++) {
