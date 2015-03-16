@@ -522,7 +522,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     }
 
     this.brandNewTarget = function(target, reportOut){
-        var wps = this.pathGen.brandNewTarget(this.FlightState, end, reportOut, this);
+        var wps = this.pathGen.brandNewTarget(this.FlightState, target, reportOut, this);
         this.waypoints = wps;
         this.currentWpIndex = 0;
         this.currentWaypoint = this.waypoints[this.currentWpIndex];
