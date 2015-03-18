@@ -187,13 +187,21 @@ html, body, #map-canvas {
     display: none;
 }
 
-#enter_callsign{
+#gotouavdiv{
     position: fixed;
     top: 80%;
     left: .5%;
+    display: block;
+    float: left;
+    margin:auto;
+    width: 170px;
+    height: 60px;
+}
+
+#enter_callsign{
     max-width: 114px;
     min-width: 70px;
-    max-height: 25px;
+    max-height: 27px;
     padding: 10px 10px;
     display: block;
     float: left;
@@ -201,15 +209,11 @@ html, body, #map-canvas {
 }
 
 #gotouavbtn{
-    position: fixed;
-    top: 79.8%;
-    left: 9%;
+    margin-left: 2px;
 }
 
 #lockuavbtn{
-    position: fixed;
-    top: 86%;
-    left: .5%;
+    margin-top: 2px;
 }
 
 .commandWindow {
