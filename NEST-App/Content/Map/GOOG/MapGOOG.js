@@ -10,6 +10,7 @@ var storedGroups = []; //keep track of different stored groupings of UAVs
 var ctrlDown = false;
 var flightLines = [];
 var selectedUAV; //the uav that's been selected
+var camLockedUAV = null;
 
 //Drone Trails
 var selectedTrail; //the trail that the selected uav has
@@ -182,8 +183,10 @@ $(document).ready(function () {
                         data: eventLog
                     });
                 }
-
                 warningUavId = uavs[vehicle.Id].Id;
+            }
+            if (vehicle.Id == camLockedUAV) {
+                mapFunctions.CenterOnUAV(vehicle.Id);
             }
         }
 
@@ -402,7 +405,7 @@ $(document).ready(function () {
         });
 
 
-
+        google.maps.event.addListener(mapListeners, 'drag', function (e) { camLockedUAV = null; });
         google.maps.event.addListener(mapListeners, 'mousemove', function (e) { mapFunctions.DrawBoundingBox(this, e) });
         google.maps.event.addListener(mapListeners, 'mousedown', function (e) { mapFunctions.StopMapDrag(this, e); });
         google.maps.event.addListener(mapListeners, 'mouseup', function (e) { droneSelection.AreaSelect(this, e, mapFunctions.mouseIsDown, mapFunctions.shiftPressed, mapFunctions.gridBoundingBox, selectedDrones, uavs) });

@@ -164,8 +164,6 @@
         }
     },
 
-
-
     ConsNotifier: function (theMap, lat, lng, notifier, message) {
         var location = new google.maps.LatLng(lat, lng);
         var noteMarker = new google.maps.Marker({
@@ -330,13 +328,16 @@
         return uav;
     },
 
-    centerOnUAV: function (cs) {
+    GetKeyFromCallsign: function(cs){
         for (var key in uavs) {
-            if (uavs[key].Callsign != cs) {}
-            else {
-                map.setCenter(uavs[key].Position);
+            if (uavs[key].Callsign == cs) {
+                return key;
             }
         }
+    },
+
+    CenterOnUAV: function (uavKey) {
+        map.setCenter(uavs[uavKey].marker.position);
     },
 
     goTo_show: function () {

@@ -27,8 +27,14 @@
 
 <div id="gotouav" style="display: block;">
     <input type="text" id="enter_callsign" placeholder="UAV Callsign" />
-    <button class="btn-default" id="gotouavbtn" onclick="mapFunctions.centerOnUAV(document.getElementById('enter_callsign').value)">GO</button>
-
+    <button class="btn-default" id="gotouavbtn" onclick="
+        mapFunctions.CenterOnUAV(
+            mapFunctions.GetKeyFromCallsign(document.getElementById('enter_callsign').value)
+        );">GO</button>
+    <button class="btn-default" id="lockuavbtn" onclick="
+    camLockedUAV = mapFunctions.GetKeyFromCallsign(document.getElementById('enter_callsign').value);
+    console.log('Locked uav key is: ' + camLockedUAV);
+    ">FOLLOW</button>
 </div>
 
 <!-- command pop up placeholder -->
