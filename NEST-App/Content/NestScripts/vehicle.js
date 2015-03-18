@@ -409,22 +409,29 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     this.setCommand = function (target) {
         if (this.hasCommsLink && !this.handleNonNavigationalCommand(target)) {
             if (this.currentWaypoint) {
-                target.NextWaypointId = this.currentWaypoint.Id;
+                this.pathGen.insertIntermediateTarget(this.waypoints,
+                    this.FlightState,
+                    target,
+                    this.currentWpIndex,
+                    this.hasCommsLink,
+                    this.Mission.id
+                    );
+                this.currentWaypoint = this.waypoints[this.currentWpIndex + 1]
+                this.currentWpIndex += 1;
             }
-            var promise = this.pathGen.insertWaypoint(this.Mission, target, this.waypoints);
-            //
-            promise.done(function (data, textStatus, jqXHR) {
-                that.reporter.ackCommand(target, target.type, "OK", true);
-                //extra
-                data.obj = target;
-                data.objType = "command";
-                that.currentWaypoint = data;
-            });
-            //if fail pass false
-            promise.fail(function (jqXHR, textStatus, err) {
-                that.reporter.ackCommand(target, target.type, "Waypoint creation failed, Error: " + err, false);
+            //var promise = this.pathGen.insertWaypoint(this.Mission, target, this.waypoints);
+            //promise.done(function (data, textStatus, jqXHR) {
+            //    that.reporter.ackCommand(target, target.type, "OK", true);
+            //    //extra
+            //    data.obj = target;
+            //    data.objType = "command";
+            //    that.currentWaypoint = data;
+            //});
+            ////if fail pass false
+            //promise.fail(function (jqXHR, textStatus, err) {
+            //    that.reporter.ackCommand(target, target.type, "Waypoint creation failed, Error: " + err, false);
 
-            });
+            //});
         }
         //else non navigational
     }
@@ -675,6 +682,24 @@ function PathGenerator(areaContainer, reporter) {
         }
         return pts;
     }
+
+    this.insertIntermediateTarget = function (wps, curPos, target, afterIndex, report, missionId) {
+        
+        var tempWps = this.brandNewTarget(curPos, target, false);
+        tempWps.splice(0, 1);
+        insertMultiPointsIntoList(wps, tempWps, afterIndex);
+        this.buildSafeRoute(wps, curPos, afterIndex);
+        if (report) {
+            var jq = this.reporter.addNewRouteToMission(missionId, wps);
+            jq.success(function (data, textStatus, jqXHR) {
+                for (var i = 0; i < wps.length; i++) {
+                    wps[i].updateInfo(data[i]);
+                }
+            });
+        }
+        return tempWps[tempWps.length - 1];
+    }
+
 
     this.appendSafeRouteToMission = function (wps, curPos, target, missionId, reportOut) {
         var tempRoute = [new Waypoint(wps[wps.length - 1]), new Waypoint(target)];
@@ -1207,6 +1232,10 @@ function PathGenerator(areaContainer, reporter) {
         while (verts.length > 0) {
 
             var u = popArrayMin(verts);
+            if (u == p2) {
+                //We found it, break.
+                break;
+            }
             for (var i = 0; i < u.edges.length; i++) {
                 var edge = u.edges[i];
                 var v = edge.vertex;
@@ -1260,6 +1289,7 @@ function PathGenerator(areaContainer, reporter) {
         return edges;
     }
 
+    
 }
 
 
