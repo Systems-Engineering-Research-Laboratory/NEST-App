@@ -84,24 +84,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     //Functions. Careful not to add global helper functions here.
     this.process = function (dt) {
-        //If the current waypoint is null but the reporter is pending, just return.
-        if (this.isAtBase() && this.FlightState.BatteryLevel < 1) {
-            this.chargeBattery(dt);
-            reporter.updateFlightState(this.FlightState);
-            return;
-        }
-        if (this.currentWaypoint && this.reporter.pendingResult) {
-            return;
-        }
-        if (this.pathGen.gotNewRestrictedArea() && this.waypoints) {
-            var resolved = this.pathGen.buildSafeRoute(this.waypoints, this.FlightState, this.currentWpIndex);
-            this.currentWpIndex += 1;
-            this.currentWaypoint = this.waypoints[this.currentWpIndex];
-            if (this.hasCommsLink && resolved) {
-                this.reporter.addNewRouteToMission(this.Mission.id, this.waypoints);
-                this.reporter.reportReroute(this.Id, this.Callsign);
-            }
-        }
+        this.preprocess();
         //Process this waypoint if we have one
         if (!this.hasCommsLink) {
             //Uh oh, loss of link. 
@@ -135,12 +118,35 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             //Make sure we don't drop the battery level 
             return;
         }
-
         this.FlightState.BatteryLevel -= dt / 1800;
         if (this.hasCommsLink) {
             reporter.updateFlightState(this.FlightState);
         }
     };
+
+    this.preprocess = function () {
+        //If the current waypoint is null but the reporter is pending, just return.
+        if (this.isAtBase() && this.FlightState.BatteryLevel < 1) {
+            this.chargeBattery(dt);
+            reporter.updateFlightState(this.FlightState);
+            return;
+        }
+        if (this.currentWaypoint && this.reporter.pendingResult) {
+            return;
+        }
+        if (this.pathGen.gotNewRestrictedArea() && this.waypoints) {
+            var resolved = this.pathGen.buildSafeRoute(this.waypoints, this.FlightState, this.currentWpIndex);
+            if (!resolved) {
+                return;
+            }
+            this.currentWpIndex += 1;
+            this.currentWaypoint = this.waypoints[this.currentWpIndex];
+            if (this.hasCommsLink && resolved) {
+                this.reporter.addNewRouteToMission(this.Mission.id, this.waypoints);
+                this.reporter.reportReroute(this.Id, this.Callsign);
+            }
+        }
+    }
 
     this.setCommsLink = function (isConnected) {
         this.hasCommsLink = isConnected;
@@ -203,13 +209,13 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         else {
             //Just go to, this is just a navigational point.
             if (this.flyToAltitude(dt, this.currentWaypoint.Altitude)) {
-                return this.deadReckon(dt, wp.X, wp.Y);
+                return this.deadReckon(dt, wp.X, wp.Y, true);
             }
         }
     }
 
     //Advances the aircraft directly towards its destination. Nothing fancy here.
-    this.deadReckon = function (dt, X, Y) {
+    this.deadReckon = function (dt, X, Y, retainSpeed) {
         var reachedDest = false;
         //Find the direction it wants to go there
         heading = calculateHeading(this.FlightState.X, this.FlightState.Y, X, Y);
@@ -227,10 +233,12 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             //We are at the target, stop and set dX to the distance to put us over the target
             dX = distanceX;
             dY = distanceY;
-            this.FlightState.VelocityX = 0;
-            this.FlightState.VelocityY = 0;
             //We reached the destination.
             reachedDest = true;
+            if (!retainSpeed) {
+                this.FlightState.VelocityX = 0;
+                this.FlightState.VelocityY = 0;
+            }
         }
         //Advance it forward
         this.FlightState.X += dX;
@@ -321,10 +329,10 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         switch (cmd.type) {
             case "CMD_NAV_Waypoint":
             case "CMD_NAV_Target": //Target commands just need to be dead reckoned towards the objective.
-                return this.deadReckon(dt, cmd.X, cmd.Y);
+                return this.deadReckon(dt, cmd.X, cmd.Y, true);
                 break;
             case "CMD_NAV_Hover":
-                if (this.deadReckon(dt, cmd.X, cmd.Y)) {
+                if (this.deadReckon(dt, cmd.X, cmd.Y, false)) {
                     if (cmd.Time > 0) {
                         cmd.Time -= dt;
                     }
@@ -419,19 +427,6 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                 this.currentWaypoint = this.waypoints[this.currentWpIndex + 1]
                 this.currentWpIndex += 1;
             }
-            //var promise = this.pathGen.insertWaypoint(this.Mission, target, this.waypoints);
-            //promise.done(function (data, textStatus, jqXHR) {
-            //    that.reporter.ackCommand(target, target.type, "OK", true);
-            //    //extra
-            //    data.obj = target;
-            //    data.objType = "command";
-            //    that.currentWaypoint = data;
-            //});
-            ////if fail pass false
-            //promise.fail(function (jqXHR, textStatus, err) {
-            //    that.reporter.ackCommand(target, target.type, "Waypoint creation failed, Error: " + err, false);
-
-            //});
         }
         //else non navigational
     }
@@ -671,14 +666,17 @@ function PathGenerator(areaContainer, reporter) {
 
     this.brandNewTarget = function (begin, end, reportOut, veh) {
         var pts = [new Waypoint({ Latitude: end.Latitude, Longitude: end.Longitude })];
-        this.buildSafeRoute(pts, begin, 0);
-        if (reportOut) {
+        var resolved = this.buildSafeRoute(pts, begin, 0);
+        if (resolved && reportOut) {
             var promise = this.reporter.addNewRouteToMission(end.id, pts);
             promise.success(function (data, textStatus, jqXHR) {
                 for (var i = 0; i < pts.length; i++) {
                     pts[i].updateInfo(data[i]);
                 }
             });
+        }
+        else if (reportOut) {
+            //The algorithm failed in this case. Eventually address this.
         }
         return pts;
     }
@@ -723,31 +721,6 @@ function PathGenerator(areaContainer, reporter) {
             return newWps;
         }
         return wps;
-    }
-
-    this.resolvePath = function (mission, wps, veh) {
-        //For now, we are just going to get the direct waypoints.
-        if (wps && wps.length < 2) {
-            this.withEndPoints(mission, wps, veh);
-        }
-        return wps;
-    }
-
-    this.withEndPoints = function (mission, wps, veh) {
-        //If the wps is less than 2, then we are missing the end points of the waypoints.
-        if (wps && wps.length < 2) {
-            wps = this.getBeginningAndEnd(veh.FlightState, mission, wps, veh);
-        }
-        return wps;
-    }
-
-    //Immediately return the beginning and end of the waypoints.
-    this.getBeginningAndEnd = function (begin, end, wps, veh) {
-
-        var pts = [Waypoint({ Latitude: begin.Latitude, Longitude: end.Longitude }),
-            Waypoint({ Latitude: end.Latitude, objective: end.Longitude })];
-
-        return pts;
     }
 
     this.addWaypointInbetween = function (before, newPoint, wps, veh) {
@@ -811,24 +784,6 @@ function PathGenerator(areaContainer, reporter) {
         }
     }
 
-
-    this.validatePoint = function (testPoint) {
-        return true;
-    }
-
-    this.checkPathValidity = function (wps) {
-        this.movePointsOutOfAreas(wps);
-        for (var i = 0; i < wps.length - 1; i++) {
-            var cands = this.checkPath(wps[i], wps[i + 1]);
-            if (cands && cands.length > 0) {
-                insertMultiPointsIntoList(wps, cands, i);
-                i--; //Recheck the old first point with the new first point
-            }
-        }
-    }
-
-
-
     this.movePointsOutOfAreas = function (wps) {
         for (var i = 0; i < wps.length; i++) {
             this.movePointOutOfArea(wps[i]);
@@ -857,155 +812,6 @@ function PathGenerator(areaContainer, reporter) {
 
     this.checkIfPointInArea = function (p, area) {
         return p.X > area.SouthWestX && p.Y > area.SouthWestY && p.X < area.NorthEastX && p.Y < area.NorthEastY;
-    }
-
-    this.checkPath = function (p1, p2) {
-        var areas = this.areaContainer.restrictedAreas;
-        var candidates = [];
-        var ints = [];
-        for (var i = 0; i < areas.length; i++) {
-            var area = areas[i];
-            if (this.checkIfIntersect(p1, p2, area)) {
-                //toInsert = this.fixPoints(p1, p2, area);
-                //candidates.push(toInsert);
-                var filt = getAreaIntersectionsFiltered(p1, p2, area);
-                var container = {
-                    filt: filt,
-                    area: area
-                }
-                ints.push(container);
-            }
-        }
-        ints.sort(function (a, b) {
-            var ax = a.filt[0].X;
-            var ay = a.filt[0].Y;
-            var bx = b.filt[0].X;
-            var by = b.filt[0].Y;
-            return d(p1.X, p1.Y, ax, ay) - d(p1.X, p1.Y, bx, by);
-        });
-        var sol = []
-        for (var i = 0; i < ints.length; i++) {
-            var ar = ints[i].area;
-            if (sol.length == 0) {
-                var nP = this.fixPoints(p1, p2, ar);
-            } else {
-                var nP = this.checkPath(sol[sol.length - 1], p2);
-            }
-            sol = sol.concat(nP);
-            if (this.checkCandidatePath(p1, p2, sol)) return sol;
-        }
-        return sol;
-        //var goodCands = this.checkCandidates(p1, p2, candidates);
-        //if (goodCands) {
-        //    return goodCands;
-        //}
-    }
-
-
-    this.checkCandidates = function (p1, p2, candidates) {
-        var areas = this.areaContainer.restrictedAreas;
-        var candPerms = permute(candidates);
-        for (var i = 0; i < candPerms.length; i++) {
-            perm = candPerms[i];
-            var path = [];
-            for (var j = 0; j < perm.length; j++) {
-                path = path.concat(perm[j]);
-            }
-            var isPathGood = this.checkCandidatePath(p1, p2, path);
-            if (isPathGood) return path;
-        }
-        return null;
-    }
-
-    //Checks to see if the proposed path hits an areas. If it doesn't, then it returns true. Else returns false.
-    this.checkCandidatePath = function (p1, p2, pts) {
-        var areas = this.areaContainer.restrictedAreas;
-        for (var j = 0; j < areas.length; j++) {
-            var area = areas[j];
-            var runningBool = true;
-            runningBool = runningBool && !this.checkIfIntersect(p1, pts[0], area);
-            for (var i = 0; i < pts.length - 1; i++) {
-                runningBool = runningBool && !this.checkIfIntersect(pts[i], pts[i + 1], area);
-            }
-            runningBool = runningBool && !this.checkIfIntersect(pts[pts.length - 1], p2, area);
-            if (!runningBool) {
-                break;
-            }
-        }
-        return runningBool;
-    }
-
-    //Creates an array of all the permutations of the input array.
-    function permute(input) {
-        var permArr = [],
-        usedChars = [];
-        function main() {
-            var i, ch;
-            for (i = 0; i < input.length; i++) {
-                ch = input.splice(i, 1)[0];
-                usedChars.push(ch);
-                if (input.length == 0) {
-                    permArr.push(usedChars.slice());
-                }
-                main();
-                input.splice(i, 0, ch);
-                usedChars.pop();
-            }
-            return permArr;
-        }
-        return main();
-    }
-
-    this.fixPoints = function (p1, p2, area) {
-        //Idea:
-        //case 1: intersect two sides that share a corner, set a new waypoint on that corner
-        //case 2: intersects two opposite sides, deal with that somehow
-        var ints = getAreaIntersections(p1, p2, area);
-        var sides = [];
-        for (var i = 0; i < ints.length; i++) {
-            if (ints[i]) {
-                sides.push(i);
-            }
-        }
-        //Sides now contains an array of which sides have been intersected
-        //Side 0: East side
-        //Side 1: North side
-        //etc...
-
-        //We intersected two sides which share a corner
-        if (sides[1] - sides[0] == 1 || sides[0] == 0 && sides[1] == 3) {
-            //two adjacent sides that share a corner
-            if (sides[1] % 2 == 0) {
-                //Make sure that sides[0] intersects the x axis
-                var tmp = sides[1];
-                sides[1] = sides[0];
-                sides[0] = tmp;
-            }
-            var xys = [area.NorthEastX + 1, area.NorthEastY + 1, area.SouthWestX - 1, area.SouthWestY - 1];
-            var selectedCorner = {
-                X: xys[sides[0]],
-                Y: xys[sides[1]],
-            }
-            XYToLatLong(selectedCorner);
-            return [new Waypoint(selectedCorner)];
-        }
-            //Two opposite edges were intersects
-        else {
-            var isNorthSouthInt = sides[0] == 1;
-            var int1 = ints[isNorthSouthInt ? 1 : 0];
-            var int2 = ints[isNorthSouthInt ? 3 : 2];
-            var fix = fixOppositeEdgeIntersection(area, int1, int2, isNorthSouthInt);
-            var heading = calculateHeading(p1.X, p1.Y, p2.X, p2.Y);
-            if (isNorthSouthInt) {
-                if (heading < Math.PI / 2 || heading > 3 * Math.PI / 2) {
-                    fix.reverse();
-                }
-            }
-            else if (heading > Math.PI / 2 && heading < 3 * Math.PI / 2) {
-                fix.reverse();
-            }
-            return fix;
-        }
     }
 
     function getAreaIntersectionsFiltered(p1, p2, area) {
@@ -1132,6 +938,10 @@ function PathGenerator(areaContainer, reporter) {
         for (var i = startIndex; i < wps.length - 1; i++) {
             if (checkPathIntersectsArea(wps[i], wps[i] + 1, areas)) {
                 var newwps = this.connectSafely(wps[i], wps[i + 1]);
+                //The algorithm failed
+                if (newwps.length == 0) {
+                    return false;
+                }
                 wps[i].prev = null;
                 wps[i].edges = null;
                 wps[i + 1].prev = null;
@@ -1252,12 +1062,17 @@ function PathGenerator(areaContainer, reporter) {
     function getDijkstrasResult(p1, p2) {
         var result = [];
         var current = p2;
-        while (current.prev != p1) {
+        while (current && current.prev != p1) {
             result.push(current.prev);
             current = current.prev;
         }
-        result.reverse();
-        return result;
+        //The algorithm was successful
+        if (current) {
+            result.reverse();
+            return result;
+        } else {
+            return [];
+        }
     }
 
     function popArrayMin(arr) {
@@ -1508,9 +1323,6 @@ function calculateDistance(x1, y1, x2, y2) {
 }
 
 var d = calculateDistance;
-
-
-
 //Takes the well formed geography and appends the lat and long as doubles, then appends the X and Y we get from the lat and long
 appendLonLatFromDbPoint = function (obj, point) {
     var pointText = point.Geography.WellKnownText
