@@ -415,7 +415,7 @@
     },
 
     goTo_RR_hide: function () {
-        $(".RoundRobin_popup").fadeOut("slow", function () { });
+        $("#RoundRobin_popup").fadeOut("slow", function () { });
     },
 
     RR_button_accept: function () {
