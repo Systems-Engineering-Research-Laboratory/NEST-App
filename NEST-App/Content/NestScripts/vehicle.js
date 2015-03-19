@@ -136,9 +136,6 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         }
         if (this.pathGen.gotNewRestrictedArea() && this.waypoints) {
             var resolved = this.pathGen.buildSafeRoute(this.waypoints, this.FlightState, this.currentWpIndex);
-            if (!resolved) {
-                return;
-            }
             this.currentWpIndex += 1;
             this.currentWaypoint = this.waypoints[this.currentWpIndex];
             if (this.hasCommsLink && resolved) {
@@ -166,7 +163,8 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             }
             LatLongToXY(this.Mission);
             //Ignore stuff in the database for now.
-            that.generateWaypoints();
+            this.generateWaypoints(this.Mission, "mission");
+            console.log("generated waypoints");
             reporter.broadcastNewMission(this.Id, this.Schedule.Id, this.Mission.id);
             console.log(this.Callsign + " moved on to mission " + this.Mission.id);
         }
@@ -424,8 +422,8 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                     this.hasCommsLink,
                     this.Mission.id
                     );
-                this.currentWaypoint = this.waypoints[this.currentWpIndex + 1]
-                this.currentWpIndex += 1;
+                this.currentWaypoint = this.waypoints[this.currentWpIndex]
+                //this.currentWpIndex += 1;
             }
         }
         //else non navigational
@@ -481,9 +479,11 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             && calculateDistance(thisX, thisY, this.Base.X, this.Base.Y) < 5;
     }
 
-    this.generateWaypoints = function (target) {
+    this.generateWaypoints = function (target, type) {
         var target = target || this.Command || this.Mission;
-        var type = this.Command ? "command" : (this.Mission? "mission" : "target");
+        if (!type) {
+            var type = this.Command ? "command" : (this.Mission ? "mission" : "target");
+        }
         //generates new waypoints
         this.brandNewTarget(target, true);
         var n = this.waypoints.length;
@@ -666,8 +666,8 @@ function PathGenerator(areaContainer, reporter) {
 
     this.brandNewTarget = function (begin, end, reportOut, veh) {
         var pts = [new Waypoint({ Latitude: end.Latitude, Longitude: end.Longitude })];
-        var resolved = this.buildSafeRoute(pts, begin, 0);
-        if (resolved && reportOut) {
+        this.buildSafeRoute(pts, begin, 0);
+        if (reportOut) {
             var promise = this.reporter.addNewRouteToMission(end.id, pts);
             promise.success(function (data, textStatus, jqXHR) {
                 for (var i = 0; i < pts.length; i++) {
@@ -675,7 +675,7 @@ function PathGenerator(areaContainer, reporter) {
                 }
             });
         }
-        else if (reportOut) {
+        else {
             //The algorithm failed in this case. Eventually address this.
         }
         return pts;
@@ -940,7 +940,7 @@ function PathGenerator(areaContainer, reporter) {
                 var newwps = this.connectSafely(wps[i], wps[i + 1]);
                 //The algorithm failed
                 if (newwps.length == 0) {
-                    return false;
+                    continue;
                 }
                 wps[i].prev = null;
                 wps[i].edges = null;
@@ -983,6 +983,7 @@ function PathGenerator(areaContainer, reporter) {
         this.appendPointEdges(p2);
         this.appendPointEdges(p1);
         var result = this.doDijkstras(p1, p2);
+        this.removePointEdges();
         return result;
     }
 
@@ -1004,6 +1005,27 @@ function PathGenerator(areaContainer, reporter) {
             var area = areas[i];
             for (var j = 0; j < area.corners.length; j++) {
                 this.checkIfConnected(p, area.corners[j]);
+            }
+        }
+    }
+
+    this.removePointEdges = function () {
+        var areas = this.areaContainer.restrictedAreas;
+        for (var i = 0; i < areas.length; i++) {
+            var a = areas[i];
+            for (var j = 0; j < a.corners.length; j++) {
+                var edges = a.corners[j].edges
+                this.removeDisposableEdges(edges);
+            }
+        }
+    }
+
+    this.removeDisposableEdges = function(edges) {
+        for (var i = 0; i < edges.length; i++) {
+            var e = edges[i];
+            if (e.disposable) {
+                edges.splice(i, 1);
+                i--;
             }
         }
     }
@@ -1030,7 +1052,8 @@ function PathGenerator(areaContainer, reporter) {
             });
             c.edges.push({
                 vertex: p,
-                distance: cDistance
+                distance: cDistance,
+                disposable: true,
             });
         }
     }

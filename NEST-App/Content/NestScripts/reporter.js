@@ -69,7 +69,6 @@ function Reporter() {
     }
 
     this.putToServer = function (url, data, opts, success) {
-
         return $.ajax({
             url: url,
             data: JSON.stringify(data),
@@ -135,7 +134,6 @@ function Reporter() {
             type: 'GET',
         })
     }
-
 
     this.addNewRouteToMission = function (id, pts) {
         var data = JSON.stringify(pts);
