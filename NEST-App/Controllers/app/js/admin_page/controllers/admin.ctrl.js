@@ -21,9 +21,9 @@
             $scope.operatorToAdd.operatorType = type;
         };
         $scope.emergencySituations = [
-            " Strong crosswinds detected",
+            " Strong crosswinds detected, change path",
             " Detected damage to rotary blades",
-            " Weak GPS link",
+            " Weak GPS link, change path",
             " Payload in danger of detachment",
         ]
         $scope.blockUI = function () {
