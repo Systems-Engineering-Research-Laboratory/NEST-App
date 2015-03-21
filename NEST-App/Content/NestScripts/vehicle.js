@@ -423,7 +423,6 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                     this.Mission.id
                     );
                 this.currentWaypoint = this.waypoints[this.currentWpIndex]
-                //this.currentWpIndex += 1;
             }
         }
         //else non navigational
@@ -681,13 +680,19 @@ function PathGenerator(areaContainer, reporter) {
         return pts;
     }
 
-    this.insertIntermediateTarget = function (wps, curPos, target, afterIndex, report, missionId) {
-        
+
+    this.insertIntermediateTarget = function (wps, curPos, target, beforeIndex, report, missionId) {
+        //Safely inserts a target into a list of waypoints. 
         var tempWps = this.brandNewTarget(curPos, target, false);
         tempWps.splice(0, 1);
-        insertMultiPointsIntoList(wps, tempWps, afterIndex);
-        this.buildSafeRoute(wps, curPos, afterIndex);
+        //insertMultiPointsIntoList inserts after an index, so use beforeIndex -1 to make the beforeIndex the afterIndex
+        insertMultiPointsIntoList(wps, tempWps, beforeIndex - 1);
+        //Ensure that the rest of it is already connected.
+        //TODO: Make this more efficient. The only connection that needs to be checked is the connection between
+        //the old route and the new target
+        this.buildSafeRoute(wps, curPos, beforeIndex);
         if (report) {
+            //Report out if needed.
             var jq = this.reporter.addNewRouteToMission(missionId, wps);
             jq.success(function (data, textStatus, jqXHR) {
                 for (var i = 0; i < wps.length; i++) {
