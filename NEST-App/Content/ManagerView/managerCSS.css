@@ -2,18 +2,37 @@
     display:inline-block;
     width: 100%
 }
+.top {
+    display: inline-table;
+    width:100%
+}
+
+.bottom {
+    display:inline-table;
+    float:left;
+    width:100%;
+}
 #ass {
     float:left;
-    width:48%;
+    width:49%;
 }
 .assigned {
     width:100%;
 }
+
 #unass {
     float:right;
-    width:48%;
+    width:49%;
 }
 .unassigned {
+    width:100%;
+}
+#operator {
+    display:inline-table;
+    float:left;
+    width:49%;
+}
+.op {
     width:100%;
 }
 #curr {
@@ -32,6 +51,9 @@ table {
 }
 th {
     border-bottom: 1px solid black;
+}
+tr {
+    border-bottom: 1px solid grey;
 }
 
 

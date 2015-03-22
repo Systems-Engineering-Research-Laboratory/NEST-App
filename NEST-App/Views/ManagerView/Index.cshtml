@@ -1,5 +1,4 @@
-﻿
-@using NEST_App.Models
+﻿@using NEST_App.Models
 @model dynamic
 
 <script src="~/Scripts/jquery-2.1.2.min.js"></script>
@@ -19,75 +18,98 @@
     <h2>Manager</h2>
 
     <div class="outer">
-        <div id="ass">
-            <h4>Assigned UAVs</h4>
-            <table class="assigned" id="assigned">
-                <tr>
-                    <th>UAV ID</th>
-                    <th>Callsign</th>
-                    <th>User ID</th>
-                    <th>User Name</th>
-                </tr>
-
-                @foreach (UAV uavs_user_user_id in Model.UAVs)
-                {
+        <div class="top">
+            <div id="ass">
+                <h4>Assigned UAVs</h4>
+                <table class="assigned" id="assigned">
                     <tr>
-                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Id)</td>
-                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Callsign)</td>
-                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User_user_id)</td>
-                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User.username)</td>
-                    </tr>
-                }
-
-            </table>
-        </div>
-        <div id="unass">
-            <h4>Unassigned UAVs</h4>
-            <table class="unassigned" id="unassigned">
-                <tr>
-                    <th>UAV ID</th>
-                    <th>Callsign</th>
-                    <th>User ID</th>
-                    <th>User Name</th>
-                </tr>
-
-                @foreach (UAV uavs_user_user_id in Model.UAVs)
-                {
-                    <tr>
-                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Id)</td>
-                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Callsign)</td>
-                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User_user_id)</td>
-                        <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User.username)</td>
-                    </tr>
-                }
-
-            </table>
-        </div> 
-        <div id="curr">
-            <h4>Current Emergencies:</h4>
-            <table class="curr_emergen" id="curr_emergen">
-                <thead>
-                    <tr>
-                        <th>UAV</th>
+                        <th>UAV ID</th>
                         <th>Callsign</th>
-                        <th>Criticality</th>
-                        <th>Message</th>
+                        <th>User ID</th>
+                        <th>User Name</th>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (EventLog eventlog in Model.Eventlog)
+
+                    @foreach (UAV uavs_user_user_id in Model.UAVs)
                     {
-                        <tr class="eventlog">
-                            <td>@Html.DisplayFor(modelItem => eventlog.uav_id)</td>
-                            <td>@Html.DisplayFor(modelItem => eventlog.UAV.Callsign)</td>
-                            <td>@Html.DisplayFor(modelItem => eventlog.criticality)</td>
-                            <td>@Html.DisplayFor(modelItem => eventlog.message)</td>
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Id)</td>
+                            <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Callsign)</td>
+                            <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User_user_id)</td>
+                            <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User.username)</td>
                         </tr>
                     }
-                </tbody>
-            </table>
+
+                </table>
+            </div>
+            <div id="unass">
+                <h4>Unassigned UAVs</h4>
+                <table class="unassigned" id="unassigned">
+                    <tr>
+                        <th>UAV ID</th>
+                        <th>Callsign</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+
+                    @foreach (UAV uavs_user_user_id in Model.UAVs)
+                    {
+                        <tr id="un" onclick="assignTo()">
+                            <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Id)</td>
+                            <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Callsign)</td>
+                            <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User_user_id)</td>
+                            <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User.username)</td>
+                        </tr>
+                    }
+
+                </table>
+            </div>
+        </div>
+
+        <div class="bottom">
+            <div id="operator">
+                <h4>Available Operators:</h4>
+                <table class="op" id="op">
+                    <tr>
+                        <th>User ID</th>
+                        <th>User Name</th>
+                        <th>Position</th>
+                    </tr>
+                    @foreach (UserRole user_id in Model.Operator)
+                    {
+                        <tr id="assop">
+                            <td>@Html.DisplayFor(modelItem => user_id.User.user_id)</td>
+                            <td>@Html.DisplayFor(modelItem => user_id.User.username)</td>
+                            <td>@Html.DisplayFor(modelItem => user_id.User.UserRole.role_type)</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+
+            <div id="curr">
+                <h4>Current Emergencies:</h4>
+                <table class="curr_emergen" id="curr_emergen">
+                    <thead>
+                        <tr>
+                            <th>UAV</th>
+                            <th>Callsign</th>
+                            <th>Criticality</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (EventLog eventlog in Model.Eventlog)
+                        {
+                            <tr class="eventlog">
+                                <td>@Html.DisplayFor(modelItem => eventlog.uav_id)</td>
+                                <td>@Html.DisplayFor(modelItem => eventlog.UAV.Callsign)</td>
+                                <td>@Html.DisplayFor(modelItem => eventlog.criticality)</td>
+                                <td>@Html.DisplayFor(modelItem => eventlog.message)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </body>
 </html>
-

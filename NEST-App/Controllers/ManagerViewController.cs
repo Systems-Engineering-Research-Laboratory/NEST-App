@@ -17,6 +17,7 @@ namespace NEST_App.Controllers
             dynamic uavManagerList = new System.Dynamic.ExpandoObject();
             uavManagerList.UAVs = db.UAVs.ToList();
             uavManagerList.Eventlog = db.EventLogs.ToList();
+            uavManagerList.Operator = db.UserRoles.ToList();
 
             return View(uavManagerList);
         }
