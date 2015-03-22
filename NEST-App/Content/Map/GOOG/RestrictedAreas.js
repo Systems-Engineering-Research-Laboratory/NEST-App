@@ -1,4 +1,47 @@
-﻿
+﻿var restrictedAreas = {
+    ne: null,
+    sw: null,
+    nelat: null,
+    nelon: null,
+    swlat: null,
+    swlon: null,
+    createDate: null,
+    endDate: null,
+    rectangle: null,
+    infoWindow: null,
+    
+    confirm: function (c) {
+        if (c) {
+            this.infoWindow.setMap(null);
+
+            var that = this;
+            $.ajax({
+                type: 'POST',
+                url: '/api/maprestricteds',
+                data: {
+                    NorthEastLatitude: that.nelat,
+                    NorthEastLongitude: that.nelon,
+                    SouthWestLatitude: that.swlat,
+                    SouthwestLongitude: that.swlon,
+                    Ceiling: 999999,
+                    Creator: "Operator",
+                    TimeCreated: that.createDate.toISOString(),
+                    TimeEnds: that.endDate.toISOString(),
+                    ReasonCreated: "Bad stuff here",
+                    Warning: false
+                }
+            }).success(function () {
+                //Delete this rectangle, we are going to add it in through the SignalR listener above.
+                that.rectangle.setMap(null);
+            });
+        }
+        else {
+            this.infoWindow.setMap(null);
+            this.rectangle.setMap(null);
+        }
+    }
+};
+
 function RestrictedAreasContainer(map, drawingManager) {
     /**
     This class is the container for all the restricted areas. Note that this is a singleton class,
@@ -47,37 +90,57 @@ function RestrictedAreasContainer(map, drawingManager) {
     //This is a refence to the drawing manager. If the drawing manager creates a rectangle, then
     //make a request to the server to display the rectangle. 
     //TODO: Report failure to put the restricted area in somehow, maybe with an event.
+
+    //UPDATE: -david
+    //1) Moved the ajax posting up top so it can be called by click event
+    //2) Made the variable globle so it can be called/changed outside (sorry for making this super ugly ):
+    //3) Add another listener in the rectangle complete to detect bounds change, so the user can change the bounds before confirming
+    //p.s. the TODO still applys
     google.maps.event.addListener(drawingManager, 'rectanglecomplete', function (rectangle) {
         //Get the corners of the rectangle to send to the server
-        var bounds = rectangle.getBounds();
-        var ne = bounds.getNorthEast();
-        var sw = bounds.getSouthWest();
-        var nelat = ne.lat();
-        var nelon = ne.lng();
-        var swlat = sw.lat();
-        var swlon = sw.lng();
-        var createDate = new Date();
-        var endDate = new Date();
-        endDate.setFullYear(2030); //Restricted areas never go away!
-        $.ajax({
-            type: 'POST',
-            url: '/api/maprestricteds',
-            data: {
-                NorthEastLatitude: nelat,
-                NorthEastLongitude: nelon,
-                SouthWestLatitude: swlat,
-                SouthwestLongitude: swlon,
-                Ceiling: 999999,
-                Creator: "Operator",
-                TimeCreated: createDate.toISOString(),
-                TimeEnds: endDate.toISOString(),
-                ReasonCreated: "Bad stuff here",
-                Warning: false
-            }
-        }).success(function () {
-            //Delete this rectangle, we are going to add it in through the SignalR listener above.
-            rectangle.setMap(null);
+        restrictedAreas.ne = rectangle.getBounds().getNorthEast();
+        restrictedAreas.sw = rectangle.getBounds().getSouthWest();
+        restrictedAreas.nelat = restrictedAreas.ne.lat();
+        restrictedAreas.nelon = restrictedAreas.ne.lng();
+        restrictedAreas.swlat = restrictedAreas.sw.lat();
+        restrictedAreas.swlon = restrictedAreas.sw.lng();
+        restrictedAreas.createDate = new Date();
+        restrictedAreas.endDate = new Date();
+        restrictedAreas.endDate.setFullYear(2030); //Restricted areas never go away!
+        restrictedAreas.rectangle = rectangle;
+
+        // ask user to confirm the selection
+        var content = "<strong>Confirm?</strong><br>" +
+                      "<button class='btn btn-default' style='margin-right: 5px;' onclick='restrictedAreas.confirm(true)'>OK</button>" +
+                      "<button class='btn btn-default' onclick='restrictedAreas.confirm(false)'>Cancle</button>";
+        restrictedAreas.infoWindow = new google.maps.InfoWindow();
+        restrictedAreas.infoWindow.setContent(content);
+        restrictedAreas.infoWindow.setPosition(restrictedAreas.ne);
+        restrictedAreas.infoWindow.open(this.map);
+
+        // detects the bounds change
+        google.maps.event.addListener(rectangle, 'bounds_changed', function () {
+            restrictedAreas.infoWindow.setMap(null);
+
+            restrictedAreas.ne = rectangle.getBounds().getNorthEast();
+            restrictedAreas.sw = rectangle.getBounds().getSouthWest();
+            restrictedAreas.nelat = restrictedAreas.ne.lat();
+            restrictedAreas.nelon = restrictedAreas.ne.lng();
+            restrictedAreas.swlat = restrictedAreas.sw.lat();
+            restrictedAreas.swlon = restrictedAreas.sw.lng();
+            restrictedAreas.createDate = new Date();
+            restrictedAreas.endDate = new Date();
+            restrictedAreas.endDate.setFullYear(2030); //Restricted areas never go away!
+            restrictedAreas.rectangle = rectangle;
+
+            // ask user to confirm the selection
+            var content = "<strong>Confirm?</strong><br>" +
+                          "<button class='btn btn-default' style='margin-right: 5px;' onclick='restrictedAreas.confirm(true)'>OK</button>" +
+                          "<button class='btn btn-default' onclick='restrictedAreas.confirm(false)'>Cancle</button>";
+            restrictedAreas.infoWindow = new google.maps.InfoWindow();
+            restrictedAreas.infoWindow.setContent(content);
+            restrictedAreas.infoWindow.setPosition(restrictedAreas.ne);
+            restrictedAreas.infoWindow.open(this.map);
         });
     });
-    
 }

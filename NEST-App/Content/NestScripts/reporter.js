@@ -69,7 +69,6 @@ function Reporter() {
     }
 
     this.putToServer = function (url, data, opts, success) {
-
         return $.ajax({
             url: url,
             data: JSON.stringify(data),
@@ -136,8 +135,8 @@ function Reporter() {
         })
     }
 
-
     this.addNewRouteToMission = function (id, pts) {
+        var data = JSON.stringify(pts);
         var promise = $.ajax(
             {
                 url: '/api/missions/' + id + '/newroute',
@@ -145,7 +144,7 @@ function Reporter() {
                 headers: {
                     "Content-Type": 'application/json',
                 },
-                data: JSON.stringify(pts),
+                data: data,
             });
         var $this = this;
         promise.fail(function (jqXHR, textStatus, errorThrown) {
@@ -154,11 +153,30 @@ function Reporter() {
         return promise;
     }
 
+    this.appendRouteToMission = function (id, pts) {
+        for (var i = 0; i < pts.length; i++) {
+            pts[i].MissionId = id;
+        }
+        var jsonPts = JSON.stringify(pts);
+        var promise = $.ajax(
+            {
+                url: '/api/missions/' + id + '/appendWaypoints',
+                type: 'POST',
+                contentType: 'application/json',
+                data: jsonPts,
+            });
+        var $this = this;
+        promise.fail(function (jqXHR, textSTatus, errorThrown) {
+            console.error(errorThrown);
+        });
+        return promise;
+    }
+
     this.broadcastNewMission = function(uavid, schedid, missionid) {
         //this.hub.server.vehicleHasNewMission(uavid, schedid, missionid);
         return $.ajax({
             method: 'PUT',
-            url: 'api/schedule/' + schedid + '/setCurrentMission/' + missionid,
+            url: '/api/schedule/' + schedid + '/setCurrentMission/' + missionid,
         });
     }
 }

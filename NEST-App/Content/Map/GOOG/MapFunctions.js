@@ -50,7 +50,10 @@
                 });
                 break;
             case 'go_here':
+                document.getElementById("go_lat").value = latLng.lat();
+                document.getElementById("go_long").value = latLng.lng();
                 this.goTo_show();
+
                 break;
             case 'add_waypoint':
                 this.goTo_show();
@@ -160,8 +163,6 @@
             }
         }
     },
-
-
 
     ConsNotifier: function (theMap, lat, lng, notifier, message) {
         var location = new google.maps.LatLng(lat, lng);
@@ -327,13 +328,16 @@
         return uav;
     },
 
-    centerOnUAV: function (cs) {
+    GetKeyFromCallsign: function(cs){
         for (var key in uavs) {
-            if (uavs[key].Callsign != cs) {}
-            else {
-                map.setCenter(uavs[key].Position);
+            if (uavs[key].Callsign == cs) {
+                return key;
             }
         }
+    },
+
+    CenterOnUAV: function (uavKey) {
+        map.setCenter(uavs[uavKey].marker.position);
     },
 
     goTo_show: function () {
@@ -411,7 +415,7 @@
     },
 
     goTo_RR_hide: function () {
-        $(".RoundRobin_popup").fadeOut("slow", function () { });
+        $("#RoundRobin_popup").fadeOut("slow", function () { });
     },
 
     RR_button_accept: function () {

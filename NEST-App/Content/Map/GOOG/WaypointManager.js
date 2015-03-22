@@ -223,7 +223,15 @@ function WaypointManager() {
             thisMission.flightPath.setMap(null);
             thisMission.flightPath = null;
         }
-        thisMission.Waypoints = null;
+        if (thisMission.Waypoints) {
+            var wps = thisMission.Waypoints;
+            for (var i = 0 ; i < wps.length; i++) {
+                if (wps[i].circle) {
+                    wps[i].circle.setMap(null);
+                }
+            }
+            thisMission.Waypoints = null;
+        }
         this.displayWaypointsPerMission(thisMission);
     }
 
