@@ -4,6 +4,7 @@ var uavs = {};
 var vehicleHub;
 var warningUavId;
 var mapUavId;
+
 //DroneSelection
 var selectedDrones = []; //store drones selected from any method here
 var storedGroups = []; //keep track of different stored groupings of UAVs
