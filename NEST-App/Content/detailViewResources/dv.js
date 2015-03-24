@@ -143,6 +143,8 @@ $(document).ready(function () {
                 evt_msg = evt.message;
                 evt_level = evt.criticality;
 
+                //////////////////////////////////////////alert("evt.criticality: " + evt.criticality);
+
                 //console.log(evt_id + ", " + evt_operator + ", " + evt_date + ", " + evt_msg + ", " + evt_level);
 
                 if (current_id == uavs[evt.uav_id].Id) {
@@ -153,7 +155,38 @@ $(document).ready(function () {
                     document.getElementById('eventlog_td3').innerHTML = evt.create_date;
                     document.getElementById('eventlog_td4').innerHTML = evt.message;
                     document.getElementById('eventlog_td5').innerHTML = evt.criticality;
-                }
+
+                    //console.log("evt.criticality: " + evt.criticality);
+
+                    
+                        //if (evt.criticality == 'critical')
+                        //{
+                        //    for (var i = 1; i < table.rows.length; i++) 
+                        //    {
+                        //        table.rows[i].style.backgroundColor = "#FF0000";
+                        //        table.rows[i].style.color = "#FFFFFF";
+                        //        console.log(uavs[evt.uav_id].Id + ", " + evt.criticality);
+                        //    }
+                        //}
+
+                        //if (evt.criticality == 'warning') 
+                        //{
+                        //    for (var i = 1; i < table.rows.length; i++) 
+                        //    {
+                        //        table.rows[i].style.backgroundColor = "#FFF612";
+                        //        table.rows[i].style.color = "#0a074a";
+                        //    }
+                        //}
+                    }
+                    
+
+                    //if (vehicle.BatteryLevel < 0.2) {
+                    //    table.rows[i].style.backgroundColor = "#FF0000";
+                    //    table.rows[i].style.color = "#FFFFFF"
+                    //}
+
+                    
+                
 
                 else if (current_id != uavs[evt.uav_id].Id) {
                     //alert("current id: " + current_id + ",   evt.uav_id: " + uavs[evt.uav_id].Id);
@@ -244,10 +277,10 @@ $(document).ready(function () {
                 if (table.rows[i].cells[0].innerHTML == uavs[vehicle.Id].Id) {
                     table.rows[i].cells[4].innerHTML = (vehicle.BatteryLevel * 100).toFixed(2) + "%";
 
-                    if (vehicle.BatteryLevel < 0.2) {
-                        table.rows[i].style.backgroundColor = "#FF0000";
-                        table.rows[i].style.color = "#FFFFFF"
-                    }
+                    //if (vehicle.BatteryLevel < 0.2) {
+                    //    table.rows[i].style.backgroundColor = "#FF0000";
+                    //    table.rows[i].style.color = "#FFFFFF"
+                    //}
                 }
             }
 
@@ -332,6 +365,7 @@ $(document).ready(function () {
                         //this.cells[15] is current delivery number
                         var payload = this.cells[16];
                         var cost = this.cells[17];
+                        var operator_name = this.cells[18];
                         var uav_lat_long = new google.maps.LatLng(this.cells[10].innerHTML, this.cells[11].innerHTML);
                         var total_num = numDelivery.innerHTML;
                         var final_total = total_num - 1;
@@ -339,7 +373,7 @@ $(document).ready(function () {
                         var final_battery = bat * 100;
                         var low_battery = "LOW BATTERY!";
 
-                        document.getElementById("detail_title").innerHTML = 'UAV #' + uavid.innerHTML + '(' + callsign.innerHTML + ') Detail';
+                        document.getElementById("detail_title").innerHTML = 'UAV #' + uavid.innerHTML + '(' + callsign.innerHTML + ') Detail     (control by ' + operator_name.innerHTML + ")";
                         document.getElementById("numdeliveries").innerHTML = 'Current Delivery: ' + numDelivery.innerHTML;
                         document.getElementById("total_deliveries").innerHTML = 'Total Delivery: ' + final_total;
                         document.getElementById("mileage").innerHTML = 'Total Miles: ' + mile.innerHTML + ' miles';

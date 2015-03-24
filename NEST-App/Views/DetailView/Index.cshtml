@@ -171,7 +171,7 @@
                         <th style="display: none;">payload</th>                     @*15*@
                         <th style="display: none;">Cost</th>                        @*16*@
                         <th style="display: none;">Priority</th>                    @*17*@
-
+                        <th style="display: none;">Operator</th>                    @*18*@
                     </tr>
                 </thead>
                 <tbody>
@@ -196,6 +196,7 @@
                             <td style="display: none;">@Html.DisplayFor(modelItem => uavs.NumDeliveries)</td>
                             <td style="display: none;">@Html.DisplayFor(modelItem => uavs.Schedules.FirstOrDefault().Missions.FirstOrDefault().Payload)</td>
                             <td style="display: none;">@Html.DisplayFor(modelItem => uavs.Schedules.FirstOrDefault().Missions.FirstOrDefault().FinancialCost)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs.User.username)</td>
                         </tr>
                     }
                 </tbody>
