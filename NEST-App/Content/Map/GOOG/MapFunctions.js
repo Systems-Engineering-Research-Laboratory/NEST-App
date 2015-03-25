@@ -1,4 +1,6 @@
-﻿var mapFunctions = {   
+﻿var eventlog_show_hide = false;
+
+var mapFunctions = {
     shiftPressed : false,
     mouseDownPos: null,
     gridBoundingBox : null,
@@ -442,12 +444,17 @@
         });
     },
 
-    eventlog_show: function() {
-        document.getElementById("eventlog").style.display = "block";
-    },
+    
+    eventlog_show: function () {
+        if (eventlog_show_hide == false) {
+            document.getElementById("eventlog").style.display = "block";
+            eventlog_show_hide = true;
+        }
 
-    eventlog_hide: function() {
-        document.getElementById("eventlog").style.display = "none";
+        else if (eventlog_show_hide == true) {
+            document.getElementById("eventlog").style.display = "none";
+            eventlog_show_hide = false;
+        }
     },
 
     delete_event_row: function() {

@@ -225,13 +225,14 @@ html, body, #map-canvas {
     right: 6px;
     width: 350px;
     height: 400px;
-    top: 50px;
+    top: 55px;
     position: fixed;
     border: 10px solid #261287;
     display: none;
     background-color: white;
     border-radius: 8px;
     transition: .2s;
+    overflow-y: auto;
 }
 
 .eventlog:before {
@@ -256,9 +257,8 @@ html, body, #map-canvas {
 
 .eventlog_table {
     border-top: 1px solid black;
-    margin-top: 20px;
     width: 100%;
-
+    max-height: 399px;
 }
 
 .eventlog_table #event_info {
@@ -279,8 +279,8 @@ html, body, #map-canvas {
     border: none;
     width: 100%;
     border-top:2px solid transparent;
-    margin-bottom: 1px;
-    margin-top: 1px;
+    /*margin-bottom: 1px;*/
+    margin-top: 2px;
 }
 
 #event_button_decline {
@@ -295,6 +295,7 @@ html, body, #map-canvas {
     border: none;
     width: 100%;
     border-top:2px solid transparent;
+    margin-top: 2px;
     margin-bottom: 1px;
 }
 

@@ -19,22 +19,19 @@
     <button type="button" id="goevent" onclick="mapFunctions.eventlog_show()">　Event Log　</button>
     <button type="button" id="filteruav" onclick="mapStyles.uavFilter()">　Filter UAVs　</button>
     <button type="button" id="base" onclick="mapStyles.BaseControl()">　Base　</button>
-    
-
 </div>
 
 <div class="eventlog" id="eventlog">
     @*UAV EVENT LOG*@
-    <div id="event_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.eventlog_hide()"></span></div>
+    @*<div id="event_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.eventlog_hide()"></span></div>*@
 
     <div class="event_table_div">
-        <table class="eventlog_table" style="font-size: 12px;">
+        <table class="eventlog_table" id="eventlog_table" style="font-size: 12px;">
             <tr>
-                <td id="event_info" style="width: 85%">
+                <td id="event_info" style="width: 85%; line-height: 100%;">
                     @*<b>UAV #</b> <p id="event_uav_id" style="display: inline-block; ">[ID]</p> : <p id="event_uav_callsign" style="margin: 0px;display: inline-block;">[CALLSIGN]</p> <br />
-                    <b>Reason:</b> [MESSAGE]*@ 
-                    <b>UAV #</b> [ID] : [CALLSIGN] <br />
-                    <b>Reason:</b> [MESSAGE]
+                    <b>Reason:</b> [MESSAGE]*@
+                    <b>Reason:</b> <p id="event_info_msg" style="display: inline-block; margin:1px;">[MESSAGE]</p>
                 </td>
                 <td style="width: 10%; font-size: 10px">
                     <button id="event_button_accept" onclick="mapFunctions.RR_button_accept()">ACCEPT</button> <br />

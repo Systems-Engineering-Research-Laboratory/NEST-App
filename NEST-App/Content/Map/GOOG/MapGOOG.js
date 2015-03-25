@@ -4,6 +4,7 @@ var uavs = {};
 var vehicleHub;
 var warningUavId;
 var mapUavId;
+var event_count = 0;
 
 //DroneSelection
 var selectedDrones = []; //store drones selected from any method here
@@ -383,6 +384,33 @@ $(document).ready(function () {
                 document.getElementById('warningUavId').innerHTML = "UAV ID: " + uavs[evt.UAVId].Id + "<br />";
                 document.getElementById('warningUavCallsign').innerHTML = "Callsign: " + uavs[evt.UAVId].Callsign + "<br />";
                 document.getElementById('warningReason').innerHTML = "Reason: " + evt.message;
+                var table = document.getElementById('eventlog_table');
+                var table_length = table.rows.length;
+                
+                
+                if (event_count == 0)
+                {
+                    event_count++;
+                    document.getElementById('event_info_uavid').innerHTML = uavs[evt.UAVId].Id;
+                    document.getElementById('event_info_callsign').innerHTML = uavs[evt.UAVId].Callsign;
+                    document.getElementById('event_info_msg').innerHTML = evt.message;
+                    console.log("im in first if:  count: " + event_count);
+                }
+
+                else if (event_count != 0)
+                {
+                    event_count++;
+                    var row = table.insertRow(0);
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    cell1.innerHTML = "UAV # " + uavs[evt.UAVId].Id + " : " + uavs[evt.UAVId].Callsign + "\n" + "hello";
+
+                    console.log("count: " + event_count);
+                }
+                
+                //document.getElementById('event_info_uavid').innerHTML = uavs[evt.UAVId].Id;
+                //document.getElementById('event_info_callsign').innerHTML = uavs[evt.UAVId].Callsign;
+                //document.getElementById('event_info_msg').innerHTML = evt.message;
             }
         }
 
