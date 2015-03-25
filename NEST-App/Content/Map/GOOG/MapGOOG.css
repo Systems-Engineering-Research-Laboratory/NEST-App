@@ -14,8 +14,8 @@ html, body, #map-canvas {
 .right-buttons {
     right: 1px;
     padding-right: 5px;
-    width: 100px;
-    height: 200px;
+    width: 260px;
+    height: 30px;
     top: 90px;
     position: fixed;
 }
@@ -23,7 +23,7 @@ html, body, #map-canvas {
 .left-buttons {
     left: 40px;
     width: 200px;
-    height: 200px;
+    height: 80px;
     top: 35px;
     position: fixed;
 }
@@ -134,16 +134,127 @@ html, body, #map-canvas {
 }
 
 #goWaypoint {
-    background-color: white;
-    font-size: 12px;
-    width: 53px;
+    background-color: #261287;
+    color: white;
+    font-size: 14px;
+    width: auto;
+    height: 30px;
     cursor: pointer;
-    border-style: solid;
-    border-width: 1px;
-    border-color: black;
+    border:solid 1px white;
     float: right;
     margin: 0;
+    font-weight: bold;
+    border-radius: 3px;
 }
+
+#goWaypoint:hover {
+    background-color: #351cad;
+    transition: .2s;
+}
+
+
+/*///////////////////////////////Event Log//////////////////////////////////*/
+#goevent {
+    background-color: #261287;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    width: auto;
+    height: 30px;
+    cursor: pointer;
+    border:solid 1px white;
+    float: right;
+    margin: 0px;
+    border-right: none;
+    border-radius: 3px;
+}
+
+#goevent:hover {
+    background-color: #351cad;
+    transition: .2s;
+}
+
+.eventlog {
+    right: 6px;
+    width: 350px;
+    height: 400px;
+    top: 133px;
+    position: fixed;
+    border: 10px solid #261287;
+    display: none;
+    background-color: white;
+    border-radius: 8px;
+    transition: .2s;
+}
+
+.eventlog:before {
+    content: '';
+    height: 10px;
+    width: 10px;
+    display: block;
+    position: absolute;
+    top: -38px;
+    right: 170px;
+    border: 15px solid #fff;
+    border-color: transparent transparent #261287 transparent;
+}
+
+#event_close {
+    position: absolute;
+    font-size: 1em;
+    right: 3px;
+    top: 3px;
+    cursor: pointer;
+}
+
+.eventlog_table {
+    border-top: 1px solid black;
+    margin-top: 20px;
+    width: 100%;
+
+}
+
+.eventlog_table #event_info {
+    padding-left: 5px;
+}
+
+
+
+#event_button_accept {
+    background-color: #46d914;
+    color: white;
+    cursor: pointer;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-radius: 5px;
+    border: none;
+    width: 100%;
+    border-top:2px solid transparent;
+}
+
+#event_button_decline {
+    background-color: #ee3f3f;
+    color: white;
+    cursor: pointer;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-radius: 5px;
+    border: none;
+    width: 100%;
+    border-top:2px solid transparent;
+}
+
+#row_close {
+    position: absolute;
+    font-size: 1em;
+
+    cursor: pointer;
+}
+
 
 #CommPopPlaceHolder {
     position: fixed;

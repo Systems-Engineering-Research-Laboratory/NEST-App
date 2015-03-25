@@ -440,6 +440,14 @@
                 $("#RR_outer_result").fadeOut("slow", function () { });
             }
         });
-        
+    },
+
+    eventlog_show: function() {
+        document.getElementById("eventlog").style.display = "block";
+    },
+
+    eventlog_hide: function() {
+        document.getElementById("eventlog").style.display = "none";
     }
+    
 };
