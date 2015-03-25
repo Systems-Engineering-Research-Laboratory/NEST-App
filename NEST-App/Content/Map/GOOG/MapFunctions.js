@@ -440,6 +440,21 @@
                 $("#RR_outer_result").fadeOut("slow", function () { });
             }
         });
-        
+    },
+
+    eventlog_show: function() {
+        document.getElementById("eventlog").style.display = "block";
+    },
+
+    eventlog_hide: function() {
+        document.getElementById("eventlog").style.display = "none";
+    },
+
+    delete_event_row: function() {
+        var current = window.event.srcElement;
+        //here we will delete the line
+        while ( (current = current.parentElement)  && current.tagName !="TR");
+        current.parentElement.removeChild(current);
     }
+    
 };

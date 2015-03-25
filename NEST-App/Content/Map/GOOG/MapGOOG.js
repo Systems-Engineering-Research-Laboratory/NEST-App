@@ -92,20 +92,20 @@ $(document).ready(function () {
         distanceCircle.setCenter(homeBase);
         distanceCircle.setMap(map);
 
-        var homeControlDiv = document.createElement('div');
-        var homeControl = new mapStyles.BaseControl(homeControlDiv, map, homeBase);
+        //var homeControlDiv = document.createElement('div');
+        //var homeControl = new mapStyles.BaseControl(homeControlDiv, map, homeBase);
         var marker = new google.maps.Marker({
             position: homeBase,
             icon: mapStyles.goldStarBase,
             map: map
         });
-        homeControlDiv.index = 1;
-        map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
+        //homeControlDiv.index = 1;
+        //map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
         
-        var uavFilterDiv = document.createElement('div');
-        var uavFilter = new mapStyles.uavFilter(uavFilterDiv, map);
-        uavFilterDiv.index = 1;
-        map.controls[google.maps.ControlPosition.RIGHT_TOP].push(uavFilterDiv);
+        //var uavFilterDiv = document.createElement('div');
+        //var uavFilter = new mapStyles.uavFilter(uavFilterDiv, map);
+        //uavFilterDiv.index = 1;
+        //map.controls[google.maps.ControlPosition.RIGHT_TOP].push(uavFilterDiv);
 
 
 
@@ -433,14 +433,12 @@ $(document).ready(function () {
         google.maps.event.addListener(mapListeners, 'mousedown', function (e) { mapFunctions.StopMapDrag(this, e); });
         google.maps.event.addListener(mapListeners, 'mouseup', function (e) { droneSelection.AreaSelect(this, e, mapFunctions.mouseIsDown, mapFunctions.shiftPressed, mapFunctions.gridBoundingBox, selectedDrones, uavs) });
         google.maps.event.addListener(mapListeners, 'dblclick', function (e) {
-            console.log("double clicked");
             mapUavId = null;
             for (var key in uavs) {
                 uavs[key].marker.setIcon(uavs[key].marker.uavSymbolBlack);
                 uavs[key].marker.selected = false;
+                google.maps.event.trigger(uavs[key].marker, 'selection_changed');
             }
-
-
         })
     };
     google.maps.event.addDomListener(window, 'load', init);
