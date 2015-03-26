@@ -379,38 +379,110 @@ $(document).ready(function () {
                     }
                 }
 
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
                 //warning popup showing
                 mapFunctions.goTo_RR_show();
                 document.getElementById('warningUavId').innerHTML = "UAV ID: " + uavs[evt.UAVId].Id + "<br />";
                 document.getElementById('warningUavCallsign').innerHTML = "Callsign: " + uavs[evt.UAVId].Callsign + "<br />";
                 document.getElementById('warningReason').innerHTML = "Reason: " + evt.message;
+
+                console.log("uavs[evt.UAVId].Id: " + uavs[evt.UAVId].Id);
+                console.log("uavs[evt.uav_id].Id: " + uavs[evt.uav_id].Id);
+                console.log("uavs[evt.uav_id].Callsign: " + uavs[evt.uav_id].Callsign);
+                //console.log("uavs[evt.uav_id].assignment.getUsername: " + uavs[evt.uav_id].assignment.getUsername());
+                //console.log("uavs[evt.Callsign].Id:  " + uavs[evt.UAVId].);
+
+
+
                 var table = document.getElementById('eventlog_table');
                 var table_length = table.rows.length;
+                var event_time = evt.create_date;
                 
-                
+
+                // Right upper Event log UI
                 if (event_count == 0)
                 {
                     event_count++;
+                    console.log("evnet count: " + event_count);
                     document.getElementById('event_info_uavid').innerHTML = uavs[evt.UAVId].Id;
                     document.getElementById('event_info_callsign').innerHTML = uavs[evt.UAVId].Callsign;
                     document.getElementById('event_info_msg').innerHTML = evt.message;
-                    console.log("im in first if:  count: " + event_count);
+                    document.getElementById('event_time').innerHTML = evt.create_date;
+                    //document.getElementById('event_info_criticality').innerHTML = evt.criticality;
+
+                    if (evt.criticality === "critical")
+                    {
+                        document.getElementById('criticality_color').style.backgroundColor = "red";
+                    }
+
+                    else if (evt.criticality === "warning")
+                    {
+                        document.getElementById('criticality_color').style.backgroundColor = "yellow";
+                    }
+
+                    else if (evt.criticality === "advisory")
+                    {
+                        document.getElementById('criticality_color').style.backgroundColor = "orange";
+                    }
+                    
+                    if (evt.operator_screen_name === "" || evt.operator_screen_name === "Test Operator")
+                    {
+                        document.getElementById('event_button_accept').style.display = 'block';
+                        document.getElementById('event_button_decline').style.display = 'block';
+                    }
+
+                    else
+                    {
+                        document.getElementById('event_button_accept').style.display = 'none';
+                        document.getElementById('event_button_decline').style.display = 'none';
+                        document.getElementById('table_button').innerHTML = "Owned by" + "<br>" + assignment.getUsername();
+                    }
                 }
 
                 else if (event_count != 0)
                 {
                     event_count++;
                     var row = table.insertRow(0);
-                    var cell1 = row.insertCell(0);
-                    var cell2 = row.insertCell(1);
-                    cell1.innerHTML = "UAV # " + uavs[evt.UAVId].Id + " : " + uavs[evt.UAVId].Callsign + "\n" + "hello";
+                    var cell0 = row.insertCell(0);
+                    var cell1 = row.insertCell(1);
+                    var cell2 = row.insertCell(2);
+                    var cell3 = row.insertCell(3);
+                    
+                    cell0.style.cssText = "width: 5%; border-bottom: 1px solid black;";
+                    cell1.style.cssText = "font-size: 12px; border-bottom: 1px solid black; padding-left: 5px; width: 75%; height: 60px; line-height:100%";
+                    cell2.style.cssText = "font-size: 10px; border-bottom: 1px solid black; width: 15%; padding-left: 3px; padding-right: 3px; padding-top: 0px; margin: 0px;";
+                    cell3.style.cssText = "font-size: 12px; border-bottom: 1px solid black; width: 5%";
+                    cell1.innerHTML = "<b>UAV # </b>" + uavs[evt.UAVId].Id + " : " + uavs[evt.UAVId].Callsign + "<b><br>Reason: </b>" + evt.message + "<br>" + event_time.fontcolor("gray").fontsize(.7);
 
-                    console.log("count: " + event_count);
+
+                    if (evt.operator_screen_name === "" || evt.operator_screen_name === "Test Operator") {
+                        var accept_butt = '<input type="button" value="ACCEPT" name="ACCEPT" onclick=mapFunctions.RR_button_accept() style="background-color: #46d914; color: white; cursor: pointer;padding-right: 5px; padding-left: 5px; padding-top: 2px; padding-bottom: 2px; border-radius: 5px; border: none; width: 100%; border-top:2px solid transparent; margin-top: 2px;">';
+                        var decline_butt = '<input type="button" value="DECLINE" name="DECLINE" onclick=mapFunctions.RR_button_decline(); style="background-color: #ee3f3f;color: white;cursor: pointer;padding-right: 5px;padding-left: 5px;padding-top: 2px;padding-bottom: 2px;border-radius: 5px;border: none;width: 100%;border-top:2px solid transparent;margin-top: 2px;margin-bottom: 1px;">';
+                        cell2.innerHTML = accept_butt + decline_butt;
+                    }
+
+                    else {
+                        cell2.innerHTML = "Owned by" + "<br>" + evt.operator_screen_name;
+                    }
+                    
+                    if (evt.criticality === "critical") {
+                        cell0.style.backgroundColor = "red";
+                    }
+
+                    else if (evt.criticality === "warning") {
+                        cell0.style.backgroundColor = "yellow";
+                    }
+
+                    else if (evt.criticality === "advisory") {
+                        cell0.style.backgroundColor = "orange";
+                    }
+
+
+                    cell3.innerHTML = '<span class="glyphicon glyphicon-remove" onclick=mapFunctions.delete_event_row();>' + '</span>';
                 }
-                
-                //document.getElementById('event_info_uavid').innerHTML = uavs[evt.UAVId].Id;
-                //document.getElementById('event_info_callsign').innerHTML = uavs[evt.UAVId].Callsign;
-                //document.getElementById('event_info_msg').innerHTML = evt.message;
+
+                console.log("table length: " + (table_length + 1));
             }
         }
 

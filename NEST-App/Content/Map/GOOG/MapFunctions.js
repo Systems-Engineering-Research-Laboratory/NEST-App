@@ -426,7 +426,8 @@ var mapFunctions = {
         document.getElementById('RR_choice_p').innerHTML = "You have accepted UAV";
         document.getElementById('RR_choice_p').style.color = "green";
         document.getElementById('RR_outer_result').style.display = "block";
-        $("#RR_outer_result").fadeOut("slow", function () {});
+        $("#RR_outer_result").fadeOut("slow", function () { });
+        mapFunctions.delete_event_row();
     },
 
 
@@ -442,6 +443,7 @@ var mapFunctions = {
                 $("#RR_outer_result").fadeOut("slow", function () { });
             }
         });
+        //mapFunctions.delete_event_row();
     },
 
     
