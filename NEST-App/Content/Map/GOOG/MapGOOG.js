@@ -222,13 +222,12 @@ $(document).ready(function () {
         }
 
         emitHub.client.newEvent = function (evt) {
-
             console.log(evt);
             //deprecate -- ack check by operator -dg
             //var checkMessage = evt.message.split(" ");
             //if (checkMessage[0] != "Acknowledged:") {
             if (evt.criticality != "ACK") {
-
+                mapFunctions.glowing();
                 var i = uavs[evt.UAVId].Events;
                 i++;
                 uavs[evt.UAVId].Events = i;
@@ -380,8 +379,6 @@ $(document).ready(function () {
                     }
                 }
 
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
                 //warning popup showing
                 mapFunctions.goTo_RR_show();
                 document.getElementById('warningUavId').innerHTML = "UAV ID: " + uavs[evt.UAVId].Id + "<br />";
@@ -391,25 +388,15 @@ $(document).ready(function () {
                 var table = document.getElementById('eventlog_table');
                 var table_length = table.rows.length;
                 var event_time = evt.create_date;
-
                 var event_uav_user = document.getElementById('event_uav_user');
-
-
-                //for (var i = 1; i < event_uav_user.rows.length; i++)
-                //{
-                //    if (uavs[evt.UAVId].Id == event_uav_user.rows[i].cells[0].innerHTML)
-                //    {
-                //        console.log(uavs[evt.UAVId].Id + ": uav id from eventtable_detail table: " + event_uav_user.rows[i].cells[1].innerHTML);
-
-                //    }
-                //}
                 
-
                 // Right upper Event log UI
                 if (event_count == 0)
                 {
                     event_count++;
-                    console.log("evnet count: " + event_count);
+
+                    //@-webkit-keyframes glowing {0% { background-color: #004a7f; -webkit-box-shadow: 0 0 3px #004a7f; }50% { background-color: #0094ff; -webkit-box-shadow: 0 0 10px #0094ff; }100% { background-color: #004a7f; -webkit-box-shadow: 0 0 3px #004a7f; }}
+                    
                     document.getElementById('event_info_uavid').innerHTML = uavs[evt.UAVId].Id;
                     document.getElementById('event_info_callsign').innerHTML = uavs[evt.UAVId].Callsign;
                     document.getElementById('event_info_msg').innerHTML = evt.message;
@@ -446,9 +433,9 @@ $(document).ready(function () {
                                 document.getElementById('event_button_decline').style.display = 'none';
                                 document.getElementById('table_button').innerHTML = "Owned by" + "<br>" + event_uav_user.rows[i].cells[1].innerHTML;
                             }
-
                         }
                     }
+                    document.getElementById('nav-counter').innerHTML = table_length;
                 }
 
                 else if (event_count != 0)
@@ -495,13 +482,10 @@ $(document).ready(function () {
                     else if (evt.criticality === "advisory") {
                         cell0.style.backgroundColor = "orange";
                     }
+                    document.getElementById('nav-counter').innerHTML = (table_length + 1);
                 }
-                console.log("table length: " + (table_length + 1));
-
-                document.getElementById('nav-counter').innerHTML = (table_length + 1);
             }
         }
-
 
         
         //Make sure to set all SignalR callbacks BEFORE the call to connect

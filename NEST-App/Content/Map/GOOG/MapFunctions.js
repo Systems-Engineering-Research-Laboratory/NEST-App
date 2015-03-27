@@ -443,7 +443,6 @@ var mapFunctions = {
                 $("#RR_outer_result").fadeOut("slow", function () { });
             }
         });
-        //mapFunctions.delete_event_row();
     },
 
     
@@ -459,11 +458,26 @@ var mapFunctions = {
         }
     },
 
-    delete_event_row: function() {
+    delete_event_row: function () {
         var current = window.event.srcElement;
-        //here we will delete the line
         while ( (current = current.parentElement)  && current.tagName !="TR");
         current.parentElement.removeChild(current);
+
+        var table = document.getElementById('eventlog_table');
+        var tablelength = table.rows.length;
+
+        if (tablelength == 0) {
+            document.getElementById('nav-counter').innerHTML = "·";
+        }
+
+        else {
+            document.getElementById('nav-counter').innerHTML = tablelength;
+        }
+    },
+
+    glowing: function() {
+        var event_button = document.getElementById('goevent');
+        event_button.style.cssText = "-webkit-animation: glowing 1s 1;";
     }
     
 };

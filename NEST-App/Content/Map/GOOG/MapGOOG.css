@@ -214,13 +214,19 @@ html, body, #map-canvas {
     border-right: none;
     border-radius: 3px;
     position: relative;
-    
+    /*animation: glowing 1500ms infinite;*/
 }
 
 #goevent:hover {
     background-color: #3239ae;
     transition: .2s;
     color: #cecbcb;
+}
+
+@-webkit-keyframes glowing {
+  0% { background-color: #29129b; -webkit-box-shadow: 0 0 3px #29129b; }
+  50% { background-color: #0094FF; -webkit-box-shadow: 0 0 10px #0094FF; }
+  100% { background-color: #29129b; -webkit-box-shadow: 0 0 3px #29129b; }
 }
 
 .nav-counter {
@@ -240,7 +246,6 @@ html, body, #map-canvas {
   border: 2px solid white;
   border-radius: 500px;
 }
-
 
 .eventlog {
     right: 6px;
@@ -307,8 +312,11 @@ html, body, #map-canvas {
 											  transparent 75%,
 											  transparent)
 }
-}
 
+#eventinfo {
+    display: inline-block; 
+    margin: 1px; 
+}
 
 #criticality_color {
     width: 5%;
@@ -320,7 +328,6 @@ html, body, #map-canvas {
     width: 75%; 
     line-height: 100%;
     height: 60px;
-    /*border-right: 1px solid black;*/
 }
 
 #table_button {
@@ -330,8 +337,6 @@ html, body, #map-canvas {
     padding-right: 3px;
     height: 60px;
 }
-
-
 
 #event_button_accept {
     background-color: #46d914;
@@ -345,7 +350,6 @@ html, body, #map-canvas {
     border: none;
     width: 100%;
     border-top:2px solid transparent;
-    /*margin-bottom: 1px;*/
     margin-top: 2px;
 }
 

@@ -26,12 +26,12 @@
 <div class="eventlog" id="eventlog">
     <div class="event_table_div">
         <table class="eventlog_table" id="eventlog_table">
-            <tr style="border-bottom: 1px solid black; height: 60px;">
+            <tr id="event_table_tr" style="border-bottom: 1px solid black; height: 60px;">
                 <td id ="criticality_color"></td>
                 <td id="event_info">
-                    <b>UAV #</b> <p id="event_info_uavid" style="display: inline-block; margin: 1px; ">[ID]</p> : <p id="event_info_callsign" style="margin: 1px;display: inline-block;">[CALLSIGN]</p> @*: <p id="event_info_criticality" style="display: inline-block; margin: 1px; color: red">[CRITICAL]</p>*@ <br />
-                    <b>Reason:</b> <p id="event_info_msg" style="display: inline-block; margin:1px;">[MESSAGE]</p> <br />
-                    <p id="event_time" style="display: inline-block; margin: 1px; color: gray; font-size: 9px;">Now</p>
+                    <b>UAV #</b> <p class ="eventinfo" id="event_info_uavid" style="display: inline-block; margin: 1px; ">[ID]</p> : <p class="eventinfo" id="event_info_callsign" style="margin: 1px;display: inline-block;">[CALLSIGN]</p><br />
+                    <b>Reason:</b> <p class="eventinfo" id="event_info_msg" style="display: inline-block; margin:1px;">[MESSAGE]</p> <br />
+                    <p class ="eventinfo" id="event_time" style="display: inline-block; margin: 1px; color: gray; font-size: 9px;">Now</p>
                 </td>
                 <td id="table_button">
                     <button id="event_button_accept" onclick="mapFunctions.RR_button_accept()">ACCEPT</button>
