@@ -988,7 +988,7 @@ function PathGenerator(areaContainer, reporter) {
         this.appendPointEdges(p2);
         this.appendPointEdges(p1);
         var result = this.doDijkstras(p1, p2);
-        this.removePointEdges();
+        this.removePointEdges(p1, p2);
         return result;
     }
 
@@ -1014,13 +1014,19 @@ function PathGenerator(areaContainer, reporter) {
         }
     }
 
-    this.removePointEdges = function () {
+    this.removePointEdges = function (p1, p2) {
         var areas = this.areaContainer.restrictedAreas;
         for (var i = 0; i < areas.length; i++) {
             var a = areas[i];
             for (var j = 0; j < a.corners.length; j++) {
                 var edges = a.corners[j].edges
                 this.removeDisposableEdges(edges);
+            }
+        }
+        if (p1) {
+            p1.edges = null;
+            if (p2) {
+                p2.edges = null;
             }
         }
     }

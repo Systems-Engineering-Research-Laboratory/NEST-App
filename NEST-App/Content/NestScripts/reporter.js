@@ -9,7 +9,7 @@ function Reporter() {
     this.reportReroute = function (uavId, callsign) {
         var curTime = new Date();
         this.eventHub.server.emit({
-            message: "UAV " + callsign + " rerouted successfully around a restricted area",
+            message: " Rerouted successfully around a restricted area",
             uav_id: uavId,
             UAVId: uavId,
             uav_callsign: callsign,

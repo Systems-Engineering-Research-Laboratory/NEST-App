@@ -4,6 +4,7 @@ var uavs = {};
 var vehicleHub;
 var warningUavId;
 var mapUavId;
+var event_count = 0;
 
 //DroneSelection
 var selectedDrones = []; //store drones selected from any method here
@@ -19,6 +20,7 @@ var selectedTrail; //the trail that the selected uav has
 //TODO: Do we need this? Are we changing this to "var theMap = map;" ?
 var mapListeners = map; //use this to add listeners to the map
 var wpm;
+
 
 function uavMarkers(data, textStatus, jqXHR) {
     console.log("Pulling Flightstates...", textStatus);
@@ -92,20 +94,20 @@ $(document).ready(function () {
         distanceCircle.setCenter(homeBase);
         distanceCircle.setMap(map);
 
-        var homeControlDiv = document.createElement('div');
-        var homeControl = new mapStyles.BaseControl(homeControlDiv, map, homeBase);
+        //var homeControlDiv = document.createElement('div');
+        //var homeControl = new mapStyles.BaseControl(homeControlDiv, map, homeBase);
         var marker = new google.maps.Marker({
             position: homeBase,
             icon: mapStyles.goldStarBase,
             map: map
         });
-        homeControlDiv.index = 1;
-        map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
+        //homeControlDiv.index = 1;
+        //map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
         
-        var uavFilterDiv = document.createElement('div');
-        var uavFilter = new mapStyles.uavFilter(uavFilterDiv, map);
-        uavFilterDiv.index = 1;
-        map.controls[google.maps.ControlPosition.RIGHT_TOP].push(uavFilterDiv);
+        //var uavFilterDiv = document.createElement('div');
+        //var uavFilter = new mapStyles.uavFilter(uavFilterDiv, map);
+        //uavFilterDiv.index = 1;
+        //map.controls[google.maps.ControlPosition.RIGHT_TOP].push(uavFilterDiv);
 
 
 
@@ -220,13 +222,12 @@ $(document).ready(function () {
         }
 
         emitHub.client.newEvent = function (evt) {
-
             console.log(evt);
             //deprecate -- ack check by operator -dg
             //var checkMessage = evt.message.split(" ");
             //if (checkMessage[0] != "Acknowledged:") {
             if (evt.criticality != "ACK") {
-
+                mapFunctions.glowing();
                 var i = uavs[evt.UAVId].Events;
                 i++;
                 uavs[evt.UAVId].Events = i;
@@ -383,9 +384,108 @@ $(document).ready(function () {
                 document.getElementById('warningUavId').innerHTML = "UAV ID: " + uavs[evt.UAVId].Id + "<br />";
                 document.getElementById('warningUavCallsign').innerHTML = "Callsign: " + uavs[evt.UAVId].Callsign + "<br />";
                 document.getElementById('warningReason').innerHTML = "Reason: " + evt.message;
+
+                var table = document.getElementById('eventlog_table');
+                var table_length = table.rows.length;
+                var event_time = evt.create_date;
+                var event_uav_user = document.getElementById('event_uav_user');
+                
+                // Right upper Event log UI
+                if (event_count == 0)
+                {
+                    event_count++;
+
+                    //@-webkit-keyframes glowing {0% { background-color: #004a7f; -webkit-box-shadow: 0 0 3px #004a7f; }50% { background-color: #0094ff; -webkit-box-shadow: 0 0 10px #0094ff; }100% { background-color: #004a7f; -webkit-box-shadow: 0 0 3px #004a7f; }}
+                    
+                    document.getElementById('event_info_uavid').innerHTML = uavs[evt.UAVId].Id;
+                    document.getElementById('event_info_callsign').innerHTML = uavs[evt.UAVId].Callsign;
+                    document.getElementById('event_info_msg').innerHTML = evt.message;
+                    document.getElementById('event_time').innerHTML = evt.create_date;
+
+                    if (evt.criticality === "critical")
+                    {
+                        document.getElementById('criticality_color').style.backgroundColor = "red";
+                    }
+
+                    else if (evt.criticality === "warning")
+                    {
+                        document.getElementById('criticality_color').style.backgroundColor = "yellow";
+                    }
+
+                    else if (evt.criticality === "advisory")
+                    {
+                        document.getElementById('criticality_color').style.backgroundColor = "orange";
+                    }
+                    
+                    for (var i = 1; i < event_uav_user.rows.length; i++) {
+                        var uav_user_id = event_uav_user.rows[i].cells[0].innerHTML;
+                        var uav_user_name = event_uav_user.rows[i].cells[1].innerHTML;
+                        if (uavs[evt.UAVId].Id == uav_user_id) {
+                            if (uav_user_name === "")
+                            {
+                                document.getElementById('event_button_accept').style.display = 'block';
+                                document.getElementById('event_button_decline').style.display = 'block';
+                            }
+                            
+                            else
+                            {
+                                document.getElementById('event_button_accept').style.display = 'none';
+                                document.getElementById('event_button_decline').style.display = 'none';
+                                document.getElementById('table_button').innerHTML = "Owned by" + "<br>" + event_uav_user.rows[i].cells[1].innerHTML;
+                            }
+                        }
+                    }
+                    document.getElementById('nav-counter').innerHTML = table_length;
+                }
+
+                else if (event_count != 0)
+                {
+                    event_count++;
+                    var row = table.insertRow(0);
+                    var cell0 = row.insertCell(0);
+                    var cell1 = row.insertCell(1);
+                    var cell2 = row.insertCell(2);
+                    var cell3 = row.insertCell(3);
+                    
+                    cell0.style.cssText = "width: 5%; border-bottom: 1px solid black;";
+                    cell1.style.cssText = "font-size: 12px; border-bottom: 1px solid black; padding-left: 5px; width: 75%; height: 60px; line-height:100%";
+                    cell2.style.cssText = "font-size: 10px; border-bottom: 1px solid black; width: 15%; padding-left: 3px; padding-right: 3px; padding-top: 0px; margin: 0px;";
+                    cell3.style.cssText = "font-size: 12px; border-bottom: 1px solid black; width: 5%";
+                    cell1.innerHTML = "<b>UAV # </b>" + uavs[evt.UAVId].Id + " : " + uavs[evt.UAVId].Callsign + "<b><br>Reason: </b>" + evt.message + "<br>" + event_time.fontcolor("gray").fontsize(.7);
+
+
+                    for (var i = 1; i < event_uav_user.rows.length; i++) {
+                        var uav_user_id = event_uav_user.rows[i].cells[0].innerHTML;
+                        var uav_user_name = event_uav_user.rows[i].cells[1].innerHTML;
+                        if (uavs[evt.UAVId].Id == uav_user_id) {
+                            if (uav_user_name === "") {
+                                var accept_butt = '<input type="button" value="ACCEPT" name="ACCEPT" onclick=mapFunctions.RR_button_accept() style="background-color: #46d914; color: white; cursor: pointer;padding-right: 5px; padding-left: 5px; padding-top: 2px; padding-bottom: 2px; border-radius: 5px; border: none; width: 100%; border-top:2px solid transparent; margin-top: 2px;">';
+                                var decline_butt = '<input type="button" value="DECLINE" name="DECLINE" onclick=mapFunctions.RR_button_decline(); style="background-color: #ee3f3f;color: white;cursor: pointer;padding-right: 5px;padding-left: 5px;padding-top: 2px;padding-bottom: 2px;border-radius: 5px;border: none;width: 100%;border-top:2px solid transparent;margin-top: 2px;margin-bottom: 1px;">';
+                                cell2.innerHTML = accept_butt + decline_butt;
+                            }
+
+                            else {
+                                cell2.innerHTML = "Owned by" + "<br>" + event_uav_user.rows[i].cells[1].innerHTML;
+                                cell3.innerHTML = '<span class="glyphicon glyphicon-remove" onclick=mapFunctions.delete_event_row();>' + '</span>';
+                            }
+                        }
+                    }
+                    
+                    if (evt.criticality === "critical") {
+                        cell0.style.backgroundColor = "red";
+                    }
+
+                    else if (evt.criticality === "warning") {
+                        cell0.style.backgroundColor = "yellow";
+                    }
+
+                    else if (evt.criticality === "advisory") {
+                        cell0.style.backgroundColor = "orange";
+                    }
+                    document.getElementById('nav-counter').innerHTML = (table_length + 1);
+                }
             }
         }
-
 
         
         //Make sure to set all SignalR callbacks BEFORE the call to connect
@@ -433,14 +533,12 @@ $(document).ready(function () {
         google.maps.event.addListener(mapListeners, 'mousedown', function (e) { mapFunctions.StopMapDrag(this, e); });
         google.maps.event.addListener(mapListeners, 'mouseup', function (e) { droneSelection.AreaSelect(this, e, mapFunctions.mouseIsDown, mapFunctions.shiftPressed, mapFunctions.gridBoundingBox, selectedDrones, uavs) });
         google.maps.event.addListener(mapListeners, 'dblclick', function (e) {
-            console.log("double clicked");
             mapUavId = null;
             for (var key in uavs) {
                 uavs[key].marker.setIcon(uavs[key].marker.uavSymbolBlack);
                 uavs[key].marker.selected = false;
+                google.maps.event.trigger(uavs[key].marker, 'selection_changed');
             }
-
-
         })
     };
     google.maps.event.addDomListener(window, 'load', init);

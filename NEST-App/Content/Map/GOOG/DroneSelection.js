@@ -45,7 +45,7 @@
                 selectedDrones.push(selectedUAV);
             }
         }
-        console.log("Number of drones selected: " + selectedDrones.length);
+        //console.log("Number of drones selected: " + selectedDrones.length);
         // enable waypoint buttons
         $("#goBtn").removeClass("disabled");
         $("#clickToGoBtn").removeClass("disabled");
