@@ -1,4 +1,6 @@
-﻿@{
+﻿@using NEST_App.Models
+@model dynamic
+@{
     Layout = null;
 }
 
@@ -16,15 +18,12 @@
 
 <div class="right-buttons">
     <button type="button" id="goWaypoint" onclick="mapFunctions.goTo_show()">　Set Waypoint　</button>
-    <button type="button" id="goevent" onclick="mapFunctions.eventlog_show()">　Event Log　</button>
+    <button type="button" id="goevent" onclick="mapFunctions.eventlog_show()">　Event Log　<p class="nav-counter" id="nav-counter">·</p></button>
     <button type="button" id="filteruav" onclick="mapStyles.uavFilter()">　Filter UAVs　</button>
     <button type="button" id="base" onclick="mapStyles.BaseControl()">　Base　</button>
 </div>
 
 <div class="eventlog" id="eventlog">
-    @*UAV EVENT LOG*@
-    @*<div id="event_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.eventlog_hide()"></span></div>*@
-
     <div class="event_table_div">
         <table class="eventlog_table" id="eventlog_table">
             <tr style="border-bottom: 1px solid black; height: 60px;">
@@ -44,6 +43,26 @@
             </tr>
         </table>
     </div>
+
+    @*/////////////////////////uav and user table@*/////////////////////////*@
+    <table class="event_uav_user" id="event_uav_user" style="display: none; width: 80%;">
+        <thead>
+            <tr>
+                <th>UAV</th>
+                <th>Owned By</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (UAV uav_user in Model.UAVs)
+            {
+                <tr class="eventlog_tr">
+                    <td>@Html.DisplayFor(modelItem => uav_user.Id)</td>
+                    <td>@Html.DisplayFor(modelItem => uav_user.User.username)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
 </div>
 
 

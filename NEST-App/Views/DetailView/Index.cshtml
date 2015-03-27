@@ -212,6 +212,7 @@
                     <th>Criticality</th>
                     <th>Create</th>
                     <th>Message</th>
+                    <th>Owned By</th>
                 </tr>
             </thead>
             <tbody>
@@ -223,6 +224,7 @@
                         <td>@Html.DisplayFor(modelItem => eventlog.criticality)</td>
                         <td>@Html.DisplayFor(modelItem => eventlog.create_date)</td>
                         <td>@Html.DisplayFor(modelItem => eventlog.message)</td>
+                        <td>@Html.DisplayFor(modelItem => eventlog.UAV.User.username)</td>
                     </tr>
                 }
             </tbody>
