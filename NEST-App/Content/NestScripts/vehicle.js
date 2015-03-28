@@ -527,6 +527,27 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         this.currentWpIndex = 0;
         this.currentWaypoint = this.waypoints[this.currentWpIndex];
     }
+
+    this.addMissionToSchedule = function (mis) {
+        this.Schedule.push(mis);
+    }
+
+    this.setNewCurrentMission = function (misId) {
+        for (var i = 0; i < this.Schedule.length; i++) {
+            if (this.Schedule[i].id == misId) {
+                var foundMis = this.Schedule.splice(i, 1);
+            }
+        }
+        if (foundMis) {
+            if (this.Mission && !this.isMissionCompleted()) {
+                //Requeue the current mission if it is not done
+                //Set to the front
+                this.Schedule.unshift(this.Mission);
+            }
+            this.Schedule.unshift(foundMis);
+        }
+    }
+
     this.getNextMission();
 }
 
