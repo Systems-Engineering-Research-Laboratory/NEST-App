@@ -27,6 +27,11 @@
 .unassigned {
     width:100%;
 }
+
+.unassigned td:hover {
+    cursor: pointer;
+}
+
 #operator {
     display:inline-table;
     float:left;
