@@ -529,22 +529,23 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     }
 
     this.addMissionToSchedule = function (mis) {
-        this.Schedule.push(mis);
+        this.Schedule.Missions.push(mis);
     }
 
     this.setNewCurrentMission = function (misId) {
-        for (var i = 0; i < this.Schedule.length; i++) {
+        var missions = this.Schedule.Missions;
+        for (var i = 0; i < missions.length; i++) {
             if (this.Schedule[i].id == misId) {
-                var foundMis = this.Schedule.splice(i, 1);
+                var foundMis = missions.splice(i, 1);
             }
         }
         if (foundMis) {
             if (this.Mission && !this.isMissionCompleted()) {
                 //Requeue the current mission if it is not done
                 //Set to the front
-                this.Schedule.unshift(this.Mission);
+                missions.unshift(this.Mission);
             }
-            this.Schedule.unshift(foundMis);
+            missions.unshift(foundMis);
         }
     }
 
