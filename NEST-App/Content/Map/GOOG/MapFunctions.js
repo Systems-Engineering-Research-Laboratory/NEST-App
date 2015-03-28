@@ -1,4 +1,6 @@
-﻿var mapFunctions = {   
+﻿var eventlog_show_hide = false;
+
+var mapFunctions = {
     shiftPressed : false,
     mouseDownPos: null,
     gridBoundingBox : null,
@@ -424,7 +426,8 @@
         document.getElementById('RR_choice_p').innerHTML = "You have accepted UAV";
         document.getElementById('RR_choice_p').style.color = "green";
         document.getElementById('RR_outer_result').style.display = "block";
-        $("#RR_outer_result").fadeOut("slow", function () {});
+        $("#RR_outer_result").fadeOut("slow", function () { });
+        mapFunctions.delete_event_row();
     },
 
 
@@ -442,19 +445,39 @@
         });
     },
 
-    eventlog_show: function() {
-        document.getElementById("eventlog").style.display = "block";
+    
+    eventlog_show: function () {
+        if (eventlog_show_hide == false) {
+            document.getElementById("eventlog").style.display = "block";
+            eventlog_show_hide = true;
+        }
+
+        else if (eventlog_show_hide == true) {
+            document.getElementById("eventlog").style.display = "none";
+            eventlog_show_hide = false;
+        }
     },
 
-    eventlog_hide: function() {
-        document.getElementById("eventlog").style.display = "none";
-    },
-
-    delete_event_row: function() {
+    delete_event_row: function () {
         var current = window.event.srcElement;
-        //here we will delete the line
         while ( (current = current.parentElement)  && current.tagName !="TR");
         current.parentElement.removeChild(current);
+
+        var table = document.getElementById('eventlog_table');
+        var tablelength = table.rows.length;
+
+        if (tablelength == 0) {
+            document.getElementById('nav-counter').innerHTML = "·";
+        }
+
+        else {
+            document.getElementById('nav-counter').innerHTML = tablelength;
+        }
+    },
+
+    glowing: function() {
+        var event_button = document.getElementById('goevent');
+        event_button.style.cssText = "-webkit-animation: glowing 1s 1;";
     }
     
 };
