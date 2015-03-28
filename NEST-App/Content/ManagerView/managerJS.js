@@ -3,7 +3,7 @@ $(document).ready(function () {
 
     var assign_table = document.getElementById('assigned');
     var unassign_table = document.getElementById('unassigned');
-    var operator_table = document.getElementById('operator');
+    var operator_table = document.getElementById('op');
     var emitHub = $.connection.eventLogHub;
 
     for (var i = assign_table.rows.length; i > 1; i--) {
@@ -18,16 +18,18 @@ $(document).ready(function () {
         var assign_id = unassign_table.rows[i - 1].cells[1].innerText;
         if (unassign_table.rows[i - 1].cells[2].innerHTML != "") {
             console.log(i + " assigned");
-            document.getElementById('unassigned').deleteRow(i - 1)
+            document.getElementById('unassigned').deleteRow(i - 1);
         }
     }
-        for (var i = operator_table.rows.length; i > 1; i--) {
-            var assign_id = operator_table.rows[i - 1].cells[1].innerText;
-            if (operator_table.rows[i - 1].cells[2].innerHTML != "") {
-                console.log(i + " operator");
-                document.getElementById('operator')
-            }
+
+    for (var i = operator_table.rows.length; i > 1; i--) {
+        var assign_id = operator_table.rows[i - 1].cells[1].innerText;
+        if (operator_table.rows[i - 1].cells[2].innerHTML != "") {
+            console.log(i + " operator");
+            document.getElementById('operator')
+        }
     }
+
 
     emitHub.client.newEvent = function (evt) {
 
@@ -66,10 +68,6 @@ $(document).ready(function () {
                 console.log("connection started for evt log");
             });
         }
-    }
-
-    function assignTo() {
-        alert("assign to:");
-    }
+    };
 })
  
