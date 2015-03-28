@@ -277,4 +277,13 @@ function setSignalrCallbacks(map) {
     vehicleHub.client.broadcastAcceptedCommand = function (ack) {
         console.log(ack);
     }
+
+    vehicleHub.client.newMissionAssignment = function (uavId, mission) {
+        if (uavId) {
+            var uav = map.getVehicleById(uavId);
+            if (uav) {
+                uav.addMissionToSchedule(mission);
+            }
+        }
+    }
 }

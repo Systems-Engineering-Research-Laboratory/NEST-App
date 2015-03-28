@@ -284,6 +284,9 @@ namespace NEST_App.Controllers.Api
                              where mis.ScheduleId == null
                              select mis;
 
+            //Uav Id and the mission assigned. Put into list in case the db update fails.
+            List<Tuple<int?, Mission>> uavMissionPairs = new List<Tuple<int?, Mission>>();
+
             //Assign each of those unassigned missions to the a schedule
             foreach (Mission mis in unassigned)
             {
@@ -294,6 +297,7 @@ namespace NEST_App.Controllers.Api
                     //This schedule had no current mission, so just assign it one
                     s.CurrentMission = mis.id;
                 }
+                uavMissionPairs.Add(new Tuple<int?, Mission>(s.UAVId, mis));
                 //Add to the back of the queue for round robinness
                 schedQ.Enqueue(s);
             }
@@ -301,6 +305,31 @@ namespace NEST_App.Controllers.Api
             try
             {
                 await db.SaveChangesAsync();
+                //Now use signalr to assign the missions to the vehicles.
+                var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
+                foreach(var tup in uavMissionPairs)
+                {
+                    int? uavId = tup.Item1;
+                    Mission mis = tup.Item2;
+                    hub.Clients.All.newMissionAssignment(uavId, new
+                    {
+                        id = mis.id,
+                        Latitude = mis.Latitude,
+                        Longitude = mis.Longitude,
+                        EstimatedCompletionTime = mis.EstimatedCompletionTime,
+                        TimeAssigned = mis.TimeAssigned,
+                        TimeCompleted = mis.TimeCompleted,
+                        ScheduledCompletionTime = mis.ScheduledCompletionTime,
+                        ScheduleId = mis.ScheduleId,
+                        create_date = mis.create_date,
+                        modified_date = mis.modified_date,
+                        Phase = mis.Phase,
+                        FlightPattern = mis.FlightPattern,
+                        Payload = mis.Payload,
+                        FinancialCost = mis.FinancialCost,
+
+                    });
+                }
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -371,6 +400,7 @@ namespace NEST_App.Controllers.Api
                         modified_date = DateTime.Now,
                     }
                 };
+                db.Entry(u).State = System.Data.Entity.EntityState.Modified;
             }
 
             await db.SaveChangesAsync();
@@ -399,8 +429,16 @@ namespace NEST_App.Controllers.Api
                     MinDeliveryAlt = 100,
                     UpdateRate = 1000,
                     CruiseAltitude = 400,
-                    isActive = true
+                    isActive = true,
                 };
+
+                uav.Schedules.Add(new Schedule
+                {
+                    UAVId = uav.Id,
+                    create_date = DateTime.Now,
+                    modified_date = DateTime.Now,
+                    CurrentMission = null
+                });
 
                 Configuration config = new Configuration
                 {
@@ -451,7 +489,6 @@ namespace NEST_App.Controllers.Api
                 //db.Schedules.Add(sched.First());
                 db.FlightStates.Add(flights.First());
 
-                await createSchedulesForUavs();
                 try
                 {
                     db.SaveChanges();
