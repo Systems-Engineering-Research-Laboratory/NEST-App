@@ -254,7 +254,7 @@ $(document).ready(function () {
    
                     var infobox = new InfoBox({
                         content: multipleText,
-                        disableAutoPan: false,
+                        disableAutoPan: true,
                         maxWidth: 100,
                         pixelOffset: new google.maps.Size(-75, 30),
                         zIndex: null,
@@ -312,7 +312,7 @@ $(document).ready(function () {
                     }
                     var infobox = new InfoBox({
                         content: boxText,
-                        disableAutoPan: false,
+                        disableAutoPan: true,
                         maxWidth: 100,
                         pixelOffset: new google.maps.Size(-75, 30),
                         zIndex: null,
@@ -362,7 +362,7 @@ $(document).ready(function () {
                     if (uavs[evt.UAVId].alertOnce != 1) {
                         var infoboxAlert = new InfoBox({
                             content: alertText,
-                            disableAutoPan: false,
+                            disableAutoPan: true,
                             maxWidth: 20,
                             pixelOffset: new google.maps.Size(-10, -80),
                             zIndex: null,

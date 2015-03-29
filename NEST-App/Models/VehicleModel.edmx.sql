@@ -2,16 +2,9 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 03/18/2015 11:36:40
--- Generated from EDMX file: C:\Users\David Wu\Documents\GitHub\NEST-App\NEST-App\Models\VehicleModel.edmx
--- --------------------------------------------------
+-- Date Created: 03/28/2015 18:12:30
+-- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
 
-SET QUOTED_IDENTIFIER OFF;
-GO
-USE [NEST_DB];
-GO
-IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
-GO
 
 -- --------------------------------------------------
 -- Dropping existing FOREIGN KEY constraints
@@ -202,6 +195,7 @@ CREATE TABLE [dbo].[UAVs] (
     [MinDeliveryAlt] float  NOT NULL,
     [User_user_id] int  NULL,
     [isActive] bit  NOT NULL,
+    [estimated_workload] int  NOT NULL,
     [Configurations_Id] int  NOT NULL
 );
 GO
@@ -367,6 +361,7 @@ CREATE TABLE [dbo].[Users] (
     [modified_date] datetime  NOT NULL,
     [phone_number] nvarchar(max)  NOT NULL,
     [position_in_queue] int  NULL,
+    [current_workload] int  NOT NULL,
     [UserRole_Id] int  NOT NULL
 );
 GO

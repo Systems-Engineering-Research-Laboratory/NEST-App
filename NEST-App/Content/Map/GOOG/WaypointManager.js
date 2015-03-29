@@ -232,7 +232,9 @@ function WaypointManager() {
             }
             thisMission.Waypoints = null;
         }
-        this.displayWaypointsPerMission(thisMission);
+        if (selectedDrones.length != 0) {
+            this.displayWaypointsPerMission(thisMission);
+        }
     }
 
     this.vehicleHasNewMission = function(uavid, schedid, missionid) {
