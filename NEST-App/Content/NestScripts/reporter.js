@@ -179,4 +179,18 @@ function Reporter() {
             url: '/api/schedule/' + schedid + '/setCurrentMission/' + missionid,
         });
     }
+
+    this.failedReroute = function (callsign, uavId) {
+        var curTime = new Date();
+        this.eventHub.server.emit({
+            message: "UAV " + callsign + " failed to reroute around a restricted area. Holding position",
+            uav_id: uavId,
+            UAVId: uavId,
+            uav_callsign: callsign,
+            operator_screen_name: "",
+            criticality: "critical",
+            create_date: curTime.toUTCString(),
+            modified_date: curTime.toUTCString(),
+        });
+    }
 }
