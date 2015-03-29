@@ -36,6 +36,7 @@ namespace NEST_App.Models
         public double MinDeliveryAlt { get; set; }
         public Nullable<int> User_user_id { get; set; }
         public bool isActive { get; set; }
+        public int estimated_workload { get; set; }
     
         public virtual Configuration Configurations { get; set; }
         public virtual ICollection<EquipmentHealth> EuipmentHealths { get; set; }

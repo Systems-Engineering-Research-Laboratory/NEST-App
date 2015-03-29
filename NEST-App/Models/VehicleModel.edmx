@@ -914,6 +914,7 @@
           <NavigationProperty Name="User" Relationship="VehicleModel.UserUAV" FromRole="UAV" ToRole="User" />
           <Property Name="User_user_id" Type="Int32" Nullable="true" />
           <Property Name="isActive" Type="Boolean" Nullable="false" />
+          <Property Name="estimated_workload" Type="Int32" Nullable="false" />
           </EntityType>
         <EntityType Name="FlightState">
           <Key>
@@ -1196,6 +1197,7 @@
           <NavigationProperty Name="UserRole" Relationship="VehicleModel.UserUserRole" FromRole="User" ToRole="UserRole" />
           <NavigationProperty Name="UAVs" Relationship="VehicleModel.UserUAV" FromRole="User" ToRole="UAV" />
           <Property Name="position_in_queue" Type="Int32" Nullable="true" />
+          <Property Name="current_workload" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="UserRole">
           <Key>
