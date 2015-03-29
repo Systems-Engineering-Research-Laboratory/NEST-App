@@ -22,6 +22,32 @@ namespace NEST_App.Controllers
             return db.Users;
         }
 
+        [HttpGet]
+        [Route("api/users/getoperatorworkload/{id}")]
+        public int GetOperatorWorkload(int id)
+        {
+                var usr = db.Users.Find(id);
+            return usr.current_workload;
+        }
+
+        [HttpGet]
+        [Route("api/users/calculateworkloadforoperator/{id}")]
+        public int CalculateWorkloadForOperator(int id)
+        {
+            int workload = 0;
+            try
+            {
+                User usr = db.Users.Find(id);
+                workload += usr.UAVs.Count;
+                workload += usr.UAVs.Sum(uav => uav.estimated_workload);
+            }
+            catch (Exception e)
+            {
+                // ignored
+            }
+            return workload;
+        }
+
         [HttpPost]
         [ResponseType(typeof(IEnumerable<UAV>))]
         [Route("api/users/assignmultiple/{user_id}/{amt}")]

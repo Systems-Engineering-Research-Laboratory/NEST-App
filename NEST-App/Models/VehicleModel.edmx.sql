@@ -2,9 +2,9 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 03/28/2015 18:12:30
+-- Date Created: 03/29/2015 10:09:59
 -- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
-
+-- --------------------------------------------------
 
 -- --------------------------------------------------
 -- Dropping existing FOREIGN KEY constraints
