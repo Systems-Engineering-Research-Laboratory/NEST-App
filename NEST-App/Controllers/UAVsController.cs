@@ -30,15 +30,25 @@ namespace NEST_App.Controllers.Api
 
         [HttpGet]
         [Route("api/uavs/getworkload/{id}")]
-        public HttpResponseMessage GetWorkload(int id)
+        public int GetWorkload(int id)
         {
             var uav = db.UAVs.Find(id);
-            HttpResponseMessage msg = new HttpResponseMessage
+            return uav.estimated_workload;
+        }
+
+        [HttpGet]
+        [Route("api/uavs/calculateworkloadforuav/{id}")]
+        public int CalculateWorkloadForUav(int id)
+        {
+            var uav = db.UAVs.Find(id);
+            int workload = 0;
+            workload += uav.Schedules.Count;
+            foreach (var sched in uav.Schedules)
             {
-                Content = uav.estimated_workload,
-                StatusCode = HttpStatusCode.OK
-            };
-            return Request.CreateResponse(msg);
+                workload += sched.Missions.Count;
+                workload += sched.Missions.Sum(miss => miss.Waypoints.Count);
+            }
+            return workload;
         }
 
         [HttpPost]
