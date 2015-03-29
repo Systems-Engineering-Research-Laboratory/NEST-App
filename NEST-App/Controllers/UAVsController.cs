@@ -28,6 +28,19 @@ namespace NEST_App.Controllers.Api
         private String[] lines2 = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content\\Flowers.txt"));
         private Random rand = new Random();
 
+        [HttpGet]
+        [Route("api/uavs/getworkload/{id}")]
+        public HttpResponseMessage GetWorkload(int id)
+        {
+            var uav = db.UAVs.Find(id);
+            HttpResponseMessage msg = new HttpResponseMessage
+            {
+                Content = uav.estimated_workload,
+                StatusCode = HttpStatusCode.OK
+            };
+            return Request.CreateResponse(msg);
+        }
+
         [HttpPost]
         [Route("api/uavs/rejectassignment")]
         public HttpResponseMessage RejectAssignment(int uavid, int userid)
