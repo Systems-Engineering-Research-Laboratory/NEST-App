@@ -1398,13 +1398,13 @@
     <Content Include="Scripts\_references.js" />
     <Content Include="Scripts\app\eventlog.js" />
     <Content Include="Content\ManagerView\managerJS.js" />
-    <Content Include="Web.config">
+    <Content Include="Views\Shared\Web.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Web.Debug.config">
+    <Content Include="Views\Shared\Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Web.Release.config">
+    <Content Include="Views\Shared\Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Views\Web.config" />
@@ -1446,6 +1446,13 @@
     <Content Include="Views\Login\Index.cshtml" />
     <Content Include="Views\ManagerView.cshtml" />
     <Content Include="Views\ManagerView\Index.cshtml" />
+    <Content Include="Web.Config" />
+    <None Include="Web.Debug.Config">
+      <DependentUpon>Web.Config</DependentUpon>
+    </None>
+    <None Include="Web.Release.Config">
+      <DependentUpon>Web.Config</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
