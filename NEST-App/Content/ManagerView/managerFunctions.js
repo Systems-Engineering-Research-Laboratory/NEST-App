@@ -11,7 +11,7 @@ var managerFunctions = {
             for (var i = 1; i < unassigned_table.rows.length; i++) {
                 for (var j = 0; j < unassigned_table.rows[i].cells.length; j++) {
                     unassigned_table.rows[i].onclick = function () {
-                        this.bgColor = "#1DDB16";
+                        this.bgColor = "#AABBCC";
                         var uavid = this.cells[0];
                         var callsign = this.cells[1];
                         var uavid_html = uavid.innerHTML;
@@ -34,7 +34,7 @@ var managerFunctions = {
                             }
 
                             else {
-                                this.bgColor = "#1DDB16";
+                                this.bgColor = "#AABBCC";
                             }
                         }
                     }
@@ -67,15 +67,11 @@ var managerFunctions = {
         }
         
         if ((drop_down_choice != "choose_operator") && (selecteduav_array.length != 0)) {
-            
-            for (var i = 1; i < unassigned_table.rows.length; i++)
-            {
-                for (var j = 0; j < unassigned_table.rows[i].cells.length; j++)
-                {
-                    for (var k = 0; k < selecteduav_array.length; k++)
-                    {
-                        if (selecteduav_array[k] == unassigned_table.rows[i].cells[0].innerHTML)
-                        {
+
+            for (var i = 1; i < unassigned_table.rows.length; i++) {
+                for (var j = 0; j < unassigned_table.rows[i].cells.length; j++) {
+                    for (var k = 0; k < selecteduav_array.length; k++) {
+                        if (selecteduav_array[k] == unassigned_table.rows[i].cells[0].innerHTML) {
                             unassigned_table.deleteRow(i);
                             console.log("Removed row # " + i + ": UAV ID " + selecteduav_array[k] + ", CALLSIGN: " + selecteduav_callsign_array[k]);
 
@@ -91,18 +87,16 @@ var managerFunctions = {
                             cell2.innerHTML = selected_userid;
                             cell3.innerHTML = selected_name;
 
-                            //////////////////////////////////////////////////////////////////////////////////////////////////////
-                            // You can add "POST" method here but....
-                            // I HAVE NO IDEA HOW TO POST THIS TO DATABASE..... T^T
-                            // VARATEP USED ANGULAR......
-                            //for (var i = 0; i < selecteduav_array.length; i++) {
-                            //    $.ajax({
-                            //        method: 'POST',
-                            //        url: 'api/uavs/assignuser?uavid=' + selecteduav_array[i] + '&userid=' + operator_id,
-                            //        success: function () {
-                            //            console.log("success");
-                            //        }
-                            //    });
+                            for (var i = 0; i < selecteduav_array.length; i++) {
+                                $.ajax({
+                                    method: 'POST',
+                                    url: '/api/uavs/assignexistinguav?uavid='+ selecteduav_array[k],
+                                    data: User_user_id = selected_userid,
+                                    success: function () {
+                                        console.log("success");
+                                    }
+                                });
+                            }
                         }
                     }
                 }
