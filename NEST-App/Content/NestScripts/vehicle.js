@@ -886,49 +886,6 @@ function PathGenerator(areaContainer, reporter) {
         return ints;
     }
 
-    function fixOppositeEdgeIntersection(area, int1, int2, isNorthSouthInt) {
-        if (!isNorthSouthInt) {
-            //The two points intersect through the east and west edges
-            var edgeCenter = (area.NorthEastY + area.SouthWestY) / 2;
-            var vertical = int1.Y - edgeCenter + int2.Y - edgeCenter;
-            var pt1 = {
-                X: area.NorthEastX + 1
-            }
-            var pt2 = {
-                X: area.SouthWestX - 1
-            }
-            if (vertical < 0) {
-                //The points average out to being closer to the bottom
-                pt1.Y = area.SouthWestY - 1;
-                pt2.Y = area.SouthWestY - 1;
-            } else {
-                pt1.Y = area.NorthEastY + 1;
-                pt2.Y = area.NorthEastY + 1;
-            }
-        }
-        else {
-            var edgeCenter = (area.NorthEastX + area.SouthWestX) / 2;
-            var horizontal = int1.X - edgeCenter + int2.X - edgeCenter;
-            var pt1 = {
-                Y: area.NorthEastY
-            };
-            var pt2 = {
-                Y: area.SouthWestY
-            };
-            if (horizontal < 0) {
-                //Average out to being more west
-                pt1.X = area.SouthWestX - 1;
-                pt2.X = area.SouthWestX - 1;
-            } else {
-                pt1.X = area.NorthEastX + 1;
-                pt2.X = area.NorthEastX + 1;
-            }
-        }
-        XYToLatLong(pt1);
-        XYToLatLong(pt2);
-        return [new Waypoint(pt1), new Waypoint(pt2)];
-    }
-
     function intersectsSide(axMin, axMax, y, px1, py1, px2, py2, reverse) {
         if (Math.abs(py1 - py2) < .00001) {
             return false;
