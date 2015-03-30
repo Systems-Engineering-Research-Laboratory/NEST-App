@@ -83,14 +83,13 @@
     // click on map to set a waypoint
     // todo: make a cancel button
     // still working on it
-    clickToGo: function () {
+    clickToGo: function (ids) {
         if (selectedUAV != null) {
             mapFunctions.goTo_hide();
             var that = this;
-
             //setting dropMarkerListener
             this.dropMarkerListener = google.maps.event.addListener(map, 'click', function (event) {
-                that.goWaypoint(event.latLng.lat(), event.latLng.lng());
+                that.goWaypoint(event.latLng.lat(), event.latLng.lng(), ids);
                 mapFunctions.ConsNotifier(this, event.latLng.lat(), event.latLng.lng(), "", "");
                 
             });
@@ -99,19 +98,20 @@
 
     //still working on it -David
     
-    goWaypoint: function (lat, lng) {
+    goWaypoint: function (lat, lng, ids) {
         //vehicleHub.server.ackCommand({
         //    CommandId: cmd.Id,
         //    CommandType: "waypoint",
         //    Reason: "OK",
         //    Accepted: true
         //}, cmd.connId);
-
-        vehicleHub.server.sendCommand({
-            Latitude: lat,
-            Longitude: lng,
-            Altitude: 400,
-            UAVID: selectedUAV.Id
-        });   
+        for (var i = 0; i < ids.length; i++) {
+            vehicleHub.server.sendCommand({
+                Latitude: lat,
+                Longitude: lng,
+                Altitude: 400,
+                UAVID: ids[i]
+            });
+        }
     }
 };

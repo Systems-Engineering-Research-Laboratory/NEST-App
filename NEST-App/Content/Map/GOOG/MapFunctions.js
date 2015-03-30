@@ -36,7 +36,11 @@ var mapFunctions = {
         return contextMenu;
     },
     //Controls context menu selection for the map
-    MapContextSelection : function(map, latLng, eventName, emitHub){
+    MapContextSelection: function (map, latLng, eventName, emitHub) {
+        var ids = [];
+        for (var i = 0; i < selectedDrones.length; i++) {
+            ids[i] = selectedDrones[i].Id;
+        }
         switch (eventName) {
             case 'get_coords':
                 var coords = {
@@ -54,6 +58,8 @@ var mapFunctions = {
             case 'go_here':
                 document.getElementById("go_lat").value = latLng.lat();
                 document.getElementById("go_long").value = latLng.lng();
+                document.getElementById("clickToGoBtn").onclick = function () { droneTrails.clickToGo(ids); };
+
                 this.goTo_show();
 
                 break;
@@ -96,6 +102,10 @@ var mapFunctions = {
             var alt = 0;
             var throttle = 0;
             var time = 0;
+            var ids = [];
+            for (var i = 0; i < selectedDrones.length; i++) {
+                    ids[i] = selectedDrones[i].Id;
+            }
             /////////////////
             switch (eventName) {
                 case 'get_details':
@@ -110,7 +120,7 @@ var mapFunctions = {
                         alt.value = uav.altitude;
                         throttle = document.getElementById("adjust_throttle");
                         throttle.value = uav.throttle;
-                        document.getElementById("adjust_click").onclick = function () { uavCommands.NonNav(uid, uav, latLng, alt.value, throttle.value); mapFunctions.adjust_hide() };
+                        document.getElementById("adjust_click").onclick = function () { uavCommands.NonNav(uid, uav, latLng, alt.value, throttle.value, ids); mapFunctions.adjust_hide() };
                         mapFunctions.adjust_show(marker.uav.Callsign);
                     }
                     break;
@@ -120,7 +130,7 @@ var mapFunctions = {
                     } else {
                         time = document.getElementById("hold_time");
                         time.value = "";
-                        document.getElementById("hold_click").onclick = function () { uavCommands.HoldPos(uid, uav, latLng, alt, 0, time.value); mapFunctions.hold_hide() };
+                        document.getElementById("hold_click").onclick = function () { uavCommands.HoldPos(uid, uav, latLng, alt, 0, time.value, ids); mapFunctions.hold_hide() };
                         mapFunctions.hold_show(marker.uav.Callsign);
                     }
                     break;
@@ -137,6 +147,8 @@ var mapFunctions = {
                         console.log("You're not the owner");
                     } else {
                         //create ui
+                        console.log("IDS here " + ids[0]);h
+                        document.getElementById("clickToGoBtn").onclick = function () { droneTrails.clickToGo(ids); };
                         this.goTo_show();
                         //uavCommands.GoTo(uid, marker.uav, latLng, alt);
                     }
@@ -146,7 +158,7 @@ var mapFunctions = {
                         console.log("You're not the owner");
                     } else {
                         //create ui
-                        document.getElementById("land_click").onclick = function () { uavCommands.ForceLand(uid, uav, latLng, alt, throttle); mapFunctions.land_hide() };
+                        document.getElementById("land_click").onclick = function () { uavCommands.ForceLand(uid, uav, latLng, alt, throttle, ids); mapFunctions.land_hide() };
                         mapFunctions.land_show(marker.uav.Callsign);
                     }
                     break;
@@ -155,7 +167,7 @@ var mapFunctions = {
                         console.log("You're not the owner");
                     } else {
                         //create ui
-                        document.getElementById("return_click").onclick = function () { uavCommands.BackToBase(uid, uav, latLng); mapFunctions.return_hide() };
+                        document.getElementById("return_click").onclick = function () { uavCommands.BackToBase(uid, uav, latLng, ids); mapFunctions.return_hide() };
                         mapFunctions.return_show(marker.uav.Callsign);
                         
                     }
