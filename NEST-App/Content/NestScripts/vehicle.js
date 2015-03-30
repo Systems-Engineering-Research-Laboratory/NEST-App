@@ -143,7 +143,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             return false;
         }
         if (this.pathGen.gotNewRestrictedArea() && this.waypoints) {
-            if (this.shouldFailReroute) {
+            if (this.shouldFailNextReroute) {
                 reporter.failedReroute(this.Callsign, this.Id);
                 this.shouldFailReroute = true;
                 this.awaitingNavigation = true;
