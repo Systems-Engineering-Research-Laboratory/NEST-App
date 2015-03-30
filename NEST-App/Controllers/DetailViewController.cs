@@ -23,6 +23,21 @@ namespace NEST_App.Controllers
             uavDetailList.missions = db.Missions.ToList();
             uavDetailList.Configurations = db.Configurations.ToList();
             uavDetailList.Eventlog = db.EventLogs.ToList();
+
+            string name = (string)Session["current_user"];
+
+            if(name != null)
+            {
+                var curUser = (from u in db.Users
+                               where u.username.Equals(name)
+                              select new
+                              {
+                                  username = u.username,
+                                  user_id = u.user_id,
+                              }).FirstOrDefault();
+                    ViewBag.currentUser = curUser;
+            }
+
             return View(uavDetailList);
         }
     }

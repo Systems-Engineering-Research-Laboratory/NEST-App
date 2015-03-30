@@ -84,8 +84,11 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     //Functions. Careful not to add global helper functions here.
     this.process = function (dt) {
-        this.preprocess();
-        //Process this waypoint if we have one
+        var keepGoing = this.preprocess();
+        if (!keepGoing)
+        {
+            return;
+        }
         if (!this.hasCommsLink) {
             //Uh oh, loss of link. 
             this.FlightState.BatteryLevel -= dt / 1800;
@@ -93,11 +96,16 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                 //So we don't report out or follow waypoints, just hover
                 return;
             } else if (!this.generatedContingency) {
+                //Go back to base if the battery is getting low.
                 this.generatedContingency = true;
                 this.brandNewTarget(this.Base, false);
             }
         }
-        if (this.currentWaypoint) {
+            //Process this waypoint if we have one
+        if (this.awaitingNavigation) {
+            //Do nothing (aka hover)
+        }
+        else if (this.currentWaypoint) {
             if (this.performWaypoint(dt)) {
                 console.log("Finished with waypoint " + this.currentWaypoint.WaypointName);
                 this.getNextWaypoint();
@@ -129,12 +137,18 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         if (this.isAtBase() && this.FlightState.BatteryLevel < 1) {
             this.chargeBattery(dt);
             reporter.updateFlightState(this.FlightState);
-            return;
+            return false;
         }
         if (this.currentWaypoint && this.reporter.pendingResult) {
-            return;
+            return false;
         }
         if (this.pathGen.gotNewRestrictedArea() && this.waypoints) {
+            if (this.shouldFailNextReroute) {
+                reporter.failedReroute(this.Callsign, this.Id);
+                this.shouldFailReroute = true;
+                this.awaitingNavigation = true;
+                return true;
+            }
             var resolved = this.pathGen.buildSafeRoute(this.waypoints, this.FlightState, this.currentWpIndex);
             this.currentWpIndex += 1;
             this.currentWaypoint = this.waypoints[this.currentWpIndex];
@@ -143,6 +157,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                 this.reporter.reportReroute(this.Id, this.Callsign);
             }
         }
+        return true;
     }
 
     this.setCommsLink = function (isConnected) {
@@ -414,6 +429,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     this.setCommand = function (target) {
         if (this.hasCommsLink && !this.handleNonNavigationalCommand(target)) {
+            this.awaitingNavigation = false;
             if (this.currentWaypoint) {
                 this.pathGen.insertIntermediateTarget(this.waypoints,
                     this.FlightState,
@@ -547,6 +563,10 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             }
             missions.unshift(foundMis);
         }
+    }
+    
+    this.failNextReroute = function () {
+        this.shouldFailNextReroute = true;
     }
 
     this.getNextMission();
