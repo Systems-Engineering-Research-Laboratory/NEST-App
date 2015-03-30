@@ -161,8 +161,17 @@
             $scope.blockUI();
             var number = Math.floor((Math.random() * ($scope.uavs.length)) + 0);
             var pickedUav = $scope.uavs[number];
-            localStorage.setItem("uavBatteryID", pickedUav.Id);
-            localStorage.setItem("uavBatteryAmount", $('#desiredBatteryDrop').val());
+
+            var batteryDrop = {
+                uavID: pickedUav.Id,
+                amount: $('#desiredBatteryDrop').val()
+            }
+
+            var adminHub = $.connection.adminHub;
+            adminHub.connection.start().done(function () {
+                adminHub.server.emit(batteryDrop);
+                console.log("sent")
+            });
             $.unblockUI();
         }
 
