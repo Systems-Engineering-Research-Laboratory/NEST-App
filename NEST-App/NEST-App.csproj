@@ -281,6 +281,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Hubs\EventLogHub.cs" />
+    <Compile Include="Hubs\AdminHub.cs" />
     <Compile Include="Hubs\VehicleHub.cs" />
     <Compile Include="Hubs\VehicleRouteHub.cs" />
     <Compile Include="Migrations\Configuration.cs" />
