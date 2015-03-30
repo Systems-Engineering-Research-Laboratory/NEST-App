@@ -7,14 +7,19 @@ using Microsoft.AspNet.SignalR;
 using NEST_App.Models;
 using NEST_App.DAL;
 using System.Data.Entity;
-
+using System.Data.Entity.Infrastructure;
+using System.Collections;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNet.SignalR.Hubs;
 
 namespace NEST_App.Hubs
 {
     public class VehicleHub : Hub
     {
         static Dictionary<string, int> activeConnections = new Dictionary<string, int>();
-
+        private List<UAV> batteryWarning = new List<UAV>();
+        private NestContainer db = new NestContainer();
+        private int events = 1;
         /* Pair a signalR connection ID with a user;
          * Since a user can have multiple connections, the connection
          * is the key and the user ID is the paired value
@@ -27,12 +32,19 @@ namespace NEST_App.Hubs
 
         public void UavWasAssigned(UAV uav)
         {
-            Clients.All.uavWasAssigned(uav);
+            //string connID = Context.ConnectionId;
+            var userConnections = activeConnections.Where(p => p.Value == uav.User.user_id).Select(p => p.Key);
+            //(IHubCallerConnectionContext<dynamic>)userConnections.uavWasAssigned(uav);
+            Clients.Clients((IList<string>)userConnections).uavWasAssigned(uav);
+            //Clients.All.uavWasAssigned(uav);
         }
 
         public void UavWasRejected(UAV uav)
         {
-            Clients.All.uavWasRejected(uav);
+            var userConnections = activeConnections.Where(p => p.Value == uav.User.user_id).Select(p => p.Key);
+            //(IHubCallerConnectionContext<dynamic>)userConnections.uavWasRejected(uav);
+            Clients.Clients((IList<string>)userConnections).uavWasRejected(uav);
+            //Clients.All.uavWasRejected(uav);
         }
 
         public Task JoinGroup(string groupName){
@@ -45,6 +57,50 @@ namespace NEST_App.Hubs
         }
 
         public void PushFlightStateUpdate(FlightStateDTO dto){
+            var eventHub = GlobalHost.ConnectionManager.GetHubContext<EventLogHub>();
+            UAV uav = db.UAVs.FirstOrDefault(x => x.Id == dto.Id);
+            double lat = Math.Round(dto.Latitude * 10000) / 10000;
+            double lon = Math.Round(dto.Longitude * 10000) / 10000;
+
+            //if the uav landed at 'base', remove from list -- allows sending warning again
+            if (lat == 34.2420 && lon == -118.5288)
+                batteryWarning.Remove(uav);
+
+            //look up the uav
+            var index = batteryWarning.IndexOf(uav);
+            //it's not in the list
+            if( index == -1 ) {
+                if (dto.BatteryLevel < .2)
+                {
+                    //add list -- stops from sending warning everytime
+                    batteryWarning.Add(uav);
+                   
+                    EventLog evt = new EventLog();
+                        evt.event_id = events;
+                        evt.uav_id = uav.Id;
+                        evt.uav_callsign = uav.Callsign;
+                        evt.criticality = "critical";
+                        evt.message = "Low Battery";
+                        evt.create_date = DateTime.Now;
+                        evt.modified_date = DateTime.Now;
+                        //wtf seriously? -- why is this in here twice...
+                        evt.UAVId = uav.Id;
+                        evt.operator_screen_name = uav.User.ToString();
+                        eventHub.Clients.All.newEvent(evt);
+
+                    db.EventLogs.Add(evt);
+                    events++;
+                    try
+                    {
+                        db.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        throw;
+                    }
+                }
+            }
+
             Clients.All.flightStateUpdate(dto);
             // flightstatedto entity is not the same as models in our db context. can not guarantee atomic. need to wipe out flightstatedto
         }

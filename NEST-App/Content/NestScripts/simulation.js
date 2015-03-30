@@ -125,7 +125,14 @@ $(document).ready(function () {
     var map = new VehicleContainer();
 
     var vehicleHub = $.connection.vehicleHub;
-
+    var adminHub = $.connection.adminHub;
+    adminHub.client.newDrop = function (drop) {
+        console.log(drop);
+        //LOL...signalR didn't work in flightStateCb...
+        localStorage.setItem("uavBatteryID", drop.uavID);
+        localStorage.setItem("uavBatteryAmount", drop.amount);
+    }
+    
     //Throws 'undefined' is not a function error...commenting out..
     //$('.dropdown-toggle').dropdown();
 
@@ -164,6 +171,7 @@ function flightStateCb (map, hub, data, textStatus, jqXHR) {
         console.log(data[i].Id + " " + data[i].Callsign);
         $("#dropdown-UAVIds").append('<li role="presentation"><a class="UAVId" role="menuitem" tabindex="-1" href="#">' + data[i].Id + '</a></li>');
     }
+
     //Communication via local storage changes
     if (window.addEventListener) {
         window.addEventListener("storage", handler, false);
@@ -174,7 +182,7 @@ function flightStateCb (map, hub, data, textStatus, jqXHR) {
         if( map.vehicles[localStorage.getItem("uavBatteryID")] != null )
             map.vehicles[localStorage.getItem("uavBatteryID")].FlightState.BatteryLevel -= localStorage.getItem("uavBatteryAmount") / 100;
     }
-
+   
     //I think this is in the wrong spot. It probably needs to be in connection.hub.start()
     $('.UAVId').click(function (eventObject) {
         var vehicleHub = $.connection.vehicleHub
