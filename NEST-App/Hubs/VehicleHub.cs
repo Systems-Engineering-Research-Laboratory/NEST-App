@@ -9,6 +9,8 @@ using NEST_App.DAL;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Collections;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNet.SignalR.Hubs;
 
 namespace NEST_App.Hubs
 {
@@ -30,12 +32,19 @@ namespace NEST_App.Hubs
 
         public void UavWasAssigned(UAV uav)
         {
-            Clients.All.uavWasAssigned(uav);
+            //string connID = Context.ConnectionId;
+            var userConnections = activeConnections.Where(p => p.Value == uav.User.user_id).Select(p => p.Key);
+            //(IHubCallerConnectionContext<dynamic>)userConnections.uavWasAssigned(uav);
+            Clients.Clients((IList<string>)userConnections).uavWasAssigned(uav);
+            //Clients.All.uavWasAssigned(uav);
         }
 
         public void UavWasRejected(UAV uav)
         {
-            Clients.All.uavWasRejected(uav);
+            var userConnections = activeConnections.Where(p => p.Value == uav.User.user_id).Select(p => p.Key);
+            //(IHubCallerConnectionContext<dynamic>)userConnections.uavWasRejected(uav);
+            Clients.Clients((IList<string>)userConnections).uavWasRejected(uav);
+            //Clients.All.uavWasRejected(uav);
         }
 
         public Task JoinGroup(string groupName){
