@@ -501,20 +501,26 @@ $(document).ready(function () {
         $(window).keydown(function (evt) {
             if (evt.which === 16) {
                 mapFunctions.shiftPressed = true;
+                //console.log("Shift key down");
+            }
             if (evt.ctrlKey) {
                 ctrlDown = true;
+                //console.log("ctrl down");
             }
             if (evt.which === 69) {
                 console.log("User is: "+ assignment.getUsername());
             }
                 //console.log("Shift key down");
-            }
             storedGroups = droneSelection.KeyBinding(selectedDrones, storedGroups, evt);
             // console.log("length in goog is: " + selectedDrones.length);
         }).keyup(function (evt) {
             if (evt.which === 16) {
                 mapFunctions.shiftPressed = false;
                 //console.log("Shift key up");
+            }
+            else if (evt.which === 17) {
+                ctrlDown = false;
+                //console.log("ctrl up");
             }
         });
 
@@ -541,6 +547,9 @@ $(document).ready(function () {
                 uavs[key].marker.setIcon(uavs[key].marker.uavSymbolBlack);
                 uavs[key].marker.selected = false;
                 google.maps.event.trigger(uavs[key].marker, 'selection_changed');
+            }
+            while (selectedDrones.length > 0) {
+                selectedDrones.pop();
             }
         })
     };
