@@ -4,7 +4,7 @@
 
     mapOptions: {
         zoom: 18,
-        center: new google.maps.LatLng(34.2417, -118.529),
+        center: new google.maps.LatLng(34.2420, -118.5288),
         disableDefaultUI: true,
         zoomControl: true,
         mapTypeId: google.maps.MapTypeId.ROADMAP,

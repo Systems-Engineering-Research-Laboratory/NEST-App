@@ -1,5 +1,5 @@
 ﻿var map;
-var homeBase = new google.maps.LatLng(34.2417, -118.529);
+var homeBase = new google.maps.LatLng(34.2420, -118.5288);
 var uavs = {};
 var vehicleHub;
 var warningUavId;
@@ -158,6 +158,8 @@ $(document).ready(function () {
             }
 
             //close event boxes when back at base (which isn't base, its above and to the right wtf jeff)
+
+            /* waiting for at base added by jeff...
             var vLat = Math.round(vehicle.Latitude * 10000) / 10000;
             var vLon = Math.round(vehicle.Longitude * 10000) / 10000;
             var landingZoneLat = 34.2420;
@@ -168,7 +170,7 @@ $(document).ready(function () {
                 if (uavs[vehicle.Id].infoboxAlert)
                     uavs[vehicle.Id].infoboxAlert.close();
             }
-
+            */
             // draw trail
             if (selectedUAV && selectedTrail != undefined) {
                 if (selectedTrail.length < 2)

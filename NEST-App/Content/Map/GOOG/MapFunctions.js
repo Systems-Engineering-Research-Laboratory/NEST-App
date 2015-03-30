@@ -1,5 +1,5 @@
 ﻿var eventlog_show_hide = false;
-
+var homeBase = new google.maps.LatLng(34.2420, -118.5288);
 var mapFunctions = {
     shiftPressed : false,
     mouseDownPos: null,
@@ -268,7 +268,7 @@ var mapFunctions = {
         uav.Mission = uavData.Mission;
         uav.Orientation = uavData.FlightState.Yaw;
         var mis = uav.Mission;
-        uav.Destination = new google.maps.LatLng(mis.Latitude, mis.Longitude);
+        uav.Destination = homeBase;
         uav.Events = 0;
         uav.infobox = null;
         uav.infoboxAlert = null;
