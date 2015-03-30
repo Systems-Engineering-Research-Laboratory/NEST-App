@@ -176,30 +176,7 @@ $(document).ready(function () {
                 else
                     selectedTrail[selectedTrail.length - 2].setMap(map);
             }
-
-            if (uavs[vehicle.Id].BatteryCheck < .2) {
-                if (uavs[vehicle.Id].BatteryWarning == 0) {
-                    uavs[vehicle.Id].BatteryWarning++;
-
-                    var eventLog = {
-                        uav_id: uavs[vehicle.Id].Id,
-                        message: "Low Battery",
-                        criticality: "critical",
-                        uav_callsign: uavs[vehicle.Id].Callsign,
-                        operator_screen_name: assignment.getUsername(),
-                        UAVId: uavs[vehicle.Id].Id
-                    };
-
-                    emitHub.server.emit(eventLog);
-                    $.ajax({
-                        type: "POST",
-                        url: "/api/uavs/postuavevent",
-                        success: function () { },
-                        data: eventLog
-                    });
-                }
-                warningUavId = uavs[vehicle.Id].Id;
-            }
+       
             if (vehicle.Id == camLockedUAV) {
                 mapFunctions.CenterOnUAV(vehicle.Id);
             }

@@ -17,13 +17,19 @@ namespace NEST_App.Hubs
     public class VehicleHub : Hub
     {
         static Dictionary<string, int> activeConnections = new Dictionary<string, int>();
-        private List<UAV> batteryWarning = new List<UAV>();
+        static private List<UAV> batteryWarning = new List<UAV>();
         private NestContainer db = new NestContainer();
         private int events = 1;
         /* Pair a signalR connection ID with a user;
          * Since a user can have multiple connections, the connection
          * is the key and the user ID is the paired value
         */
+        public void clearWarnings()
+        {
+            batteryWarning.Clear();
+        }
+
+
         public void AddConnection(int userID)
         {
             string connID = Context.ConnectionId;
@@ -67,9 +73,10 @@ namespace NEST_App.Hubs
                 batteryWarning.Remove(uav);
 
             //look up the uav
-            var index = batteryWarning.IndexOf(uav);
+            //var index = batteryWarning.IndexOf(uav);
+            bool isInList = (batteryWarning.Where(u => u.Id == uav.Id).Count()) > 0 ;
             //it's not in the list
-            if( index == -1 ) {
+            if( !isInList ) {
                 if (dto.BatteryLevel < .2)
                 {
                     //add list -- stops from sending warning everytime
@@ -85,7 +92,7 @@ namespace NEST_App.Hubs
                         evt.modified_date = DateTime.Now;
                         //wtf seriously? -- why is this in here twice...
                         evt.UAVId = uav.Id;
-                        evt.operator_screen_name = uav.User.ToString();
+                        evt.operator_screen_name = "jimbob";
                         eventHub.Clients.All.newEvent(evt);
 
                     db.EventLogs.Add(evt);
