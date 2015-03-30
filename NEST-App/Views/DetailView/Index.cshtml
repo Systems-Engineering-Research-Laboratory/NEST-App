@@ -365,6 +365,13 @@
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=drawing"></script>
 
 
+@if (ViewBag.currentUser != null)
+{
+    var user = ViewBag.currentUser;
+    <script id="current_user" type="application/json">
+        @Html.Raw(Json.Encode(user))
+    </script>
+}
 @Scripts.Render("~/bundles/jquery")
 @Scripts.Render("~/bundles/jquery-signalR")
 @Scripts.Render("~/signalr/hubs")

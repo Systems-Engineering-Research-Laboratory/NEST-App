@@ -23,8 +23,6 @@ namespace NEST_App.Hubs
         {
             string connID = Context.ConnectionId;
             activeConnections.Add(connID, userID);
-            System.Diagnostics.Debug.WriteLine("The connection id is: " + connID);
-            System.Diagnostics.Debug.WriteLine("And the user ID is: " + userID);
         }
 
         public void UavWasAssigned(UAV uav)
@@ -139,22 +137,8 @@ namespace NEST_App.Hubs
             var connectionIDs = activeConnections.Where(p => p.Value == userID).Select(p => p.Key);
             foreach (var id in connectionIDs)
             {
-                System.Diagnostics.Debug.WriteLine("dictionary hit!");
-                Clients.Client(id).changeSelected(uavId, selected);
+                    Clients.Client(id).changeSelected(uavId, selected);
             }
-
-
-            //System.Diagnostics.Debug.WriteLine("Notify hit");
-            //foreach (KeyValuePair<string, int> entry in activeConnections)
-            //{
-            //    System.Diagnostics.Debug.WriteLine("The selected connection id is: " + entry.Key);
-            //    System.Diagnostics.Debug.WriteLine("And the selected user ID is: " + entry.Value);
-            //    if (entry.Value == userID)
-            //    {
-            //        System.Diagnostics.Debug.WriteLine("dictionary hit!");
-            //        Clients.Client(entry.Key).changeSelected(uavId, selected);
-            //    }
-            //}
         }
 
         public async Task BroadcastAcceptedCommand(CMD_ACK ack)
