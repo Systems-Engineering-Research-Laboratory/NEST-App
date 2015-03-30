@@ -491,6 +491,9 @@ $(document).ready(function () {
         //Make sure to set all SignalR callbacks BEFORE the call to connect
         $.connection.hub.start().done(function () {
             console.log("connection started for evt log");
+            //Add this connectionID to the user's list of active connections so user-specific calls can be made
+            vehicleHub.server.addConnection(assignment.getUserId());
+
         });
 
         vehicleHub.connection.start();

@@ -13,6 +13,20 @@ namespace NEST_App.Hubs
 {
     public class VehicleHub : Hub
     {
+        Dictionary<string, int> activeConnections = new Dictionary<string, int>();
+
+        /* Pair a signalR connection ID with a user;
+         * Since a user can have multiple connections, the connection
+         * is the key and the user ID is the paired value
+        */
+        public void AddConnection(int userID)
+        {
+            string connID = Context.ConnectionId;
+            activeConnections.Add(connID, userID);
+            System.Diagnostics.Debug.WriteLine("The connection id is: " + connID);
+            System.Diagnostics.Debug.WriteLine("And the user ID is: " + userID);
+        }
+
         public void UavWasAssigned(UAV uav)
         {
             Clients.All.uavWasAssigned(uav);
@@ -119,9 +133,32 @@ namespace NEST_App.Hubs
             Clients.All.vehicleHasNewMission(uavId, schedId, missionId);
         }
 
-        public void NotifySelected(int uavId, bool selected)
+        public void NotifySelected(int uavId, bool selected, int userID)
         {
-            Clients.All.changeSelected(uavId, selected);
+            System.Diagnostics.Debug.WriteLine("Notify hit");
+            var connectionIDs = activeConnections.Where(p => p.Value == userID).Select(p => p.Key);
+            System.Diagnostics.Debug.WriteLine("iteration complete");
+            System.Diagnostics.Debug.WriteLine("length is: " + connectionIDs.GetEnumerator());
+
+
+            foreach (var id in connectionIDs)
+            {
+                System.Diagnostics.Debug.WriteLine("dictionary hit!");
+                Clients.Client(id).changeSelected(uavId, selected);
+            }
+
+
+            //System.Diagnostics.Debug.WriteLine("Notify hit");
+            //foreach (KeyValuePair<string, int> entry in activeConnections)
+            //{
+            //    System.Diagnostics.Debug.WriteLine("The selected connection id is: " + entry.Key);
+            //    System.Diagnostics.Debug.WriteLine("And the selected user ID is: " + entry.Value);
+            //    if (entry.Value == userID)
+            //    {
+            //        System.Diagnostics.Debug.WriteLine("dictionary hit!");
+            //        Clients.Client(entry.Key).changeSelected(uavId, selected);
+            //    }
+            //}
         }
 
         public async Task BroadcastAcceptedCommand(CMD_ACK ack)
