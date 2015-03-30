@@ -13,7 +13,7 @@ namespace NEST_App.Hubs
 {
     public class VehicleHub : Hub
     {
-        Dictionary<string, int> activeConnections = new Dictionary<string, int>();
+        static Dictionary<string, int> activeConnections = new Dictionary<string, int>();
 
         /* Pair a signalR connection ID with a user;
          * Since a user can have multiple connections, the connection
@@ -135,12 +135,8 @@ namespace NEST_App.Hubs
 
         public void NotifySelected(int uavId, bool selected, int userID)
         {
-            System.Diagnostics.Debug.WriteLine("Notify hit");
+
             var connectionIDs = activeConnections.Where(p => p.Value == userID).Select(p => p.Key);
-            System.Diagnostics.Debug.WriteLine("iteration complete");
-            System.Diagnostics.Debug.WriteLine("length is: " + connectionIDs.GetEnumerator());
-
-
             foreach (var id in connectionIDs)
             {
                 System.Diagnostics.Debug.WriteLine("dictionary hit!");

@@ -54,7 +54,7 @@
 
     //This fires when a drone turns green or black, ie it has either been selected or de-selected
     SelectionStateChanged: function (marker, selectedDrones, flightLines, uavTrails, selectedTrail) {
-        vehicleHub.server.notifySelected(marker.uav.Id, marker.selected);
+        vehicleHub.server.notifySelected(marker.uav.Id, marker.selected, assignment.getUserId());
         //console.log("Selection change event fired");
 
         //*******************SELECTED*********************//
