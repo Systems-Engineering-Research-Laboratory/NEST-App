@@ -128,9 +128,9 @@ $(document).ready(function () {
     var adminHub = $.connection.adminHub;
     adminHub.client.newDrop = function (drop) {
         console.log(drop);
-        //LOL...
+        //LOL...signalR didn't work in flightStateCb...
         localStorage.setItem("uavBatteryID", drop.uavID);
-        localStorage.setItem("uavBatteryAmount",drop.amount);
+        localStorage.setItem("uavBatteryAmount", drop.amount);
     }
     
     //Throws 'undefined' is not a function error...commenting out..

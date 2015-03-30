@@ -125,6 +125,14 @@ $(document).ready(function () {
             console.log("connection for signalR...success");
         });
 
+        //admin view battery drop signalR
+        var adminHub = $.connection.adminHub;
+        adminHub.client.newDrop = function (drop) {
+            if (uavs[drop.uavID] != null)
+                uavs[drop.uavID].Battery -= drop.amount / 100;
+            console.log(uavs[drop.uavID].Id + " " +uavs[drop.uavID].Battery)
+        }
+
         var emitHub = $.connection.eventLogHub;
         emitHub.client.newEvent = function (evt) {
 

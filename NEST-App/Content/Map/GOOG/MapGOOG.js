@@ -5,7 +5,6 @@ var vehicleHub;
 var warningUavId;
 var mapUavId;
 var event_count = 0;
-
 //DroneSelection
 var selectedDrones = []; //store drones selected from any method here
 var storedGroups = []; //keep track of different stored groupings of UAVs
@@ -157,6 +156,19 @@ $(document).ready(function () {
                 var latlng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
                 map.setCenter(latlng);
             }
+
+            //close event boxes when back at base (which isn't base, its above and to the right wtf jeff)
+            var vLat = Math.round(vehicle.Latitude * 10000) / 10000;
+            var vLon = Math.round(vehicle.Longitude * 10000) / 10000;
+            var landingZoneLat = 34.2420;
+            var landingZoneLon = -118.5288;
+            if (vLat == landingZoneLat && vLon == landingZoneLon) {
+                if (uavs[vehicle.Id].infobox)
+                    uavs[vehicle.Id].infobox.close();
+                if (uavs[vehicle.Id].infoboxAlert)
+                    uavs[vehicle.Id].infoboxAlert.close();
+            }
+
             // draw trail
             if (selectedUAV && selectedTrail != undefined) {
                 if (selectedTrail.length < 2)
@@ -373,6 +385,7 @@ $(document).ready(function () {
                         })
 
                         infoboxAlert.open(map, uavs[evt.UAVId].marker);
+                        uavs[evt.UAVId].infoboxAlert = infoboxAlert;
                         var i = uavs[evt.UAVId].alertOnce;
                         i++;
                         uavs[evt.UAVId].alertOnce = i;
