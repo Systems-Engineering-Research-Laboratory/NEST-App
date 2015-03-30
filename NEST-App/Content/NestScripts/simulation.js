@@ -125,6 +125,8 @@ $(document).ready(function () {
     var map = new VehicleContainer();
 
     var vehicleHub = $.connection.vehicleHub;
+    
+
     var adminHub = $.connection.adminHub;
     adminHub.client.newDrop = function (drop) {
         console.log(drop);
@@ -155,7 +157,10 @@ $(document).ready(function () {
     //Wait until the vehicle hub is connected before we can execute the main loop.
     //The main loop will push updates via signalr, don't want to do it prematurely.
     $.connection.hub.start().done(
-        function () { connectedToHub(vehicleHub, map); }
+        function () {
+            connectedToHub(vehicleHub, map);
+            vehicleHub.server.clearWarnings();
+        }
        );
 });
 
