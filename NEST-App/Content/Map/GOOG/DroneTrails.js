@@ -113,5 +113,6 @@
                 UAVID: ids[i]
             });
         }
+        mapFunctions.goTo_hide();
     }
 };
