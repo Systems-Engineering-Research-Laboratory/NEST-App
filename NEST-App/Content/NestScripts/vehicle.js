@@ -431,17 +431,36 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         if (this.hasCommsLink && !this.handleNonNavigationalCommand(target)) {
             this.awaitingNavigation = false;
             if (this.currentWaypoint) {
-                this.pathGen.insertIntermediateTarget(this.waypoints,
-                    this.FlightState,
+                var newIdx = this.getNextNavigationalIndex();
+                if (newIdx == -1) {
+                    var start = this.FlightState;
+                    var newIdx = this.currentWpIndex;
+                }
+                var wpLoc = this.pathGen.insertIntermediateTarget(this.waypoints,
+                    start,
                     target,
-                    this.currentWpIndex,
+                    newIdx,
                     this.hasCommsLink,
                     this.Mission.id
                     );
                 this.currentWaypoint = this.waypoints[this.currentWpIndex]
+                this.commandList.push(this.waypoints[wpLoc]);
             }
         }
         //else non navigational
+    }
+
+    this.commandList = [];
+    this.getNextNavigationalIndex = function () {
+        if (this.commandList.length > 0) {
+            var lastCommandedWp = this.commandList[this.commandList.length - 1];
+            for (var i = 0; i < this.waypoints.length; i++) {
+                if (lastCommandedWp == this.waypoints[i]) {
+                    return i + 1;
+                }
+            }
+        }
+        return -1;
     }
 
     this.handleNonNavigationalCommand = function (target) {
@@ -537,7 +556,8 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         this.reporter.updateWaypoint(wp);
     }
 
-    this.brandNewTarget = function(target, reportOut){
+    this.brandNewTarget = function (target, reportOut) {
+        this.lastCommandWaypoint = 0;
         var wps = this.pathGen.brandNewTarget(this.FlightState, target, reportOut, this);
         this.waypoints = wps;
         this.currentWpIndex = 0;
@@ -725,10 +745,17 @@ function PathGenerator(areaContainer, reporter) {
 
     this.insertIntermediateTarget = function (wps, curPos, target, beforeIndex, report, missionId) {
         //Safely inserts a target into a list of waypoints. 
-        var tempWps = this.brandNewTarget(curPos, target, false);
-        tempWps.splice(0, 1);
-        //insertMultiPointsIntoList inserts after an index, so use beforeIndex -1 to make the beforeIndex the afterIndex
-        insertMultiPointsIntoList(wps, tempWps, beforeIndex - 1);
+        if (curPos) {
+            var tempWps = this.brandNewTarget(curPos, target, false);
+            tempWps.splice(0, 1);
+            //insertMultiPointsIntoList inserts after an index, so use beforeIndex -1 to make the beforeIndex the afterIndex
+            insertMultiPointsIntoList(wps, tempWps, beforeIndex - 1);
+            var wpInserted = tempWps[tempWps.length - 1];
+        }
+        else {
+            var wpInserted = new Waypoint(target);
+            wps.splice(beforeIndex, 0, wpInserted);
+        }
         //Ensure that the rest of it is already connected.
         //TODO: Make this more efficient. The only connection that needs to be checked is the connection between
         //the old route and the new target
@@ -742,7 +769,13 @@ function PathGenerator(areaContainer, reporter) {
                 }
             });
         }
-        return tempWps[tempWps.length - 1];
+        for (var i = beforeIndex; i < wps.length; i++) {
+            if (wpInserted == wps[i]) {
+                return i;
+            }
+        }
+        console.log("Error in insertIntermediateTarget: couldn't find inserted waypoint");
+        return -1; //this should never happen
     }
 
 
@@ -935,7 +968,9 @@ function PathGenerator(areaContainer, reporter) {
         if (!startIndex) {
             startIndex = 0;
         }
-        wps.splice(startIndex, 0, new Waypoint(curPos));
+        if (curPos) {
+            wps.splice(startIndex, 0, new Waypoint(curPos));
+        }
         var areas = this.areaContainer.restrictedAreas;
         var addedPoints = false;
         removeDisposableWps(wps);
