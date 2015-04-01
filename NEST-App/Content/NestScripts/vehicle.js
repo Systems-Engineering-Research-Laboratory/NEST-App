@@ -432,9 +432,8 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             this.awaitingNavigation = false;
             if (this.currentWaypoint) {
                 var newIdx = this.getNextNavigationalIndex();
-                if (newIdx == -1) {
+                if (newIdx == this.currentWpIndex) {
                     var start = this.FlightState;
-                    var newIdx = this.currentWpIndex;
                 }
                 var wpLoc = this.pathGen.insertIntermediateTarget(this.waypoints,
                     start,
@@ -460,7 +459,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                 }
             }
         }
-        return -1;
+        return this.currentWpIndex;
     }
 
     this.handleNonNavigationalCommand = function (target) {
