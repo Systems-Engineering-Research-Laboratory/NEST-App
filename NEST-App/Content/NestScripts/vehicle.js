@@ -454,7 +454,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     this.getNextNavigationalIndex = function () {
         if (this.commandList.length > 0) {
             var lastCommandedWp = this.commandList[this.commandList.length - 1];
-            for (var i = 0; i < this.waypoints.length; i++) {
+            for (var i = this.currentWpIndex; i < this.waypoints.length; i++) {
                 if (lastCommandedWp == this.waypoints[i]) {
                     return i + 1;
                 }
