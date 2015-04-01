@@ -13,9 +13,11 @@ var curUser;
 
 $(document).ready(function () {
 
-        var userJson = $('#current_user').html();
-        curUser = JSON.parse(userJson);
+    //getting current user and such -- throws u token if not logged in
+    var userJson = $('#current_user').html();
+    curUser = JSON.parse(userJson);
 
+    //map options -- looks solid dragos was here 3/30/15 
     mapOptions = {
         zoom: 17,
         center: new google.maps.LatLng(34.2417, -118.529),
@@ -33,6 +35,7 @@ $(document).ready(function () {
         }]
     };
 
+    //don't really know what this is something about a filter looks fine -- dragos was here 3/30/15
     var priorityfilter_value = {
         display_all_text: "Show all",
         col_0: "none",
@@ -41,6 +44,7 @@ $(document).ready(function () {
     };
     setFilterGrid("priority_table", priorityfilter_value);
 
+    //still don't know what this is, some javascript, looks fine though -- dragos was here 3/30/15
     var operatorfilter_value = {
         display_all_text: "Show all",
         col_0: "select",
@@ -50,26 +54,14 @@ $(document).ready(function () {
     };
     setFilterGrid("operator_table", operatorfilter_value);
 
-    //var eventlogfilter_value = {
-    //    display_all_text: "All",
-    //    col_0: "select",
-    //    col_1: "select",
-    //    col_2: "select",
-    //    col_3: "none",
-    //    col_4: "select"
-    //};
-
-    //if (document.getElementById("event_log_table") != null)
-    //    setFilterGrid("event_log_table", eventlogfilter_value);
-
-
-
+    //get the map, set up some tables looks ok -- dragos was here 3/30/15
     var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
     var table = document.getElementById("UAV_table");
     var table2 = document.getElementById("priority_table");
     var table3 = document.getElementById("operator_table");
     var table4 = document.getElementById("event_log_table");
 
+    //table2 or something looks ok -- dragos was here 3/30/15
     if (table2 != null) {
         for (var i = 2; i < table2.rows.length; i++) {
             table2.rows[i].onclick = function () {
@@ -78,6 +70,7 @@ $(document).ready(function () {
         }
     }
 
+    //table3 okay cool looks fine -- dragos was here 3/30/15
     if (table3 != null) {
         for (var i = 2; i < table3.rows.length; i++) {
             table3.rows[i].onclick = function () {
@@ -86,6 +79,7 @@ $(document).ready(function () {
         }
     }
 
+    //okay table4 it's all good -- dragos was here 3/30/15
     if (table4 != null) {
         for (var i = 2; i < table4.rows.length; i++) {
             table4.rows[i].onclick = function () {
@@ -94,7 +88,6 @@ $(document).ready(function () {
         }
     }
     var presentMarker, lastMarker;
-
     function UpdateVehicle(uav, updatedUAV) {
         var LatLng = new google.maps.LatLng(updatedUAV.Latitude, updatedUAV.Longitude);
 
@@ -117,133 +110,134 @@ $(document).ready(function () {
             })
         }
 
+
         uav.marker.setOptions({
             labelContent: uav.Callsign + '<div style="text-align: center;"><b>Alt: </b>' + uav.Alt + '<br/><b>Bat: </b>' + uav.BatteryCheck + '</div>'
         });
 
+        return uav;
+    };
 
-        //admin view battery drop signalR
-        var adminHub = $.connection.adminHub;
-        adminHub.client.newDrop = function (drop) {
-            if (uavs[drop.uavID] != null)
-                uavs[drop.uavID].Battery -= drop.amount / 100;
-            console.log(uavs[drop.uavID].Id + " " + uavs[drop.uavID].Battery)
-        }
+    $.connection.hub.start().done(function () {
+        console.log("connection for signalR...success");
+    });
 
-        var emitHub = $.connection.eventLogHub;
-        emitHub.client.newEvent = function (evt) {
-
-            return uav;
-        };
-
+    var adminHub = $.connection.adminHub;
+    adminHub.client.newDrop = function (drop) {
+        if (uavs[drop.uavID] != null)
+            uavs[drop.uavID].Battery -= drop.amount / 100;
+            console.log(uavs[drop.uavID].Id + " " +uavs[drop.uavID].Battery)
+    }
 
 
-        var emitHub = $.connection.eventLogHub;
-        emitHub.client.newEvent = function (evt) {
+    var emitHub = $.connection.eventLogHub;
+    emitHub.client.newEvent = function (evt) {
+
+        console.log(evt);
+        var checkMessage = evt.message.split(" ");
+        if (checkMessage[0] != "Acknowledged:") {
 
             console.log(evt);
-            var checkMessage = evt.message.split(" ");
-            if (checkMessage[0] != "Acknowledged:") {
 
-                console.log(evt);
+            //var eventObj = JSON.stringify(evt);
+            //alert(eventObj);
 
-                //var eventObj = JSON.stringify(evt);
-                //alert(eventObj);
-
-                evt_id = evt.uav_id;
-                evt_operator = evt.operator_screen_name;
-                evt_date = evt.create_date;
-                evt_msg = evt.message;
-                evt_level = evt.criticality;
+            evt_id = evt.uav_id;
+            evt_operator = evt.operator_screen_name;
+            evt_date = evt.create_date;
+            evt_msg = evt.message;
+            evt_level = evt.criticality;
 
 
-                for (var i = 0; i < table.rows.length; i++) {
-                    if (evt.criticality == 'critical' && table.rows[i].cells[0].innerHTML == evt_id) {
-                        table.rows[i].style.backgroundColor = "#FF0000";
-                        table.rows[i].style.color = "#FFFFFF";
-                    }
-
-                    if (evt.criticality == 'Warning' && table.rows[i].cells[0].innerHTML == evt_id) {
-                        table.rows[i].style.backgroundColor = "#FFF612";
-                        table.rows[i].style.color = "#0a074a";
-                    }
+            for (var i = 0; i < table.rows.length; i++) {
+                if (evt.criticality == 'critical' && table.rows[i].cells[0].innerHTML == evt_id) {
+                    table.rows[i].style.backgroundColor = "#FF0000";
+                    table.rows[i].style.color = "#FFFFFF";
                 }
 
-                if (current_id == uavs[evt.uav_id].Id) {
-                    document.getElementById('eventlog_td1').innerHTML = evt.uav_id;
-                    document.getElementById('eventlog_td2').innerHTML = evt.operator_screen_name;
-                    document.getElementById('eventlog_td3').innerHTML = evt.create_date;
-                    document.getElementById('eventlog_td4').innerHTML = evt.message;
-                    document.getElementById('eventlog_td5').innerHTML = evt.criticality;
+                if (evt.criticality == 'Warning' && table.rows[i].cells[0].innerHTML == evt_id) {
+                    table.rows[i].style.backgroundColor = "#FFF612";
+                    table.rows[i].style.color = "#0a074a";
                 }
-
-                else if (current_id != uavs[evt.uav_id].Id) {
-                    document.getElementById('eventlog_td1').innerHTML = "NO";
-                    document.getElementById('eventlog_td2').innerHTML = "EVENT";
-                    document.getElementById('eventlog_td3').innerHTML = "FOR";
-                    document.getElementById('eventlog_td4').innerHTML = "UAV";
-                    document.getElementById('eventlog_td5').innerHTML = evt.uav_callsign;
-                }
-
-                var boxText = document.createElement("div");
-                boxText.style.cssText = "border: 1px solid black;margin-top: 8px;background: #333;color: #FFF;font-size: 10px;padding: .5em 2em;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;";
-                boxText.innerHTML = "<span style='color: red;'>Warning: </span>" + evt.message;
-
-                var alertText = document.createElement("div");
-                alertText.style.cssText = "border: 1px solid red;height: 40px;background: #333;color: #FFF;padding: 0px 0px 15px 4px;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;"
-                alertText.innerHTML = "<span style='color: red; font-size: 30px;'>!</span";
-
-                var infobox = new InfoBox({
-                    content: boxText,
-                    disableAutoPan: false,
-                    maxWidth: 100,
-                    pixelOffset: new google.maps.Size(-75, 30),
-                    zIndex: null,
-                    enableEventPropagation: true,
-                    pane: "floatPane",
-                    boxStyle: {
-                        opacity: 0.75,
-                        width: "150px"
-                    },
-                    closeBoxMargin: "9px 1px 2px 2px",
-                    uav_id: null
-                })
-
-                var infoboxAlert = new InfoBox({
-                    content: alertText,
-                    disableAutoPan: false,
-                    maxWidth: 20,
-                    pixelOffset: new google.maps.Size(-10, -80),
-                    zIndex: null,
-                    boxStyle: {
-                        opacity: 0.75,
-                        width: "20px",
-                    },
-                    uav_id: null
-                })
-
-                //infobox.open(map, uavs[evt.uav_id].marker);
-                infobox.uav_id = uavs[evt.uav_id].Id;
-                //infoboxAlert.open(map, uavs[evt.uav_id].marker);
-                infoboxAlert.uav_id = uavs[evt.uav_id].Id;
-
-                infoboxContainer[evt.uav_id] = containBox(infobox, infoboxAlert);
-
-                document.getElementById(evt.uav_id).style.backgroundColor = "red";
-                uavs[evt.uav_id].CurrentEvent = evt;
-                uavs[evt.uav_id].setEventOnce = 0;
             }
+
+            if (current_id == uavs[evt.uav_id].Id) {
+                document.getElementById('eventlog_td1').innerHTML = evt.uav_id;
+                document.getElementById('eventlog_td2').innerHTML = evt.operator_screen_name;
+                document.getElementById('eventlog_td3').innerHTML = evt.create_date;
+                document.getElementById('eventlog_td4').innerHTML = evt.message;
+                document.getElementById('eventlog_td5').innerHTML = evt.criticality;
+            }
+
+            else if (current_id != uavs[evt.uav_id].Id) {
+                document.getElementById('eventlog_td1').innerHTML = "NO";
+                document.getElementById('eventlog_td2').innerHTML = "EVENT";
+                document.getElementById('eventlog_td3').innerHTML = "FOR";
+                document.getElementById('eventlog_td4').innerHTML = "UAV";
+                document.getElementById('eventlog_td5').innerHTML = evt.uav_callsign;
+            }
+
+            var boxText = document.createElement("div");
+            boxText.style.cssText = "border: 1px solid black;margin-top: 8px;background: #333;color: #FFF;font-size: 10px;padding: .5em 2em;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;";
+            boxText.innerHTML = "<span style='color: red;'>Warning: </span>" + evt.message;
+
+            var alertText = document.createElement("div");
+            alertText.style.cssText = "border: 1px solid red;height: 40px;background: #333;color: #FFF;padding: 0px 0px 15px 4px;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;"
+            alertText.innerHTML = "<span style='color: red; font-size: 30px;'>!</span";
+
+            var infobox = new InfoBox({
+                content: boxText,
+                disableAutoPan: false,
+                maxWidth: 100,
+                pixelOffset: new google.maps.Size(-75, 30),
+                zIndex: null,
+                enableEventPropagation: true,
+                pane: "floatPane",
+                boxStyle: {
+                    opacity: 0.75,
+                    width: "150px"
+                },
+                closeBoxMargin: "9px 1px 2px 2px",
+                uav_id: null
+            })
+
+            var infoboxAlert = new InfoBox({
+                content: alertText,
+                disableAutoPan: false,
+                maxWidth: 20,
+                pixelOffset: new google.maps.Size(-10, -80),
+                zIndex: null,
+                boxStyle: {
+                    opacity: 0.75,
+                    width: "20px",
+                },
+                uav_id: null
+            })
+
+            //infobox.open(map, uavs[evt.uav_id].marker);
+            infobox.uav_id = uavs[evt.uav_id].Id;
+            //infoboxAlert.open(map, uavs[evt.uav_id].marker);
+            infoboxAlert.uav_id = uavs[evt.uav_id].Id;
+
+            infoboxContainer[evt.uav_id] = containBox(infobox, infoboxAlert);
+
+            document.getElementById(evt.uav_id).style.backgroundColor = "red";
+            uavs[evt.uav_id].CurrentEvent = evt;
+            uavs[evt.uav_id].setEventOnce = 0;
         }
     }
 
+    //connect to the hub -- dragos was here 3/30/15
     var vehicleHub = $.connection.vehicleHub;
 
+    //okay on start do this sure -- dragos was here 3/30/15
     $.connection.hub.start().done(function () {
         console.log("connection for signalR...success");
         //Add this connectionID to the user's list of active connections so user-specific calls can be made
         vehicleHub.server.addConnection(curUser.user_id);
     });
 
+    //not sure what this does but it looks like it works -- dragos was here 3/30/15
     vehicleHub.client.changeSelected = function (uavId, selectionState) {
         console.log("hit change");
         for (var i = 1; i < table.rows.length; i++) {
@@ -260,6 +254,9 @@ $(document).ready(function () {
         }
     }
 
+
+    //okay update the flightstate here and move the uavs on the map -- dragos was here 3/30/15
+    //not here
     vehicleHub.client.flightStateUpdate = function (vehicle) {
         uavs[vehicle.Id].Id = vehicle.Id;
         uavs[vehicle.Id].Battery = vehicle.BatteryLevel;
@@ -269,7 +266,6 @@ $(document).ready(function () {
         for (var i = 1; i < table.rows.length; i++) {
             if (table.rows[i].cells[0].innerHTML == uavs[vehicle.Id].Id) {
                 table.rows[i].cells[4].innerHTML = (vehicle.BatteryLevel * 100).toFixed(2) + "%";
-
                 if (vehicle.BatteryLevel < 0.2) {
                     table.rows[i].style.backgroundColor = "#FF0000";
                     table.rows[i].style.color = "#FFFFFF"

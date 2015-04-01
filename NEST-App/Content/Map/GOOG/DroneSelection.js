@@ -37,17 +37,21 @@
         else {//otherwise, empty the selectedDrones list and add the drone to the empty list
             ctrlDown = false;
             while (selectedDrones.length > 0) {//clear the selected drone list
+                
                 var c = selectedDrones.length - 1;
+                //console.log("selecteddrone length (pre) is: " + selectedDrones.length);
+                //console.log("Selecteddrone (pre) is: " + selectedDrones[c]);
                 selectedDrones[c].marker.setIcon(selectedDrones[c].marker.uavSymbolBlack);
                 selectedDrones[c].marker.selected = false;
                 google.maps.event.trigger(selectedDrones[c].marker, 'selection_changed');
                 selectedDrones.pop();
+
             }
-            
+            if (selectedUAV != null) {
                 //console.log("Selected is now: " + selectedUAV);
                 //console.log("uav pushed");
                 selectedDrones.push(selectedUAV);
-            
+            }
         }
         //console.log("Number of drones selected: " + selectedDrones.length);
         // enable waypoint buttons
