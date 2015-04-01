@@ -59,9 +59,7 @@ var mapFunctions = {
                 document.getElementById("go_lat").value = latLng.lat();
                 document.getElementById("go_long").value = latLng.lng();
                 document.getElementById("clickToGoBtn").onclick = function () { droneTrails.clickToGo(ids); };
-
                 this.goTo_show();
-
                 break;
             case 'add_waypoint':
                 this.goTo_show();

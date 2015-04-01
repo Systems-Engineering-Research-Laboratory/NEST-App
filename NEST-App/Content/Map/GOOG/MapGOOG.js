@@ -116,7 +116,11 @@ $(document).ready(function () {
                 console.log("Need lat lng!");
             }
             else {
-                droneTrails.goWaypoint(document.getElementById("go_lat").value, document.getElementById("go_long").value);
+                var ids = [];
+                for (var i = 0; i < selectedDrones.length; i++) {
+                    ids[i] = selectedDrones[i].Id;
+                }
+                droneTrails.goWaypoint(document.getElementById("go_lat").value, document.getElementById("go_long").value, ids);
             }
             
         });
