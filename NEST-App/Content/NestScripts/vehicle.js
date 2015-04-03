@@ -432,9 +432,14 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             this.awaitingNavigation = false;
             if (this.currentWaypoint) {
                 var newIdx = this.getNextNavigationalIndex();
+                
                 if (newIdx == this.currentWpIndex) {
+                    //If we are inserting the command before the current navigation point
+                    //then pass start into the intermediate target so that we can validate the path
+                    //from the current position to the waypoint that is being inserted.
                     var start = this.FlightState;
                 }
+                //insertIntermediateTarget will return the index of the waypoint inserted.
                 var wpLoc = this.pathGen.insertIntermediateTarget(this.waypoints,
                     start,
                     target,
@@ -442,7 +447,9 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                     this.hasCommsLink,
                     this.Mission.id
                     );
-                this.currentWaypoint = this.waypoints[this.currentWpIndex]
+                //CurrentWaypoint is either the same or the current flight state
+                this.currentWaypoint = this.waypoints[this.currentWpIndex];
+                //Record that this waypoint is supposed to be preserved, and navigational points added afterwards.
                 this.commandList.push(this.waypoints[wpLoc]);
             }
         }
@@ -451,14 +458,19 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     this.commandList = [];
     this.getNextNavigationalIndex = function () {
+        
         if (this.commandList.length > 0) {
+            //Only start from from the current waypoint index because we dont want to create navigational points before it
             var lastCommandedWp = this.commandList[this.commandList.length - 1];
             for (var i = this.currentWpIndex; i < this.waypoints.length; i++) {
+                //Find the last commanded waypoint in the list. 
                 if (lastCommandedWp == this.waypoints[i]) {
+                    //Return i+1, but i is the index of the lastCommandedWp, we want i+1 to be the next index
                     return i + 1;
                 }
             }
         }
+        //This index is the one we can insert the waypoint in front of.
         return this.currentWpIndex;
     }
 
@@ -490,10 +502,12 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     this.flyToAndLand = function (dt, destX, destY) {
         var thisX = this.FlightState.X;
         var thisY = this.FlightState.Y;
+        //Fly to
         if (calculateDistance(thisX, thisY, destX, destY) > .1) {
             this.deadReckon(dt, destX, destY);
             return false;
         }
+            //Land if we are really close.
         else {
             return this.targetAltitude(dt, 0, this.MaxVerticalVelocity);
         }
@@ -513,6 +527,8 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     }
 
     this.generateWaypoints = function (target, type) {
+        //Generate waypoints for the current target.
+        //Really should just change to be target and type, which get passed into this function.
         var target = target || this.Command || this.Mission;
         if (!type) {
             var type = this.Command ? "command" : (this.Mission ? "mission" : "target");
@@ -522,12 +538,6 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         var n = this.waypoints.length;
         this.waypoints[n - 1].obj = target;
         this.waypoints[n - 1].objType = type;
-    }
-
-    this.generateWaypointsAndAppend = function (target) {
-        var target = target || this.Command || this.Mission;
-        var type = this.Command ? "command" : (this.Mission ? "mission" : "target");
-
     }
 
     this.getNextWaypoint = function () {
@@ -647,33 +657,43 @@ function VehicleContainer() {
     })
 
     this.buildGraph = function () {
+        //Go through pairs of areas and create the graph.
         var areas = this.restrictedAreas;
         prepareAreas(this.restrictedAreas);
         for (var i = 0; i < areas.length; i++) {
             area = areas[i];
             area.edges = [];
-            for (var j = i; j < areas.length; j++) {
-                var neighbor = areas[j];
-                this.getEdges(area, neighbor);
+            //Start at i+1 so we don't have corners that point to themselves.
+            for (var j = i+1; j < areas.length; j++) {
+                this.getEdges(area, areas[j]);
             }
         }
     }
 
     this.getEdges = function (area1, area2) {
         var areas = this.restrictedAreas;
-
+        //Creates the edges between the corners of the areas to build the graph for Dijkstra's algorithm.
+        /*
+        This works by iterating through the corners of each area (two loops), then iterating through every area and ensuring that
+        the line between the two corners isn't intersect by a restricted area. If it is, then the corners aren't connected by an
+        edge.
+        */
         for (var j = 0; j < area1.corners.length; j++) {
+            //First area's corner
             var c1 = area1.corners[j];
             for (var k = 0; k < area2.corners.length; k++) {
+                //second area's corner
                 var c2 = area2.corners[k];
                 var int = false;
                 for (var i = 0; i < areas.length && !int; i++) {
+                    //Now that make sure there isn't any points between the two corners being checked.
                     var a = areas[i];
                     int = checkPathIntersectsRectangle(a.SouthWestX, a.SouthWestY, a.NorthEastX, a.NorthEastY,
                         c1.X, c1.Y, c2.X, c2.Y);
 
                 }
                 if (!int) {
+                    //Edges point to each other, weighted by the distances
                     var cDistance = d(c1.X, c1.Y, c2.X, c2.Y);
                     c1.edges.push({
                         vertex: c2,
@@ -698,8 +718,11 @@ function prepareAreas(areas) {
 }
 
 function addCornersToArea(area) {
-    var xs = [area.NorthEastX + 20, area.SouthWestX - 20];
-    var ys = [area.NorthEastY + 20, area.SouthWestY - 20];
+    //Add the corners of the restricted area to the area object.
+    //Keep the corners slightly apart from the area to avoid the UAV getting too close to the area
+    //in most cases.
+    var xs = [area.NorthEastX + 10, area.SouthWestX - 10];
+    var ys = [area.NorthEastY + 10, area.SouthWestY - 10];
     area.corners = [];
     for (var i = 0; i < 2; i++) {
         for (var j = 0; j < 2; j++) {
