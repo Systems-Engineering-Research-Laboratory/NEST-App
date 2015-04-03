@@ -747,7 +747,11 @@ function PathGenerator(areaContainer, reporter) {
         return this.areaContainer.newRestrictedArea;
     }
 
+    //This function is used to create a new flight path between the current position and the end target
+    //Begin must not be null, and end must not be null. reportOut is a boolean that is used to send out the new
+    //route to the server is desired. The veh can be passed in, but it is unused.
     this.brandNewTarget = function (begin, end, reportOut, veh) {
+        //The pts is just the endpoint, buildSafeRoute does most of the dirty work.
         var pts = [new Waypoint({ Latitude: end.Latitude, Longitude: end.Longitude })];
         this.buildSafeRoute(pts, begin, 0);
         if (reportOut) {
@@ -801,7 +805,11 @@ function PathGenerator(areaContainer, reporter) {
     }
 
 
+    //Add a safe route to the end a waypoint list. Typical use case is for when the UAV makes a delivery,
+    //then it uses this function to generate a list of waypoints for going back to base. 
     this.appendSafeRouteToMission = function (wps, curPos, target, missionId, reportOut) {
+        //Generate a waypoint of just the ed point, then buildSafeRoute between current point
+        //and the end point.
         var tempRoute = [new Waypoint(wps[wps.length - 1]), new Waypoint(target)];
         this.buildSafeRoute(tempRoute, curPos);
         if (missionId && reportOut) {
@@ -814,15 +822,8 @@ function PathGenerator(areaContainer, reporter) {
                 }
             });
         }
+        //Now insert the wps into the list at the end
         insertMultiPointsIntoList(wps, tempRoute, wps.length - 1);
-    }
-
-    this.generatePath = function (wps, veh) {
-        if (this.gotNewRestrictedArea()) {
-            var newWps = this.resolvePath(wps);
-            return newWps;
-        }
-        return wps;
     }
 
     this.addWaypointInbetween = function (before, newPoint, wps, veh) {
