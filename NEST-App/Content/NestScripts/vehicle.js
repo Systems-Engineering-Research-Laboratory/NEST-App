@@ -494,6 +494,28 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         return handled;
     }
 
+    this.cancelMission = function () {
+        if (this.Mission.Phase !== "back to base") {
+            console.log("Canceling mission");
+            //Prepare this by removing the mission waypoint, which should be the last one
+            this.waypoints.splice(this.waypoints.length - 1, 1);
+            //Now we can append the safe route.
+            //Last param is false because we want to say this is a brand new route for the mission. Makes life easier.
+            this.pathGen.appendSafeRouteToMission(this.waypoints, this.FlightState, this.Base, this.Mission.id, false);
+
+            var promise = this.reporter.addNewRouteToMission(this.Mission.id, this.waypoints);
+
+            var $this = this;
+            promise.success(function (data, textStatus, jqXHR) {
+                for (var i = 0; i < data.length; i++) {
+                    $this.waypoints[i].updateInfo(data[i]);
+                }
+            });
+
+            this.currentWaypoint = this.waypoints[this.currentWpIndex];
+        }
+    }
+
     //Makes the vehicle go back to base
     this.backToBase = function (dt) {
         return this.flyToAndLand(dt, this.Base.X, this.Base.Y);

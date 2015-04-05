@@ -166,6 +166,10 @@ namespace NEST_App.Controllers
                 wp.NextWaypointId = wps[0].Id;
                 db.Entry(wp).State = System.Data.Entity.EntityState.Modified;
                 await db.SaveChangesAsync();
+
+                var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
+                hub.Clients.All.newRouteForMission(id);
+
                 return Ok(wps);
             }
         }
