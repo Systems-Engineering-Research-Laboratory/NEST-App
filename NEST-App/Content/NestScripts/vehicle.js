@@ -360,7 +360,8 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                 }
                 break;
             case "CMD_NAV_Land":
-                return this.flyToAndLand(dt, cmd.X, cmd.Y);
+                this.flyToAndLand(dt, cmd.X, cmd.Y);
+                return false; //Never consume this one
                 break;
 
             case "CMD_DO_Return_To_Base":
