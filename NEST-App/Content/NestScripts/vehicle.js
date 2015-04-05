@@ -686,7 +686,7 @@ function VehicleContainer() {
             area = areas[i];
             area.edges = [];
             //Start at i+1 so we don't have corners that point to themselves.
-            for (var j = i+1; j < areas.length; j++) {
+            for (var j = i; j < areas.length; j++) {
                 this.getEdges(area, areas[j]);
             }
         }
