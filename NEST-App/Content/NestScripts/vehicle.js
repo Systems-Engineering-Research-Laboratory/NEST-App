@@ -342,7 +342,10 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         switch (cmd.type) {
             case "CMD_NAV_Waypoint":
             case "CMD_NAV_Target": //Target commands just need to be dead reckoned towards the objective.
-                return this.deadReckon(dt, cmd.X, cmd.Y, true);
+                if (this.flyToAltitude(dt, cmd.Altitude)) {
+                    return this.deadReckon(dt, cmd.X, cmd.Y, true);
+                }
+                return false;
                 break;
             case "CMD_NAV_Hover":
                 if (this.deadReckon(dt, cmd.X, cmd.Y, false)) {
@@ -360,7 +363,9 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                 }
                 break;
             case "CMD_NAV_Land":
-                return this.flyToAndLand(dt, cmd.X, cmd.Y);
+                this.flyToAndLand(dt, cmd.X, cmd.Y);
+                console.log("cmd_nav_land");
+                return false; //Never consume this one for now
                 break;
 
             case "CMD_DO_Return_To_Base":
@@ -431,10 +436,16 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         if (this.hasCommsLink && !this.handleNonNavigationalCommand(target)) {
             this.awaitingNavigation = false;
             if (this.currentWaypoint) {
+                
                 var newIdx = this.getNextNavigationalIndex();
+                
                 if (newIdx == this.currentWpIndex) {
+                    //If we are inserting the command before the current navigation point
+                    //then pass start into the intermediate target so that we can validate the path
+                    //from the current position to the waypoint that is being inserted.
                     var start = this.FlightState;
                 }
+                //insertIntermediateTarget will return the index of the waypoint inserted.
                 var wpLoc = this.pathGen.insertIntermediateTarget(this.waypoints,
                     start,
                     target,
@@ -442,8 +453,18 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                     this.hasCommsLink,
                     this.Mission.id
                     );
-                this.currentWaypoint = this.waypoints[this.currentWpIndex]
+                
+                //Record that this waypoint is supposed to be preserved, and navigational points added afterwards.
                 this.commandList.push(this.waypoints[wpLoc]);
+                this.waypoints[wpLoc].obj = target;
+                this.waypoints[wpLoc].objType = "command";
+                if (target.type === "CMD_NAV_Target"
+                    && this.currentWaypoint.objType === "command"
+                    && this.currentWaypoint.obj.type === "CMD_NAV_Land") {
+                    this.getNextWaypoint();
+                }
+                //CurrentWaypoint is either the same or the current flight state
+                this.currentWaypoint = this.waypoints[this.currentWpIndex];
             }
         }
         //else non navigational
@@ -451,14 +472,19 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     this.commandList = [];
     this.getNextNavigationalIndex = function () {
+        
         if (this.commandList.length > 0) {
+            //Only start from from the current waypoint index because we dont want to create navigational points before it
             var lastCommandedWp = this.commandList[this.commandList.length - 1];
             for (var i = this.currentWpIndex; i < this.waypoints.length; i++) {
+                //Find the last commanded waypoint in the list. 
                 if (lastCommandedWp == this.waypoints[i]) {
+                    //Return i+1, but i is the index of the lastCommandedWp, we want i+1 to be the next index
                     return i + 1;
                 }
             }
         }
+        //This index is the one we can insert the waypoint in front of.
         return this.currentWpIndex;
     }
 
@@ -482,6 +508,28 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         return handled;
     }
 
+    this.cancelMission = function () {
+        if (this.Mission.Phase !== "back to base") {
+            console.log("Canceling mission");
+            //Prepare this by removing the mission waypoint, which should be the last one
+            this.waypoints.splice(this.waypoints.length - 1, 1);
+            //Now we can append the safe route.
+            //Last param is false because we want to say this is a brand new route for the mission. Makes life easier.
+            this.pathGen.appendSafeRouteToMission(this.waypoints, this.FlightState, this.Base, this.Mission.id, false);
+
+            var promise = this.reporter.addNewRouteToMission(this.Mission.id, this.waypoints);
+
+            var $this = this;
+            promise.success(function (data, textStatus, jqXHR) {
+                for (var i = 0; i < data.length; i++) {
+                    $this.waypoints[i].updateInfo(data[i]);
+                }
+            });
+
+            this.currentWaypoint = this.waypoints[this.currentWpIndex];
+        }
+    }
+
     //Makes the vehicle go back to base
     this.backToBase = function (dt) {
         return this.flyToAndLand(dt, this.Base.X, this.Base.Y);
@@ -490,10 +538,12 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     this.flyToAndLand = function (dt, destX, destY) {
         var thisX = this.FlightState.X;
         var thisY = this.FlightState.Y;
+        //Fly to
         if (calculateDistance(thisX, thisY, destX, destY) > .1) {
             this.deadReckon(dt, destX, destY);
             return false;
         }
+            //Land if we are really close.
         else {
             return this.targetAltitude(dt, 0, this.MaxVerticalVelocity);
         }
@@ -513,6 +563,8 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     }
 
     this.generateWaypoints = function (target, type) {
+        //Generate waypoints for the current target.
+        //Really should just change to be target and type, which get passed into this function.
         var target = target || this.Command || this.Mission;
         if (!type) {
             var type = this.Command ? "command" : (this.Mission ? "mission" : "target");
@@ -522,12 +574,6 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         var n = this.waypoints.length;
         this.waypoints[n - 1].obj = target;
         this.waypoints[n - 1].objType = type;
-    }
-
-    this.generateWaypointsAndAppend = function (target) {
-        var target = target || this.Command || this.Mission;
-        var type = this.Command ? "command" : (this.Mission ? "mission" : "target");
-
     }
 
     this.getNextWaypoint = function () {
@@ -647,33 +693,43 @@ function VehicleContainer() {
     })
 
     this.buildGraph = function () {
+        //Go through pairs of areas and create the graph.
         var areas = this.restrictedAreas;
         prepareAreas(this.restrictedAreas);
         for (var i = 0; i < areas.length; i++) {
             area = areas[i];
             area.edges = [];
+            //Start at i+1 so we don't have corners that point to themselves.
             for (var j = i; j < areas.length; j++) {
-                var neighbor = areas[j];
-                this.getEdges(area, neighbor);
+                this.getEdges(area, areas[j]);
             }
         }
     }
 
     this.getEdges = function (area1, area2) {
         var areas = this.restrictedAreas;
-
+        //Creates the edges between the corners of the areas to build the graph for Dijkstra's algorithm.
+        /*
+        This works by iterating through the corners of each area (two loops), then iterating through every area and ensuring that
+        the line between the two corners isn't intersect by a restricted area. If it is, then the corners aren't connected by an
+        edge.
+        */
         for (var j = 0; j < area1.corners.length; j++) {
+            //First area's corner
             var c1 = area1.corners[j];
             for (var k = 0; k < area2.corners.length; k++) {
+                //second area's corner
                 var c2 = area2.corners[k];
                 var int = false;
                 for (var i = 0; i < areas.length && !int; i++) {
+                    //Now that make sure there isn't any points between the two corners being checked.
                     var a = areas[i];
                     int = checkPathIntersectsRectangle(a.SouthWestX, a.SouthWestY, a.NorthEastX, a.NorthEastY,
                         c1.X, c1.Y, c2.X, c2.Y);
 
                 }
                 if (!int) {
+                    //Edges point to each other, weighted by the distances
                     var cDistance = d(c1.X, c1.Y, c2.X, c2.Y);
                     c1.edges.push({
                         vertex: c2,
@@ -698,8 +754,11 @@ function prepareAreas(areas) {
 }
 
 function addCornersToArea(area) {
-    var xs = [area.NorthEastX + 20, area.SouthWestX - 20];
-    var ys = [area.NorthEastY + 20, area.SouthWestY - 20];
+    //Add the corners of the restricted area to the area object.
+    //Keep the corners slightly apart from the area to avoid the UAV getting too close to the area
+    //in most cases.
+    var xs = [area.NorthEastX + 10, area.SouthWestX - 10];
+    var ys = [area.NorthEastY + 10, area.SouthWestY - 10];
     area.corners = [];
     for (var i = 0; i < 2; i++) {
         for (var j = 0; j < 2; j++) {
@@ -724,7 +783,11 @@ function PathGenerator(areaContainer, reporter) {
         return this.areaContainer.newRestrictedArea;
     }
 
+    //This function is used to create a new flight path between the current position and the end target
+    //Begin must not be null, and end must not be null. reportOut is a boolean that is used to send out the new
+    //route to the server is desired. The veh can be passed in, but it is unused.
     this.brandNewTarget = function (begin, end, reportOut, veh) {
+        //The pts is just the endpoint, buildSafeRoute does most of the dirty work.
         var pts = [new Waypoint({ Latitude: end.Latitude, Longitude: end.Longitude })];
         this.buildSafeRoute(pts, begin, 0);
         if (reportOut) {
@@ -778,7 +841,11 @@ function PathGenerator(areaContainer, reporter) {
     }
 
 
+    //Add a safe route to the end a waypoint list. Typical use case is for when the UAV makes a delivery,
+    //then it uses this function to generate a list of waypoints for going back to base. 
     this.appendSafeRouteToMission = function (wps, curPos, target, missionId, reportOut) {
+        //Generate a waypoint of just the ed point, then buildSafeRoute between current point
+        //and the end point.
         var tempRoute = [new Waypoint(wps[wps.length - 1]), new Waypoint(target)];
         this.buildSafeRoute(tempRoute, curPos);
         if (missionId && reportOut) {
@@ -791,15 +858,8 @@ function PathGenerator(areaContainer, reporter) {
                 }
             });
         }
+        //Now insert the wps into the list at the end
         insertMultiPointsIntoList(wps, tempRoute, wps.length - 1);
-    }
-
-    this.generatePath = function (wps, veh) {
-        if (this.gotNewRestrictedArea()) {
-            var newWps = this.resolvePath(wps);
-            return newWps;
-        }
-        return wps;
     }
 
     this.addWaypointInbetween = function (before, newPoint, wps, veh) {

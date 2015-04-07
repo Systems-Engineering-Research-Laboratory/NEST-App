@@ -616,6 +616,33 @@ namespace NEST_App.Controllers.Api
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        [ResponseType(typeof(UAV))]
+        [Route("api/uavs/addUavWithAutoConfig")]
+        [HttpPost]
+        public async Task<IHttpActionResult> PostUAVWithConfig(UAV uAV)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            db.Configurations.Add(
+                new Configuration
+                {
+                    Classification = "quadrotor",
+                    create_date = DateTime.Now,
+                    modified_date = DateTime.Now,
+                    Name = "autogen",
+                    NumberOfMotors = 4,
+                    
+                });
+
+            db.UAVs.Add(uAV);
+            await db.SaveChangesAsync();
+
+            return CreatedAtRoute("DefaultApi", new { id = uAV.Id }, uAV);
+        }
+
         // POST: api/UAVs
         [ResponseType(typeof(UAV))]
         public async Task<IHttpActionResult> PostUAV(UAV uAV)
