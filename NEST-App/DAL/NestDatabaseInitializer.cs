@@ -18,8 +18,8 @@ namespace NEST_App.DAL
         public DbGeography distance()
         {
             int alt = 400;                                  //altitude of UAV with 400 ft default
-            double homeLat = 34.2417;                       //default home latitude
-            double homeLon = -118.529;                      //default home longitude
+            double homeLat = 34.2420;                       //default home latitude
+            double homeLon = -118.5288;                      //default home longitude
             double radius = 8050;                           //meters (5 miles)
             Random rand = new Random();
             double radiusDegrees = radius / 111300f;        //convert meters to degrees, from the equator, 111300 meters in 1 degree
@@ -84,8 +84,8 @@ namespace NEST_App.DAL
                         var FlightStates = new List<FlightState>
                         {
                             new FlightState { 
-                                Latitude = 34.2417,
-                                Longitude = -118.529,
+                                Latitude = 34.2420,
+                                Longitude = -118.5288,
                                 Altitude = 400,
                                 VelocityX = 0, 
                                 VelocityY = 0, 
@@ -147,8 +147,8 @@ namespace NEST_App.DAL
                                 IsActive = true, WasSkipped = false, 
                                 GeneratedBy = "Jeff", 
                                 Action = "Fly Through", 
-                                Latitude = 34.2417,
-                                Longitude = -118.529,
+                                Latitude = 34.2420,
+                                Longitude = -118.5288,
                                 Altitude = 400
                                 //Missions = missions[0] 
                             },

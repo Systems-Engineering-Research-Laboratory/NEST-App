@@ -281,6 +281,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Hubs\EventLogHub.cs" />
+    <Compile Include="Hubs\AdminHub.cs" />
     <Compile Include="Hubs\VehicleHub.cs" />
     <Compile Include="Hubs\VehicleRouteHub.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -416,6 +417,7 @@
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\detailViewResources\dv.css" />
     <Content Include="Content\detailViewResources\dv.js" />
+    <Content Include="Content\detailViewResources\filter.js" />
     <Content Include="Content\Flowers.txt" />
     <Content Include="Content\font-awesome-4.3.0\css\font-awesome.css" />
     <Content Include="Content\font-awesome-4.3.0\css\font-awesome.min.css" />

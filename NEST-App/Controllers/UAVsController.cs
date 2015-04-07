@@ -172,8 +172,8 @@ namespace NEST_App.Controllers.Api
         private DbGeography getDistance()
         {
             int alt = 400;                                  //altitude of UAV with 400 ft default
-            double homeLat = 34.2417;                       //default home latitude
-            double homeLon = -118.529;                      //default home longitude
+            double homeLat = 34.2420;                       //default home latitude
+            double homeLon = -118.5288;                      //default home longitude
             double radius = 8050;                           //meters (5 miles)
             double radiusDegrees = radius / 111300f;        //convert meters to degrees, from the equator, 111300 meters in 1 degree
             double lat2 = rand.NextDouble();                //random double latitude
@@ -269,8 +269,8 @@ namespace NEST_App.Controllers.Api
                     TimeAssigned = null,
                     TimeCompleted = null,
                     //DestinationCoordinates = DbGeography.FromText("POINT(-118.52529 34.241670 400)"),  
-                    Latitude = p.Latitude ?? 34.2417,
-                    Longitude = p.Longitude ?? -118.529,
+                    Latitude = p.Latitude ?? 34.2420,
+                    Longitude = p.Longitude ?? -118.5288,
                     ScheduledCompletionTime = null,
                     EstimatedCompletionTime = null,
                     create_date = DateTime.Now,
@@ -474,8 +474,8 @@ namespace NEST_App.Controllers.Api
                 var flights = new List<FlightState>
                 {
                    new FlightState { 
-                       Longitude = -118.529,
-                       Latitude = 34.2417,
+                       Longitude = -118.5288,
+                       Latitude = 34.2420,
                        Altitude = 400,
                        VelocityX = 0, 
                        VelocityY = 0, 
@@ -614,6 +614,33 @@ namespace NEST_App.Controllers.Api
             }
 
             return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        [ResponseType(typeof(UAV))]
+        [Route("api/uavs/addUavWithAutoConfig")]
+        [HttpPost]
+        public async Task<IHttpActionResult> PostUAVWithConfig(UAV uAV)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            db.Configurations.Add(
+                new Configuration
+                {
+                    Classification = "quadrotor",
+                    create_date = DateTime.Now,
+                    modified_date = DateTime.Now,
+                    Name = "autogen",
+                    NumberOfMotors = 4,
+                    
+                });
+
+            db.UAVs.Add(uAV);
+            await db.SaveChangesAsync();
+
+            return CreatedAtRoute("DefaultApi", new { id = uAV.Id }, uAV);
         }
 
         // POST: api/UAVs

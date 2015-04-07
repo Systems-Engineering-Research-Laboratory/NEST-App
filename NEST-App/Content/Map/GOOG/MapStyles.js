@@ -3,8 +3,8 @@
     uavFilterClick: false,
 
     mapOptions: {
-        zoom: 18,
-        center: new google.maps.LatLng(34.2417, -118.529),
+        zoom: 14,
+        center: new google.maps.LatLng(34.2420, -118.5288),
         disableDefaultUI: true,
         zoomControl: true,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -189,16 +189,16 @@
     //    });
     //},
     
-    //setting trail style
-    uavTrail: {
-        url: '../Content/img/blue.jpg',
-        fillOpacity: 0.7,
-        size: new google.maps.Size(46, 44),
-        scaledSize: new google.maps.Size(5, 5),
-        anchor: new google.maps.Point(5, 5),
-        zIndex: 10,
-        clickable: false
-    },
+    ////setting trail style
+    //uavTrail: {
+    //    url: '../Content/img/blue.jpg',
+    //    fillOpacity: 0.7,
+    //    size: new google.maps.Size(46, 44),
+    //    scaledSize: new google.maps.Size(5, 5),
+    //    anchor: new google.maps.Point(5, 5),
+    //    zIndex: 10,
+    //    clickable: false
+    //},
 
     restrictedArea: {
         strokeColor: '#FF0000',

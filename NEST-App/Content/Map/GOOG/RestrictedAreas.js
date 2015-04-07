@@ -11,9 +11,9 @@
     infoWindow: null,
     
     confirm: function (c) {
-        if (c) {
-            this.infoWindow.setMap(null);
+        this.infoWindow.setMap(null);
 
+        if (c) {
             var that = this;
             $.ajax({
                 type: 'POST',
@@ -36,7 +36,6 @@
             });
         }
         else {
-            this.infoWindow.setMap(null);
             this.rectangle.setMap(null);
         }
     }
@@ -112,7 +111,7 @@ function RestrictedAreasContainer(map, drawingManager) {
         // ask user to confirm the selection
         var content = "<strong>Confirm?</strong><br>" +
                       "<button class='btn btn-default' style='margin-right: 5px;' onclick='restrictedAreas.confirm(true)'>OK</button>" +
-                      "<button class='btn btn-default' onclick='restrictedAreas.confirm(false)'>Cancle</button>";
+                      "<button class='btn btn-default' onclick='restrictedAreas.confirm(false)'>Cancel</button>";
         restrictedAreas.infoWindow = new google.maps.InfoWindow();
         restrictedAreas.infoWindow.setContent(content);
         restrictedAreas.infoWindow.setPosition(restrictedAreas.ne);
@@ -136,7 +135,7 @@ function RestrictedAreasContainer(map, drawingManager) {
             // ask user to confirm the selection
             var content = "<strong>Confirm?</strong><br>" +
                           "<button class='btn btn-default' style='margin-right: 5px;' onclick='restrictedAreas.confirm(true)'>OK</button>" +
-                          "<button class='btn btn-default' onclick='restrictedAreas.confirm(false)'>Cancle</button>";
+                          "<button class='btn btn-default' onclick='restrictedAreas.confirm(false)'>Cancel</button>";
             restrictedAreas.infoWindow = new google.maps.InfoWindow();
             restrictedAreas.infoWindow.setContent(content);
             restrictedAreas.infoWindow.setPosition(restrictedAreas.ne);
