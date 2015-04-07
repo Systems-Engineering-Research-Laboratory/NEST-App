@@ -12,6 +12,14 @@ var ctrlDown = false;
 var flightLines = [];
 var selectedUAV; //the uav that's been selected
 var camLockedUAV = null;
+var radius = 6371000;
+var base_lat_radian = 34.2420 * Math.PI / 180;
+var base_long_radian = -118.5288 * Math.PI / 180;
+var percent_global_for_progress_bar;
+var missiontable = document.getElementById("progress_table_for_info");
+var progress_table = document.getElementById("progress_table");
+
+
 
 //Drone Trails
 var selectedTrail; //the trail that the selected uav has
@@ -185,6 +193,58 @@ $(document).ready(function () {
        
             if (vehicle.Id == camLockedUAV) {
                 mapFunctions.CenterOnUAV(vehicle.Id);
+            }
+
+            for (i = 0, j = 1, k = 0; i < missiontable.rows.length; i++, j+=2, k+=2) {
+                var uavid_progress_table = missiontable.rows[i].cells[0].innerHTML;
+                var lat_progress_table = missiontable.rows[i].cells[2].innerHTML;
+                var long_progress_table = missiontable.rows[i].cells[3].innerHTML;
+
+                var dest_lat_radian = lat_progress_table * Math.PI / 180;
+                var dest_long_radian = long_progress_table * Math.PI / 180;
+
+                var diff_base_dest_lat = base_lat_radian - dest_lat_radian;
+                var diff_base_dest_long = base_long_radian - dest_long_radian;
+                var total_a1 = Math.sin(diff_base_dest_lat / 2) * Math.sin(diff_base_dest_lat / 2);
+                var total_a2 = Math.cos(base_lat_radian);
+                var total_a3 = Math.cos(dest_lat_radian);
+                var total_a4 = Math.sin(diff_base_dest_long / 2) * Math.sin(diff_base_dest_long / 2);
+                var total_a = total_a1 + (total_a2 * total_a3 * total_a4);
+                var total_c = 2 * Math.atan2(Math.sqrt(total_a), Math.sqrt(1 - total_a));
+                var total_distance = radius * total_c;
+                var total_distance_in_km = total_distance / 1000;
+
+                var current_lat_radian = vehicle.Latitude * Math.PI / 180;
+                var current_long_radian = vehicle.Longitude * Math.PI / 180;
+
+                var diff_curr_dest_lat = dest_lat_radian - current_lat_radian;
+                var diff_curr_dest_long = dest_long_radian - current_long_radian;
+
+                var remaining_a1 = Math.sin(diff_curr_dest_lat / 2) * Math.sin(diff_curr_dest_lat / 2);
+                var remaining_a2 = Math.cos(dest_lat_radian);
+                var remaining_a3 = Math.cos(current_lat_radian);
+                var remaining_a4 = Math.sin(diff_curr_dest_long / 2) * Math.sin(diff_curr_dest_long / 2);
+                var remaining_a = remaining_a1 + (remaining_a2 * remaining_a3 * remaining_a4);
+                var remaining_c = 2 * Math.atan2(Math.sqrt(remaining_a), Math.sqrt(1 - remaining_a));
+                var remaining_distance = radius * remaining_c;
+                var remaining_distance_in_km = remaining_distance / 1000;
+
+
+                if ((vehicle.Id == uavid_progress_table))
+                {
+                    var percent = 100 - ((remaining_distance_in_km / total_distance_in_km) * 100);
+                    percent_global_for_progress_bar = percent;
+                    missiontable.rows[i].cells[4].innerHTML = total_distance;
+                    progress_table.rows[j].cells[1].innerHTML = "<b>Distance to destination: </b>" + remaining_distance_in_km.toFixed(3) + " km";
+                    progress_table.rows[j].cells[0].innerHTML = " " + percent.toFixed(0) + " % on delivery";
+
+                    var progress_row = progress_table.children[0].children[k].children[0].children[0];
+                    progress_row.setAttribute("value", percent);
+
+                    if (percent.toFixed(0) == '100') {
+                        progress_table.rows[j].cells[0].innerHTML = "Done with delivery";
+                    }
+                }
             }
         }
 
@@ -493,6 +553,21 @@ $(document).ready(function () {
         });
 
         vehicleHub.connection.start();
+
+        //for (k = 0; k < progress_table.rows.length; k += 2)
+        //{
+        //    var progressbar_td = progress_table.rows[k];
+        //    var x = progressbar_td.cells[0];
+
+        //    var progressbar_bar = document.createElement("PROGRESS");
+        //    var progressbar_array = [];
+
+        //    progressbar_bar.setAttribute("value", "0");
+        //    progressbar_bar.setAttribute("max", "100");
+
+        //    x.appendChild(progressbar_bar);
+        //}
+        
 
         $(window).keydown(function (evt) {
             if (evt.which === 16) {

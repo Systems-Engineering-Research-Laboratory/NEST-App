@@ -1,4 +1,5 @@
 ﻿var eventlog_show_hide = false;
+var progress_show_hide = false;
 var homeBase = new google.maps.LatLng(34.2420, -118.5288);
 var mapFunctions = {
     shiftPressed : false,
@@ -455,12 +456,20 @@ var mapFunctions = {
             }
         });
     },
-
     
     eventlog_show: function () {
         if (eventlog_show_hide == false) {
-            document.getElementById("eventlog").style.display = "block";
-            eventlog_show_hide = true;
+            if (progress_show_hide == true) {
+                document.getElementById("eventlog").style.display = "block";
+                eventlog_show_hide = true;
+                document.getElementById("progress_div").style.display = "none";
+                progress_show_hide = false;
+            }
+
+            else if (progress_show_hide == false) {
+                document.getElementById("eventlog").style.display = "block";
+                eventlog_show_hide = true;
+            }
         }
 
         else if (eventlog_show_hide == true) {
@@ -489,6 +498,59 @@ var mapFunctions = {
     glowing: function() {
         var event_button = document.getElementById('goevent');
         event_button.style.cssText = "-webkit-animation: glowing 1s 1;";
-    }
+    },
     
+    progressbar_show: function () {
+        if (progress_show_hide == false) {
+            if (eventlog_show_hide == true)
+            {
+                document.getElementById("eventlog").style.display = "none";
+                eventlog_show_hide = false;
+                document.getElementById("progress_div").style.display = "block";
+                progress_show_hide = true;
+
+            }
+            
+            else if (eventlog_show_hide == false)
+            {
+                document.getElementById("progress_div").style.display = "block";
+                progress_show_hide = true;
+            }
+            mapFunctions.progressbar_distance();
+        }
+
+        else if (progress_show_hide == true) {
+            document.getElementById("progress_div").style.display = "none";
+            progress_show_hide = false;
+        }
+    },
+
+    progressbar_distance: function () {
+        var missiontable = document.getElementById("progress_table_for_info");
+        var progress_table = document.getElementById("progress_table");
+
+        for (i = 0, j = 1; i < missiontable.rows.length; i++, j+=2) {
+            var uavid_progress_table = missiontable.rows[i].cells[0].innerHTML;
+            var lat_progress_table = missiontable.rows[i].cells[2].innerHTML;
+            var long_progress_table = missiontable.rows[i].cells[3].innerHTML;
+            //var distance_progress_table = missiontable.rows[i].cells[4].innerHTML;
+
+            var dest_lat_radian = lat_progress_table * Math.PI / 180;
+            var dest_long_radian = long_progress_table * Math.PI / 180;
+            var diff_base_dest_lat = base_lat_radian - dest_lat_radian;
+            var diff_base_dest_long = base_long_radian - dest_long_radian;
+            var total_a1 = Math.sin(diff_base_dest_lat / 2) * Math.sin(diff_base_dest_lat / 2);
+            var total_a2 = Math.cos(base_lat_radian);
+            var total_a3 = Math.cos(dest_lat_radian);
+            var total_a4 = Math.sin(diff_base_dest_long / 2) * Math.sin(diff_base_dest_long / 2);
+            var total_a = total_a1 + (total_a2 * total_a3 * total_a4);
+            var total_c = 2 * Math.atan2(Math.sqrt(total_a), Math.sqrt(1 - total_a));
+            var total_distance = radius * total_c;
+            var total_distance_in_km = total_distance / 1000;
+
+            missiontable.rows[i].cells[4].innerHTML = total_distance;
+            
+            progress_table.rows[j].cells[1].innerHTML = "<b>Distance: </b>" + total_distance_in_km.toFixed(3) + " km";
+        }
+    },
 };
