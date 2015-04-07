@@ -464,7 +464,6 @@
     <Content Include="Content\Names.txt" />
     <Content Include="Content\NestScripts\assignment.js" />
     <Content Include="Content\nest_style.css" />
-    <Content Include="Content\ScheduleView\ScheduleCSS.css" />
     <Content Include="Content\ScheduleView\ScheduleJS.js" />
     <Content Include="Controllers\app\js\admin_page\admin_page.app.js" />
     <Content Include="Controllers\app\js\admin_page\controllers\admin.ctrl.js" />
