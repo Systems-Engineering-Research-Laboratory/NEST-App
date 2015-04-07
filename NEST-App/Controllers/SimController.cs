@@ -77,9 +77,10 @@ namespace NEST_App.Controllers.Api
         int numOfDrones = 5;    //num of drones per sim
         //int numOfSims = 1;      //number of sims
 
-        TransferObject[] xList;
-        bool generated;
-        int startIndex;
+        static TransferObject[] xList;
+        static bool generated;
+        static int startIndex;
+
         private NestContainer db = new NestContainer();
         
 
@@ -160,11 +161,23 @@ namespace NEST_App.Controllers.Api
             else //xList is already generated
             {
                 System.Diagnostics.Debug.WriteLine("Another sim opened, hit 'else'");
-                TransferObject[] transferList = new TransferObject[numOfDrones];
-                for (int i = startIndex; i < (startIndex + numOfDrones) && i < xList.Length; i++)
+                
+                int capacity = 0;
+                if ((startIndex + numOfDrones) > xList.Length)
+                {
+                    capacity = xList.Length - startIndex;
+                }
+                else
+                {
+                    capacity = numOfDrones;
+                }
+                TransferObject[] transferList = new TransferObject[capacity];
+                
+
+                for (int i = 0; i < numOfDrones && (i + startIndex) < xList.Length; i++)
                 {
                     transferList[i] = new TransferObject();
-                    transferList[i] = transferList[i].Copy(xList[i]);
+                    transferList[i] = transferList[i].Copy(xList[i + startIndex]);
                 }
                 startIndex += numOfDrones;
                
