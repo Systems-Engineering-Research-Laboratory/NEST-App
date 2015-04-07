@@ -24,6 +24,7 @@ namespace NEST_App.Controllers
             uav_event_user.UAVs = db.UAVs.ToList();
             uav_event_user.Eventlog = db.EventLogs.ToList();
             uav_event_user.Operator = db.Users.ToList();
+            uav_event_user.missions = db.Missions.ToList();
 
             string name = (string)Session["current_user"];
 

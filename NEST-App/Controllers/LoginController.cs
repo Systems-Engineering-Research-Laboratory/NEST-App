@@ -23,6 +23,7 @@ namespace NEST_App.Controllers
         public ActionResult Login(string username)
         {
             Session["current_user"] = username;
+            Session.Timeout = 1440;
             return RedirectToAction("Index", "Home");
         }
     }
