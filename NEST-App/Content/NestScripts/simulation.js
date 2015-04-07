@@ -15,7 +15,7 @@
 //The URL where we will perform the AJAX call to get the vehicle info from the DB.
 var uri = '/api/flightstate';
 var runSim = false;
-var dt = 50; //Timestep in milliseconds
+var dt = 2000; //Timestep in milliseconds
 var phases = ["preparing", "enroute", "delivering", "returning", "landing"];
 var availableMissions = [];
 
@@ -126,6 +126,7 @@ $(document).ready(function () {
 
     var vehicleHub = $.connection.vehicleHub;
     
+    avgCalcTimeDiv = $("#avg-time")
 
     var adminHub = $.connection.adminHub;
     adminHub.client.newDrop = function (drop) {
@@ -211,7 +212,7 @@ function unassignedMissionsCb(container, data, textStatus, jqXHR) {
     missionsRecvd = true;
 }
 
-function updateSimulation(vehicleHub, map) {
+function updateSimulation(vehicleHub, map, dt) {
     //TODO: Add scheduler here
     //Do dead reckoning on each of the aircraft
     var vehicles = map.vehicles;
@@ -229,14 +230,37 @@ function updateSimulation(vehicleHub, map) {
 //Main function loop
 function connectedToHub(vehicleHub, map) {
     vehicleHub.server.joinGroup("vehicles");
+    var iters = 0;
+    var cumulativeCalcTime = 0;
     function mainLoop() {
         //This boolean is switched by the start sim and stop sim buttons
+        var now = new Date().getTime();
         if (runSim) {
-            updateSimulation(vehicleHub, map);
+            updateSimulation(vehicleHub, map, dt);
+            var postUpdate = new Date().getTime();
+            var timediff = (postUpdate - now);
+            cumulativeCalcTime += timediff;
+            iters++;
+            if (iters != 0) {
+                displayCalcTime(cumulativeCalcTime / iters);
+            }
+            var nextTimeOut = dt - timediff;
+            if (nextTimeOut <= 0) {
+                console.log("The sim is running too slow!");
+            }
+            setTimeout(mainLoop, dt - (postUpdate - now));
+        } else
+        {
+            setTimeout(mainLoop, dt);
         }
-        setTimeout(mainLoop, dt);
+        
     }
     mainLoop();
+}
+
+function displayCalcTime(avgTime) {
+    var str = parseFloat(avgTime).toFixed(3);
+    avgCalcTimeDiv.text("average calculation time is " + str + " ms");
 }
 
 function receivedCommand(map, cmd, type, misc) {
