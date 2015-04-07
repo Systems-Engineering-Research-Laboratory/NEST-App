@@ -60,7 +60,7 @@
                         <th style="display: none;"></th>
                     </tr>
 
-                    @foreach (UAV uavs_user_user_id in Model.UAVs)
+                    @foreach (UAV uavs_user_user_id in Model.UAVs) 
                     {
                         <tr id="un" onclick="managerFunctions.selected_uav()">
                             <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Id)</td>
