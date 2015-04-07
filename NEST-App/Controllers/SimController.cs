@@ -44,6 +44,7 @@ namespace NEST_App.Controllers.Api
         public Schedule Schedule;
         public FlightState FlightState;
 
+        //Copy the contents of the master UAV list at given index to a new UAV list index
         public TransferObject Copy(TransferObject old)
         {
             TransferObject temp = new TransferObject
@@ -75,22 +76,19 @@ namespace NEST_App.Controllers.Api
     public class SimApiController : ApiController
     {
         int numOfDrones = 5;    //num of drones per sim
-        //int numOfSims = 1;      //number of sims
 
         static TransferObject[] xList;
-        static bool generated;
-        static int startIndex;
+        static bool generated = false;
+        static int startIndex = 0;
 
         private NestContainer db = new NestContainer();
-        
-
         public HttpResponseMessage GetInitSim()
         {
             int ct = 0;
+            //Check if the UAV list has already been created
             if (!generated)
             {
-                System.Diagnostics.Debug.WriteLine("Generated is still false");
-                startIndex = 0;
+                //Flag the list as being created
                 generated = true;
                 UAV temp = db.UAVs.Find(0);
                 var uavs = from u in db.UAVs.Include(u => u.FlightStates).Include(u => u.Schedules)
@@ -117,12 +115,16 @@ namespace NEST_App.Controllers.Api
                                },
                                FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
                            };
+                //Find out how many drones have been retrieved
                 foreach (var vehicle in uavs)
                 {
                     ct++;
                 }
+                //Create a transferobject list of uavs
                 xList = new TransferObject[ct];
                 ct = 0;
+
+                //Populate the uav list
                 foreach(var vehicle in uavs){
                     xList[ct] = new TransferObject
                     {
@@ -148,12 +150,15 @@ namespace NEST_App.Controllers.Api
                     };
                     ct++;
                 }
+
+                //Build the list of drones to send to the simulator
                 TransferObject[] transferList = new TransferObject[numOfDrones];
                 for (int i = startIndex; i < (startIndex + numOfDrones) && i < xList.Length; i++)
                 {
                     transferList[i] = new TransferObject();
                     transferList[i] = transferList[i].Copy(xList[i]);
                 }
+                //Build the list of drones to send to the simulator
                 startIndex += numOfDrones;
 
                 return Request.CreateResponse(HttpStatusCode.OK, transferList);
@@ -161,8 +166,10 @@ namespace NEST_App.Controllers.Api
             else //xList is already generated
             {
                 System.Diagnostics.Debug.WriteLine("Another sim opened, hit 'else'");
-                
+
                 int capacity = 0;
+                //Check if creating a new numofdrones-sized array would exceed the number of remaining, unassigned drones
+                //If it would exceed, make the length only as long as the remaining number of drones
                 if ((startIndex + numOfDrones) > xList.Length)
                 {
                     capacity = xList.Length - startIndex;
@@ -173,12 +180,13 @@ namespace NEST_App.Controllers.Api
                 }
                 TransferObject[] transferList = new TransferObject[capacity];
                 
-
+                //Build the list of drones to send to the simulator
                 for (int i = 0; i < numOfDrones && (i + startIndex) < xList.Length; i++)
                 {
                     transferList[i] = new TransferObject();
                     transferList[i] = transferList[i].Copy(xList[i + startIndex]);
                 }
+                //Increase the starting index of the next iteration
                 startIndex += numOfDrones;
                
                 return Request.CreateResponse(HttpStatusCode.OK, transferList);
