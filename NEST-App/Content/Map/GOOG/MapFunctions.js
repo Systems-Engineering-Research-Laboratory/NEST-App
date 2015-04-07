@@ -5,7 +5,11 @@ var mapFunctions = {
     shiftPressed : false,
     mouseDownPos: null,
     gridBoundingBox : null,
-    mouseIsDown : false,
+    mouseIsDown: false,
+    confirmWindow: null,
+    goLat: null,
+    goLng: null,
+    ids: [],
 
     //Returns the latlong of the clicked point
     GetLatLong: function (theMap, event) {
@@ -38,9 +42,8 @@ var mapFunctions = {
     },
     //Controls context menu selection for the map
     MapContextSelection: function (map, latLng, eventName, emitHub) {
-        var ids = [];
         for (var i = 0; i < selectedDrones.length; i++) {
-            ids[i] = selectedDrones[i].Id;
+            this.ids[i] = selectedDrones[i].Id;
         }
         switch (eventName) {
             case 'get_coords':
@@ -57,16 +60,32 @@ var mapFunctions = {
                 });
                 break;
             case 'go_here':
-                document.getElementById("go_lat").value = latLng.lat();
-                document.getElementById("go_long").value = latLng.lng();
-                document.getElementById("clickToGoBtn").onclick = function () { droneTrails.clickToGo(ids); };
-                this.goTo_show();
+                // ask user to confirm the commend
+                var content = "<strong>Confirm?</strong><br>" +
+                              "<button class='btn btn-default' style='margin-right: 5px;' onclick='mapFunctions.confirmGoHere(true)'>OK</button>" +
+                              "<button class='btn btn-default' onclick='mapFunctions.confirmGoHere(false)'>Cancel</button>";
+                this.confirmWindow = new google.maps.InfoWindow();
+                this.confirmWindow.setContent(content);
+                this.confirmWindow.setPosition(latLng);
+                this.confirmWindow.open(map);
+
+                this.goLat = latLng.lat();
+                this.goLng = latLng.lng();
+                
                 break;
             case 'add_waypoint':
                 this.goTo_show();
                 break;
             default:
                 break;
+        }
+    },
+
+    //confirmation for the go_here commend
+    confirmGoHere: function (c) {
+        this.confirmWindow.setMap(null);
+        if (c && (this.goLat != null) && (this.goLng != null)) {
+            droneTrails.goWaypoint(this.goLat, this.goLng, this.ids);
         }
     },
 
@@ -101,11 +120,11 @@ var mapFunctions = {
             var alt = 0;
             var throttle = 0;
             var time = 0;
-            var ids = [];
             for (var i = 0; i < selectedDrones.length; i++) {
-                    ids[i] = selectedDrones[i].Id;
+                    this.ids[i] = selectedDrones[i].Id;
             }
             /////////////////
+            that = this;
             switch (eventName) {
                 case 'get_details':
                     window.open("http://localhost:53130/detailview", "_blank");
@@ -119,7 +138,7 @@ var mapFunctions = {
                         alt.value = uav.altitude;
                         throttle = document.getElementById("adjust_throttle");
                         throttle.value = uav.throttle;
-                        document.getElementById("adjust_click").onclick = function () { uavCommands.NonNav(uid, uav, latLng, alt.value, throttle.value, ids); mapFunctions.adjust_hide() };
+                        document.getElementById("adjust_click").onclick = function () { uavCommands.NonNav(uid, uav, latLng, alt.value, throttle.value, that.ids); mapFunctions.adjust_hide() };
                         mapFunctions.adjust_show(marker.uav.Callsign);
                     }
                     break;
@@ -129,7 +148,7 @@ var mapFunctions = {
                     } else {
                         time = document.getElementById("hold_time");
                         time.value = "";
-                        document.getElementById("hold_click").onclick = function () { uavCommands.HoldPos(uid, uav, latLng, alt, 0, time.value, ids); mapFunctions.hold_hide() };
+                        document.getElementById("hold_click").onclick = function () { uavCommands.HoldPos(uid, uav, latLng, alt, 0, time.value, that.ids); mapFunctions.hold_hide() };
                         mapFunctions.hold_show(marker.uav.Callsign);
                     }
                     break;
@@ -146,8 +165,8 @@ var mapFunctions = {
                         console.log("You're not the owner");
                     } else {
                         //create ui
-                        console.log("IDS here " + ids[0]);h
-                        document.getElementById("clickToGoBtn").onclick = function () { droneTrails.clickToGo(ids); };
+                        console.log("IDS here " + that.ids[0]);
+                        document.getElementById("clickToGoBtn").onclick = function () { droneTrails.clickToGo(that.ids); };
                         this.goTo_show();
                         //uavCommands.GoTo(uid, marker.uav, latLng, alt);
                     }
@@ -157,7 +176,7 @@ var mapFunctions = {
                         console.log("You're not the owner");
                     } else {
                         //create ui
-                        document.getElementById("land_click").onclick = function () { uavCommands.ForceLand(uid, uav, latLng, alt, throttle, ids); mapFunctions.land_hide() };
+                        document.getElementById("land_click").onclick = function () { uavCommands.ForceLand(uid, uav, latLng, alt, throttle, that.ids); mapFunctions.land_hide() };
                         mapFunctions.land_show(marker.uav.Callsign);
                     }
                     break;
@@ -166,7 +185,7 @@ var mapFunctions = {
                         console.log("You're not the owner");
                     } else {
                         //create ui
-                        document.getElementById("return_click").onclick = function () { uavCommands.BackToBase(uid, uav, latLng, ids); mapFunctions.return_hide() };
+                        document.getElementById("return_click").onclick = function () { uavCommands.BackToBase(uid, uav, latLng, that.ids); mapFunctions.return_hide() };
                         mapFunctions.return_show(marker.uav.Callsign);
                         
                     }
@@ -308,7 +327,7 @@ var mapFunctions = {
 
     UpdateVehicle : function(uav, updatedUAV){
         var LatLng = new google.maps.LatLng(updatedUAV.Latitude, updatedUAV.Longitude);
-        droneTrails.storeTrail(updatedUAV.Id, LatLng);
+        //droneTrails.storeTrail(updatedUAV.Id, LatLng);
 
         uav.marker.setPosition(LatLng);
         uav.markerCircle.setPosition(LatLng);

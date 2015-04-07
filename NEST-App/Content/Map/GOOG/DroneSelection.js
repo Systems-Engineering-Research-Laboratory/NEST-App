@@ -62,7 +62,9 @@
     },
 
     //This fires when a drone turns green or black, ie it has either been selected or de-selected
-    SelectionStateChanged: function (marker, selectedDrones, flightLines, uavTrails, selectedTrail) {
+    //SelectionStateChanged: function (marker, selectedDrones, flightLines, uavTrails, selectedTrail) {
+    //take out some unused variables -david
+    SelectionStateChanged: function (marker, selectedDrones) {
         vehicleHub.server.notifySelected(marker.uav.Id, marker.selected, assignment.getUserId());
         //console.log("Selection change event fired");
 
@@ -83,18 +85,19 @@
             //TODO: ADJUST TRAIL TOGGLE SO IT FITS THE NEW SELECTION PARADIGM
             //NOTE: Maybe outsource it to a DroneTrails.js function?
             // set selected trail
-            for (var i = 0; i < uavTrails.length; i++) {
-                if (uavTrails[i].id == selectedUAV.Id) {
-                    selectedTrail = uavTrails[i].trail;
-                }
-            }
+            // remove trail functions entirely -david
+            //for (var i = 0; i < uavTrails.length; i++) {
+            //    if (uavTrails[i].id == selectedUAV.Id) {
+            //        selectedTrail = uavTrails[i].trail;
+            //    }
+            //}
 
-            // draw entire trail when clicked
-            if (selectedTrail != undefined) {
-                for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
-                    selectedTrail[i].setMap(marker.map);
-                }
-            }
+            //// draw entire trail when clicked
+            //if (selectedTrail != undefined) {
+            //    for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
+            //        selectedTrail[i].setMap(marker.map);
+            //    }
+            //}
             
         }
             //******************DE-SELECTED*******************//

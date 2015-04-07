@@ -20,9 +20,9 @@ var missiontable = document.getElementById("progress_table_for_info");
 var progress_table = document.getElementById("progress_table");
 
 
-
-//Drone Trails
-var selectedTrail; //the trail that the selected uav has
+// remove trail functions entirely -david
+////Drone Trails
+//var selectedTrail; //the trail that the selected uav has
 
 //TODO: Do we need this? Are we changing this to "var theMap = map;" ?
 var mapListeners = map; //use this to add listeners to the map
@@ -59,9 +59,15 @@ function uavMarkers(data, textStatus, jqXHR) {
 
         ///////UAV Marker listeners/////////
         //When fired, the UAV is marked as 'selected'
-        google.maps.event.addListener(marker, 'click', (function () {droneSelection.CtrlSelect(this, selectedDrones)}));
+        google.maps.event.addListener(marker, 'click', function () {
+            droneSelection.CtrlSelect(this, selectedDrones);
+        });
         //Events to ccur when a UAV's marker icon has changed (ie the marker's been clicked)
-        google.maps.event.addListener(marker, 'selection_changed', function () { droneSelection.SelectionStateChanged(this, selectedDrones, flightLines, droneTrails.uavTrails, selectedTrail) });
+        google.maps.event.addListener(marker, 'selection_changed', function () {
+            //droneSelection.SelectionStateChanged(this, selectedDrones, flightLines, droneTrails.uavTrails, selectedTrail);
+            //take out some unused variables -david
+            droneSelection.SelectionStateChanged(this, selectedDrones);
+        });
         //UAV Context Menu
         var UAVContext = mapFunctions.UAVContext(map);
         google.maps.event.addListener(marker, 'rightclick', function (event) {
@@ -132,6 +138,13 @@ $(document).ready(function () {
             }
             
         });
+        document.getElementById("clickToGoBtn").addEventListener("click", function () {
+            var ids = [];
+            for (var i = 0; i < selectedDrones.length; i++) {
+                ids[i] = selectedDrones[i].Id;
+            }
+            droneTrails.clickToGo(ids);
+        });
 
         $.ajax({
             url: '/api/uavs/getuavinfo',
@@ -184,12 +197,13 @@ $(document).ready(function () {
             }
             */
             // draw trail
-            if (selectedUAV && selectedTrail != undefined) {
-                if (selectedTrail.length < 2)
-                    selectedTrail[selectedTrail.length - 1].setMap(map);
-                else
-                    selectedTrail[selectedTrail.length - 2].setMap(map);
-            }
+            // remove trail functions entirely -david
+            //if (selectedUAV && selectedTrail != undefined) {
+            //    if (selectedTrail.length < 2)
+            //        selectedTrail[selectedTrail.length - 1].setMap(map);
+            //    else
+            //        selectedTrail[selectedTrail.length - 2].setMap(map);
+            //}
        
             if (vehicle.Id == camLockedUAV) {
                 mapFunctions.CenterOnUAV(vehicle.Id);
@@ -410,6 +424,14 @@ $(document).ready(function () {
                     });
                 }
                 if (evt.criticality != "normal") {
+                    //warning popup showing
+                    warningUavId = uavs[evt.UAVId].Id;
+                    document.getElementById('criticality').innerHTML = evt.criticality;
+                    document.getElementById('warningUavId').innerHTML = "UAV ID: " + uavs[evt.UAVId].Id + "<br />";
+                    document.getElementById('warningUavCallsign').innerHTML = "Callsign: " + uavs[evt.UAVId].Callsign + "<br />";
+                    document.getElementById('warningReason').innerHTML = "Reason: " + evt.message;
+                    mapFunctions.goTo_RR_show();
+
                     if (evt.criticality === "warning") {
                         alertText.style.cssText = "border: 1px solid yellow;height: 40px;background: #333;color: #FFF;padding: 0px 0px 15px 4px;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;"
                         alertText.innerHTML = "<span style='color: yellow; font-size: 30px;'>!</span>";
@@ -435,11 +457,7 @@ $(document).ready(function () {
                     }
                 }
 
-                //warning popup showing
-                mapFunctions.goTo_RR_show();
-                document.getElementById('warningUavId').innerHTML = "UAV ID: " + uavs[evt.UAVId].Id + "<br />";
-                document.getElementById('warningUavCallsign').innerHTML = "Callsign: " + uavs[evt.UAVId].Callsign + "<br />";
-                document.getElementById('warningReason').innerHTML = "Reason: " + evt.message;
+                
 
                 var table = document.getElementById('eventlog_table');
                 var table_length = table.rows.length;
