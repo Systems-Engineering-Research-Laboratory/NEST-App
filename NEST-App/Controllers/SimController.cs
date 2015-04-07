@@ -13,6 +13,7 @@ using System.Web.Mvc;
 using System.Web;
 using NEST_App.DAL;
 using NEST_App.Models;
+
 namespace NEST_App.Controllers
 {
     public class SimController : Controller
@@ -74,22 +75,21 @@ namespace NEST_App.Controllers.Api
     public class SimApiController : ApiController
     {
         int numOfDrones = 5;    //num of drones per sim
-        int numOfSims = 1;      //number of sims
+        //int numOfSims = 1;      //number of sims
 
         TransferObject[] xList;
-        bool generated = false;
-        int startIndex = 0;
+        bool generated;
+        int startIndex;
         private NestContainer db = new NestContainer();
         
 
         public HttpResponseMessage GetInitSim()
         {
             int ct = 0;
-            int i = 0;
-            int j = 0;
-            int k = 0;
             if (!generated)
             {
+                System.Diagnostics.Debug.WriteLine("Generated is still false");
+                startIndex = 0;
                 generated = true;
                 UAV temp = db.UAVs.Find(0);
                 var uavs = from u in db.UAVs.Include(u => u.FlightStates).Include(u => u.Schedules)
@@ -148,28 +148,27 @@ namespace NEST_App.Controllers.Api
                     ct++;
                 }
                 TransferObject[] transferList = new TransferObject[numOfDrones];
-                for (int m = startIndex; m < (startIndex + numOfDrones) || m == transferList.Length-1; m++)
+                for (int i = startIndex; i < (startIndex + numOfDrones) && i < xList.Length; i++)
                 {
-                    transferList[m] = new TransferObject();
-                    transferList[m] = transferList[m].Copy(xList[m]);
+                    transferList[i] = new TransferObject();
+                    transferList[i] = transferList[i].Copy(xList[i]);
                 }
+                startIndex += numOfDrones;
 
-                    return Request.CreateResponse(HttpStatusCode.OK, transferList);
+                return Request.CreateResponse(HttpStatusCode.OK, transferList);
             }
             else //xList is already generated
             {
-                /*if current index is less than starting index + number of drones
-                 * 
-                 * 
-                 */
-
-                for (var q = startIndex; q < (startIndex + numOfDrones) || q == xList.Length + 1; q++)
+                System.Diagnostics.Debug.WriteLine("Another sim opened, hit 'else'");
+                TransferObject[] transferList = new TransferObject[numOfDrones];
+                for (int i = startIndex; i < (startIndex + numOfDrones) && i < xList.Length; i++)
                 {
-
+                    transferList[i] = new TransferObject();
+                    transferList[i] = transferList[i].Copy(xList[i]);
                 }
-                    //System.Diagnostics.Debug.WriteLine("Second sim opened, hit 'else'");
+                startIndex += numOfDrones;
                
-                return Request.CreateResponse(HttpStatusCode.OK, xList);
+                return Request.CreateResponse(HttpStatusCode.OK, transferList);
             }
         }
     }
