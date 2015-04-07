@@ -342,7 +342,10 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         switch (cmd.type) {
             case "CMD_NAV_Waypoint":
             case "CMD_NAV_Target": //Target commands just need to be dead reckoned towards the objective.
-                return this.deadReckon(dt, cmd.X, cmd.Y, true);
+                if (this.flyToAltitude(dt, cmd.Altitude)) {
+                    return this.deadReckon(dt, cmd.X, cmd.Y, true);
+                }
+                return false;
                 break;
             case "CMD_NAV_Hover":
                 if (this.deadReckon(dt, cmd.X, cmd.Y, false)) {
@@ -361,7 +364,8 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                 break;
             case "CMD_NAV_Land":
                 this.flyToAndLand(dt, cmd.X, cmd.Y);
-                return false; //Never consume this one
+                console.log("cmd_nav_land");
+                return false; //Never consume this one for now
                 break;
 
             case "CMD_DO_Return_To_Base":
@@ -432,6 +436,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         if (this.hasCommsLink && !this.handleNonNavigationalCommand(target)) {
             this.awaitingNavigation = false;
             if (this.currentWaypoint) {
+                
                 var newIdx = this.getNextNavigationalIndex();
                 
                 if (newIdx == this.currentWpIndex) {
@@ -448,10 +453,18 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                     this.hasCommsLink,
                     this.Mission.id
                     );
-                //CurrentWaypoint is either the same or the current flight state
-                this.currentWaypoint = this.waypoints[this.currentWpIndex];
+                
                 //Record that this waypoint is supposed to be preserved, and navigational points added afterwards.
                 this.commandList.push(this.waypoints[wpLoc]);
+                this.waypoints[wpLoc].obj = target;
+                this.waypoints[wpLoc].objType = "command";
+                if (target.type === "CMD_NAV_Target"
+                    && this.currentWaypoint.objType === "command"
+                    && this.currentWaypoint.obj.type === "CMD_NAV_Land") {
+                    this.getNextWaypoint();
+                }
+                //CurrentWaypoint is either the same or the current flight state
+                this.currentWaypoint = this.waypoints[this.currentWpIndex];
             }
         }
         //else non navigational
