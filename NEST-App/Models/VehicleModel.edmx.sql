@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 03/22/2015 13:46:19
+-- Date Created: 04/07/2015 10:40:01
 -- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
@@ -202,6 +202,7 @@ CREATE TABLE [dbo].[UAVs] (
     [MinDeliveryAlt] float  NOT NULL,
     [User_user_id] int  NULL,
     [isActive] bit  NOT NULL,
+    [estimated_workload] int  NOT NULL,
     [Configurations_Id] int  NOT NULL
 );
 GO
@@ -367,6 +368,7 @@ CREATE TABLE [dbo].[Users] (
     [modified_date] datetime  NOT NULL,
     [phone_number] nvarchar(max)  NOT NULL,
     [position_in_queue] int  NULL,
+    [current_workload] int  NOT NULL,
     [UserRole_Id] int  NOT NULL
 );
 GO
