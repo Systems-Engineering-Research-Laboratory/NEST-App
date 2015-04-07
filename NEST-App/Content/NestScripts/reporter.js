@@ -9,7 +9,7 @@ function Reporter() {
     this.reportReroute = function (uavId, callsign) {
         var curTime = new Date();
         this.eventHub.server.emit({
-            message: "UAV " + callsign + " rerouted successfully around a restricted area",
+            message: " Rerouted successfully around a restricted area",
             uav_id: uavId,
             UAVId: uavId,
             uav_callsign: callsign,
@@ -177,6 +177,20 @@ function Reporter() {
         return $.ajax({
             method: 'PUT',
             url: '/api/schedule/' + schedid + '/setCurrentMission/' + missionid,
+        });
+    }
+
+    this.failedReroute = function (callsign, uavId) {
+        var curTime = new Date();
+        this.eventHub.server.emit({
+            message: "UAV " + callsign + " failed to reroute around a restricted area. Holding position",
+            uav_id: uavId,
+            UAVId: uavId,
+            uav_callsign: callsign,
+            operator_screen_name: "",
+            criticality: "critical",
+            create_date: curTime.toUTCString(),
+            modified_date: curTime.toUTCString(),
         });
     }
 }

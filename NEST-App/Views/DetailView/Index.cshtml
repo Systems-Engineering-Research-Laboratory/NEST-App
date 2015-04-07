@@ -171,7 +171,7 @@
                         <th style="display: none;">payload</th>                     @*15*@
                         <th style="display: none;">Cost</th>                        @*16*@
                         <th style="display: none;">Priority</th>                    @*17*@
-
+                        <th style="display: none;">Operator</th>                    @*18*@
                     </tr>
                 </thead>
                 <tbody>
@@ -196,6 +196,7 @@
                             <td style="display: none;">@Html.DisplayFor(modelItem => uavs.NumDeliveries)</td>
                             <td style="display: none;">@Html.DisplayFor(modelItem => uavs.Schedules.FirstOrDefault().Missions.FirstOrDefault().Payload)</td>
                             <td style="display: none;">@Html.DisplayFor(modelItem => uavs.Schedules.FirstOrDefault().Missions.FirstOrDefault().FinancialCost)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs.User.username)</td>
                         </tr>
                     }
                 </tbody>
@@ -211,6 +212,7 @@
                     <th>Criticality</th>
                     <th>Create</th>
                     <th>Message</th>
+                    <th>Owned By</th>
                 </tr>
             </thead>
             <tbody>
@@ -222,6 +224,7 @@
                         <td>@Html.DisplayFor(modelItem => eventlog.criticality)</td>
                         <td>@Html.DisplayFor(modelItem => eventlog.create_date)</td>
                         <td>@Html.DisplayFor(modelItem => eventlog.message)</td>
+                        <td>@Html.DisplayFor(modelItem => eventlog.UAV.User.username)</td>
                     </tr>
                 }
             </tbody>
@@ -362,6 +365,13 @@
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=drawing"></script>
 
 
+@if (ViewBag.currentUser != null)
+{
+    var user = ViewBag.currentUser;
+    <script id="current_user" type="application/json">
+        @Html.Raw(Json.Encode(user))
+    </script>
+}
 @Scripts.Render("~/bundles/jquery")
 @Scripts.Render("~/bundles/jquery-signalR")
 @Scripts.Render("~/signalr/hubs")

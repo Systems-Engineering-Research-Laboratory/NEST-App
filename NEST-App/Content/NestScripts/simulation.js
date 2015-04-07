@@ -125,7 +125,17 @@ $(document).ready(function () {
     var map = new VehicleContainer();
 
     var vehicleHub = $.connection.vehicleHub;
+    
+    avgCalcTimeDiv = $("#avg-time")
 
+    var adminHub = $.connection.adminHub;
+    adminHub.client.newDrop = function (drop) {
+        console.log(drop);
+        //LOL...signalR didn't work in flightStateCb...
+        localStorage.setItem("uavBatteryID", drop.uavID);
+        localStorage.setItem("uavBatteryAmount", drop.amount);
+    }
+    
     //Throws 'undefined' is not a function error...commenting out..
     //$('.dropdown-toggle').dropdown();
 
@@ -148,7 +158,10 @@ $(document).ready(function () {
     //Wait until the vehicle hub is connected before we can execute the main loop.
     //The main loop will push updates via signalr, don't want to do it prematurely.
     $.connection.hub.start().done(
-        function () { connectedToHub(vehicleHub, map); }
+        function () {
+            connectedToHub(vehicleHub, map);
+            vehicleHub.server.clearWarnings();
+        }
        );
 });
 
@@ -164,6 +177,7 @@ function flightStateCb (map, hub, data, textStatus, jqXHR) {
         console.log(data[i].Id + " " + data[i].Callsign);
         $("#dropdown-UAVIds").append('<li role="presentation"><a class="UAVId" role="menuitem" tabindex="-1" href="#">' + data[i].Id + '</a></li>');
     }
+
     //Communication via local storage changes
     if (window.addEventListener) {
         window.addEventListener("storage", handler, false);
@@ -174,7 +188,7 @@ function flightStateCb (map, hub, data, textStatus, jqXHR) {
         if( map.vehicles[localStorage.getItem("uavBatteryID")] != null )
             map.vehicles[localStorage.getItem("uavBatteryID")].FlightState.BatteryLevel -= localStorage.getItem("uavBatteryAmount") / 100;
     }
-
+   
     //I think this is in the wrong spot. It probably needs to be in connection.hub.start()
     $('.UAVId').click(function (eventObject) {
         var vehicleHub = $.connection.vehicleHub
@@ -198,7 +212,7 @@ function unassignedMissionsCb(container, data, textStatus, jqXHR) {
     missionsRecvd = true;
 }
 
-function updateSimulation(vehicleHub, map) {
+function updateSimulation(vehicleHub, map, dt) {
     //TODO: Add scheduler here
     //Do dead reckoning on each of the aircraft
     var vehicles = map.vehicles;
@@ -216,14 +230,37 @@ function updateSimulation(vehicleHub, map) {
 //Main function loop
 function connectedToHub(vehicleHub, map) {
     vehicleHub.server.joinGroup("vehicles");
+    var iters = 0;
+    var cumulativeCalcTime = 0;
     function mainLoop() {
         //This boolean is switched by the start sim and stop sim buttons
+        var now = new Date().getTime();
         if (runSim) {
-            updateSimulation(vehicleHub, map);
+            updateSimulation(vehicleHub, map, dt);
+            var postUpdate = new Date().getTime();
+            var timediff = (postUpdate - now);
+            cumulativeCalcTime += timediff;
+            iters++;
+            if (iters != 0) {
+                displayCalcTime(cumulativeCalcTime / iters);
+            }
+            var nextTimeOut = dt - timediff;
+            if (nextTimeOut <= 0) {
+                console.log("The sim is running too slow!");
+            }
+            setTimeout(mainLoop, dt - (postUpdate - now));
+        } else
+        {
+            setTimeout(mainLoop, dt);
         }
-        setTimeout(mainLoop, dt);
+        
     }
     mainLoop();
+}
+
+function displayCalcTime(avgTime) {
+    var str = parseFloat(avgTime).toFixed(3);
+    avgCalcTimeDiv.text("average calculation time is " + str + " ms");
 }
 
 function receivedCommand(map, cmd, type, misc) {
@@ -276,5 +313,14 @@ function setSignalrCallbacks(map) {
     }
     vehicleHub.client.broadcastAcceptedCommand = function (ack) {
         console.log(ack);
+    }
+
+    vehicleHub.client.newMissionAssignment = function (uavId, mission) {
+        if (uavId) {
+            var uav = map.getVehicleById(uavId);
+            if (uav) {
+                uav.addMissionToSchedule(mission);
+            }
+        }
     }
 }

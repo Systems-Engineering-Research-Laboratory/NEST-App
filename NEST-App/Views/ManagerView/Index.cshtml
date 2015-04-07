@@ -3,6 +3,7 @@
 
 <script src="~/Scripts/jquery-2.1.2.min.js"></script>
 <script src="~/Content/ManagerView/managerJS.js" type="text/javascript"></script>
+<script src="~/Content/ManagerView/managerFunctions.js" type="text/javascript"></script>
 
 @{
     ViewBag.Title = "Index";
@@ -43,21 +44,29 @@
             </div>
             <div id="unass">
                 <h4>Unassigned UAVs</h4>
+                <select id="drop_down">
+                    <option value="choose_operator">Choose an operator</option>
+                    @foreach (UserRole user_id in Model.Operator)
+                    {
+                        <option value="@Html.DisplayFor(modelItem => user_id.User.username)">@Html.DisplayFor(modelItem => user_id.User.username)</option>
+                    }
+                </select>
+                <button type="button" id="button" onclick="managerFunctions.assignTo()">Assign UAVs</button>
                 <table class="unassigned" id="unassigned">
                     <tr>
                         <th>UAV ID</th>
                         <th>Callsign</th>
-                        <th></th>
-                        <th></th>
+                        <th style="display: none;"></th>
+                        <th style="display: none;"></th>
                     </tr>
 
-                    @foreach (UAV uavs_user_user_id in Model.UAVs)
+                    @foreach (UAV uavs_user_user_id in Model.UAVs) 
                     {
-                        <tr id="un" onclick="assignTo()">
+                        <tr id="un" onclick="managerFunctions.selected_uav()">
                             <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Id)</td>
                             <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Callsign)</td>
-                            <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User_user_id)</td>
-                            <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User.username)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs_user_user_id.User_user_id)</td>
+                            <td style="display: none;">@Html.DisplayFor(modelItem => uavs_user_user_id.User.username)</td>
                         </tr>
                     }
 

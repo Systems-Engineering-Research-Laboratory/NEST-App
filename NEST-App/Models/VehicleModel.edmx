@@ -138,6 +138,7 @@
     <Property Name="MinDeliveryAlt" Type="float" Nullable="false" />
     <Property Name="User_user_id" Type="int" Nullable="true" />
     <Property Name="isActive" Type="bit" Nullable="false" />
+    <Property Name="estimated_workload" Type="int" Nullable="false" />
     <Property Name="Configurations_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="FlightStates">
@@ -303,6 +304,7 @@
     <Property Name="modified_date" Type="datetime" Nullable="false" />
     <Property Name="phone_number" Type="nvarchar(max)" Nullable="false" />
     <Property Name="position_in_queue" Type="int" Nullable="true" />
+    <Property Name="current_workload" Type="int" Nullable="false" />
     <Property Name="UserRole_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="UserRoles">
@@ -914,6 +916,7 @@
           <NavigationProperty Name="User" Relationship="VehicleModel.UserUAV" FromRole="UAV" ToRole="User" />
           <Property Name="User_user_id" Type="Int32" Nullable="true" />
           <Property Name="isActive" Type="Boolean" Nullable="false" />
+          <Property Name="estimated_workload" Type="Int32" Nullable="false" />
           </EntityType>
         <EntityType Name="FlightState">
           <Key>
@@ -1196,6 +1199,7 @@
           <NavigationProperty Name="UserRole" Relationship="VehicleModel.UserUserRole" FromRole="User" ToRole="UserRole" />
           <NavigationProperty Name="UAVs" Relationship="VehicleModel.UserUAV" FromRole="User" ToRole="UAV" />
           <Property Name="position_in_queue" Type="Int32" Nullable="true" />
+          <Property Name="current_workload" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="UserRole">
           <Key>
@@ -1498,6 +1502,7 @@
           <ScalarProperty Name="MinDeliveryAlt" ColumnName="MinDeliveryAlt" />
           <ScalarProperty Name="User_user_id" ColumnName="User_user_id" />
           <ScalarProperty Name="isActive" ColumnName="isActive" />
+          <ScalarProperty Name="estimated_workload" ColumnName="estimated_workload" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -1671,6 +1676,7 @@
           <ScalarProperty Name="modified_date" ColumnName="modified_date" />
           <ScalarProperty Name="phone_number" ColumnName="phone_number" />
           <ScalarProperty Name="position_in_queue" ColumnName="position_in_queue" />
+          <ScalarProperty Name="current_workload" ColumnName="current_workload" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

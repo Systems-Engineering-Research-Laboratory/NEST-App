@@ -28,6 +28,29 @@ namespace NEST_App.Controllers.Api
         private String[] lines2 = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content\\Flowers.txt"));
         private Random rand = new Random();
 
+        [HttpGet]
+        [Route("api/uavs/getworkload/{id}")]
+        public int GetWorkload(int id)
+        {
+            var uav = db.UAVs.Find(id);
+            return uav.estimated_workload;
+        }
+
+        [HttpGet]
+        [Route("api/uavs/calculateworkloadforuav/{id}")]
+        public int CalculateWorkloadForUav(int id)
+        {
+            var uav = db.UAVs.Find(id);
+            int workload = 0;
+            workload += uav.Schedules.Count;
+            foreach (var sched in uav.Schedules)
+            {
+                workload += sched.Missions.Count;
+                workload += sched.Missions.Sum(miss => miss.Waypoints.Count);
+            }
+            return workload;
+        }
+
         [HttpPost]
         [Route("api/uavs/rejectassignment")]
         public HttpResponseMessage RejectAssignment(int uavid, int userid)
@@ -149,8 +172,8 @@ namespace NEST_App.Controllers.Api
         private DbGeography getDistance()
         {
             int alt = 400;                                  //altitude of UAV with 400 ft default
-            double homeLat = 34.2417;                       //default home latitude
-            double homeLon = -118.529;                      //default home longitude
+            double homeLat = 34.2420;                       //default home latitude
+            double homeLon = -118.5288;                      //default home longitude
             double radius = 8050;                           //meters (5 miles)
             double radiusDegrees = radius / 111300f;        //convert meters to degrees, from the equator, 111300 meters in 1 degree
             double lat2 = rand.NextDouble();                //random double latitude
@@ -246,8 +269,8 @@ namespace NEST_App.Controllers.Api
                     TimeAssigned = null,
                     TimeCompleted = null,
                     //DestinationCoordinates = DbGeography.FromText("POINT(-118.52529 34.241670 400)"),  
-                    Latitude = p.Latitude ?? 34.2417,
-                    Longitude = p.Longitude ?? -118.529,
+                    Latitude = p.Latitude ?? 34.2420,
+                    Longitude = p.Longitude ?? -118.5288,
                     ScheduledCompletionTime = null,
                     EstimatedCompletionTime = null,
                     create_date = DateTime.Now,
@@ -284,6 +307,9 @@ namespace NEST_App.Controllers.Api
                              where mis.ScheduleId == null
                              select mis;
 
+            //Uav Id and the mission assigned. Put into list in case the db update fails.
+            List<Tuple<int?, Mission>> uavMissionPairs = new List<Tuple<int?, Mission>>();
+
             //Assign each of those unassigned missions to the a schedule
             foreach (Mission mis in unassigned)
             {
@@ -294,6 +320,7 @@ namespace NEST_App.Controllers.Api
                     //This schedule had no current mission, so just assign it one
                     s.CurrentMission = mis.id;
                 }
+                uavMissionPairs.Add(new Tuple<int?, Mission>(s.UAVId, mis));
                 //Add to the back of the queue for round robinness
                 schedQ.Enqueue(s);
             }
@@ -301,6 +328,31 @@ namespace NEST_App.Controllers.Api
             try
             {
                 await db.SaveChangesAsync();
+                //Now use signalr to assign the missions to the vehicles.
+                var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
+                foreach(var tup in uavMissionPairs)
+                {
+                    int? uavId = tup.Item1;
+                    Mission mis = tup.Item2;
+                    hub.Clients.All.newMissionAssignment(uavId, new
+                    {
+                        id = mis.id,
+                        Latitude = mis.Latitude,
+                        Longitude = mis.Longitude,
+                        EstimatedCompletionTime = mis.EstimatedCompletionTime,
+                        TimeAssigned = mis.TimeAssigned,
+                        TimeCompleted = mis.TimeCompleted,
+                        ScheduledCompletionTime = mis.ScheduledCompletionTime,
+                        ScheduleId = mis.ScheduleId,
+                        create_date = mis.create_date,
+                        modified_date = mis.modified_date,
+                        Phase = mis.Phase,
+                        FlightPattern = mis.FlightPattern,
+                        Payload = mis.Payload,
+                        FinancialCost = mis.FinancialCost,
+
+                    });
+                }
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -371,6 +423,7 @@ namespace NEST_App.Controllers.Api
                         modified_date = DateTime.Now,
                     }
                 };
+                db.Entry(u).State = System.Data.Entity.EntityState.Modified;
             }
 
             await db.SaveChangesAsync();
@@ -399,8 +452,16 @@ namespace NEST_App.Controllers.Api
                     MinDeliveryAlt = 100,
                     UpdateRate = 1000,
                     CruiseAltitude = 400,
-                    isActive = true
+                    isActive = true,
                 };
+
+                uav.Schedules.Add(new Schedule
+                {
+                    UAVId = uav.Id,
+                    create_date = DateTime.Now,
+                    modified_date = DateTime.Now,
+                    CurrentMission = null
+                });
 
                 Configuration config = new Configuration
                 {
@@ -413,8 +474,8 @@ namespace NEST_App.Controllers.Api
                 var flights = new List<FlightState>
                 {
                    new FlightState { 
-                       Longitude = -118.529,
-                       Latitude = 34.2417,
+                       Longitude = -118.5288,
+                       Latitude = 34.2420,
                        Altitude = 400,
                        VelocityX = 0, 
                        VelocityY = 0, 
@@ -451,7 +512,6 @@ namespace NEST_App.Controllers.Api
                 //db.Schedules.Add(sched.First());
                 db.FlightStates.Add(flights.First());
 
-                await createSchedulesForUavs();
                 try
                 {
                     db.SaveChanges();
@@ -554,6 +614,33 @@ namespace NEST_App.Controllers.Api
             }
 
             return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        [ResponseType(typeof(UAV))]
+        [Route("api/uavs/addUavWithAutoConfig")]
+        [HttpPost]
+        public async Task<IHttpActionResult> PostUAVWithConfig(UAV uAV)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            db.Configurations.Add(
+                new Configuration
+                {
+                    Classification = "quadrotor",
+                    create_date = DateTime.Now,
+                    modified_date = DateTime.Now,
+                    Name = "autogen",
+                    NumberOfMotors = 4,
+                    
+                });
+
+            db.UAVs.Add(uAV);
+            await db.SaveChangesAsync();
+
+            return CreatedAtRoute("DefaultApi", new { id = uAV.Id }, uAV);
         }
 
         // POST: api/UAVs

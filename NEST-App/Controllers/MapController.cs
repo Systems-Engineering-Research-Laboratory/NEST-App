@@ -9,7 +9,6 @@ namespace NEST_App.Controllers
 {
     public class MapController : Controller
     {
-
         private NestContainer db = new NestContainer();
         //
         // GET: /Map/Overview
@@ -21,6 +20,12 @@ namespace NEST_App.Controllers
         // GET: /Map/GoogleMap
         public ActionResult GoogleMap()
         {
+            dynamic uav_event_user = new System.Dynamic.ExpandoObject();
+            uav_event_user.UAVs = db.UAVs.ToList();
+            uav_event_user.Eventlog = db.EventLogs.ToList();
+            uav_event_user.Operator = db.Users.ToList();
+            uav_event_user.missions = db.Missions.ToList();
+
             string name = (string)Session["current_user"];
 
             if(name != null)
@@ -45,7 +50,7 @@ namespace NEST_App.Controllers
                 }
             }
 
-            return View();
+            return View(uav_event_user);
         }
 	}
 }

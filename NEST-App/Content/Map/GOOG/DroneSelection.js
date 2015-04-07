@@ -2,6 +2,7 @@
     /*CTRL-SELECT*/
     CtrlSelect: function (marker, selectedDrones) {
         selectedUAV = null;
+        //console.log("Selected is: " + selectedUAV);
         clickedUAV = marker.uav;
         //UAV has been selected
         if (marker.selected == false) {//other drone-selection-related events should trigger off this!
@@ -23,38 +24,48 @@
         google.maps.event.trigger(marker, 'selection_changed');
 
         if (ctrlDown) {//Check if ctrl is held when a drone is selected; if so, ignore immediate key repeats and proceed
-            ctrlDown = false
-            //console.log(selectedUAV);
+            console.log(selectedUAV);
             if (selectedUAV != null) {
                 selectedDrones.push(selectedUAV);
             }
+            ctrlDown = false;
+            //console.log("Ctrl is pressed");
             /*else {
                 //TODO: remove from selectedDrones (tricky because it's an array) 
             }*/
         }
         else {//otherwise, empty the selectedDrones list and add the drone to the empty list
-            //console.log("hit else");
+            ctrlDown = false;
             while (selectedDrones.length > 0) {//clear the selected drone list
-                selectedDrones.pop(); 
-            }/*
-            for (var c = selectedDrones.length; c > 0; c--) {
-                selectedDrones[c].marker.setIcon(selectedDrones[c].uavSymbolBlack);
+                
+                var c = selectedDrones.length - 1;
+                //console.log("selecteddrone length (pre) is: " + selectedDrones.length);
+                //console.log("Selecteddrone (pre) is: " + selectedDrones[c]);
+                selectedDrones[c].marker.setIcon(selectedDrones[c].marker.uavSymbolBlack);
+                selectedDrones[c].marker.selected = false;
+                google.maps.event.trigger(selectedDrones[c].marker, 'selection_changed');
+                selectedDrones.pop();
+
             }
-            selectedDrones = [];*/
             if (selectedUAV != null) {
+                //console.log("Selected is now: " + selectedUAV);
+                //console.log("uav pushed");
                 selectedDrones.push(selectedUAV);
             }
         }
-        console.log("Number of drones selected: " + selectedDrones.length);
+        //console.log("Number of drones selected: " + selectedDrones.length);
         // enable waypoint buttons
         $("#goBtn").removeClass("disabled");
         $("#clickToGoBtn").removeClass("disabled");
-        
+        //console.log("Currently selected drones array is of length: " + selectedDrones.length);
+        //console.log("Currently selected drones are: " + selectedDrones);
     },
 
     //This fires when a drone turns green or black, ie it has either been selected or de-selected
-    SelectionStateChanged: function (marker, selectedDrones, flightLines, uavTrails, selectedTrail) {
-        vehicleHub.server.notifySelected(marker.uav.Id, marker.selected);
+    //SelectionStateChanged: function (marker, selectedDrones, flightLines, uavTrails, selectedTrail) {
+    //take out some unused variables -david
+    SelectionStateChanged: function (marker, selectedDrones) {
+        vehicleHub.server.notifySelected(marker.uav.Id, marker.selected, assignment.getUserId());
         //console.log("Selection change event fired");
 
         //*******************SELECTED*********************//
@@ -74,25 +85,27 @@
             //TODO: ADJUST TRAIL TOGGLE SO IT FITS THE NEW SELECTION PARADIGM
             //NOTE: Maybe outsource it to a DroneTrails.js function?
             // set selected trail
-            for (var i = 0; i < uavTrails.length; i++) {
-                if (uavTrails[i].id == selectedUAV.Id) {
-                    selectedTrail = uavTrails[i].trail;
-                }
-            }
+            // remove trail functions entirely -david
+            //for (var i = 0; i < uavTrails.length; i++) {
+            //    if (uavTrails[i].id == selectedUAV.Id) {
+            //        selectedTrail = uavTrails[i].trail;
+            //    }
+            //}
 
-            // draw entire trail when clicked
-            if (selectedTrail != undefined) {
-                for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
-                    selectedTrail[i].setMap(marker.map);
-                }
-            }
+            //// draw entire trail when clicked
+            //if (selectedTrail != undefined) {
+            //    for (var i = 0; i < (selectedTrail.length - 1) ; i++) {
+            //        selectedTrail[i].setMap(marker.map);
+            //    }
+            //}
+            
         }
             //******************DE-SELECTED*******************//
         else if (marker.selected == false) {
             //Turn off drone's flightpath
-            flightLines[marker.uav.Id].setMap(null);
+            //flightLines[marker.uav.Id].setMap(null);
 
-            selectedUAV = null;
+
             
             //TURN OFF TRAIL 
             //droneTrails.deleteTrails(selectedUAV.Id);

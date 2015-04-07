@@ -281,6 +281,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Hubs\EventLogHub.cs" />
+    <Compile Include="Hubs\AdminHub.cs" />
     <Compile Include="Hubs\VehicleHub.cs" />
     <Compile Include="Hubs\VehicleRouteHub.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -446,6 +447,7 @@
     <Content Include="Content\img\yellow.jpg" />
     <Content Include="Content\img\yun_kim.png" />
     <Content Include="Content\ManagerView\managerCSS.css" />
+    <Content Include="Content\ManagerView\managerFunctions.js" />
     <Content Include="Content\Map\GOOG\ContextMenu.js" />
     <Content Include="Content\Map\GOOG\DroneSelection.js" />
     <Content Include="Content\Map\GOOG\DroneTrails.js" />
@@ -462,6 +464,8 @@
     <Content Include="Content\Names.txt" />
     <Content Include="Content\NestScripts\assignment.js" />
     <Content Include="Content\nest_style.css" />
+    <Content Include="Content\ScheduleView\ScheduleCSS.css" />
+    <Content Include="Content\ScheduleView\ScheduleJS.js" />
     <Content Include="Controllers\app\js\admin_page\admin_page.app.js" />
     <Content Include="Controllers\app\js\admin_page\controllers\admin.ctrl.js" />
     <Content Include="favicon.ico" />
@@ -1399,13 +1403,13 @@
     <Content Include="Scripts\_references.js" />
     <Content Include="Scripts\app\eventlog.js" />
     <Content Include="Content\ManagerView\managerJS.js" />
-    <Content Include="Web.config">
+    <Content Include="Views\Shared\Web.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Web.Debug.config">
+    <Content Include="Views\Shared\Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Web.Release.config">
+    <Content Include="Views\Shared\Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Views\Web.config" />
@@ -1447,6 +1451,13 @@
     <Content Include="Views\Login\Index.cshtml" />
     <Content Include="Views\ManagerView.cshtml" />
     <Content Include="Views\ManagerView\Index.cshtml" />
+    <Content Include="Web.Config" />
+    <None Include="Web.Debug.Config">
+      <DependentUpon>Web.Config</DependentUpon>
+    </None>
+    <None Include="Web.Release.Config">
+      <DependentUpon>Web.Config</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
