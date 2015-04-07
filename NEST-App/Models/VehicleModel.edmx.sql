@@ -2,10 +2,14 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/07/2015 10:47:49
+-- Date Created: 04/07/2015 11:56:55
 -- Generated from EDMX file: C:\Users\Varatep-mac\Documents\Visual Studio 2013\Projects\NEST-App\NEST-App\Models\VehicleModel.edmx
 -- --------------------------------------------------
 
+SET QUOTED_IDENTIFIER OFF;
+GO
+IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
+GO
 
 -- --------------------------------------------------
 -- Dropping existing FOREIGN KEY constraints
