@@ -626,21 +626,19 @@ namespace NEST_App.Controllers.Api
                 return BadRequest(ModelState);
             }
 
-            db.Configurations.Add(
-                new Configuration
+            uAV.Configurations = new Configuration
                 {
                     Classification = "quadrotor",
                     create_date = DateTime.Now,
                     modified_date = DateTime.Now,
                     Name = "autogen",
                     NumberOfMotors = 4,
-                    
-                });
 
+                };
             db.UAVs.Add(uAV);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = uAV.Id }, uAV);
+            return Ok(uAV);
         }
 
         // POST: api/UAVs
