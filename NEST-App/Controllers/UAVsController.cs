@@ -619,14 +619,14 @@ namespace NEST_App.Controllers.Api
         [ResponseType(typeof(UAV))]
         [Route("api/uavs/addUavWithAutoConfig")]
         [HttpPost]
-        public async Task<IHttpActionResult> PostUAVWithConfig(UAV uAV)
+        public async Task<IHttpActionResult> PostUAVWithConfig(UAV uav)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            uAV.Configurations = new Configuration
+            uav.Configurations = new Configuration
                 {
                     Classification = "quadrotor",
                     create_date = DateTime.Now,
@@ -635,10 +635,18 @@ namespace NEST_App.Controllers.Api
                     NumberOfMotors = 4,
 
                 };
-            db.UAVs.Add(uAV);
+
+            uav.Schedules.Add(new Schedule
+            {
+                UAVId = uav.Id,
+                create_date = DateTime.Now,
+                modified_date = DateTime.Now,
+                CurrentMission = null
+            });
+            db.UAVs.Add(uav);
             await db.SaveChangesAsync();
 
-            return Ok(uAV);
+            return Ok(uav);
         }
 
         // POST: api/UAVs
