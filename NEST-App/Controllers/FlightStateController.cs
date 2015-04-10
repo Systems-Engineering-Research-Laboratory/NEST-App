@@ -18,7 +18,7 @@ namespace NEST_App.Controllers
 {
     public class FlightStateController : ApiController
     {
-        private NestDbContext db = new NestDbContext();
+        private NestContainer db = new NestContainer();
 
         // GET: api/FlightState
         public IQueryable<FlightStateDTO> GetFlightStates()
@@ -98,19 +98,17 @@ namespace NEST_App.Controllers
 
         // POST: api/FlightState
         [ResponseType(typeof(FlightState))]
-        public async Task<IHttpActionResult> PostFlightState(FlightStateDTO flightStateDto)
+        public async Task<IHttpActionResult> PostFlightState(FlightState flightState)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            FlightState flightState = Mapper.Map<FlightState>(flightStateDto);
-
             db.FlightStates.Add(flightState);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = flightState.Id }, flightState);
+            return Ok(flightState);
         }
 
         // DELETE: api/FlightState/5
