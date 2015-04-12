@@ -24,6 +24,7 @@ eventlogapp
             critical: false,
             create_date: new Date()
         };
+
         $scope.criticalityFilter = function (evt) {
             var crt = evt.criticality;
             function checkRegular(crt) {
@@ -151,4 +152,6 @@ eventlogapp
         };
     };
     $scope.init();
+
+
 }])
