@@ -89,6 +89,7 @@ namespace NEST_App.Controllers.Api
             if (!generated)
             {
                 //Flag the list as being created
+                //System.Diagnostics.Debug.WriteLine("started");
                 generated = true;
                 UAV temp = db.UAVs.Find(0);
                 var uavs = from u in db.UAVs.Include(u => u.FlightStates).Include(u => u.Schedules)
@@ -115,6 +116,7 @@ namespace NEST_App.Controllers.Api
                                },
                                FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
                            };
+                //System.Diagnostics.Debug.WriteLine("uav var generated");
                 //Find out how many drones have been retrieved
                 foreach (var vehicle in uavs)
                 {
@@ -150,23 +152,7 @@ namespace NEST_App.Controllers.Api
                     };
                     ct++;
                 }
-
-                //Build the list of drones to send to the simulator
-                TransferObject[] transferList = new TransferObject[numOfDrones];
-                for (int i = startIndex; i < (startIndex + numOfDrones) && i < xList.Length; i++)
-                {
-                    transferList[i] = new TransferObject();
-                    transferList[i] = transferList[i].Copy(xList[i]);
-                }
-                //Build the list of drones to send to the simulator
-                startIndex += numOfDrones;
-
-                return Request.CreateResponse(HttpStatusCode.OK, transferList);
-            }
-            else //xList is already generated
-            {
-                System.Diagnostics.Debug.WriteLine("Another sim opened, hit 'else'");
-
+                //System.Diagnostics.Debug.WriteLine("List created");
                 int capacity = 0;
                 //Check if creating a new numofdrones-sized array would exceed the number of remaining, unassigned drones
                 //If it would exceed, make the length only as long as the remaining number of drones
@@ -179,17 +165,49 @@ namespace NEST_App.Controllers.Api
                     capacity = numOfDrones;
                 }
                 TransferObject[] transferList = new TransferObject[capacity];
-                
-                //Build the list of drones to send to the simulator
-                for (int i = 0; i < numOfDrones && (i + startIndex) < xList.Length; i++)
+                for (int i = startIndex; i < (startIndex + numOfDrones) && i < xList.Length; i++)
                 {
                     transferList[i] = new TransferObject();
-                    transferList[i] = transferList[i].Copy(xList[i + startIndex]);
+                    transferList[i] = transferList[i].Copy(xList[i]);
                 }
-                //Increase the starting index of the next iteration
+                //Build the list of drones to send to the simulator
                 startIndex += numOfDrones;
-               
+
                 return Request.CreateResponse(HttpStatusCode.OK, transferList);
+            }
+            else //xList is already generated
+            {
+                if (startIndex > xList.Length) {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Another sim opened, hit 'else'");
+
+                    int capacity = 0;
+                    //Check if creating a new numofdrones-sized array would exceed the number of remaining, unassigned drones
+                    //If it would exceed, make the length only as long as the remaining number of drones
+                    if ((startIndex + numOfDrones) > xList.Length)
+                    {
+                        capacity = xList.Length - startIndex;
+                    }
+                    else
+                    {
+                        capacity = numOfDrones;
+                    }
+                    TransferObject[] transferList = new TransferObject[capacity];
+
+                    //Build the list of drones to send to the simulator
+                    for (int i = 0; i < numOfDrones && (i + startIndex) < xList.Length; i++)
+                    {
+                        transferList[i] = new TransferObject();
+                        transferList[i] = transferList[i].Copy(xList[i + startIndex]);
+                    }
+                    //Increase the starting index of the next iteration
+                    startIndex += numOfDrones;
+
+                    return Request.CreateResponse(HttpStatusCode.OK, transferList);
+                }
             }
         }
     }
