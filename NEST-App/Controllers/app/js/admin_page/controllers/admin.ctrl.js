@@ -177,10 +177,6 @@
                 console.log("sent")
             });
 
-            localStorage.setItem("uavBatteryID", pickedUav.Id);
-            localStorage.setItem("uavBatteryAmount", $('#desiredBatteryDrop').val());
-
-
             $.unblockUI();
         }
 
