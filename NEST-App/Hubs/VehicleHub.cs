@@ -66,7 +66,9 @@ namespace NEST_App.Hubs
             return Groups.Remove(Context.ConnectionId, groupName);
         }
 
-        public void PushFlightStateUpdate(FlightStateDTO dto){
+        public async Task PushFlightStateUpdate(FlightStateDTO dto){
+            Clients.All.flightStateUpdate(dto);
+            await TrespassChecker.ReportTrespassIfNecesarry(dto.UAVId, dto.Latitude, dto.Longitude);
             var eventHub = GlobalHost.ConnectionManager.GetHubContext<EventLogHub>();
             UAV uav = db.UAVs.FirstOrDefault(x => x.Id == dto.Id);
             double lat = Math.Round(dto.Latitude * 10000) / 10000;
@@ -140,22 +142,6 @@ namespace NEST_App.Hubs
                 }
             }
 
-            if(TrespassChecker.ShouldReportOut(dto.UAVId, dto.Latitude, dto.Longitude))
-            {
-                EventLog evt = new EventLog();
-                evt.event_id = events;
-                evt.uav_id = uav.Id;
-                evt.uav_callsign = uav.Callsign;
-                evt.criticality = "critical";
-                evt.message = uav.Callsign + " Trespassing";
-                evt.create_date = DateTime.Now;
-                evt.modified_date = DateTime.Now;
-                //wtf seriously? -- why is this in here twice...
-                evt.UAVId = uav.Id;
-                evt.operator_screen_name = "NEST";
-                eventHub.Clients.All.newEvent(evt);
-            }
-
             try
             {
                 db.SaveChangesAsync();
@@ -164,7 +150,7 @@ namespace NEST_App.Hubs
             {
                 throw;
             }
-            Clients.All.flightStateUpdate(dto);
+            
             // flightstatedto entity is not the same as models in our db context. can not guarantee atomic. need to wipe out flightstatedto
         }
 

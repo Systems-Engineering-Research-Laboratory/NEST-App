@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using NEST_App.Models;
 using System.Threading.Tasks;
+using Microsoft.AspNet.SignalR;
+using NEST_App.Models;
+using NEST_App.Hubs;
 
 namespace NEST_App.Helpers
 {
@@ -11,6 +13,37 @@ namespace NEST_App.Helpers
     {
         private static NestContainer db = new NestContainer();
         private static List<int> violatingUavs = new List<int>();
+        private static IHubContext eventHub = GlobalHost.ConnectionManager.GetHubContext<EventLogHub>();
+
+        public static async Task ReportTrespassIfNecesarry(int uavId, double latitude, double longitude)
+        {
+            bool shouldReport = ShouldReportOut(uavId, latitude, longitude);
+            if(shouldReport)
+            {
+                await SendTrespassEvent(uavId);
+            }
+        }
+
+        public static async Task SendTrespassEvent(int uavId)
+        {
+            var uav = await db.UAVs.FindAsync(uavId);
+            EventLog evt = new EventLog();
+            evt.uav_id = uav.Id;
+            evt.uav_callsign = uav.Callsign;
+            evt.criticality = "critical";
+            evt.message = uav.Callsign + " Trespassing";
+            evt.create_date = DateTime.Now;
+            evt.modified_date = DateTime.Now;
+            //wtf seriously? -- why is this in here twice...
+            evt.UAVId = uav.Id;
+            evt.operator_screen_name = "NEST";
+            eventHub.Clients.All.newEvent(evt);
+
+            
+            db.EventLogs.Add(evt);
+            await db.SaveChangesAsync();
+            eventHub.Clients.All.newEvent(evt);
+        }
 
         public static bool ShouldReportOut(int uavId, double latitude, double longitude)
         {
