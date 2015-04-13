@@ -297,7 +297,6 @@ $(document).ready(function () {
         emitHub.client.showNote = function (lat, lng, notifier, message) {
             mapFunctions.ConsNotifier(map, lat, lng, notifier, message);
         }
-
         emitHub.client.newEvent = function (evt) {
             console.log(evt);
             //deprecate -- ack check by operator -dg
@@ -354,6 +353,7 @@ $(document).ready(function () {
                     
                     google.maps.event.addDomListener(multipleText, 'click', function () {
                         if (infobox.open) {
+                            uavs[evt.UAVId].infobox = null;
                             infobox.close();
 
                             var eventACK = {
@@ -374,7 +374,6 @@ $(document).ready(function () {
                                 success: function () { },
                                 data: eventACK
                             });
-
                         }
                     });
                 }
@@ -407,6 +406,7 @@ $(document).ready(function () {
 
                     google.maps.event.addDomListener(boxText, 'click', function () {
                         if (infobox.open) {
+                            uavs[evt.UAVId].infobox = null;
                             infobox.close();
 
                             var eventACK = {

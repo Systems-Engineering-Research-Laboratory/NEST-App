@@ -107,8 +107,10 @@
                         uavs[i].marker.setVisible(false);
                         if (uavs[i].infobox) {
                             var infobox = uavs[i].infobox;
-                            var infoboxAlert = uavs[i].infoboxAlert;
                             infobox.close();
+                        }
+                        if (uavs[i].infoboxAlert) {
+                            var infoboxAlert = uavs[i].infoboxAlert;
                             infoboxAlert.close();
                         }
                         i++;
@@ -127,8 +129,10 @@
                         uavs[i].marker.setVisible(true);
                         if (uavs[i].infobox) {
                             var infobox = uavs[i].infobox;
-                            var infoboxAlert = uavs[i].infoboxAlert;
                             infobox.open(map, uavs[i].marker);
+                        }
+                        if (uavs[i].infoboxAlert) {
+                            var infoboxAlert = uavs[i].infoboxAlert;
                             infoboxAlert.open(map, uavs[i].marker);
                         }
                         i++;
