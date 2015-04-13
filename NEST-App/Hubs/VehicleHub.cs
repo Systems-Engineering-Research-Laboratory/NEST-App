@@ -18,6 +18,8 @@ namespace NEST_App.Hubs
     {
         static Dictionary<string, int> activeConnections = new Dictionary<string, int>();
         static private List<UAV> batteryWarning = new List<UAV>();
+        //check if uav destination is in a restricted area
+        static private List<UAV> areaWarning = new List<UAV>();
         private NestContainer db = new NestContainer();
         private int events = 1;
         /* Pair a signalR connection ID with a user;
@@ -27,6 +29,7 @@ namespace NEST_App.Hubs
         public void clearWarnings()
         {
             batteryWarning.Clear();
+            areaWarning.Clear();
         }
 
 
@@ -72,11 +75,46 @@ namespace NEST_App.Hubs
             if (lat == 34.2420 && lon == -118.5288)
                 batteryWarning.Remove(uav);
 
+            var mis = from ms in db.Missions
+                      where ms.ScheduleId == uav.Id
+                      select ms;
+
             //look up the uav
-            //var index = batteryWarning.IndexOf(uav);
-            bool isInList = (batteryWarning.Where(u => u.Id == uav.Id).Count()) > 0 ;
-            //it's not in the list
-            if( !isInList ) {
+            bool areaList = (areaWarning.Where(u => u.Id == uav.Id).Count()) > 0;
+            bool batteryList = (batteryWarning.Where(u => u.Id == uav.Id).Count()) > 0 ;
+            if (!areaList)
+            {
+                bool check = db.MapRestrictedSet.Where(
+                    u => u.SouthWestLatitude < mis.FirstOrDefault().Latitude &&
+                        u.NorthEastLatitude > mis.FirstOrDefault().Latitude &&
+                        u.SouthWestLongitude < mis.FirstOrDefault().Longitude &&
+                        u.NorthEastLongitude > mis.FirstOrDefault().Longitude
+                    ).Count() > 0;
+                if (check)
+                {
+                    areaWarning.Add(uav);
+
+                    EventLog evt = new EventLog();
+                    evt.event_id = events;
+                    evt.uav_id = uav.Id;
+                    evt.uav_callsign = uav.Callsign;
+                    evt.criticality = "critical";
+                    evt.message = "Delivery is in restricted area";
+                    evt.create_date = DateTime.Now;
+                    evt.modified_date = DateTime.Now;
+                    //wtf seriously? -- why is this in here twice...
+                    evt.UAVId = uav.Id;
+                    evt.operator_screen_name = "jimbob";
+                    eventHub.Clients.All.newEvent(evt);
+
+                    db.EventLogs.Add(evt);
+                    events++;
+                   
+                }
+            }
+
+            //it's not in the battery list
+            if( !batteryList ) {
                 if (dto.BatteryLevel < .2)
                 {
                     //add list -- stops from sending warning everytime
@@ -97,17 +135,17 @@ namespace NEST_App.Hubs
 
                     db.EventLogs.Add(evt);
                     events++;
-                    try
-                    {
-                        db.SaveChangesAsync();
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        throw;
-                    }
+                    
                 }
             }
-
+            try
+            {
+                db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
             Clients.All.flightStateUpdate(dto);
             // flightstatedto entity is not the same as models in our db context. can not guarantee atomic. need to wipe out flightstatedto
         }
