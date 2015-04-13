@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using NEST_App.Models;
 using NEST_App.DAL;
+using NEST_App.Helpers;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Collections;
@@ -106,6 +107,22 @@ namespace NEST_App.Hubs
                         throw;
                     }
                 }
+            }
+
+            if(TrespassChecker.ShouldReportOut(dto.UAVId, dto.Latitude, dto.Longitude))
+            {
+                EventLog evt = new EventLog();
+                evt.event_id = events;
+                evt.uav_id = uav.Id;
+                evt.uav_callsign = uav.Callsign;
+                evt.criticality = "critical";
+                evt.message = uav.Callsign + " Trespassing";
+                evt.create_date = DateTime.Now;
+                evt.modified_date = DateTime.Now;
+                //wtf seriously? -- why is this in here twice...
+                evt.UAVId = uav.Id;
+                evt.operator_screen_name = "NEST";
+                eventHub.Clients.All.newEvent(evt);
             }
 
             Clients.All.flightStateUpdate(dto);
