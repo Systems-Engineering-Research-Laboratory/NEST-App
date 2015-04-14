@@ -36,14 +36,15 @@ function uavMarkers(data, textStatus, jqXHR) {
         //Set UAV properties
         uavs[data[i].Id] = mapFunctions.SetUAV(data[i]);
 
-        //Creates the flightpath line from uav position to destination
-        flightLines[data[i].Id] = new google.maps.Polyline(mapStyles.flightPathOptions);
-        flightLines[data[i].Id].setPath([uavs[data[i].Id].Position, uavs[data[i].Id].Destination]);
+        ////Creates the flightpath line from uav position to destination
+        //flightLines[data[i].Id] = new google.maps.Polyline(mapStyles.flightPathOptions);
+        //flightLines[data[i].Id].setPath([uavs[data[i].Id].Position, uavs[data[i].Id].Destination]);
 
         //Create the map's visual aspects of the uav
         var markerCircle = new google.maps.Marker({
             position: uavs[data[i].Id].Position,
-            icon: mapStyles.uavCircleBlack
+            icon: mapStyles.uavCircleBlack,
+            clickable: false
         });
         var marker = mapFunctions.SetUAVMarker(uavs[data[i].Id]);
 
@@ -53,7 +54,7 @@ function uavMarkers(data, textStatus, jqXHR) {
         wpm.addMarker(marker);
         uavs[data[i].Id].marker = marker;
         uavs[data[i].Id].markerCircle = markerCircle;
-        uavs[data[i].Id].flightPath = flightLines[data[i].Id];
+        //uavs[data[i].Id].flightPath = flightLines[data[i].Id];
         uavs[data[i].Id].markerCircle.setMap(map);
         uavs[data[i].Id].marker.setMap(map);
 
@@ -681,11 +682,13 @@ $(document).ready(function () {
         google.maps.event.addListener(mapListeners, 'mousedown', function (e) { mapFunctions.StopMapDrag(this, e); });
         google.maps.event.addListener(mapListeners, 'mouseup', function (e) { droneSelection.AreaSelect(this, e, mapFunctions.mouseIsDown, mapFunctions.shiftPressed, mapFunctions.gridBoundingBox, selectedDrones, uavs) });
         google.maps.event.addListener(mapListeners, 'dblclick', function (e) {
+            //console.log("db click");
             mapUavId = null;
             for (var key in uavs) {
                 uavs[key].marker.setIcon(uavs[key].marker.uavSymbolBlack);
                 uavs[key].marker.selected = false;
                 google.maps.event.trigger(uavs[key].marker, 'selection_changed');
+                //console.log("selection was changed");
             }
             while (selectedDrones.length > 0) {
                 selectedDrones.pop();
