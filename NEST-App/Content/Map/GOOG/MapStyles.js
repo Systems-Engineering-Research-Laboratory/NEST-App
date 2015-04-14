@@ -105,6 +105,14 @@
                         uavs[i].markerCircle.setMap(null);
                         uavs[i].markerCircle.setVisible(false);
                         uavs[i].marker.setVisible(false);
+                        if (uavs[i].infobox) {
+                            var infobox = uavs[i].infobox;
+                            infobox.close();
+                        }
+                        if (uavs[i].infoboxAlert) {
+                            var infoboxAlert = uavs[i].infoboxAlert;
+                            infoboxAlert.close();
+                        }
                         i++;
                     }
                 }
@@ -119,6 +127,14 @@
                         uavs[i].markerCircle.setMap(map);
                         uavs[i].markerCircle.setVisible(true);
                         uavs[i].marker.setVisible(true);
+                        if (uavs[i].infobox) {
+                            var infobox = uavs[i].infobox;
+                            infobox.open(map, uavs[i].marker);
+                        }
+                        if (uavs[i].infoboxAlert) {
+                            var infoboxAlert = uavs[i].infoboxAlert;
+                            infoboxAlert.open(map, uavs[i].marker);
+                        }
                         i++;
                     }
                     else

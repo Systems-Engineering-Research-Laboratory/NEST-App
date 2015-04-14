@@ -86,17 +86,7 @@ $(document).ready(function () {
     function init() {
         //Used for communication and map.setCenter()
         mapUavId = null;
-        localStorage.clear();
-        //Communication via local storage changes
-        if (window.addEventListener) {
-            window.addEventListener("storage", handler, false);
-        }
-        function handler(e) {
-            console.log('Successfully communicated with the other tab');
-            console.log('Received data: ' + JSON.parse(localStorage.getItem('uavid')));
-            mapUavId = JSON.parse(localStorage.getItem('uavid'));
-        }
-
+        
         wpm = new WaypointManager(map);
         map = new google.maps.Map(document.getElementById('map-canvas'), mapStyles.mapOptions);
         /*map = new GMaps({
@@ -115,15 +105,6 @@ $(document).ready(function () {
             icon: mapStyles.goldStarBase,
             map: map
         });
-        //homeControlDiv.index = 1;
-        //map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
-        
-        //var uavFilterDiv = document.createElement('div');
-        //var uavFilter = new mapStyles.uavFilter(uavFilterDiv, map);
-        //uavFilterDiv.index = 1;
-        //map.controls[google.maps.ControlPosition.RIGHT_TOP].push(uavFilterDiv);
-
-
 
         // add event listener
         document.getElementById("goBtn").addEventListener("click", function () {
@@ -182,29 +163,6 @@ $(document).ready(function () {
                 var latlng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
                 map.setCenter(latlng);
             }
-
-            //close event boxes when back at base (which isn't base, its above and to the right wtf jeff)
-
-            /* waiting for at base added by jeff...
-            var vLat = Math.round(vehicle.Latitude * 10000) / 10000;
-            var vLon = Math.round(vehicle.Longitude * 10000) / 10000;
-            var landingZoneLat = 34.2420;
-            var landingZoneLon = -118.5288;
-            if (vLat == landingZoneLat && vLon == landingZoneLon) {
-                if (uavs[vehicle.Id].infobox)
-                    uavs[vehicle.Id].infobox.close();
-                if (uavs[vehicle.Id].infoboxAlert)
-                    uavs[vehicle.Id].infoboxAlert.close();
-            }
-            */
-            // draw trail
-            // remove trail functions entirely -david
-            //if (selectedUAV && selectedTrail != undefined) {
-            //    if (selectedTrail.length < 2)
-            //        selectedTrail[selectedTrail.length - 1].setMap(map);
-            //    else
-            //        selectedTrail[selectedTrail.length - 2].setMap(map);
-            //}
        
             if (vehicle.Id == camLockedUAV) {
                 mapFunctions.CenterOnUAV(vehicle.Id);
@@ -340,7 +298,6 @@ $(document).ready(function () {
         emitHub.client.showNote = function (lat, lng, notifier, message) {
             mapFunctions.ConsNotifier(map, lat, lng, notifier, message);
         }
-
         emitHub.client.newEvent = function (evt) {
             console.log(evt);
             //deprecate -- ack check by operator -dg
@@ -397,6 +354,7 @@ $(document).ready(function () {
                     
                     google.maps.event.addDomListener(multipleText, 'click', function () {
                         if (infobox.open) {
+                            uavs[evt.UAVId].infobox = null;
                             infobox.close();
 
                             var eventACK = {
@@ -417,7 +375,6 @@ $(document).ready(function () {
                                 success: function () { },
                                 data: eventACK
                             });
-
                         }
                     });
                 }
@@ -450,6 +407,7 @@ $(document).ready(function () {
 
                     google.maps.event.addDomListener(boxText, 'click', function () {
                         if (infobox.open) {
+                            uavs[evt.UAVId].infobox = null;
                             infobox.close();
 
                             var eventACK = {

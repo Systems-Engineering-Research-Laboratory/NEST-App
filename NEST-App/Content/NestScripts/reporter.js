@@ -14,7 +14,7 @@ function Reporter() {
             UAVId: uavId,
             uav_callsign: callsign,
             operator_screen_name: "",
-            criticality: "advisory",
+            criticality: "normal",
             create_date: curTime.toUTCString(),
             modified_date: curTime.toUTCString(),
         });
