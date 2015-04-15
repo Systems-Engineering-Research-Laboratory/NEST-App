@@ -280,6 +280,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\TrespassChecker.cs" />
     <Compile Include="Hubs\EventLogHub.cs" />
     <Compile Include="Hubs\AdminHub.cs" />
     <Compile Include="Hubs\VehicleHub.cs" />
@@ -418,6 +419,7 @@
     <Content Include="Content\detailViewResources\dv.css" />
     <Content Include="Content\detailViewResources\dv.js" />
     <Content Include="Content\detailViewResources\filter.js" />
+    <Content Include="Content\EventLog\eventlogJS.js" />
     <Content Include="Content\Flowers.txt" />
     <Content Include="Content\font-awesome-4.3.0\css\font-awesome.css" />
     <Content Include="Content\font-awesome-4.3.0\css\font-awesome.min.css" />

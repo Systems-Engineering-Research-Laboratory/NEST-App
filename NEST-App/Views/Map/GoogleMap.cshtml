@@ -181,6 +181,17 @@
         <button class="btn btn-default" onclick="mapFunctions.return_hide()">Cancel</button>
     </div>
 
+    <!--Cancel mission window-->
+    <div id="cancel_popup" class="commandWindow">
+        <div class="closeBtn"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.cancel_hide()"></span></div>
+        <h3 class="UAVId">Select an UAV first</h3>
+        <h3>Returning to base</h3>
+        <p>Please confirm</p>
+        <button class="btn btn-default" id="cancel_click" onclick="">Ok</button>
+        <button class="btn btn-default" onclick="mapFunctions.cancel_hide()">Cancel</button>
+    </div>
+
+
     <!--Force landing command window-->
     <div id="land_popup" class="commandWindow">
         <div class="closeBtn"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.land_hide()"></span></div>

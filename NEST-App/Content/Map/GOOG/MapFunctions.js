@@ -390,6 +390,11 @@ var mapFunctions = {
         $(".UAVId").html("UAV: " + callsign);
     },
 
+    cancel_show: function () {
+        document.getElementById("CommPopPlaceHolder").style.display = "block";
+        document.getElementById("cancel_popup").style.display = "block";
+    },
+
     land_show: function (callsign) {
         document.getElementById("CommPopPlaceHolder").style.display = "block";
         document.getElementById("land_popup").style.display = "block";
@@ -420,6 +425,11 @@ var mapFunctions = {
     return_hide: function () {
         document.getElementById("CommPopPlaceHolder").style.display = "none";
         document.getElementById("return_popup").style.display = "none";
+    },
+
+    cancel_hide: function () {
+        document.getElementById("CommPopPlaceHolder").style.display = "none";
+        document.getElementById("cancel_popup").style.display = "none";
     },
 
     land_hide: function () {

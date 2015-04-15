@@ -311,6 +311,10 @@ img[src="http://www.google.com/intl/en_us/mapfiles/close.gif"] {
     width: 100%;
 }
 
+#mission_table {
+    width: 100%;
+}
+
 .inner_eventlog_td {
     background-color: #fafbeb;
     text-align: center;
