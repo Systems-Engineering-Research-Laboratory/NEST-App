@@ -102,6 +102,7 @@ namespace NEST_App.Controllers.Api
         {
             try
             {
+                uav.estimated_workload = 0;
                 db.UAVs.Add(uav);
                 var nextUserInQueue = db.Users.FirstOrDefault(u => u.position_in_queue == 1);
                 var users = db.Users;
@@ -301,7 +302,7 @@ namespace NEST_App.Controllers.Api
         {
             //Ensure that the UAVs have schedules before we do the round robin so we don't skip UAVs
             await createSchedulesForUavs();
-            Queue<Schedule> schedQ = new Queue<Schedule>(db.Schedules);
+            IOrderedEnumerable<Schedule> schedQ = new Queue<Schedule>(db.Schedules).OrderByDescending(s => s.UAV.estimated_workload);
             //Grab all the unassigned missions in the database.
             var unassigned = from mis in db.Missions
                              where mis.ScheduleId == null
@@ -314,6 +315,7 @@ namespace NEST_App.Controllers.Api
             foreach (Mission mis in unassigned)
             {
                 Schedule s = schedQ.Dequeue();
+                s.UAV.estimated_workload++;
                 s.Missions.Add(mis);
                 if (s.CurrentMission == null)
                 {
