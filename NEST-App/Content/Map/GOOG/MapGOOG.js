@@ -342,7 +342,7 @@ $(document).ready(function () {
                             width: "150px"
                         },
                         closeBoxMargin: "9px 1px 2px 2px"
-                    })
+                    });
 
                     if (uavs[evt.UAVId].infobox != null) {
                         var ibox = new InfoBox();
@@ -360,7 +360,7 @@ $(document).ready(function () {
                             var eventACK = {
                                 uav_id: uavs[evt.UAVId].Id,
                                 message: "Acknowledged: " + evt.message,
-                                criticality: "normal",
+                                criticality: "ACK",
                                 uav_callsign: uavs[evt.UAVId].Callsign,
                                 operator_screen_name: evt.operator_screen_name,
                                 UAVId: uavs[evt.UAVId].Id
@@ -569,7 +569,6 @@ $(document).ready(function () {
                 }
             }
         }
-
         
         //Make sure to set all SignalR callbacks BEFORE the call to connect
         $.connection.hub.start().done(function () {
