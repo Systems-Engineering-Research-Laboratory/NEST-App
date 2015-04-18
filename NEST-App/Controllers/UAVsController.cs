@@ -29,6 +29,20 @@ namespace NEST_App.Controllers.Api
         private Random rand = new Random();
 
         [HttpGet]
+        [Route("api/uavs/searchbycallsign")]
+        public async Task<UAV> SearchByCallsign(string callsign)
+        {
+            var uavs = from u in db.UAVs
+                       where u.Callsign.Equals(callsign)
+                       select u;
+            if(uavs.Count() == 0)
+            {
+                return null;
+            }
+            return await uavs.FirstAsync();
+        }
+
+        [HttpGet]
         [Route("api/uavs/getworkload/{id}")]
         public int GetWorkload(int id)
         {
