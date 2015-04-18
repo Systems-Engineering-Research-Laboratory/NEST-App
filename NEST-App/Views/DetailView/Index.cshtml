@@ -13,44 +13,55 @@
         document.getElementById("filter_title").innerHTML = 'ALL UAVs TABLE';
         document.getElementById("UAV_table").style.display = 'block';
         document.getElementById("priority_table").style.display = 'none';
-        document.getElementById("low_bat_table").style.display = 'none';
         document.getElementById("operator_table").style.display = 'none';
         document.getElementById("choose_uav_table").style.display = 'none';
         document.getElementById("outer_detail_div").style.display = 'block';
         document.getElementById("event_log_table").style.display = 'none';
+        document.getElementById("mission_table").style.display = 'none';
     }
 
     function operatorfilter() {
         document.getElementById("filter_title").innerHTML = 'OPERATOR TABLE';
         document.getElementById("UAV_table").style.display = 'none';
         document.getElementById("priority_table").style.display = 'none';
-        document.getElementById("low_bat_table").style.display = 'none';
         document.getElementById("operator_table").style.display = 'block';
         document.getElementById("choose_uav_table").style.display = 'none';
         document.getElementById("outer_detail_div").style.display = 'none';
         document.getElementById("event_log_table").style.display = 'none';
+        document.getElementById("mission_table").style.display = 'none';
     }
 
     function priorityfilter() {
         document.getElementById("filter_title").innerHTML = 'PRIORITY TABLE';
         document.getElementById("UAV_table").style.display = 'none';
         document.getElementById("priority_table").style.display = 'block';
-        document.getElementById("low_bat_table").style.display = 'none';
         document.getElementById("operator_table").style.display = 'none';
         document.getElementById("choose_uav_table").style.display = 'none';
         document.getElementById("outer_detail_div").style.display = 'none';
         document.getElementById("event_log_table").style.display = 'none';
+        document.getElementById("mission_table").style.display = 'none';
     }
 
     function eventlogfilter() {
         document.getElementById("filter_title").innerHTML = 'EVENT LOG TABLE';
         document.getElementById("UAV_table").style.display = 'none';
         document.getElementById("priority_table").style.display = 'none';
-        document.getElementById("low_bat_table").style.display = 'none';
         document.getElementById("operator_table").style.display = 'none';
         document.getElementById("choose_uav_table").style.display = 'none';
         document.getElementById("outer_detail_div").style.display = 'none';
         document.getElementById("event_log_table").style.display = 'block';
+        document.getElementById("mission_table").style.display = 'none';
+    }
+
+    function missionfilter() {
+        document.getElementById("filter_title").innerHTML = 'MISSION TABLE';
+        document.getElementById("UAV_table").style.display = 'none';
+        document.getElementById("priority_table").style.display = 'none';
+        document.getElementById("operator_table").style.display = 'none';
+        document.getElementById("choose_uav_table").style.display = 'none';
+        document.getElementById("outer_detail_div").style.display = 'none';
+        document.getElementById("event_log_table").style.display = 'none';
+        document.getElementById("mission_table").style.display = 'block';
     }
 </script>
 
@@ -74,7 +85,7 @@
                     <li class="drop_li_inside" onclick="operatorfilter();">Operator</li>
                     <li class="drop_li_inside" onclick="priorityfilter();">Priority</li>
                     <li class="drop_li_inside" onclick="eventlogfilter();">Event Log</li>
-                    @*<li class="drop_li_inside" onclick="low_batteryfilter();">Low Battery</li>*@
+                    <li class="drop_li_inside" onclick="missionfilter();">Mission</li>
                 </ul>
             </li>
         </ul>
@@ -83,38 +94,6 @@
     <div class="outside">
         <div class="table">
             <p id="choose_uav_table" style="display: none; color: red;"> Please choose 'ALL UAVs' filter for UAV detail.</p>
-
-            @*/////////////////////////low battery filter table@*/////////////////////////*@
-            <table class="UAV_table" id="low_bat_table" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>UAV</th>
-                        <th>Callsign</th>
-                        <th>Battery</th>
-                        <th>ETA</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (Mission miss in Model.missions)
-                    {
-                        <tr id=@miss.Schedule.UAV.Id.ToString()>
-                            <td>
-                                @Html.DisplayFor(modelItem => miss.Schedule.UAV.Id)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => miss.Schedule.UAV.Callsign)
-                            </td>
-                            <td id="low_bat">
-                                @Html.DisplayFor(modelItem => miss.Schedule.UAV.FlightStates.FirstOrDefault().BatteryLevel)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => miss.EstimatedCompletionTime)
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-
 
             @*/////////////////////////Operator filter table@*/////////////////////////*@
             <table class="UAV_table" id="operator_table" style="display: none;">
@@ -128,20 +107,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (Mission miss in Model.missions)
+                    @foreach (UAV oper in Model.UAVs)
                     {
-                        <tr id=@miss.Schedule.UAV.Id.ToString()>
+                        <tr>
                             <td>
-                                @Html.DisplayFor(modelItem => miss.Schedule.UAV.User.user_id)
+                                @Html.DisplayFor(modelItem => oper.User.user_id)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => miss.Schedule.UAV.User.username)
+                                @Html.DisplayFor(modelItem => oper.User.username)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => miss.Schedule.UAV.Id)
+                                @Html.DisplayFor(modelItem => oper.Id)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => miss.Schedule.UAV.Callsign)
+                                @Html.DisplayFor(modelItem => oper.Callsign)
                             </td>
                         </tr>
                     }
@@ -230,6 +209,40 @@
             </tbody>
         </table>
 
+        @*/////////////////////////MISSION filter table@*/////////////////////////*@
+        <table class="UAV_table" id="mission_table" style="display: none; width: 60%">
+            <thead>
+                <tr>
+                    <th>UAV</th>
+                    <th>Callsign</th>
+                    <th>Mission number</th>
+                    <th>Destination Latitude</th>
+                    <th>Destination Longitude</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Mission miss in Model.missions)
+                {
+                    <tr id=@miss.Schedule.UAV.Id.ToString()>
+                        <td>
+                            @Html.DisplayFor(modelItem => miss.Schedule.UAV.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => miss.Schedule.UAV.Callsign)
+                        </td>
+                        <td id="low_bat">
+                            @Html.DisplayFor(modelItem => miss.ScheduleId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => miss.Latitude)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => miss.Longitude)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
         @*/////////////////////////priority filter table@*/////////////////////////*@
         <table class="UAV_table" id="priority_table" style="display: none; width: 25%">

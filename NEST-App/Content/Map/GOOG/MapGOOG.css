@@ -58,6 +58,7 @@ html, body, #map-canvas {
     font-weight: bold;
     text-align: center;
     width: 60px;
+    pointer-events: none;
 }
 
 #infobox {

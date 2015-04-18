@@ -39,7 +39,6 @@ namespace NEST_App.Hubs
         public void Emit(JObject eventLog)
         {
             EventLog evt = eventLog.ToObject<EventLog>();
-            //EventLog evt = eventLog;
             evt.create_date = DateTime.Now;
             evt.modified_date = DateTime.Now;
             Clients.All.newEvent(evt);
