@@ -559,6 +559,15 @@ progress::-webkit-progress-value {
     height: 60px;
 }
 
+#uavList{
+    position: fixed;
+    top: 80.5%;
+    left: 13%;
+    float: left;
+    margin: auto;
+    width: 60%;
+}
+
 #enter_callsign{
     max-width: 114px;
     min-width: 70px;
@@ -576,6 +585,15 @@ progress::-webkit-progress-value {
 #lockuavbtn{
     margin-top: 2px;
 }
+
+.uavListItem{
+    max-width: 114px;
+    min-width: 70px;
+    max-height: 27px;
+    float: left;
+    border: 1px solid;
+}
+
 
 .commandWindow {
     position: fixed;

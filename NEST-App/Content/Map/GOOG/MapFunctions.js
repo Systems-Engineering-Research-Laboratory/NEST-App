@@ -1,6 +1,8 @@
 ﻿var eventlog_show_hide = false;
 var progress_show_hide = false;
 var homeBase = new google.maps.LatLng(34.2420, -118.5288);
+
+
 var mapFunctions = {
     shiftPressed : false,
     mouseDownPos: null,
@@ -10,6 +12,7 @@ var mapFunctions = {
     goLat: null,
     goLng: null,
     ids: [],
+
 
     //Returns the latlong of the clicked point
     GetLatLong: function (theMap, event) {
@@ -367,6 +370,41 @@ var mapFunctions = {
                 return key;
             }
         }
+    },
+
+    GetUavById: function(id){
+        for (var key in uavs){
+            if(uavs[key].Id == id){
+                return uavs[key];
+            }
+        }
+    },
+
+    BuildUavListItem: function(uid){
+        var item = document.createElement("DIV");
+        item.id = uavs[uid].Callsign;
+        item.innerHTML = uavs[uid].Callsign;
+        item.style.maxWidth = "114px";
+        item.style.minWidth = "70px";
+        item.style.maxHeight = "27px";
+        item.style.cssFloat = "left";
+        item.style.border = "1px solid";
+        item.style.paddingLeft = "2px";
+        item.style.backgroundColor = "rgba(250, 250, 250, 0.75)";
+        item.onclick = function () {
+            mapUavId = null;
+            for (var key in uavs) {
+                uavs[key].marker.setIcon(uavs[key].marker.uavSymbolBlack);
+                uavs[key].marker.selected = false;
+                google.maps.event.trigger(uavs[key].marker, 'selection_changed');
+                //console.log("selection was changed");
+            }
+            while (selectedDrones.length > 0) {
+                selectedDrones.pop();
+            }
+            droneSelection.CtrlSelect(uavs[uid].marker, selectedDrones);
+        }
+        return item;
     },
 
     CenterOnUAV: function (uavKey) {
