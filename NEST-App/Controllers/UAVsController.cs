@@ -332,7 +332,7 @@ namespace NEST_App.Controllers.Api
         {
             //Ensure that the UAVs have schedules before we do the round robin so we don't skip UAVs
             await createSchedulesForUavs();
-            IOrderedEnumerable<Schedule> schedQOrdered = db.Schedules.OrderByDescending(s => s.UAV.estimated_workload) as IOrderedEnumerable<Schedule>;
+            IEnumerable<Schedule> schedQOrdered = db.Schedules.OrderByDescending(s => s.UAV.estimated_workload).AsEnumerable() ;
             if (schedQOrdered != null)
             {
                 Queue<Schedule> schedQ = new Queue<Schedule>(schedQOrdered);
