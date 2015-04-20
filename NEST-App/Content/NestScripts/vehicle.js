@@ -133,6 +133,22 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     };
 
     this.preprocess = function () {
+        if (this.FlightState.BatteryLevel <= 0) {
+            this.targetAltitude(dt, 0, this.MaxVerticalVelocity);
+            var eEvent = {
+                uav_id: this.Id,
+                message: "UAV has crashed",
+                criticality: "critical",
+                uav_callsign: this.Callsign,
+                operator_screen_name: "test operator",
+                UAVId: this.Id
+            }
+            var emitHub = $.connection.eventLogHub;
+            emitHub.connection.start().done(function () {
+                emitHub.server.emit(eEvent);
+            });
+            return false;
+        }
         //If the current waypoint is null but the reporter is pending, just return.
         if (this.isAtBase() && this.FlightState.BatteryLevel < 1) {
             this.chargeBattery(dt);
