@@ -91,7 +91,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         }
         if (!this.hasCommsLink) {
             //Uh oh, loss of link. 
-            this.FlightState.BatteryLevel -= dt / 1800;
+            this.dropBatteryLevel(dt);
             if (this.FlightState.BatteryLevel > .5) {
                 //So we don't report out or follow waypoints, just hover
                 return;
@@ -126,7 +126,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             //Make sure we don't drop the battery level 
             return;
         }
-        this.FlightState.BatteryLevel -= dt / 1800;
+        this.dropBatteryLevel(dt);
         if (this.hasCommsLink) {
             reporter.updateFlightState(this.FlightState);
         }
@@ -158,6 +158,26 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             }
         }
         return true;
+    }
+
+    this.dropBatteryLevel = function (dt) {
+        this.addToBatteryLevel(-dt / 18000);
+    }
+
+    this.chargeBattery = function (dt) {
+        this.addToBatteryLevel(5 * dt / 18000);
+    }
+
+    this.addToBatteryLevel = function (amount) {
+        this.FlightState.BatteryLevel += amount;
+        if (this.FlightState.BatteryLevel >= 1)
+        {
+            this.FlightState.BatteryLevel = 1; 
+        }
+        if(this.FlightState.BatteryLevel <= 0)
+        {
+            this.FlightState.BatteryLevel = 0;
+        }
     }
 
     this.setCommsLink = function (isConnected) {
@@ -197,12 +217,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         return this.Schedule.Missions.length > 0;
     }
 
-    this.chargeBattery = function (dt) {
-        this.FlightState.BatteryLevel += 5 * dt / 18000;
-        if (skipBattery || this.FlightState.BatteryLevel > 1) {
-            this.FlightState.BatteryLevel = 1;
-        }
-    }
+    
 
     this.performWaypoint = function (dt) {
         var wp = this.currentWaypoint;
