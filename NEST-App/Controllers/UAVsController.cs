@@ -29,6 +29,20 @@ namespace NEST_App.Controllers.Api
         private Random rand = new Random();
 
         [HttpGet]
+        [Route("api/uavs/searchbycallsign")]
+        public async Task<UAV> SearchByCallsign(string callsign)
+        {
+            var uavs = from u in db.UAVs
+                       where u.Callsign.Equals(callsign)
+                       select u;
+            if(uavs.Count() == 0)
+            {
+                return null;
+            }
+            return await uavs.FirstAsync();
+        }
+
+        [HttpGet]
         [Route("api/uavs/getworkload/{id}")]
         public int GetWorkload(int id)
         {
@@ -102,6 +116,7 @@ namespace NEST_App.Controllers.Api
         {
             try
             {
+                uav.estimated_workload = 0;
                 db.UAVs.Add(uav);
                 var nextUserInQueue = db.Users.FirstOrDefault(u => u.position_in_queue == 1);
                 var users = db.Users;
@@ -109,7 +124,7 @@ namespace NEST_App.Controllers.Api
                 {
                     nextUserInQueue.UAVs.Add(uav);
                     uav.User = nextUserInQueue;
-                    foreach (var user in users.Where(user => user.user_id != nextUserInQueue.user_id))
+                    foreach (var user in users.Where(user => user.user_id != nextUserInQueue.user_id && user.UserRole.role_type == "Flight Dispatcher"))
                     {
                         user.position_in_queue--;
                         db.Entry(user).State = System.Data.Entity.EntityState.Modified;
@@ -146,7 +161,7 @@ namespace NEST_App.Controllers.Api
                 {
                     nextUserInQueue.UAVs.Add(foundUav);
                     foundUav.User = nextUserInQueue;
-                    foreach (var user in users.Where(user => user.user_id != nextUserInQueue.user_id))
+                    foreach (var user in users.Where(user => user.user_id != nextUserInQueue.user_id && user.UserRole.role_type == "Flight Dispatcher"))
                     {
                         user.position_in_queue--;
                         db.Entry(user).State = System.Data.Entity.EntityState.Modified;
@@ -301,62 +316,67 @@ namespace NEST_App.Controllers.Api
         {
             //Ensure that the UAVs have schedules before we do the round robin so we don't skip UAVs
             await createSchedulesForUavs();
-            Queue<Schedule> schedQ = new Queue<Schedule>(db.Schedules);
-            //Grab all the unassigned missions in the database.
-            var unassigned = from mis in db.Missions
-                             where mis.ScheduleId == null
-                             select mis;
-
-            //Uav Id and the mission assigned. Put into list in case the db update fails.
-            List<Tuple<int?, Mission>> uavMissionPairs = new List<Tuple<int?, Mission>>();
-
-            //Assign each of those unassigned missions to the a schedule
-            foreach (Mission mis in unassigned)
+            IOrderedEnumerable<Schedule> schedQOrdered = db.Schedules.OrderByDescending(s => s.UAV.estimated_workload) as IOrderedEnumerable<Schedule>;
+            if (schedQOrdered != null)
             {
-                Schedule s = schedQ.Dequeue();
-                s.Missions.Add(mis);
-                if (s.CurrentMission == null)
-                {
-                    //This schedule had no current mission, so just assign it one
-                    s.CurrentMission = mis.id;
-                }
-                uavMissionPairs.Add(new Tuple<int?, Mission>(s.UAVId, mis));
-                //Add to the back of the queue for round robinness
-                schedQ.Enqueue(s);
-            }
+                Queue<Schedule> schedQ = new Queue<Schedule>(schedQOrdered);
+                //Grab all the unassigned missions in the database.
+                var unassigned = from mis in db.Missions
+                    where mis.ScheduleId == null
+                    select mis;
 
-            try
-            {
-                await db.SaveChangesAsync();
-                //Now use signalr to assign the missions to the vehicles.
-                var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
-                foreach(var tup in uavMissionPairs)
+                //Uav Id and the mission assigned. Put into list in case the db update fails.
+                List<Tuple<int?, Mission>> uavMissionPairs = new List<Tuple<int?, Mission>>();
+
+                //Assign each of those unassigned missions to the a schedule
+                foreach (Mission mis in unassigned)
                 {
-                    int? uavId = tup.Item1;
-                    Mission mis = tup.Item2;
-                    hub.Clients.All.newMissionAssignment(uavId, new
+                    Schedule s = schedQ.Dequeue();
+                    s.UAV.estimated_workload++;
+                    s.Missions.Add(mis);
+                    if (s.CurrentMission == null)
                     {
-                        id = mis.id,
-                        Latitude = mis.Latitude,
-                        Longitude = mis.Longitude,
-                        EstimatedCompletionTime = mis.EstimatedCompletionTime,
-                        TimeAssigned = mis.TimeAssigned,
-                        TimeCompleted = mis.TimeCompleted,
-                        ScheduledCompletionTime = mis.ScheduledCompletionTime,
-                        ScheduleId = mis.ScheduleId,
-                        create_date = mis.create_date,
-                        modified_date = mis.modified_date,
-                        Phase = mis.Phase,
-                        FlightPattern = mis.FlightPattern,
-                        Payload = mis.Payload,
-                        FinancialCost = mis.FinancialCost,
-
-                    });
+                        //This schedule had no current mission, so just assign it one
+                        s.CurrentMission = mis.id;
+                    }
+                    uavMissionPairs.Add(new Tuple<int?, Mission>(s.UAVId, mis));
+                    //Add to the back of the queue for round robinness
+                    schedQ.Enqueue(s);
                 }
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
+
+                try
+                {
+                    await db.SaveChangesAsync();
+                    //Now use signalr to assign the missions to the vehicles.
+                    var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
+                    foreach(var tup in uavMissionPairs)
+                    {
+                        int? uavId = tup.Item1;
+                        Mission mis = tup.Item2;
+                        hub.Clients.All.newMissionAssignment(uavId, new
+                        {
+                            id = mis.id,
+                            Latitude = mis.Latitude,
+                            Longitude = mis.Longitude,
+                            EstimatedCompletionTime = mis.EstimatedCompletionTime,
+                            TimeAssigned = mis.TimeAssigned,
+                            TimeCompleted = mis.TimeCompleted,
+                            ScheduledCompletionTime = mis.ScheduledCompletionTime,
+                            ScheduleId = mis.ScheduleId,
+                            create_date = mis.create_date,
+                            modified_date = mis.modified_date,
+                            Phase = mis.Phase,
+                            FlightPattern = mis.FlightPattern,
+                            Payload = mis.Payload,
+                            FinancialCost = mis.FinancialCost,
+
+                        });
+                    }
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
             }
 
             return Request.CreateResponse(HttpStatusCode.OK);
