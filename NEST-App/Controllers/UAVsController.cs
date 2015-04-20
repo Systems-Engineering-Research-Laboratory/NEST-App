@@ -35,7 +35,7 @@ namespace NEST_App.Controllers.Api
             var uavs = from u in db.UAVs
                        where u.Callsign.Equals(callsign)
                        select u;
-            if(uavs.Count() == 0)
+            if (uavs.Count() == 0)
             {
                 return null;
             }
@@ -96,7 +96,7 @@ namespace NEST_App.Controllers.Api
 
                 db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
                 db.Entry(user).State = System.Data.Entity.EntityState.Modified;
-                
+
                 var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
                 hub.Clients.All.UavRejected(uavid);
 
@@ -109,7 +109,23 @@ namespace NEST_App.Controllers.Api
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-
+        [HttpPost]
+        [Route("api/uavs/assignment/{id}/{userId}")]
+        public async Task<HttpResponseMessage> UAVAssignment(int id, int? userId)
+        {
+            try
+            {
+                UAV u = db.UAVs.FirstOrDefault(x => x.Id == id);
+                u.User_user_id = userId;
+                db.Entry(u).State = System.Data.Entity.EntityState.Modified;
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
         [HttpPost]
         [Route("api/uavs/adduavandassign")]
         public HttpResponseMessage AddUavAndAssign(UAV uav)
@@ -149,7 +165,7 @@ namespace NEST_App.Controllers.Api
         }
 
         [HttpPost]
-        [Route("api/uavs/assignexistinguav")]
+        [Route("api/uavs/assignexistinguav/{uavid}")]
         public HttpResponseMessage AssignExistingUav(int uavid)
         {
             try
@@ -322,8 +338,8 @@ namespace NEST_App.Controllers.Api
                 Queue<Schedule> schedQ = new Queue<Schedule>(schedQOrdered);
                 //Grab all the unassigned missions in the database.
                 var unassigned = from mis in db.Missions
-                    where mis.ScheduleId == null
-                    select mis;
+                                 where mis.ScheduleId == null
+                                 select mis;
 
                 //Uav Id and the mission assigned. Put into list in case the db update fails.
                 List<Tuple<int?, Mission>> uavMissionPairs = new List<Tuple<int?, Mission>>();
@@ -349,7 +365,7 @@ namespace NEST_App.Controllers.Api
                     await db.SaveChangesAsync();
                     //Now use signalr to assign the missions to the vehicles.
                     var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
-                    foreach(var tup in uavMissionPairs)
+                    foreach (var tup in uavMissionPairs)
                     {
                         int? uavId = tup.Item1;
                         Mission mis = tup.Item2;
@@ -419,7 +435,7 @@ namespace NEST_App.Controllers.Api
             db.Maintenances.AddRange(maintenance);
 
             await db.SaveChangesAsync();
-             
+
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 

@@ -3,6 +3,37 @@ var selecteduav_callsign_array = [];
 
 
 var managerFunctions = {
+    remove_op: function () {
+        var current = window.event.srcElement;
+        var uavid = current.parentElement.parentElement.children[0].innerHTML;
+        var callsign = current.parentElement.parentElement.children[1].innerHTML;
+        var userID = current.parentElement.parentElement.children[2].innerHTML;
+        var userName = current.parentElement.parentElement.children[3].innerHTML;
+        var unassigned_table = document.getElementById("unassigned");
+        var unassigned_length = unassigned_table.rows.length;
+
+        var row = unassigned_table.insertRow(unassigned_length);
+        var cell0 = row.insertCell(0);
+        var cell1 = row.insertCell(1);
+
+        cell0.innerHTML = uavid;
+        cell1.innerHTML = callsign;
+
+        while ((current = current.parentElement) && current.tagName != "TR");
+        current.parentElement.removeChild(current);
+
+        var n = null;
+
+        $.ajax({
+            method: 'POST',
+            url: '/api/uavs/assignment/' + uavid + '/' + null,
+            success: function () {
+                console.log("success");
+            }
+        });
+
+    },
+
     selected_uav: function () {
         var unassigned_table = document.getElementById("unassigned");
         var checked_uav = document.getElementById("checked_uav");
@@ -12,7 +43,7 @@ var managerFunctions = {
                 for (var j = 0; j < unassigned_table.rows[i].cells.length; j++) {
                     unassigned_table.rows[i].onclick = function () {
                         this.bgColor = "#AABBCC";
-                        var uavid = this.cells[0];
+                        var uavid = this.cells[0]; 
                         var callsign = this.cells[1];
                         var uavid_html = uavid.innerHTML;
                         var callsign_html = callsign.innerHTML;
@@ -81,17 +112,18 @@ var managerFunctions = {
                             var cell1 = row.insertCell(1);
                             var cell2 = row.insertCell(2);
                             var cell3 = row.insertCell(3);
+                            var cell4 = row.insertCell(4);
 
                             cell0.innerHTML = selecteduav_array[k];
                             cell1.innerHTML = selecteduav_callsign_array[k];
                             cell2.innerHTML = selected_userid;
                             cell3.innerHTML = selected_name;
+                            cell4.innerHTML = "";
 
                             for (var i = 0; i < selecteduav_array.length; i++) {
                                 $.ajax({
                                     method: 'POST',
-                                    url: '/api/uavs/assignexistinguav?uavid='+ selecteduav_array[k],
-                                    data: User_user_id = selected_userid,
+                                    url: '/api/uavs/assignment/' + selecteduav_array[k] +'/'+selected_userid,
                                     success: function () {
                                         console.log("success");
                                     }
