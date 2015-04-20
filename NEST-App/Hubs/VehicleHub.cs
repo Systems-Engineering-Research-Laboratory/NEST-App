@@ -195,7 +195,6 @@ namespace NEST_App.Hubs
                 return cmd.Id;
          }
 
-
         public int LandCommand(CMD_NAV_Land cmd)
         {
                 Clients.Group("vehicles").sendLandCommand(cmd, Context.ConnectionId);

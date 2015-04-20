@@ -117,9 +117,10 @@ $(document).ready(function () {
                     ids[i] = selectedDrones[i].Id;
                 }
                 droneTrails.goWaypoint(document.getElementById("go_lat").value, document.getElementById("go_long").value, ids);
-            }
-            
+            }    
         });
+
+
         document.getElementById("clickToGoBtn").addEventListener("click", function () {
             var ids = [];
             for (var i = 0; i < selectedDrones.length; i++) {

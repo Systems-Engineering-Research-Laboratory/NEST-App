@@ -46,6 +46,10 @@ function Reporter() {
 
     this.updateFlightState = function (fs, opts) {
         var curTime = new Date();
+        if (fs.BatteryLevel < 0)
+        {
+            fs.BatteryLevel = 0;
+        }
         this.hub.server.pushFlightStateUpdate({
             Id: fs.Id,
             Timestamp: fs.Timestamp,
