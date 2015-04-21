@@ -118,7 +118,7 @@ var managerFunctions = {
                             cell1.innerHTML = selecteduav_callsign_array[k];
                             cell2.innerHTML = selected_userid;
                             cell3.innerHTML = selected_name;
-                            cell4.innerHTML = "";
+                            cell4.innerHTML = '<span class="glyphicon glyphicon-remove" onclick="managerFunctions.remove_op()" style="cursor: pointer;">' + '</span>'
 
                             for (var i = 0; i < selecteduav_array.length; i++) {
                                 $.ajax({
