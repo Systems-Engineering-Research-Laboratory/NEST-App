@@ -6,7 +6,9 @@ function Reporter() {
 
     this.pendingResult = false;
     this.reportCrashEvent = function (uavId, callsign) {
+        var curTime = new Date();
         var event = {
+            event_id: 0,
             uav_id: uavId,
             message: "UAV has crashed",
             criticality: "critical",
