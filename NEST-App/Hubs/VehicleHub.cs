@@ -74,10 +74,6 @@ namespace NEST_App.Hubs
             double lat = Math.Round(dto.Latitude * 10000) / 10000;
             double lon = Math.Round(dto.Longitude * 10000) / 10000;
 
-            //if the uav landed at 'base', remove from list -- allows sending warning again
-            if (lat == 34.2420 && lon == -118.5288)
-                batteryWarning.Remove(uav);
-
             var mis = from ms in db.Missions
                       where ms.ScheduleId == uav.Id
                       select ms;
@@ -153,6 +149,16 @@ namespace NEST_App.Hubs
             
             // flightstatedto entity is not the same as models in our db context. can not guarantee atomic. need to wipe out flightstatedto
         }
+
+        public void reportBackAtBase(int uavId)
+        {
+            UAV uav = db.UAVs.FirstOrDefault(x => x.Id == uavId);
+            //if the uav landed at 'base', remove from list -- allows sending warning again
+            batteryWarning.Remove(uav);
+            areaWarning.Remove(uav);
+            Clients.All.uavBackAtBase(uavId);
+        }
+
 
         /**
          * Returns -1 if the insertion into the database failed.
@@ -243,11 +249,6 @@ namespace NEST_App.Hubs
             {
                     Clients.Client(id).changeSelected(uavId, selected);
             }
-        }
-
-        public void reportBackAtBase(int uavId)
-        {
-            Clients.All.uavBackAtBase(uavId);
         }
 
         public async Task BroadcastAcceptedCommand(CMD_ACK ack)

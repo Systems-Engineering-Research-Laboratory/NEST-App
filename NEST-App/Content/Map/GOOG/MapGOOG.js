@@ -294,6 +294,17 @@ $(document).ready(function () {
         new RestrictedAreasContainer(map, mapDraw.drawingManager)
         /* Event Log */
         var emitHub = $.connection.eventLogHub;
+        //close notification when back at base
+        vehicleHub.client.reportBackAtBase = function (UAVId) {
+            console.log("uav id for back at base: " + UAVId);
+            var infobox = uavs[UAVId].infobox;
+            uavs[UAVId].infobox = null;
+            infobox.close();
+            var infoboxAlert = uavs[UAVId].infoboxAlert;
+            uavs[UAVId].infoboxAlert = null;
+            infoboxAlert.close();
+        }
+
 
         //show the notification for every one
         emitHub.client.showNote = function (lat, lng, notifier, message) {
