@@ -245,6 +245,11 @@ namespace NEST_App.Hubs
             }
         }
 
+        public void reportBackAtBase(int uavId)
+        {
+            Clients.All.uavBackAtBase(uavId);
+        }
+
         public async Task BroadcastAcceptedCommand(CMD_ACK ack)
         {
             NestContainer db = new NestContainer();

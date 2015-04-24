@@ -554,7 +554,12 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     //Makes the vehicle go back to base
     this.backToBase = function (dt) {
-        return this.flyToAndLand(dt, this.Base.X, this.Base.Y);
+        var hasArrived = this.flyToAndLand(dt, this.Base.X, this.Base.Y);
+        if(hasArrived)
+        {
+            reporter.reportBackAtBase(this);
+        }
+        return hasArrived;
     }
 
     this.flyToAndLand = function (dt, destX, destY) {

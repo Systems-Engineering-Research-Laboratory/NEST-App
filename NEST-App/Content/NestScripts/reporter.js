@@ -221,4 +221,8 @@ function Reporter() {
             modified_date: curTime.toUTCString(),
         });
     }
+
+    this.reportBackAtBase = function (uav) {
+        this.hub.server.reportBackAtBase(uav.Id);
+    }
 }
