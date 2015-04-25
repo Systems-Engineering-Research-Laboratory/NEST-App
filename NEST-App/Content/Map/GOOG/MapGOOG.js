@@ -704,4 +704,5 @@ function checkIfMissionInTable(missionid)
             break;
         }
     }
+    return runningBool;
 }
