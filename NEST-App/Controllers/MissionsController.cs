@@ -119,6 +119,37 @@ namespace NEST_App.Controllers
             return unassgn;
         }
 
+        [Route("api/missions/{id}/updatephase")]
+        [ResponseType(typeof(void))]
+        [HttpPut]
+        public async Task<IHttpActionResult> UpdatePhase(int id, string phase)
+        {
+            var mis = await db.Missions.FindAsync(id);
+            if (mis != null && phase != null)
+            {
+                mis.Phase = phase;
+                db.Entry(mis);
+                try
+                {
+                    await db.SaveChangesAsync();
+                }
+                catch (Exception e)
+                {
+                    //Just catch the exception and emit out, that's all we care about
+                }
+
+                var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
+                hub.Clients.All.newMissionPhase(id);
+                return Ok();
+
+
+            }
+            else
+            {
+                return Conflict();
+            }
+        }
+
         [Route("api/missions/{id}/newroute")]
         [ResponseType(typeof(void))]
         [HttpPost]
