@@ -219,7 +219,9 @@ function WaypointManager() {
     this.updateFlightPath = function (id) {
         var thisMission = this.getMissionByMissionId(id);
 
+        var fpVisible = false;
         if (thisMission.flightPath) {
+            thisMission.flightPath.getVisible();
             thisMission.flightPath.setMap(null);
             thisMission.flightPath = null;
         }
@@ -232,7 +234,7 @@ function WaypointManager() {
             }
             thisMission.Waypoints = null;
         }
-        if (selectedDrones.length != 0) {
+        if (fpVisible) {
             this.displayWaypointsPerMission(thisMission);
         }
     }
