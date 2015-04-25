@@ -158,6 +158,13 @@ $(document).ready(function () {
             assignment.uavRejected(uavId);
         }
 
+        vehicleHub.client.newMissionPhase = function(missionid, phase)
+        {
+            //missionid - integer
+            //phase - string
+            //kaylee- stuff goes here
+        }
+
         vehicleHub.client.flightStateUpdate = function (vehicle) {
             uavs[vehicle.Id] = mapFunctions.UpdateVehicle(uavs[vehicle.Id], vehicle);
             if (mapUavId != null && mapUavId === vehicle.Id) {

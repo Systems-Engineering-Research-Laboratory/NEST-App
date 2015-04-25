@@ -139,7 +139,7 @@ namespace NEST_App.Controllers
                 }
 
                 var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
-                hub.Clients.All.newMissionPhase(id);
+                hub.Clients.All.newMissionPhase(id, phase);
                 return Ok();
 
 
