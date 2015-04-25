@@ -173,12 +173,18 @@ $(document).ready(function () {
             //var phase = vehicle.returnphase();
             //console.log(phase);
 
+            //console.log(document.getElementById("uav_mission_id"+vehicle.id));
+
 
             
             // MISSION PROGRESS WINDOW
-            for (i = 0, j = 1, k = 0; i < missiontable.rows.length; i++, j += 2, k += 2) {
-                //var boolean_progress_table = missiontable.rows[i].cells[6].innerHTML;
-                //if (boolean_progress_table === 'False') {
+            for (i = 0, j = 1, k = 0; i < missiontable.rows.length, k < progress_table.rows.length; i++, j += 2, k += 2) {
+                var missionid_table = progress_table.children[0].children[k].children[1].children[4].innerHTML;
+                
+                //console.log(k + ", " + missionid_table);
+                //check if uav is enrouting or not. (moving or not) in phase from database.
+                // need to find a way to get the phase info from database inside of flightpathupdates.
+                if ((vehicle.Id == uavid_progress_table)) {
                     var uavid_progress_table = missiontable.rows[i].cells[7].innerHTML;
                     var missionid_progress_table = missiontable.rows[i].cells[0].innerHTML;
                     var lat_progress_table = missiontable.rows[i].cells[2].innerHTML;
@@ -203,7 +209,7 @@ $(document).ready(function () {
                     var total_c = 2 * Math.atan2(Math.sqrt(total_a), Math.sqrt(1 - total_a));
                     var total_distance = radius * total_c;
                     var total_distance_in_km = total_distance / 1000;
-                    document.getElementById("distance").innerHTML = total_distance;
+                    //document.getElementById("distance").innerHTML = total_distance;
 
                     var remaining_a1 = Math.sin(diff_curr_dest_lat / 2) * Math.sin(diff_curr_dest_lat / 2);
                     var remaining_a2 = Math.cos(dest_lat_radian);
@@ -214,10 +220,6 @@ $(document).ready(function () {
                     var remaining_distance = radius * remaining_c;
                     var remaining_distance_in_km = remaining_distance / 1000;
 
-
-                //check if uav is enrouting or not. (moving or not) in phase from database.
-                // need to find a way to get the phase info from database inside of flightpathupdates.
-                    if ((vehicle.Id == uavid_progress_table)) {
                         var percent = 100 - ((remaining_distance_in_km / total_distance_in_km) * 100);
                         percent_global_for_progress_bar = percent;
                         missiontable.rows[i].cells[4].innerHTML = total_distance;
@@ -314,6 +316,15 @@ $(document).ready(function () {
 
         vehicleHub.client.vehicleHasNewMission = function (uavid, schedid, missionid) {
             wpm.vehicleHasNewMission(uavid, schedid, missionid);
+            //console.log(uavid + ", " + missionid);
+            for (var i = 0; i < progress_table.rows.length; i += 2)
+            {
+                var uavid_table = progress_table.children[0].children[i].children[1].children[1].innerHTML;
+                if (uavid == uavid_table)
+                {
+                    progress_table.children[0].children[i].children[1].children[4].innerHTML = missionid;
+                }
+            }
             if(!checkIfMissionInTable(missionid))
             {
                 //store it
@@ -700,7 +711,7 @@ function checkIfMissionInTable(missionid)
 {
     var runningBool = false;
     for (var i = 0; i < missiontable.rows.length; i++) {
-        var runningBool = missionid == missiontable.rows[i].cell[0].innerHTML;
+        var runningBool = missionid == missiontable.rows[i].cells[0].innerHTML;
         if (runningBool) {
             break;
         }
@@ -726,6 +737,7 @@ function calculateDistance(dest_lat, dest_long) {
     return total_distance;
 }
 
+
 function addMissionToTheTable(mission)
 {
     mission.id 
@@ -740,7 +752,7 @@ function addMissionToTheTable(mission)
     var cell7 = row.insertCell(7);
 
     cell0.innerHTML = mission.id;
-    cell1.innerHTML = ""                  // callsign
+    cell1.innerHTML = "";                  // callsign
     cell2.innerHTML = mission.Latitude;                  // lat
     cell3.innerHTML = mission.Longitude;                  // long
 
@@ -752,3 +764,17 @@ function addMissionToTheTable(mission)
     cell7.innerHTML = mission.schedid;  //uavid
 }
 
+function findMissionRowById(missionid)
+{
+    for (var i = 0; i < missiontable.rows.length; i++) {
+        if (missionid == missiontable.rows[i].cell[0].innerHTML) 
+        {
+            return missiontable.rows[i];
+        }
+    }
+}
+
+function getCurrentMission(uavid)
+{
+
+}
