@@ -219,9 +219,10 @@ function WaypointManager() {
     this.updateFlightPath = function (id) {
         var thisMission = this.getMissionByMissionId(id);
 
+        //Check to see if the path is currently being displayed
         var fpVisible = false;
         if (thisMission.flightPath) {
-            thisMission.flightPath.getVisible();
+            fpVisible = thisMission.flightPath.getVisible();
             thisMission.flightPath.setMap(null);
             thisMission.flightPath = null;
         }
@@ -234,6 +235,9 @@ function WaypointManager() {
             }
             thisMission.Waypoints = null;
         }
+
+        //If the flight path isn't visible, don't bother displaying it.
+        //It will be loaded when the user wants it.
         if (fpVisible) {
             this.displayWaypointsPerMission(thisMission);
         }
@@ -241,8 +245,7 @@ function WaypointManager() {
 
     this.vehicleHasNewMission = function(uavid, schedid, missionid) {
         var sched = this.getScheduleByUavId(uavid);
-        //Do we really need this?
-        //var mission = this.getMissionByMissionId(missionid);
+
         if (sched) {
             sched.CurrentMission = missionid;
             this.updateFlightPath(missionid);
