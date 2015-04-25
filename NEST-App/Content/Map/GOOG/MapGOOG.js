@@ -313,6 +313,10 @@ $(document).ready(function () {
 
         vehicleHub.client.vehicleHasNewMission = function (uavid, schedid, missionid) {
             wpm.vehicleHasNewMission(uavid, schedid, missionid);
+            if(!checkIfMissionInTable(missionid))
+            {
+                //store it
+            }
         }
 
         mapDraw.InitDrawingManager();
@@ -691,4 +695,13 @@ $(document).ready(function () {
     google.maps.event.addDomListener(window, 'load', init);
 });
 
-
+function checkIfMissionInTable(missionid)
+{
+    var runningBool = false;
+    for (var i = 0; i < missiontable.rows.length; i++) {
+        var runningBool = missionid == missiontable.rows[i].cell[0].innerHTML;
+        if (runningBool) {
+            break;
+        }
+    }
+}
