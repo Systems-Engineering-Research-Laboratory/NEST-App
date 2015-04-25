@@ -98,7 +98,7 @@ var mapFunctions = {
         contextMenuOptions.classNames = { menu: 'context_menu', menuSeparator: 'context_menu_separator' };
         var menuItems = [];
         menuItems.push({ className: 'context_menu_item', eventName: 'get_details', label: 'UAV Details' });
-        menuItems.push({});
+        menuItems.push({ className: 'context_menu_item', eventName: 'battery_est', label: 'Battery EST' });
         menuItems.push({});
         menuItems.push({ className: 'context_menu_item', eventName: 'non_nav', label: 'Adjust Parameters' });
         menuItems.push({ className: 'context_menu_item', eventName: 'hold', label: 'Hold Position' });
@@ -115,6 +115,7 @@ var mapFunctions = {
     UAVContextSelection: function (map, marker, latLng, eventName) {
         if (typeof(assignment) == 'undefined') {
             console.log("*********  Log in first!  **********");
+            return ;
         }
         else {
             var uid = assignment.getUserId();
@@ -131,6 +132,9 @@ var mapFunctions = {
             switch (eventName) {
                 case 'get_details':
                     window.open("http://localhost:53130/detailview", "_blank");
+                    break;
+                case 'battery_est':
+                    batteryCalc.displayEstCircle(uav);
                     break;
                 case 'non_nav':
                     if (!assignment.isUavAssignedToUser(uav.Id)) {

@@ -169,6 +169,11 @@ $(document).ready(function () {
                 mapFunctions.CenterOnUAV(vehicle.Id);
             }
 
+            //update uav location for batteryCalc if the uav is selected
+            if (batteryCalc.circle != null && selectedUAV != null && selectedUAV.Id == vehicle.Id) {
+                batteryCalc.updateBatteryCalc(vehicle);
+            }
+
             // MISSION PROGRESS WINDOW
             for (i = 0, j = 1, k = 0; i < missiontable.rows.length; i++, j += 2, k += 2) {
                 var uavid_progress_table = missiontable.rows[i].cells[0].innerHTML;
