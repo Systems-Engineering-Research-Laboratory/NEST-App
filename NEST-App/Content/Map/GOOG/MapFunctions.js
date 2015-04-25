@@ -506,6 +506,15 @@ var mapFunctions = {
         document.getElementById('RR_choice_p').style.color = "green";
         document.getElementById('RR_outer_result').style.display = "block";
         $("#RR_outer_result").fadeOut("slow", function () { });
+    },
+
+    RR_button_accept_window: function() {
+        assignment.uavAccepted(warningUavId);
+        $("#RoundRobin_popup").fadeOut("slow", function () { });
+        document.getElementById('RR_choice_p').innerHTML = "You have accepted UAV";
+        document.getElementById('RR_choice_p').style.color = "green";
+        document.getElementById('RR_outer_result').style.display = "block";
+        $("#RR_outer_result").fadeOut("slow", function () { });
         mapFunctions.delete_event_row();
     },
 
