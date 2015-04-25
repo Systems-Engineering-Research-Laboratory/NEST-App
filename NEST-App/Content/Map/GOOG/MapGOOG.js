@@ -327,7 +327,12 @@ $(document).ready(function () {
             }
             if(!checkIfMissionInTable(missionid))
             {
-                //store it
+                $.ajax({
+                    url: '/api/missions/' + missionid,
+                    type: 'GET'
+                }).suucess(function (data, textStatus, jqxhr) {
+                    addMissionToTheTable(data);
+                });
             }
         }
 
@@ -767,7 +772,7 @@ function addMissionToTheTable(mission)
 function findMissionRowById(missionid)
 {
     for (var i = 0; i < missiontable.rows.length; i++) {
-        if (missionid == missiontable.rows[i].cell[0].innerHTML) 
+        if (missionid == missiontable.rows[i].cells[0].innerHTML) 
         {
             return missiontable.rows[i];
         }
