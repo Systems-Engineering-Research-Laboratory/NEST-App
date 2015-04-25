@@ -203,6 +203,7 @@ $(document).ready(function () {
                     var total_c = 2 * Math.atan2(Math.sqrt(total_a), Math.sqrt(1 - total_a));
                     var total_distance = radius * total_c;
                     var total_distance_in_km = total_distance / 1000;
+                    document.getElementById("distance").innerHTML = total_distance;
 
                     var remaining_a1 = Math.sin(diff_curr_dest_lat / 2) * Math.sin(diff_curr_dest_lat / 2);
                     var remaining_a2 = Math.cos(dest_lat_radian);
@@ -706,3 +707,48 @@ function checkIfMissionInTable(missionid)
     }
     return runningBool;
 }
+
+function calculateDistance(dest_lat, dest_long) {
+
+    var dest_lat_radian = dest_lat * Math.PI / 180;
+    var dest_long_radian = dest_long * Math.PI / 180;
+    var diff_base_dest_lat = base_lat_radian - dest_lat_radian;
+    var diff_base_dest_long = base_long_radian - dest_long_radian;
+
+    var total_a1 = Math.sin(diff_base_dest_lat / 2) * Math.sin(diff_base_dest_lat / 2);
+    var total_a2 = Math.cos(base_lat_radian);
+    var total_a3 = Math.cos(dest_lat_radian);
+    var total_a4 = Math.sin(diff_base_dest_long / 2) * Math.sin(diff_base_dest_long / 2);
+    var total_a = total_a1 + (total_a2 * total_a3 * total_a4);
+    var total_c = 2 * Math.atan2(Math.sqrt(total_a), Math.sqrt(1 - total_a));
+    var total_distance = radius * total_c;
+    
+    return total_distance;
+}
+
+function addMissionToTheTable(mission)
+{
+    mission.id 
+    var row = missiontable.insertRow(0);
+    var cell0 = row.insertCell(0);
+    var cell1 = row.insertCell(1);
+    var cell2 = row.insertCell(2);
+    var cell3 = row.insertCell(3);
+    var cell4 = row.insertCell(4);
+    var cell5 = row.insertCell(5);
+    var cell6 = row.insertCell(6);
+    var cell7 = row.insertCell(7);
+
+    cell0.innerHTML = mission.id;
+    cell1.innerHTML = ""                  // callsign
+    cell2.innerHTML = mission.Latitude;                  // lat
+    cell3.innerHTML = mission.Longitude;                  // long
+
+    var distance = calculateDistance(cell2, cell3);
+
+    cell4.innerHTML = distance;
+    cell5.innerHTML = "";       //phase
+    cell6.innerHTML = "";       //bool
+    cell7.innerHTML = mission.schedid;  //uavid
+}
+
