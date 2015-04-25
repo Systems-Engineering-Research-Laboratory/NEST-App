@@ -626,7 +626,7 @@ var mapFunctions = {
 
             missiontable.rows[i].cells[4].innerHTML = total_distance;
             
-            progress_table.rows[j].cells[1].innerHTML = "<b>Distance: </b>" + total_distance_in_km.toFixed(3) + " km";
+            //progress_table.rows[j].cells[1].innerHTML = "<b>Distance: </b>" + total_distance_in_km.toFixed(3) + " km";
         }
     },
 };
