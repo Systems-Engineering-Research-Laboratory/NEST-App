@@ -115,6 +115,7 @@ namespace NEST_App.Controllers.Api
                                    Missions = s.Missions,
                                },
                                FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
+                               User = u.User
                            };
                 //System.Diagnostics.Debug.WriteLine("uav var generated");
                 //Find out how many drones have been retrieved

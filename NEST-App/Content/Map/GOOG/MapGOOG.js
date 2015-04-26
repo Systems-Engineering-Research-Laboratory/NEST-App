@@ -132,6 +132,7 @@ $(document).ready(function () {
         $.ajax({
             url: '/api/uavs/getuavinfo',
             success: function (data, textStatus, jqXHR) {
+                console.log(data);
                 uavMarkers(data, textStatus, jqXHR);
             }
         });

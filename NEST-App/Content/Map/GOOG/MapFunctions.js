@@ -299,6 +299,7 @@ var mapFunctions = {
         uav.infoboxAlert = null;
         uav.alertOnce = 0;
         uav.BatteryWarning = 0;
+        uav.User = uavData.User;
         return uav;
     },
 

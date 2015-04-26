@@ -365,6 +365,7 @@ namespace NEST_App.Controllers.Api
                            Mission = m,
                            FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
                            EventLog = u.EventLogs,
+                           User = u.User
                        };
             return Request.CreateResponse(HttpStatusCode.OK, uavs);
         }
