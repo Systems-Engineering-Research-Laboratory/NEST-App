@@ -13,10 +13,10 @@
     <div id="sched">
         <h3>Missions:</h3>
         <table class="schedule">
-            <tr>
+            <tr id="row">
                 <th>UAV Callsign:</th>
-                <th>Estimated Delivery Time:</th>
-                <th>Scheduled Delivery Time:</th>
+                @*<th>Estimated Delivery Time:</th>
+                <th>Scheduled Delivery Time:</th>*@
                 <th>Destination Coordinates: (lat, long)</th>
                 <th>Mission Phase:</th>
                 <th>Delivery Package:</th>
@@ -24,12 +24,15 @@
 
             @foreach (var sched in Model)
             {
+                <tr id="uav">
+                    <td>  @(sched.UAV.Callsign.ToString() + ":")</td>
+                </tr>
                 <tr>
                     @foreach (var mission in sched.Missions)
                     {
-                        <td>  @(sched.UAV.Callsign.ToString() + ":")</td>
-                        <td>  @(mission.EstimatedCompletionTime) </td>
-                        <td>  @(mission.ScheduledCompletionTime) </td>
+                        <td></td>
+                        @*<td>  @(mission.EstimatedCompletionTime) </td>
+                        <td>  @(mission.ScheduledCompletionTime) </td>*@
                         <td>  @(mission.Latitude + "," + mission.Longitude) </td>
                         <td>  @(mission.Phase)</td>
                         <td>  @(mission.Payload)</td>
