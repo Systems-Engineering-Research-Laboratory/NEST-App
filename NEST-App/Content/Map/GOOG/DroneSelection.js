@@ -181,6 +181,10 @@
             //console.log("AreaSelect check fired");
             mouseIsDown = false;
             if (gridBoundingBox !== null) {
+                var ulist = document.getElementById("uavList");
+                while (ulist.firstChild) {
+                    ulist.removeChild(ulist.firstChild);
+                }
                 while (selectedDrones.length > 0) {//clear the selected drone list
                     selectedDrones.pop();
                 }
