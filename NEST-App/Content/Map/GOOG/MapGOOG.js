@@ -15,7 +15,7 @@ var camLockedUAV = null;
 var radius = 6371000;
 var base_lat_radian = 34.2420 * Math.PI / 180;
 var base_long_radian = -118.5288 * Math.PI / 180;
-var percent_global_for_progress_bar;
+//var percent_global_for_progress_bar;
 var missiontable = document.getElementById("progress_table_for_info");
 var progress_table = document.getElementById("progress_table");
 
@@ -158,11 +158,36 @@ $(document).ready(function () {
             assignment.uavRejected(uavId);
         }
 
-        vehicleHub.client.newMissionPhase = function(missionid, phase)
-        {
-            //missionid - integer
-            //phase - string
-            //kaylee- stuff goes here
+        
+        // got new mission
+        vehicleHub.client.vehicleHasNewMission = function (uavid, schedid, missionid) {
+            wpm.vehicleHasNewMission(uavid, schedid, missionid);
+            for (var i = 0; i < progress_table.rows.length; i += 2) {
+                var uavid_table = progress_table.children[0].children[i].children[1].children[1].innerHTML;
+                
+                if (uavid == uavid_table) {
+                    progress_table.children[0].children[i].children[1].children[4].innerHTML = missionid;
+                    progress_table.children[0].children[i + 1].children[1].children[3].innerHTML = "enroute";
+                }
+            }
+
+            if (!checkIfMissionInTable(missionid)) {
+                $.ajax({
+                    url: '/api/missions/' + missionid,
+                    type: 'GET'
+                }).suucess(function (data, textStatus, jqxhr) {
+                    addMissionToTheTable(data);
+                });
+            }
+        }
+
+
+        vehicleHub.client.newMissionPhase = function (missionid, phase) {
+            for (var i = 1; i < progress_table.rows.length; i += 2) {
+                if (missionid == progress_table.children[0].children[i - 1].children[1].children[4].innerHTML) {
+                    progress_table.children[0].children[i].children[1].children[3].innerHTML = phase;
+                }
+            }
         }
 
         vehicleHub.client.flightStateUpdate = function (vehicle) {
@@ -176,34 +201,24 @@ $(document).ready(function () {
                 mapFunctions.CenterOnUAV(vehicle.Id);
             }
 
-            
-            //var phase = vehicle.returnphase();
-            //console.log(phase);
-
-            //console.log(document.getElementById("uav_mission_id"+vehicle.id));
-
-
+          
             
             // MISSION PROGRESS WINDOW
             for (i = 0, j = 1, k = 0; i < missiontable.rows.length, k < progress_table.rows.length; i++, j += 2, k += 2) {
-                var missionid_table = progress_table.children[0].children[k].children[1].children[4].innerHTML;
-                var missionid_ref_table = missiontable.rows[i].cells[0].innerHTML;
-                var uavid_progress_table = missiontable.rows[i].cells[0].innerHTML;
-
-                //var phase_backtobase = progress_table.children[0].children[j].children[1].children[3].innerHTML;
-                //console.log(phase_backtobase);
+                var missionid_1st = progress_table.children[0].children[k].children[1].children[4].innerHTML;
+                var uavid_2nd = missiontable.rows[i].cells[0].innerHTML;
                 
-                //console.log(k + ", " + missionid_table);
-                //check if uav is enrouting or not. (moving or not) in phase from database.
-                // need to find a way to get the phase info from database inside of flightpathupdates.
-                // check if vehicle id and uav id is same and mission id in table and mission id in mission table is same
-                if ((vehicle.Id == uavid_progress_table) && (missionid_table == missionid_ref_table)) {
-                    //var uavid_progress_table = missiontable.rows[i].cells[7].innerHTML;
-                    //var missionid_progress_table = missiontable.rows[i].cells[0].innerHTML;
-                    var lat_progress_table = missiontable.rows[i].cells[2].innerHTML;
-                    var long_progress_table = missiontable.rows[i].cells[3].innerHTML;
-                    console.log(vehicle.Id + ", " + missionid_table + ": " + lat_progress_table + ", " + long_progress_table);
-                    var total_distance = missiontable.rows[i].cells[4].innerHTML;
+                if (vehicle.Id == uavid_2nd) {
+
+                    for (var q = 0; q < missiontable.rows.length; q++)
+                    {
+                        var missionid_2nd = missiontable.children[0].children[q].children[0].innerHTML;
+                        if (missionid_1st == missionid_2nd)
+                        {
+                            var lat_progress_table = missiontable.rows[q].cells[2].innerHTML;
+                            var long_progress_table = missiontable.rows[q].cells[3].innerHTML;
+                        }
+                    }
 
                     var dest_lat_radian = lat_progress_table * Math.PI / 180;
                     var dest_long_radian = long_progress_table * Math.PI / 180;
@@ -212,8 +227,6 @@ $(document).ready(function () {
 
                     var diff_base_dest_lat = base_lat_radian - dest_lat_radian;
                     var diff_base_dest_long = base_long_radian - dest_long_radian;
-                    var diff_curr_dest_lat = dest_lat_radian - current_lat_radian;
-                    var diff_curr_dest_long = dest_long_radian - current_long_radian;
 
                     var total_a1 = Math.sin(diff_base_dest_lat / 2) * Math.sin(diff_base_dest_lat / 2);
                     var total_a2 = Math.cos(base_lat_radian);
@@ -223,137 +236,72 @@ $(document).ready(function () {
                     var total_c = 2 * Math.atan2(Math.sqrt(total_a), Math.sqrt(1 - total_a));
                     var total_distance = radius * total_c;
                     var total_distance_in_km = total_distance / 1000;
-                    //document.getElementById("distance").innerHTML = total_distance;
 
-                    var remaining_a1 = Math.sin(diff_curr_dest_lat / 2) * Math.sin(diff_curr_dest_lat / 2);
-                    var remaining_a2 = Math.cos(dest_lat_radian);
-                    var remaining_a3 = Math.cos(current_lat_radian);
-                    var remaining_a4 = Math.sin(diff_curr_dest_long / 2) * Math.sin(diff_curr_dest_long / 2);
-                    var remaining_a = remaining_a1 + (remaining_a2 * remaining_a3 * remaining_a4);
-                    var remaining_c = 2 * Math.atan2(Math.sqrt(remaining_a), Math.sqrt(1 - remaining_a));
-                    var remaining_distance = radius * remaining_c;
-                    var remaining_distance_in_km = remaining_distance / 1000;
+                    if ((progress_table.children[0].children[j].children[1].children[3].innerHTML === "enroute") || (progress_table.children[0].children[j].children[1].children[3].innerHTML === "standby"))
+                    {
+                        var diff_curr_dest_lat = dest_lat_radian - current_lat_radian;
+                        var diff_curr_dest_long = dest_long_radian - current_long_radian;
+
+                        var remaining_a1 = Math.sin(diff_curr_dest_lat / 2) * Math.sin(diff_curr_dest_lat / 2);
+                        var remaining_a2 = Math.cos(dest_lat_radian);
+                        var remaining_a3 = Math.cos(current_lat_radian);
+                        var remaining_a4 = Math.sin(diff_curr_dest_long / 2) * Math.sin(diff_curr_dest_long / 2);
+                        var remaining_a = remaining_a1 + (remaining_a2 * remaining_a3 * remaining_a4);
+                        var remaining_c = 2 * Math.atan2(Math.sqrt(remaining_a), Math.sqrt(1 - remaining_a));
+                        var remaining_distance = radius * remaining_c;
+                        var remaining_distance_in_km = remaining_distance / 1000;
 
                         var percent = 100 - ((remaining_distance_in_km / total_distance_in_km) * 100);
-                        percent_global_for_progress_bar = percent;
-                        missiontable.rows[i].cells[4].innerHTML = total_distance;
+
                         progress_table.children[0].children[j].children[1].children[0].innerHTML = "<b>Distance to destination: </b>";
                         progress_table.children[0].children[j].children[1].children[1].innerHTML = remaining_distance_in_km.toFixed(3) + " km";
 
-                        //progress_table.rows[j].cells[1].innerHTML = "<b>Distance to destination: </b>" + remaining_distance_in_km.toFixed(3) + " km";
                         progress_table.rows[j].cells[0].innerHTML = " " + percent.toFixed(0) + " % on delivery";
                         progress_table.rows[j].cells[0].style.color = "red";
 
                         var progress_row = progress_table.children[0].children[k].children[0].children[0];
-                        //console.log(progress_row);
                         progress_row.setAttribute("value", percent);
+                    }
 
-                        if ((percent.toFixed(0) == '100') && (vehicle.Altitude == '400')) {
-                            var phase_backtobase = progress_table.children[0].children[j].children[1].children[3].innerHTML;
-                            console.log("phase: " + phase_backtobase);
-                            phase_backtobase.innerHTML = "back to base";
+                    // check if uav is at destination and before back to base
+                    if (progress_table.children[0].children[j].children[1].children[3].innerHTML === "delivering")
+                    {
+                        progress_table.rows[j].cells[0].innerHTML = "Delivering . . .";
+                    }
 
-                            var diff_curr_base_lat = base_lat_radian - current_lat_radian;
-                            var diff_curr_base_long = base_long_radian - current_long_radian;
+                    // check if uav reaches destination
+                    if (progress_table.children[0].children[j].children[1].children[3].innerHTML === "back to base")
+                    {
+                        var diff_curr_base_lat = base_lat_radian - current_lat_radian;
+                        var diff_curr_base_long = base_long_radian - current_long_radian;
 
-                            var backtobase_a1 = Math.sin(diff_curr_base_lat / 2) * Math.sin(diff_curr_base_lat / 2);
-                            var backtobase_a2 = Math.cos(base_lat_radian);
-                            var backtobase_a3 = Math.cos(current_lat_radian);
-                            var backtobase_a4 = Math.sin(diff_curr_base_long / 2) * Math.sin(diff_curr_base_long / 2);
-                            var backtobase_a = backtobase_a1 + (backtobase_a2 * backtobase_a3 * backtobase_a4);
-                            var backtobase_c = 2 * Math.atan2(Math.sqrt(backtobase_a), Math.sqrt(1 - backtobase_a));
-                            var backtobase_distance = radius * backtobase_c;
-                            var backtobase_distance_in_km = backtobase_distance / 1000;
+                        var backtobase_a1 = Math.sin(diff_curr_base_lat / 2) * Math.sin(diff_curr_base_lat / 2);
+                        var backtobase_a2 = Math.cos(base_lat_radian);
+                        var backtobase_a3 = Math.cos(current_lat_radian);
+                        var backtobase_a4 = Math.sin(diff_curr_base_long / 2) * Math.sin(diff_curr_base_long / 2);
+                        var backtobase_a = backtobase_a1 + (backtobase_a2 * backtobase_a3 * backtobase_a4);
+                        var backtobase_c = 2 * Math.atan2(Math.sqrt(backtobase_a), Math.sqrt(1 - backtobase_a));
+                        var backtobase_distance = radius * backtobase_c;
+                        var backtobase_distance_in_km = backtobase_distance / 1000;
 
-                            percent = 100 - (backtobase_distance_in_km / total_distance_in_km) * 100;
-                            progress_table.rows[j].cells[0].innerHTML = percent.toFixed(0) + " % on returning";
-                            progress_table.rows[j].cells[0].style.color = "green";
-                            progress_row.setAttribute("value", percent);
-                        }
+                        percent_back = 100 - (backtobase_distance_in_km / total_distance_in_km) * 100;
 
-                        if (progress_table.children[0].children[k].children[1].children[3].innerHTML === "back to base") {
-                            var diff_curr_base_lat = base_lat_radian - current_lat_radian;
-                            var diff_curr_base_long = base_long_radian - current_long_radian;
+                        progress_table.rows[j].cells[0].innerHTML = percent_back.toFixed(0) + " % on returning";
+                        progress_table.rows[j].cells[0].style.color = "green";
+                        var progress_row = progress_table.children[0].children[k].children[0].children[0];
+                        progress_row.setAttribute("value", percent_back);
+                        progress_table.children[0].children[j].children[1].children[0].innerHTML = "<b>Distance to base: </b>";
+                        progress_table.children[0].children[j].children[1].children[1].innerHTML = backtobase_distance_in_km.toFixed(3) + " km";
 
-                            var backtobase_a1 = Math.sin(diff_curr_base_lat / 2) * Math.sin(diff_curr_base_lat / 2);
-                            var backtobase_a2 = Math.cos(base_lat_radian);
-                            var backtobase_a3 = Math.cos(current_lat_radian);
-                            var backtobase_a4 = Math.sin(diff_curr_base_long / 2) * Math.sin(diff_curr_base_long / 2);
-                            var backtobase_a = backtobase_a1 + (backtobase_a2 * backtobase_a3 * backtobase_a4);
-                            var backtobase_c = 2 * Math.atan2(Math.sqrt(backtobase_a), Math.sqrt(1 - backtobase_a));
-                            var backtobase_distance = radius * backtobase_c;
-                            var backtobase_distance_in_km = backtobase_distance / 1000;
-
-                            percent = 100 - (backtobase_distance_in_km / total_distance_in_km) * 100;
-
-                            progress_table.rows[k + 1].cells[0].innerHTML = percent.toFixed(0) + " % on returning";
-                            progress_table.rows[k + 1].cells[0].style.color = "green";
-                            progress_row.setAttribute("value", percent);
-                            progress_table.rows[k + 1].cells[1].innerHTML = "<b>Distance to base: </b>" + backtobase_distance_in_km.toFixed(3) + " km";
-
-                            // change if distance between uav and base is less than 0.005km, then done with mission
-                            // add distance between uav and base is larger than 0.005 km, then chagne the phase state as "on delivery"
-                            // change the percent of progress as 0 % after uav hit the base.
-                            if (backtobase_distance_in_km.toFixed(3) < 0.007) {
-                                progress_table.rows[j].cells[0].innerHTML = "Done with Mission";
-                                progress_table.rows[k + 1].cells[1].innerHTML = "<b>Distance to base: </b> 0.000 km";
-                                progress_table.rows[j].cells[0].style.color = "green";
-                                
-                                //console.log("uav lat: " + vehicle.Latitude + ", long: " + vehicle.Longitude);
-                                //console.log("base: 34.2420, -118.5288");
-                                for (var q = 0; q < missiontable.rows.length; q++) {
-                                    var uavid_missiontable = missiontable.rows[q].cells[0].innerHTML;
-                                    var boolean_missiontable = missiontable.rows[q].cells[6].innerHTML;
-                                    if ((vehicle.Id == uavid_missiontable) && (boolean_missiontable === 'false')) {
-                                        //console.log("row #" + q + ", " + vehicle.Id + ", " + uavid_missiontable + ": " + boolean_missiontable);
-                                    }
-                                }
-
-                                if (backtobase_distance > 0) {
-                                    percent = 100 - ((remaining_distance_in_km / total_distance_in_km) * 100);
-                                    percent_global_for_progress_bar = percent;
-                                    missiontable.rows[i].cells[4].innerHTML = total_distance;
-                                    progress_table.rows[j].cells[1].innerHTML = "<b>Distance to destination: </b>" + remaining_distance_in_km.toFixed(3) + " km";
-                                    progress_table.rows[j].cells[0].innerHTML = " " + percent.toFixed(0) + " % on delivery";
-                                    var phase_backtobase = progress_table.children[0].children[k].children[1].children[4];
-                                    phase_backtobase.innerHTML = "hello";
-                                    progress_table.rows[j].cells[0].style.color = "red";
-                                    progress_row.setAttribute("value", percent);
-                                }
-                            }
-
-                        //}
+                        if (percent_back.toFixed(0) == '100')
+                            progress_table.children[0].children[j].children[1].children[1].innerHTML = "0.000 km";
                     }
                     // end of whole if statement
                 }
             }
             // end of whole for loop
-
-
         }
-
-        vehicleHub.client.vehicleHasNewMission = function (uavid, schedid, missionid) {
-            wpm.vehicleHasNewMission(uavid, schedid, missionid);
-            console.log(uavid + ", " + missionid + "　　　NEW MISSION!!!!");
-            for (var i = 0; i < progress_table.rows.length; i += 2)
-            {
-                var uavid_table = progress_table.children[0].children[i].children[1].children[1].innerHTML;
-                if (uavid == uavid_table)
-                {
-                    progress_table.children[0].children[i].children[1].children[4].innerHTML = missionid;
-                    
-                }
-            }
-            if(!checkIfMissionInTable(missionid))
-            {
-                $.ajax({
-                    url: '/api/missions/' + missionid,
-                    type: 'GET'
-                }).suucess(function (data, textStatus, jqxhr) {
-                    addMissionToTheTable(data);
-                });
-            }
-        }
+        
 
         mapDraw.InitDrawingManager();
         mapDraw.drawingManager.setMap(map);
@@ -794,9 +742,4 @@ function findMissionRowById(missionid)
             return missiontable.rows[i];
         }
     }
-}
-
-function getCurrentMission(uavid)
-{
-
 }

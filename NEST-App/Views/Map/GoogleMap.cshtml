@@ -60,7 +60,7 @@
             }
         </table>
 
-        <table class="progress_table_for_info" id="progress_table_for_info" style="display: block; font-size: 13px;">
+        <table class="progress_table_for_info" id="progress_table_for_info" style="display: none; font-size: 13px;">
             @*@foreach (UAV prog in Model.UAVs)
             {
                 <tr>
@@ -83,7 +83,7 @@
                     <td style="display: block;">@Html.DisplayFor(modelItem => prog.Longitude)</td>
                     <td id="distance">Distance</td>
                     <td style="display: none;"id="prog_phase">@Html.DisplayFor(modelItem => prog.Phase)</td>
-                    <td id="prog_boolean">False</td>
+                    @*<td id="prog_boolean">False</td>*@
                     <td>@Html.DisplayFor(modelItem => prog.Schedule.UAV.Id)</td>
                 </tr>
             }
