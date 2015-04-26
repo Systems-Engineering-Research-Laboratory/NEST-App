@@ -415,6 +415,7 @@ namespace NEST_App.Controllers.Api
                 //Assign each of those unassigned missions to the a schedule
                 foreach (Mission mis in unassigned)
                 {
+                    mis.TimeAssigned = DateTime.Now;
                     Schedule s = schedQ.Dequeue();
                     s.UAV.estimated_workload++;
                     s.Missions.Add(mis);
