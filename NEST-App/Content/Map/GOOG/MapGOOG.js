@@ -696,7 +696,6 @@ function checkIfMissionInTable(missionid)
 }
 
 function calculateDistance(dest_lat, dest_long) {
-
     var dest_lat_radian = dest_lat * Math.PI / 180;
     var dest_long_radian = dest_long * Math.PI / 180;
     var diff_base_dest_lat = base_lat_radian - dest_lat_radian;
@@ -710,6 +709,13 @@ function calculateDistance(dest_lat, dest_long) {
     var total_c = 2 * Math.atan2(Math.sqrt(total_a), Math.sqrt(1 - total_a));
     var total_distance = radius * total_c;
 
+    //console.log(dest_lat + ", " + dest_long);
+    //console.log(dest_lat_radian + ", " + dest_long_radian);
+    //console.log(diff_base_dest_lat + ", " + diff_base_dest_long);
+    //console.log(total_a1 + ", " + total_a2 + ", " + total_a3 + ", " + total_a4);
+    //console.log(total_a + ", " + total_c);
+    //console.log("///////////////////////////////////////////////////////////");
+    //console.log(total_distance);
     return total_distance;
 }
 
@@ -723,19 +729,19 @@ function addMissionToTheTable(mission)
     var cell4 = row.insertCell(4);
     var cell5 = row.insertCell(5);
     var cell6 = row.insertCell(6);
-    var cell7 = row.insertCell(7);
 
     cell0.innerHTML = mission.id;
     cell1.innerHTML = "";                  // callsign
     cell2.innerHTML = mission.Latitude;                  // lat
     cell3.innerHTML = mission.Longitude;                  // long
 
-    var distance = calculateDistance(cell2, cell3);
+    var distance = calculateDistance(cell2.innerHTML, cell3.innerHTML);
 
     cell4.innerHTML = distance;
-    cell5.innerHTML =              //phase
-    cell6.innerHTML = "";       //bool
-    cell7.innerHTML = mission.schedid;  //uavid
+    cell5.innerHTML = "enroute";             //phase
+    cell6.innerHTML = mission.schedid;  //uavid
+
+    cell5.style.cssText = "display: none";
 }
 
 function findMissionRowById(missionid)
