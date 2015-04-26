@@ -41,6 +41,11 @@ namespace NEST_App.Controllers.Api
             if (m == GeoCodeCalcMeasurement.Kilometers) { radius = GeoCodeCalc.EarthRadiusInKilometers; }
             return radius * 2 * Math.Asin(Math.Min(1, Math.Sqrt((Math.Pow(Math.Sin((DiffRadian(lat1, lat2)) / 2.0), 2.0) + Math.Cos(ToRadian(lat1)) * Math.Cos(ToRadian(lat2)) * Math.Pow(Math.Sin((DiffRadian(lng1, lng2)) / 2.0), 2.0)))));
         }
+
+        public static double CalcPythagorean(double x, double y)
+        {
+            return Math.Sqrt(x * x + y * y);
+        }
     }
 
     public enum GeoCodeCalcMeasurement : int
@@ -59,9 +64,25 @@ namespace NEST_App.Controllers.Api
         [Route("api/uavs/geteta/{id}")]
         public DateTime GetEta(int id)
         {
-            
+            var uav = _db.UAVs.Find(id);
+            var firstOrDefault = uav.Schedules.FirstOrDefault();
+            if (firstOrDefault == null) return new DateTime();
+            if (firstOrDefault.CurrentMission == null) return new DateTime();
+            var currentMissionId = (int)firstOrDefault.CurrentMission;
+            var currentMission = _db.Missions.Find(currentMissionId);
 
-            return new DateTime();
+            var orDefault = uav.FlightStates.FirstOrDefault();
+            if (orDefault == null) return new DateTime();
+            var radianVelocity = GeoCodeCalc.CalcPythagorean(orDefault.VelocityX, orDefault.VelocityY);
+
+            if (currentMission.TimeAssigned == null) return new DateTime();
+            var flightState = uav.FlightStates.FirstOrDefault();
+            if (flightState == null) return new DateTime();
+            currentMission.EstimatedCompletionTime = ((DateTime)currentMission.TimeAssigned).AddMinutes(GeoCodeCalc.CalcDistance(flightState.Latitude,
+                flightState.Longitude, currentMission.Latitude, currentMission.Longitude) / radianVelocity);
+            _db.Entry(currentMission).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return (DateTime)currentMission.EstimatedCompletionTime;
         }
 
         [HttpGet]
