@@ -460,13 +460,13 @@ $(document).ready(function () {
                     });
                 }
                 if (evt.criticality != "normal") {
-                    //warning popup showing
-                    warningUavId = uavs[evt.UAVId].Id;
-                    document.getElementById('criticality').innerHTML = evt.criticality;
-                    document.getElementById('warningUavId').innerHTML = "UAV ID: " + uavs[evt.UAVId].Id + "<br />";
-                    document.getElementById('warningUavCallsign').innerHTML = "Callsign: " + uavs[evt.UAVId].Callsign + "<br />";
-                    document.getElementById('warningReason').innerHTML = "Reason: " + evt.message;
-                    mapFunctions.goTo_RR_show();
+                    ////warning popup showing
+                    //warningUavId = uavs[evt.UAVId].Id;
+                    //document.getElementById('criticality').innerHTML = evt.criticality;
+                    //document.getElementById('warningUavId').innerHTML = "UAV ID: " + uavs[evt.UAVId].Id + "<br />";
+                    //document.getElementById('warningUavCallsign').innerHTML = "Callsign: " + uavs[evt.UAVId].Callsign + "<br />";
+                    //document.getElementById('warningReason').innerHTML = "Reason: " + evt.message;
+                    //mapFunctions.goTo_RR_show();
 
                     if (evt.criticality === "warning") {
                         alertText.style.cssText = "border: 1px solid yellow;height: 40px;background: #333;color: #FFF;padding: 0px 0px 15px 4px;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;"
