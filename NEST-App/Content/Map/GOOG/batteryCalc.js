@@ -13,9 +13,9 @@ var batteryCalc = {
     },
 
     batteryDistanceEst: function (uav) {
-        //assume they are all 20...... mph
+        //assume they are all 20 m/s
         //return the distance in meter
-        return (1609 * 20 * this.remainingBatteryTime(uav) / 3600);
+        return (20 * this.remainingBatteryTime(uav));
     },
 
     updateBatteryCalc: function (uav) {

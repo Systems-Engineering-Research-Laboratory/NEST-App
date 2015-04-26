@@ -84,24 +84,24 @@
         </table>
     </div>
 
-                @*/////////////////////////uav and user table@*/////////////////////////*@
-                    <table class="event_uav_user" id="event_uav_user" style="display: none; width: 80%;">
-                        <thead>
-                            <tr>
-                                <th>UAV</th>
-                                <th>Owned By</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (UAV uav_user in Model.UAVs)
+    @*/////////////////////////uav and user table@*/////////////////////////*@
+    <table class="event_uav_user" id="event_uav_user" style="display: none; width: 80%;">
+        <thead>
+            <tr>
+                <th>UAV</th>
+                <th>Owned By</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (UAV uav_user in Model.UAVs)
             {
                 <tr class="eventlog_tr">
                     <td>@Html.DisplayFor(modelItem => uav_user.Id)</td>
                     <td>@Html.DisplayFor(modelItem => uav_user.User.username)</td>
                 </tr>
             }
-                        </tbody>
-                    </table>
+        </tbody>
+    </table>
 
 </div>
 
@@ -231,7 +231,7 @@
     </p>
 </div>
 
-<div id="RR_outer">
+@*<div id="RR_outer">
     <div id="RoundRobin_popup">
         <div id="RR_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.goTo_RR_hide()"></span></div>
         <p id="criticality" style="text-align:center; color:red; margin:0px; font-size:23px;font-weight:bold;"></p>
@@ -243,7 +243,7 @@
         <button id="RR_button_accept" onclick="mapFunctions.RR_button_accept()">ACCEPT</button>
         <button id="RR_button_decline" onclick="mapFunctions.RR_button_decline()">DECLINE</button>
     </div>
-</div>
+</div>*@
 
 @if (ViewBag.currentUser != null && ViewBag.assignedUavs != null)
 {

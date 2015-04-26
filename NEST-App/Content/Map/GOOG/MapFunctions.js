@@ -494,14 +494,14 @@ var mapFunctions = {
         document.getElementById("go_long").value = "";
     },
 
-    // USER INTERFACE PROMPT TO ACCEPT OR REJECT UAV ASSIGNMENT ON MAP
-    goTo_RR_show: function () {
-        document.getElementById("RoundRobin_popup").style.display = "block";
-    },
+    //// USER INTERFACE PROMPT TO ACCEPT OR REJECT UAV ASSIGNMENT ON MAP
+    //goTo_RR_show: function () {
+    //    document.getElementById("RoundRobin_popup").style.display = "block";
+    //},
 
-    goTo_RR_hide: function () {
-        $("#RoundRobin_popup").fadeOut("slow", function () { });
-    },
+    //goTo_RR_hide: function () {
+    //    $("#RoundRobin_popup").fadeOut("slow", function () { });
+    //},
 
     RR_button_accept: function () {
         assignment.uavAccepted(warningUavId);

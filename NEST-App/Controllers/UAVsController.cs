@@ -29,17 +29,14 @@ namespace NEST_App.Controllers.Api
         private Random rand = new Random();
 
         [HttpGet]
-        [Route("api/uavs/geteta/{id}")]
-        public DateTime GetEta(int id)
+        [Route("api/uavs/getavailabledistance/{id}")]
+        public double GetAvailableDistance(int id)
         {
-            
-        }
-
-        [HttpGet]
-        [Route("api/uavs/getsta/{id}")]
-        public DateTime GetSta(int id)
-        {
-            
+            var uav = db.UAVs.Find(id);
+            var firstOrDefault = uav.FlightStates.FirstOrDefault();
+            if (firstOrDefault != null)
+                return uav.Mileage/firstOrDefault.BatteryLevel;
+            return 0;
         }
 
         [HttpGet]
@@ -49,7 +46,7 @@ namespace NEST_App.Controllers.Api
             var uavs = from u in db.UAVs
                        where u.Callsign.Equals(callsign)
                        select u;
-            if (uavs.Count() == 0)
+            if (!uavs.Any())
             {
                 return null;
             }
