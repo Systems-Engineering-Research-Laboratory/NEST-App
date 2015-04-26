@@ -175,7 +175,7 @@ $(document).ready(function () {
                 $.ajax({
                     url: '/api/missions/' + missionid,
                     type: 'GET'
-                }).suucess(function (data, textStatus, jqxhr) {
+                }).success(function (data, textStatus, jqxhr) {
                     addMissionToTheTable(data);
                 });
             }
