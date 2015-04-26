@@ -29,6 +29,20 @@ namespace NEST_App.Controllers.Api
         private Random rand = new Random();
 
         [HttpGet]
+        [Route("api/uavs/geteta/{id}")]
+        public DateTime GetEta(int id)
+        {
+            
+        }
+
+        [HttpGet]
+        [Route("api/uavs/getsta/{id}")]
+        public DateTime GetSta(int id)
+        {
+            
+        }
+
+        [HttpGet]
         [Route("api/uavs/getavailabledistance/{id}")]
         public double GetAvailableDistance(int id)
         {
