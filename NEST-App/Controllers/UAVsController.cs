@@ -33,13 +33,28 @@ namespace NEST_App.Controllers.Api
         public DateTime GetEta(int id)
         {
             
+
+            return new DateTime();
         }
 
         [HttpGet]
         [Route("api/uavs/getsta/{id}")]
         public DateTime GetSta(int id)
         {
-            
+            var uav = _db.UAVs.Find(id);
+            var firstOrDefault = uav.Schedules.FirstOrDefault();
+            if (firstOrDefault == null) return new DateTime();
+            if (firstOrDefault.CurrentMission == null) return new DateTime();
+            var currentMissionId = (int) firstOrDefault.CurrentMission;
+            var currentMission = _db.Missions.Find(currentMissionId);
+
+            if (currentMission.TimeAssigned != null)
+            {
+                var timeToMissionEnd = 
+                currentMission.ScheduledCompletionTime = ((DateTime) currentMission.TimeAssigned).AddMinutes(25);
+                _db.Entry(currentMission).State = System.Data.Entity.EntityState.Modified;
+                _db.SaveChanges();
+            }
         }
 
         [HttpGet]
@@ -49,7 +64,7 @@ namespace NEST_App.Controllers.Api
             var uav = _db.UAVs.Find(id);
             var firstOrDefault = uav.FlightStates.FirstOrDefault();
             if (firstOrDefault != null)
-                return uav.Mileage/firstOrDefault.BatteryLevel;
+                return uav.Mileage/ ( 1.0 * firstOrDefault.BatteryLevel ) ;
             return 0;
         }
 
