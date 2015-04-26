@@ -74,7 +74,7 @@
                     <p class ="eventinfo" id="event_time" style="display: inline-block; margin: 1px; color: gray; font-size: 9px;">Now</p>
                 </td>
                 <td id="table_button">
-                    <button id="event_button_accept" onclick="mapFunctions.RR_button_accept()">ACCEPT</button>
+                    <button id="event_button_accept" onclick="mapFunctions.RR_button_accept_window()">ACCEPT</button>
                     <button id="event_button_decline" onclick="mapFunctions.RR_button_decline()">DECLINE</button>
                 </td>
                 <td style="width: 5%; height: 60px;" >
@@ -113,17 +113,24 @@
     <button id="delete-button">Delete One</button>
     <button id="delete-all-button">Delete All</button>
 </div>
-
-<div id="gotouavdiv">
-    <input type="text" id="enter_callsign" placeholder="UAV Callsign" />
-    <button class="btn-default" id="gotouavbtn" onclick="
+<div>
+    <div id="gotouavdiv">
+        <input type="text" id="enter_callsign" placeholder="UAV Callsign" />
+        <button class="btn-default" id="gotouavbtn" onclick="
         mapFunctions.CenterOnUAV(
             mapFunctions.GetKeyFromCallsign(document.getElementById('enter_callsign').value)
-        );">GO</button>
-    <button class="btn-default" id="lockuavbtn" onclick="
+        );">
+            GO
+        </button>
+        <button class="btn-default" id="lockuavbtn" onclick="
     camLockedUAV = mapFunctions.GetKeyFromCallsign(document.getElementById('enter_callsign').value);
     console.log('Locked uav key is: ' + camLockedUAV);
-    ">FOLLOW</button>
+    ">
+            FOLLOW
+        </button>
+    </div>
+    <div id="uavList">
+    </div>
 </div>
 
 <!-- command pop up placeholder -->

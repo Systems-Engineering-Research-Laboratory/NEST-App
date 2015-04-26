@@ -5,6 +5,30 @@ function Reporter() {
     this.eventHub = $.connection.eventLogHub;
 
     this.pendingResult = false;
+    this.reportCrashEvent = function (uavId, callsign) {
+        var curTime = new Date();
+        var event = {
+            event_id: 0,
+            uav_id: uavId,
+            message: "UAV has crashed",
+            criticality: "critical",
+            uav_callsign: callsign,
+            operator_screen_name: "",
+            UAVId: uavId,
+            create_date: curTime.toUTCString(),
+            modified_date: curTime.toUTCString()
+        }
+
+       return  $.ajax({
+                    url: "/api/uavs/postuavevent",
+                    data: event,
+                    success: function () {
+                        this.eventHub.server.emit(event);
+                    },
+                    type: 'POST',
+                    contentType: "application/json",
+                });
+    }
 
     this.reportReroute = function (uavId, callsign) {
         var curTime = new Date();
@@ -196,5 +220,9 @@ function Reporter() {
             create_date: curTime.toUTCString(),
             modified_date: curTime.toUTCString(),
         });
+    }
+
+    this.reportBackAtBase = function (uav) {
+        this.hub.server.reportBackAtBase(uav.Id);
     }
 }
