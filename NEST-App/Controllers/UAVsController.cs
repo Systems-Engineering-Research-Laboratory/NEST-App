@@ -76,11 +76,13 @@ namespace NEST_App.Controllers.Api
             var currentMission = _db.Missions.Find(currentMissionId);
 
             if (currentMission.TimeAssigned == null) return new DateTime();
-            var timeToMissionEnd = 
-                currentMission.ScheduledCompletionTime = ((DateTime) currentMission.TimeAssigned).AddMinutes(currentMission.FlightPattern. / uav.MaxVelocity);
+            var flightState = uav.FlightStates.FirstOrDefault();
+            if (flightState == null) return new DateTime();
+            currentMission.ScheduledCompletionTime = ((DateTime) currentMission.TimeAssigned).AddMinutes(GeoCodeCalc.CalcDistance(flightState.Latitude,
+                flightState.Longitude, currentMission.Latitude, currentMission.Longitude) / uav.MaxVelocity);
             _db.Entry(currentMission).State = System.Data.Entity.EntityState.Modified;
             _db.SaveChanges();
-            return (DateTime) currentMission.ScheduledCompletionTime;
+            return (DateTime)currentMission.ScheduledCompletionTime;
         }
 
         [HttpGet]
