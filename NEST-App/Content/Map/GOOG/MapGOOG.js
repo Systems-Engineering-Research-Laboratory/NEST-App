@@ -71,14 +71,15 @@ function uavMarkers(data, textStatus, jqXHR) {
         });
         //UAV Context Menu
         var UAVContext = mapFunctions.UAVContext(map);
+        var temp;
         google.maps.event.addListener(marker, 'rightclick', function (event) {
+            temp = this;
             UAVContext.show(event.latLng);
         });
         //Context Menu Selection
         google.maps.event.addListener(UAVContext, 'menu_item_selected', function (latLng, eventName) {
-            mapFunctions.UAVContextSelection(map, marker, latLng, eventName);
+            mapFunctions.UAVContextSelection(map, temp, latLng, eventName);
         });
-
     }
 }
 

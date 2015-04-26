@@ -213,7 +213,7 @@ var mapFunctions = {
                         console.log("You're not the owner");
                     } else {
                         //create ui
-                        document.getElementById("land_click").onclick = function () { uavCommands.ForceLand(uid, uav, uavs[uid].marker.position, alt, throttle, that.ids); console.log("position is: " + uav.marker.position); mapFunctions.land_hide() };
+                        document.getElementById("land_click").onclick = function () { uavCommands.ForceLand(uid, uav, uavs[uav.Id].marker.position, alt, throttle, that.ids); mapFunctions.land_hide() };
                         mapFunctions.land_show(marker.uav.Callsign);
                     }
                     break;
