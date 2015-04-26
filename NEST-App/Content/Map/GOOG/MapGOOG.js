@@ -119,6 +119,14 @@ $(document).ready(function () {
                 droneTrails.goWaypoint(document.getElementById("go_lat").value, document.getElementById("go_long").value, ids);
             }    
         });
+        document.getElementById("clearBtn").addEventListener("click", function () {
+            document.getElementById("go_lat").value = "";
+            document.getElementById("go_long").value = "";
+        });
+        document.getElementById("clearNote").addEventListener("click", function () {
+            document.getElementById("notifier").value = "";
+            document.getElementById("message").value = "";
+        });
 
 
         document.getElementById("clickToGoBtn").addEventListener("click", function () {

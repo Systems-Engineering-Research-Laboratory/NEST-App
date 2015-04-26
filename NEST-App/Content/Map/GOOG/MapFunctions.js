@@ -9,6 +9,7 @@ var mapFunctions = {
     gridBoundingBox : null,
     mouseIsDown: false,
     confirmWindow: null,
+    tempMarker: null,
     goLat: null,
     goLng: null,
     ids: [],
@@ -57,10 +58,11 @@ var mapFunctions = {
                 break;
             case 'send_note':
                 mapFunctions.note_show();
-                document.getElementById("send").addEventListener("click", function () {
+                var clickEvt = document.getElementById("send").addEventListener("click", function () {
                     emitHub.server.sendNote(latLng.lat(), latLng.lng(), document.getElementById("notifier").value, document.getElementById("message").value);
                     mapFunctions.note_hide();
                 });
+                google.maps.event.removeListener(clickEvt);
                 break;
             case 'go_here':
                 // ask user to confirm the commend
@@ -71,6 +73,17 @@ var mapFunctions = {
                 this.confirmWindow.setContent(content);
                 this.confirmWindow.setPosition(latLng);
                 this.confirmWindow.open(map);
+
+                this.tempMarker = new google.maps.Circle({
+                    map: map,
+                    center: latLng,
+                    radius: 30,
+                    fillColor: '#FFFF40',
+                    strokeWeight: 2,
+                    clickable: false,
+                    zindex: -99999
+                });
+                this.tempMarker.setMap(map);
 
                 this.goLat = latLng.lat();
                 this.goLng = latLng.lng();
@@ -87,6 +100,9 @@ var mapFunctions = {
     //confirmation for the go_here commend
     confirmGoHere: function (c) {
         this.confirmWindow.setMap(null);
+        this.confirmWindow = null;
+        this.tempMarker.setMap(null);
+        this.tempMarker = null;
         if (c && (this.goLat != null) && (this.goLng != null)) {
             droneTrails.goWaypoint(this.goLat, this.goLng, this.ids);
         }
@@ -487,11 +503,6 @@ var mapFunctions = {
     note_hide: function () {
         document.getElementById("CommPopPlaceHolder").style.display = "none";
         document.getElementById("notification").style.display = "none";
-    },
-
-    clear: function () {
-        document.getElementById("go_lat").value = "";
-        document.getElementById("go_long").value = "";
     },
 
     //// USER INTERFACE PROMPT TO ACCEPT OR REJECT UAV ASSIGNMENT ON MAP
