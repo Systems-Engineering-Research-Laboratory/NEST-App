@@ -92,18 +92,20 @@
     uavFilter: function () {
         //Click event listener
         var filterbutton = document.getElementById("filteruav");
-        google.maps.event.addDomListener(filterbutton, 'click', function () {
+        var currentUser = JSON.parse($("#current_user").html()).username;
+        google.maps.event.addDomListener(filterbutton, "click", function () {
             var infobox;
             var infoboxAlert;
             var i;
-            if (mapStyles.uavFilterClick == false) {
+            if (mapStyles.uavFilterClick === false) {
                 i = 1;
                 while (uavs[i] != undefined || uavs[i] != null) {
-                    if (assignment.assignments[uavs[i].Id - 1] != null) {
-                        i++;
-                        continue;
-                    }
-                    else {
+                    //if (assignment.assignments[uavs[i].Id - 1] != null) {
+                    //    i++;
+                    //    continue;
+                    //}
+                     if (uavs[i].User == null || uavs[i].User.username != currentUser) {
+                        console.log("filtering out: " + uavs[i].Callsign);
                         uavs[i].marker.setMap(null);
                         uavs[i].markerCircle.setMap(null);
                         uavs[i].markerCircle.setVisible(false);
@@ -116,8 +118,8 @@
                             infoboxAlert = uavs[i].infoboxAlert;
                             infoboxAlert.close();
                         }
-                        i++;
                     }
+                    i++;
                 }
                 mapStyles.uavFilterClick = true;
             }
