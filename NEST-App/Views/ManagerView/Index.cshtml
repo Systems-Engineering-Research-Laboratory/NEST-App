@@ -1,13 +1,14 @@
 ﻿@using NEST_App.Models
 @model dynamic
+@{Layout = "~/Views/Shared/_Layout.cshtml";}
+@{ViewBag.Title = "Index";}
+@Scripts.Render("~/bundles/bootstrap")
+
 
 <script src="~/Scripts/jquery-2.1.2.min.js"></script>
 <script src="~/Content/ManagerView/managerJS.js" type="text/javascript"></script>
 <script src="~/Content/ManagerView/managerFunctions.js" type="text/javascript"></script>
 
-@{
-    ViewBag.Title = "Index";
-}
 
 <!DOCTYPE html>
 <html>
@@ -28,6 +29,7 @@
                         <th>Callsign</th>
                         <th>User ID</th>
                         <th>User Name</th>
+                        <th></th>
                     </tr>
 
                     @foreach (UAV uavs_user_user_id in Model.UAVs)
@@ -37,6 +39,7 @@
                             <td>@Html.DisplayFor(modelItem => uavs_user_user_id.Callsign)</td>
                             <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User_user_id)</td>
                             <td>@Html.DisplayFor(modelItem => uavs_user_user_id.User.username)</td>
+                            <td><span class="glyphicon glyphicon-remove" onclick="managerFunctions.remove_op()" style="cursor: pointer;"></span></td>
                         </tr>
                     }
 

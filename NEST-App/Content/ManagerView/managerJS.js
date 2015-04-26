@@ -9,7 +9,7 @@ $(document).ready(function () {
     for (var i = assign_table.rows.length; i > 1; i--) {
         var assign_id = assign_table.rows[i - 1].cells[1].innerText;
         if (assign_table.rows[i - 1].cells[2].innerHTML == "") {
-            console.log(i + " unassigned");
+            console.log(i + " unassigned"); 
             document.getElementById('assigned').deleteRow(i - 1);
         }
     }

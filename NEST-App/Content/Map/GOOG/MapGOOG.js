@@ -36,14 +36,15 @@ function uavMarkers(data, textStatus, jqXHR) {
         //Set UAV properties
         uavs[data[i].Id] = mapFunctions.SetUAV(data[i]);
 
-        //Creates the flightpath line from uav position to destination
-        flightLines[data[i].Id] = new google.maps.Polyline(mapStyles.flightPathOptions);
-        flightLines[data[i].Id].setPath([uavs[data[i].Id].Position, uavs[data[i].Id].Destination]);
+        ////Creates the flightpath line from uav position to destination
+        //flightLines[data[i].Id] = new google.maps.Polyline(mapStyles.flightPathOptions);
+        //flightLines[data[i].Id].setPath([uavs[data[i].Id].Position, uavs[data[i].Id].Destination]);
 
         //Create the map's visual aspects of the uav
         var markerCircle = new google.maps.Marker({
             position: uavs[data[i].Id].Position,
-            icon: mapStyles.uavCircleBlack
+            icon: mapStyles.uavCircleBlack,
+            clickable: false
         });
         var marker = mapFunctions.SetUAVMarker(uavs[data[i].Id]);
 
@@ -53,7 +54,7 @@ function uavMarkers(data, textStatus, jqXHR) {
         wpm.addMarker(marker);
         uavs[data[i].Id].marker = marker;
         uavs[data[i].Id].markerCircle = markerCircle;
-        uavs[data[i].Id].flightPath = flightLines[data[i].Id];
+        //uavs[data[i].Id].flightPath = flightLines[data[i].Id];
         uavs[data[i].Id].markerCircle.setMap(map);
         uavs[data[i].Id].marker.setMap(map);
 
@@ -85,17 +86,7 @@ $(document).ready(function () {
     function init() {
         //Used for communication and map.setCenter()
         mapUavId = null;
-        localStorage.clear();
-        //Communication via local storage changes
-        if (window.addEventListener) {
-            window.addEventListener("storage", handler, false);
-        }
-        function handler(e) {
-            console.log('Successfully communicated with the other tab');
-            console.log('Received data: ' + JSON.parse(localStorage.getItem('uavid')));
-            mapUavId = JSON.parse(localStorage.getItem('uavid'));
-        }
-
+        
         wpm = new WaypointManager(map);
         map = new google.maps.Map(document.getElementById('map-canvas'), mapStyles.mapOptions);
         /*map = new GMaps({
@@ -114,15 +105,6 @@ $(document).ready(function () {
             icon: mapStyles.goldStarBase,
             map: map
         });
-        //homeControlDiv.index = 1;
-        //map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
-        
-        //var uavFilterDiv = document.createElement('div');
-        //var uavFilter = new mapStyles.uavFilter(uavFilterDiv, map);
-        //uavFilterDiv.index = 1;
-        //map.controls[google.maps.ControlPosition.RIGHT_TOP].push(uavFilterDiv);
-
-
 
         // add event listener
         document.getElementById("goBtn").addEventListener("click", function () {
@@ -135,9 +117,10 @@ $(document).ready(function () {
                     ids[i] = selectedDrones[i].Id;
                 }
                 droneTrails.goWaypoint(document.getElementById("go_lat").value, document.getElementById("go_long").value, ids);
-            }
-            
+            }    
         });
+
+
         document.getElementById("clickToGoBtn").addEventListener("click", function () {
             var ids = [];
             for (var i = 0; i < selectedDrones.length; i++) {
@@ -149,6 +132,7 @@ $(document).ready(function () {
         $.ajax({
             url: '/api/uavs/getuavinfo',
             success: function (data, textStatus, jqXHR) {
+                console.log(data);
                 uavMarkers(data, textStatus, jqXHR);
             }
         });
@@ -181,44 +165,31 @@ $(document).ready(function () {
                 var latlng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
                 map.setCenter(latlng);
             }
-
-            //close event boxes when back at base (which isn't base, its above and to the right wtf jeff)
-
-            /* waiting for at base added by jeff...
-            var vLat = Math.round(vehicle.Latitude * 10000) / 10000;
-            var vLon = Math.round(vehicle.Longitude * 10000) / 10000;
-            var landingZoneLat = 34.2420;
-            var landingZoneLon = -118.5288;
-            if (vLat == landingZoneLat && vLon == landingZoneLon) {
-                if (uavs[vehicle.Id].infobox)
-                    uavs[vehicle.Id].infobox.close();
-                if (uavs[vehicle.Id].infoboxAlert)
-                    uavs[vehicle.Id].infoboxAlert.close();
-            }
-            */
-            // draw trail
-            // remove trail functions entirely -david
-            //if (selectedUAV && selectedTrail != undefined) {
-            //    if (selectedTrail.length < 2)
-            //        selectedTrail[selectedTrail.length - 1].setMap(map);
-            //    else
-            //        selectedTrail[selectedTrail.length - 2].setMap(map);
-            //}
        
             if (vehicle.Id == camLockedUAV) {
                 mapFunctions.CenterOnUAV(vehicle.Id);
             }
 
-            for (i = 0, j = 1, k = 0; i < missiontable.rows.length; i++, j+=2, k+=2) {
+            //update uav location for batteryCalc if the uav is selected
+            if (batteryCalc.circle != null && selectedUAV != null && selectedUAV.Id == vehicle.Id) {
+                batteryCalc.updateBatteryCalc(vehicle);
+            }
+
+            // MISSION PROGRESS WINDOW
+            for (i = 0, j = 1, k = 0; i < missiontable.rows.length; i++, j += 2, k += 2) {
                 var uavid_progress_table = missiontable.rows[i].cells[0].innerHTML;
                 var lat_progress_table = missiontable.rows[i].cells[2].innerHTML;
                 var long_progress_table = missiontable.rows[i].cells[3].innerHTML;
-
                 var dest_lat_radian = lat_progress_table * Math.PI / 180;
                 var dest_long_radian = long_progress_table * Math.PI / 180;
+                var current_lat_radian = vehicle.Latitude * Math.PI / 180;
+                var current_long_radian = vehicle.Longitude * Math.PI / 180;
 
                 var diff_base_dest_lat = base_lat_radian - dest_lat_radian;
                 var diff_base_dest_long = base_long_radian - dest_long_radian;
+                var diff_curr_dest_lat = dest_lat_radian - current_lat_radian;
+                var diff_curr_dest_long = dest_long_radian - current_long_radian;
+
                 var total_a1 = Math.sin(diff_base_dest_lat / 2) * Math.sin(diff_base_dest_lat / 2);
                 var total_a2 = Math.cos(base_lat_radian);
                 var total_a3 = Math.cos(dest_lat_radian);
@@ -227,12 +198,6 @@ $(document).ready(function () {
                 var total_c = 2 * Math.atan2(Math.sqrt(total_a), Math.sqrt(1 - total_a));
                 var total_distance = radius * total_c;
                 var total_distance_in_km = total_distance / 1000;
-
-                var current_lat_radian = vehicle.Latitude * Math.PI / 180;
-                var current_long_radian = vehicle.Longitude * Math.PI / 180;
-
-                var diff_curr_dest_lat = dest_lat_radian - current_lat_radian;
-                var diff_curr_dest_long = dest_long_radian - current_long_radian;
 
                 var remaining_a1 = Math.sin(diff_curr_dest_lat / 2) * Math.sin(diff_curr_dest_lat / 2);
                 var remaining_a2 = Math.cos(dest_lat_radian);
@@ -243,22 +208,83 @@ $(document).ready(function () {
                 var remaining_distance = radius * remaining_c;
                 var remaining_distance_in_km = remaining_distance / 1000;
 
-
-                if ((vehicle.Id == uavid_progress_table))
-                {
+                if ((vehicle.Id == uavid_progress_table)) {
                     var percent = 100 - ((remaining_distance_in_km / total_distance_in_km) * 100);
                     percent_global_for_progress_bar = percent;
                     missiontable.rows[i].cells[4].innerHTML = total_distance;
                     progress_table.rows[j].cells[1].innerHTML = "<b>Distance to destination: </b>" + remaining_distance_in_km.toFixed(3) + " km";
                     progress_table.rows[j].cells[0].innerHTML = " " + percent.toFixed(0) + " % on delivery";
+                    progress_table.rows[j].cells[0].style.color = "red";
 
                     var progress_row = progress_table.children[0].children[k].children[0].children[0];
                     progress_row.setAttribute("value", percent);
 
-                    if (percent.toFixed(0) == '100') {
-                        progress_table.rows[j].cells[0].innerHTML = "Done with delivery";
+                    if ((percent.toFixed(0) == '100') && (vehicle.Altitude == '400')) {
+                        var phase_backtobase = progress_table.children[0].children[k].children[1].children[3];
+                        phase_backtobase.innerHTML = "back to base";
+
+                        var diff_curr_base_lat = base_lat_radian - current_lat_radian;
+                        var diff_curr_base_long = base_long_radian - current_long_radian;
+
+                        var backtobase_a1 = Math.sin(diff_curr_base_lat / 2) * Math.sin(diff_curr_base_lat / 2);
+                        var backtobase_a2 = Math.cos(base_lat_radian);
+                        var backtobase_a3 = Math.cos(current_lat_radian);
+                        var backtobase_a4 = Math.sin(diff_curr_base_long / 2) * Math.sin(diff_curr_base_long / 2);
+                        var backtobase_a = backtobase_a1 + (backtobase_a2 * backtobase_a3 * backtobase_a4);
+                        var backtobase_c = 2 * Math.atan2(Math.sqrt(backtobase_a), Math.sqrt(1 - backtobase_a));
+                        var backtobase_distance = radius * backtobase_c;
+                        var backtobase_distance_in_km = backtobase_distance / 1000;
+
+                        percent = 100 - (backtobase_distance_in_km / total_distance_in_km) * 100;
+                        progress_table.rows[j].cells[0].innerHTML = percent.toFixed(0) + " % on returning";
+                        progress_table.rows[j].cells[0].style.color = "green";
+                        progress_row.setAttribute("value", percent);
+                    }
+
+                    if (progress_table.children[0].children[k].children[1].children[3].innerHTML === "back to base") {
+                        var diff_curr_base_lat = base_lat_radian - current_lat_radian;
+                        var diff_curr_base_long = base_long_radian - current_long_radian;
+
+                        var backtobase_a1 = Math.sin(diff_curr_base_lat / 2) * Math.sin(diff_curr_base_lat / 2);
+                        var backtobase_a2 = Math.cos(base_lat_radian);
+                        var backtobase_a3 = Math.cos(current_lat_radian);
+                        var backtobase_a4 = Math.sin(diff_curr_base_long / 2) * Math.sin(diff_curr_base_long / 2);
+                        var backtobase_a = backtobase_a1 + (backtobase_a2 * backtobase_a3 * backtobase_a4);
+                        var backtobase_c = 2 * Math.atan2(Math.sqrt(backtobase_a), Math.sqrt(1 - backtobase_a));
+                        var backtobase_distance = radius * backtobase_c;
+                        var backtobase_distance_in_km = backtobase_distance / 1000;
+
+                        percent = 100 - (backtobase_distance_in_km / total_distance_in_km) * 100;
+
+                        progress_table.rows[k + 1].cells[0].innerHTML = percent.toFixed(0) + " % on returning";
+                        progress_table.rows[k + 1].cells[0].style.color = "green";
+                        progress_row.setAttribute("value", percent);
+                        progress_table.rows[k + 1].cells[1].innerHTML = "<b>Distance to base: </b>" + backtobase_distance_in_km.toFixed(3) + " km";
+
+                        // change if distance between uav and base is less than 0.005km, then done with mission
+                        // add distance between uav and base is larger than 0.005 km, then chagne the phase state as "on delivery"
+                        // change the percent of progress as 0 % after uav hit the base.
+                        if (percent.toFixed(0) == '100') {
+                            progress_table.rows[j].cells[0].innerHTML = "Done with Mission";
+                            progress_table.rows[k + 1].cells[1].innerHTML = "<b>Distance to base: </b> 0.000 km";
+                            progress_table.rows[j].cells[0].style.color = "green";
+                            console.log("uav lat: " + vehicle.Latitude + ", long: " + vehicle.Longitude);
+                            console.log("base: 34.2420, -118.5288");
+
+                            if (backtobase_distance > 0) {
+                                percent = 100 - ((remaining_distance_in_km / total_distance_in_km) * 100);
+                                percent_global_for_progress_bar = percent;
+                                missiontable.rows[i].cells[4].innerHTML = total_distance;
+                                progress_table.rows[j].cells[1].innerHTML = "<b>Distance to destination: </b>" + remaining_distance_in_km.toFixed(3) + " km";
+                                progress_table.rows[j].cells[0].innerHTML = " " + percent.toFixed(0) + " % on delivery";
+                                progress_table.rows[j].cells[0].style.color = "red";
+                                progress_row.setAttribute("value", percent);
+                            }
+                        }
+
                     }
                 }
+                // end of whole if statement
             }
         }
 
@@ -284,12 +310,22 @@ $(document).ready(function () {
         new RestrictedAreasContainer(map, mapDraw.drawingManager)
         /* Event Log */
         var emitHub = $.connection.eventLogHub;
+        //close notification when back at base
+        vehicleHub.client.reportBackAtBase = function (UAVId) {
+            console.log("uav id for back at base: " + UAVId);
+            var infobox = uavs[UAVId].infobox;
+            uavs[UAVId].infobox = null;
+            infobox.close();
+            var infoboxAlert = uavs[UAVId].infoboxAlert;
+            uavs[UAVId].infoboxAlert = null;
+            infoboxAlert.close();
+        }
+
 
         //show the notification for every one
         emitHub.client.showNote = function (lat, lng, notifier, message) {
             mapFunctions.ConsNotifier(map, lat, lng, notifier, message);
         }
-
         emitHub.client.newEvent = function (evt) {
             console.log(evt);
             //deprecate -- ack check by operator -dg
@@ -334,7 +370,7 @@ $(document).ready(function () {
                             width: "150px"
                         },
                         closeBoxMargin: "9px 1px 2px 2px"
-                    })
+                    });
 
                     if (uavs[evt.UAVId].infobox != null) {
                         var ibox = new InfoBox();
@@ -346,12 +382,13 @@ $(document).ready(function () {
                     
                     google.maps.event.addDomListener(multipleText, 'click', function () {
                         if (infobox.open) {
+                            uavs[evt.UAVId].infobox = null;
                             infobox.close();
 
                             var eventACK = {
                                 uav_id: uavs[evt.UAVId].Id,
                                 message: "Acknowledged: " + evt.message,
-                                criticality: "normal",
+                                criticality: "ACK",
                                 uav_callsign: uavs[evt.UAVId].Callsign,
                                 operator_screen_name: evt.operator_screen_name,
                                 UAVId: uavs[evt.UAVId].Id
@@ -366,7 +403,6 @@ $(document).ready(function () {
                                 success: function () { },
                                 data: eventACK
                             });
-
                         }
                     });
                 }
@@ -399,6 +435,7 @@ $(document).ready(function () {
 
                     google.maps.event.addDomListener(boxText, 'click', function () {
                         if (infobox.open) {
+                            uavs[evt.UAVId].infobox = null;
                             infobox.close();
 
                             var eventACK = {
@@ -424,13 +461,13 @@ $(document).ready(function () {
                     });
                 }
                 if (evt.criticality != "normal") {
-                    //warning popup showing
-                    warningUavId = uavs[evt.UAVId].Id;
-                    document.getElementById('criticality').innerHTML = evt.criticality;
-                    document.getElementById('warningUavId').innerHTML = "UAV ID: " + uavs[evt.UAVId].Id + "<br />";
-                    document.getElementById('warningUavCallsign').innerHTML = "Callsign: " + uavs[evt.UAVId].Callsign + "<br />";
-                    document.getElementById('warningReason').innerHTML = "Reason: " + evt.message;
-                    mapFunctions.goTo_RR_show();
+                    ////warning popup showing
+                    //warningUavId = uavs[evt.UAVId].Id;
+                    //document.getElementById('criticality').innerHTML = evt.criticality;
+                    //document.getElementById('warningUavId').innerHTML = "UAV ID: " + uavs[evt.UAVId].Id + "<br />";
+                    //document.getElementById('warningUavCallsign').innerHTML = "Callsign: " + uavs[evt.UAVId].Callsign + "<br />";
+                    //document.getElementById('warningReason').innerHTML = "Reason: " + evt.message;
+                    //mapFunctions.goTo_RR_show();
 
                     if (evt.criticality === "warning") {
                         alertText.style.cssText = "border: 1px solid yellow;height: 40px;background: #333;color: #FFF;padding: 0px 0px 15px 4px;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;"
@@ -532,8 +569,8 @@ $(document).ready(function () {
                         var uav_user_id = event_uav_user.rows[i].cells[0].innerHTML;
                         var uav_user_name = event_uav_user.rows[i].cells[1].innerHTML;
                         if (uavs[evt.UAVId].Id == uav_user_id) {
-                            if (uav_user_name === "") {
-                                var accept_butt = '<input type="button" value="ACCEPT" name="ACCEPT" onclick=mapFunctions.RR_button_accept() style="background-color: #46d914; color: white; cursor: pointer;padding-right: 5px; padding-left: 5px; padding-top: 2px; padding-bottom: 2px; border-radius: 5px; border: none; width: 100%; border-top:2px solid transparent; margin-top: 2px;">';
+                            if (uav_user_name === "") { 
+                                var accept_butt = '<input type="button" value="ACCEPT" name="ACCEPT" onclick=mapFunctions.RR_button_accept_window() style="background-color: #46d914; color: white; cursor: pointer;padding-right: 5px; padding-left: 5px; padding-top: 2px; padding-bottom: 2px; border-radius: 5px; border: none; width: 100%; border-top:2px solid transparent; margin-top: 2px;">';
                                 var decline_butt = '<input type="button" value="DECLINE" name="DECLINE" onclick=mapFunctions.RR_button_decline(); style="background-color: #ee3f3f;color: white;cursor: pointer;padding-right: 5px;padding-left: 5px;padding-top: 2px;padding-bottom: 2px;border-radius: 5px;border: none;width: 100%;border-top:2px solid transparent;margin-top: 2px;margin-bottom: 1px;">';
                                 cell2.innerHTML = accept_butt + decline_butt;
                             }
@@ -560,7 +597,6 @@ $(document).ready(function () {
                 }
             }
         }
-
         
         //Make sure to set all SignalR callbacks BEFORE the call to connect
         $.connection.hub.start().done(function () {
@@ -631,11 +667,13 @@ $(document).ready(function () {
         google.maps.event.addListener(mapListeners, 'mousedown', function (e) { mapFunctions.StopMapDrag(this, e); });
         google.maps.event.addListener(mapListeners, 'mouseup', function (e) { droneSelection.AreaSelect(this, e, mapFunctions.mouseIsDown, mapFunctions.shiftPressed, mapFunctions.gridBoundingBox, selectedDrones, uavs) });
         google.maps.event.addListener(mapListeners, 'dblclick', function (e) {
+            //console.log("db click");
             mapUavId = null;
             for (var key in uavs) {
                 uavs[key].marker.setIcon(uavs[key].marker.uavSymbolBlack);
                 uavs[key].marker.selected = false;
                 google.maps.event.trigger(uavs[key].marker, 'selection_changed');
+                //console.log("selection was changed");
             }
             while (selectedDrones.length > 0) {
                 selectedDrones.pop();

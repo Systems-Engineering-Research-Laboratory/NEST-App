@@ -1,6 +1,8 @@
 ﻿var eventlog_show_hide = false;
 var progress_show_hide = false;
 var homeBase = new google.maps.LatLng(34.2420, -118.5288);
+
+
 var mapFunctions = {
     shiftPressed : false,
     mouseDownPos: null,
@@ -10,6 +12,7 @@ var mapFunctions = {
     goLat: null,
     goLng: null,
     ids: [],
+
 
     //Returns the latlong of the clicked point
     GetLatLong: function (theMap, event) {
@@ -95,7 +98,7 @@ var mapFunctions = {
         contextMenuOptions.classNames = { menu: 'context_menu', menuSeparator: 'context_menu_separator' };
         var menuItems = [];
         menuItems.push({ className: 'context_menu_item', eventName: 'get_details', label: 'UAV Details' });
-        menuItems.push({});
+        menuItems.push({ className: 'context_menu_item', eventName: 'battery_est', label: 'Battery EST' });
         menuItems.push({});
         menuItems.push({ className: 'context_menu_item', eventName: 'non_nav', label: 'Adjust Parameters' });
         menuItems.push({ className: 'context_menu_item', eventName: 'hold', label: 'Hold Position' });
@@ -112,6 +115,7 @@ var mapFunctions = {
     UAVContextSelection: function (map, marker, latLng, eventName) {
         if (typeof(assignment) == 'undefined') {
             console.log("*********  Log in first!  **********");
+            return ;
         }
         else {
             var uid = assignment.getUserId();
@@ -128,6 +132,9 @@ var mapFunctions = {
             switch (eventName) {
                 case 'get_details':
                     window.open("http://localhost:53130/detailview", "_blank");
+                    break;
+                case 'battery_est':
+                    batteryCalc.displayEstCircle(uav);
                     break;
                 case 'non_nav':
                     if (!assignment.isUavAssignedToUser(uav.Id)) {
@@ -176,7 +183,7 @@ var mapFunctions = {
                         console.log("You're not the owner");
                     } else {
                         //create ui
-                        document.getElementById("land_click").onclick = function () { uavCommands.ForceLand(uid, uav, latLng, alt, throttle, that.ids); mapFunctions.land_hide() };
+                        document.getElementById("land_click").onclick = function () { uavCommands.ForceLand(uid, uav, uavs[uid].marker.position, alt, throttle, that.ids); console.log("position is: " + uav.marker.position); mapFunctions.land_hide() };
                         mapFunctions.land_show(marker.uav.Callsign);
                     }
                     break;
@@ -292,6 +299,7 @@ var mapFunctions = {
         uav.infoboxAlert = null;
         uav.alertOnce = 0;
         uav.BatteryWarning = 0;
+        uav.User = uavData.User;
         return uav;
     },
 
@@ -369,6 +377,41 @@ var mapFunctions = {
         }
     },
 
+    GetUavById: function(id){
+        for (var key in uavs){
+            if(uavs[key].Id == id){
+                return uavs[key];
+            }
+        }
+    },
+
+    BuildUavListItem: function(uid){
+        var item = document.createElement("DIV");
+        item.id = uavs[uid].Callsign;
+        item.innerHTML = uavs[uid].Callsign;
+        item.style.maxWidth = "114px";
+        item.style.minWidth = "70px";
+        item.style.maxHeight = "27px";
+        item.style.cssFloat = "left";
+        item.style.border = "1px solid";
+        item.style.paddingLeft = "2px";
+        item.style.backgroundColor = "rgba(250, 250, 250, 0.75)";
+        item.onclick = function () {
+            mapUavId = null;
+            for (var key in uavs) {
+                uavs[key].marker.setIcon(uavs[key].marker.uavSymbolBlack);
+                uavs[key].marker.selected = false;
+                google.maps.event.trigger(uavs[key].marker, 'selection_changed');
+                //console.log("selection was changed");
+            }
+            while (selectedDrones.length > 0) {
+                selectedDrones.pop();
+            }
+            droneSelection.CtrlSelect(uavs[uid].marker, selectedDrones);
+        }
+        return item;
+    },
+
     CenterOnUAV: function (uavKey) {
         map.setCenter(uavs[uavKey].marker.position);
     },
@@ -388,6 +431,11 @@ var mapFunctions = {
         document.getElementById("CommPopPlaceHolder").style.display = "block";
         document.getElementById("return_popup").style.display = "block";
         $(".UAVId").html("UAV: " + callsign);
+    },
+
+    cancel_show: function () {
+        document.getElementById("CommPopPlaceHolder").style.display = "block";
+        document.getElementById("cancel_popup").style.display = "block";
     },
 
     land_show: function (callsign) {
@@ -422,6 +470,11 @@ var mapFunctions = {
         document.getElementById("return_popup").style.display = "none";
     },
 
+    cancel_hide: function () {
+        document.getElementById("CommPopPlaceHolder").style.display = "none";
+        document.getElementById("cancel_popup").style.display = "none";
+    },
+
     land_hide: function () {
         document.getElementById("CommPopPlaceHolder").style.display = "none";
         document.getElementById("land_popup").style.display = "none";
@@ -442,16 +495,25 @@ var mapFunctions = {
         document.getElementById("go_long").value = "";
     },
 
-    // USER INTERFACE PROMPT TO ACCEPT OR REJECT UAV ASSIGNMENT ON MAP
-    goTo_RR_show: function () {
-        document.getElementById("RoundRobin_popup").style.display = "block";
-    },
+    //// USER INTERFACE PROMPT TO ACCEPT OR REJECT UAV ASSIGNMENT ON MAP
+    //goTo_RR_show: function () {
+    //    document.getElementById("RoundRobin_popup").style.display = "block";
+    //},
 
-    goTo_RR_hide: function () {
-        $("#RoundRobin_popup").fadeOut("slow", function () { });
-    },
+    //goTo_RR_hide: function () {
+    //    $("#RoundRobin_popup").fadeOut("slow", function () { });
+    //},
 
     RR_button_accept: function () {
+        assignment.uavAccepted(warningUavId);
+        $("#RoundRobin_popup").fadeOut("slow", function () { });
+        document.getElementById('RR_choice_p').innerHTML = "You have accepted UAV";
+        document.getElementById('RR_choice_p').style.color = "green";
+        document.getElementById('RR_outer_result').style.display = "block";
+        $("#RR_outer_result").fadeOut("slow", function () { });
+    },
+
+    RR_button_accept_window: function() {
         assignment.uavAccepted(warningUavId);
         $("#RoundRobin_popup").fadeOut("slow", function () { });
         document.getElementById('RR_choice_p').innerHTML = "You have accepted UAV";

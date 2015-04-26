@@ -21,18 +21,121 @@ using NEST_App.Hubs;
 
 namespace NEST_App.Controllers.Api
 {
+    public static class GeoCodeCalc
+    {
+        public const double EarthRadiusInMiles = 3956.0;
+        public const double EarthRadiusInKilometers = 6367.0;
+
+        public static double ToRadian(double val) { return val * (Math.PI / 180); }
+        public static double DiffRadian(double val1, double val2) { return ToRadian(val2) - ToRadian(val1); }
+
+        public static double CalcDistance(double lat1, double lng1, double lat2, double lng2)
+        {
+            return CalcDistance(lat1, lng1, lat2, lng2, GeoCodeCalcMeasurement.Miles);
+        }
+
+        public static double CalcDistance(double lat1, double lng1, double lat2, double lng2, GeoCodeCalcMeasurement m)
+        {
+            double radius = GeoCodeCalc.EarthRadiusInMiles;
+
+            if (m == GeoCodeCalcMeasurement.Kilometers) { radius = GeoCodeCalc.EarthRadiusInKilometers; }
+            return radius * 2 * Math.Asin(Math.Min(1, Math.Sqrt((Math.Pow(Math.Sin((DiffRadian(lat1, lat2)) / 2.0), 2.0) + Math.Cos(ToRadian(lat1)) * Math.Cos(ToRadian(lat2)) * Math.Pow(Math.Sin((DiffRadian(lng1, lng2)) / 2.0), 2.0)))));
+        }
+
+        public static double CalcPythagorean(double x, double y)
+        {
+            return Math.Sqrt(x * x + y * y);
+        }
+    }
+
+    public enum GeoCodeCalcMeasurement : int
+    {
+        Miles = 0,
+        Kilometers = 1
+    }
     public class UAVsController : ApiController
     {
-        private NestContainer db = new NestContainer();
-        private String[] lines = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content\\Names.txt"));
-        private String[] lines2 = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content\\Flowers.txt"));
-        private Random rand = new Random();
+        private readonly NestContainer _db = new NestContainer();
+        private readonly string[] _lines = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content\\Names.txt"));
+        private readonly string[] _lines2 = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content\\Flowers.txt"));
+        private readonly Random _rand = new Random();
+
+        [HttpGet]
+        [Route("api/uavs/geteta/{id}")]
+        public DateTime GetEta(int id)
+        {
+            var uav = _db.UAVs.Find(id);
+            var firstOrDefault = uav.Schedules.FirstOrDefault();
+            if (firstOrDefault == null) return new DateTime();
+            if (firstOrDefault.CurrentMission == null) return new DateTime();
+            var currentMissionId = (int)firstOrDefault.CurrentMission;
+            var currentMission = _db.Missions.Find(currentMissionId);
+
+            var orDefault = uav.FlightStates.FirstOrDefault();
+            if (orDefault == null) return new DateTime();
+            var radianVelocity = GeoCodeCalc.CalcPythagorean(orDefault.VelocityX, orDefault.VelocityY);
+
+            if (currentMission.TimeAssigned == null) return new DateTime();
+            var flightState = uav.FlightStates.FirstOrDefault();
+            if (flightState == null) return new DateTime();
+            currentMission.EstimatedCompletionTime = ((DateTime)currentMission.TimeAssigned).AddMinutes(GeoCodeCalc.CalcDistance(flightState.Latitude,
+                flightState.Longitude, currentMission.Latitude, currentMission.Longitude) / radianVelocity);
+            _db.Entry(currentMission).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return (DateTime)currentMission.EstimatedCompletionTime;
+        }
+
+        [HttpGet]
+        [Route("api/uavs/getsta/{id}")]
+        public DateTime GetSta(int id)
+        {
+            var uav = _db.UAVs.Find(id);
+            var firstOrDefault = uav.Schedules.FirstOrDefault();
+            if (firstOrDefault == null) return new DateTime();
+            if (firstOrDefault.CurrentMission == null) return new DateTime();
+            var currentMissionId = (int) firstOrDefault.CurrentMission;
+            var currentMission = _db.Missions.Find(currentMissionId);
+
+            if (currentMission.TimeAssigned == null) return new DateTime();
+            var flightState = uav.FlightStates.FirstOrDefault();
+            if (flightState == null) return new DateTime();
+            currentMission.ScheduledCompletionTime = ((DateTime) currentMission.TimeAssigned).AddMinutes(GeoCodeCalc.CalcDistance(flightState.Latitude,
+                flightState.Longitude, currentMission.Latitude, currentMission.Longitude) / uav.MaxVelocity);
+            _db.Entry(currentMission).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return (DateTime)currentMission.ScheduledCompletionTime;
+        }
+
+        [HttpGet]
+        [Route("api/uavs/getavailabledistance/{id}")]
+        public double GetAvailableDistance(int id)
+        {
+            var uav = _db.UAVs.Find(id);
+            var firstOrDefault = uav.FlightStates.FirstOrDefault();
+            if (firstOrDefault != null)
+                return uav.Mileage/ ( 1.0 * firstOrDefault.BatteryLevel ) ;
+            return 0;
+        }
+
+        [HttpGet]
+        [Route("api/uavs/searchbycallsign")]
+        public async Task<UAV> SearchByCallsign(string callsign)
+        {
+            var uavs = from u in _db.UAVs
+                       where u.Callsign.Equals(callsign)
+                       select u;
+            if (!uavs.Any())
+            {
+                return null;
+            }
+            return await uavs.FirstAsync();
+        }
 
         [HttpGet]
         [Route("api/uavs/getworkload/{id}")]
         public int GetWorkload(int id)
         {
-            var uav = db.UAVs.Find(id);
+            var uav = _db.UAVs.Find(id);
             return uav.estimated_workload;
         }
 
@@ -40,7 +143,7 @@ namespace NEST_App.Controllers.Api
         [Route("api/uavs/calculateworkloadforuav/{id}")]
         public int CalculateWorkloadForUav(int id)
         {
-            var uav = db.UAVs.Find(id);
+            var uav = _db.UAVs.Find(id);
             int workload = 0;
             workload += uav.Schedules.Count;
             foreach (var sched in uav.Schedules)
@@ -55,9 +158,9 @@ namespace NEST_App.Controllers.Api
         [Route("api/uavs/rejectassignment")]
         public HttpResponseMessage RejectAssignment(int uavid, int userid)
         {
-            var user = db.Users.Find(userid);
-            var uav = db.UAVs.Find(uavid);
-            var nextUserInQueue = db.Users.FirstOrDefault(u => u.position_in_queue == 1);
+            var user = _db.Users.Find(userid);
+            var uav = _db.UAVs.Find(uavid);
+            var nextUserInQueue = _db.Users.FirstOrDefault(u => u.position_in_queue == 1);
             try
             {
                 user.UAVs.Remove(uav);
@@ -65,24 +168,24 @@ namespace NEST_App.Controllers.Api
                 {
                     nextUserInQueue.UAVs.Add(uav);
                     uav.User = nextUserInQueue;
-                    foreach (var usr in db.Users.Where(u => u.user_id != nextUserInQueue.user_id))
+                    foreach (var usr in _db.Users.Where(u => u.user_id != nextUserInQueue.user_id))
                     {
                         usr.position_in_queue--;
-                        db.Entry(usr).State = System.Data.Entity.EntityState.Modified;
+                        _db.Entry(usr).State = System.Data.Entity.EntityState.Modified;
                     }
-                    nextUserInQueue.position_in_queue = db.Users.Count();
-                    db.Entry(nextUserInQueue).State = System.Data.Entity.EntityState.Modified;
-                    db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
-                    db.SaveChanges();
+                    nextUserInQueue.position_in_queue = _db.Users.Count();
+                    _db.Entry(nextUserInQueue).State = System.Data.Entity.EntityState.Modified;
+                    _db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
                 }
                 else
                 {
                     return Request.CreateResponse(HttpStatusCode.Conflict);
                 }
 
-                db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
-                db.Entry(user).State = System.Data.Entity.EntityState.Modified;
-                
+                _db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
+                _db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+
                 var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
                 hub.Clients.All.UavRejected(uavid);
 
@@ -95,29 +198,46 @@ namespace NEST_App.Controllers.Api
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-
+        [HttpPost]
+        [Route("api/uavs/assignment/{id}/{userId}")]
+        public async Task<HttpResponseMessage> UAVAssignment(int id, int? userId)
+        {
+            try
+            {
+                UAV u = _db.UAVs.FirstOrDefault(x => x.Id == id);
+                u.User_user_id = userId;
+                _db.Entry(u).State = System.Data.Entity.EntityState.Modified;
+                await _db.SaveChangesAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
         [HttpPost]
         [Route("api/uavs/adduavandassign")]
         public HttpResponseMessage AddUavAndAssign(UAV uav)
         {
             try
             {
-                db.UAVs.Add(uav);
-                var nextUserInQueue = db.Users.FirstOrDefault(u => u.position_in_queue == 1);
-                var users = db.Users;
+                uav.estimated_workload = 0;
+                _db.UAVs.Add(uav);
+                var nextUserInQueue = _db.Users.FirstOrDefault(u => u.position_in_queue == 1);
+                var users = _db.Users;
                 if (nextUserInQueue != null)
                 {
                     nextUserInQueue.UAVs.Add(uav);
                     uav.User = nextUserInQueue;
-                    foreach (var user in users.Where(user => user.user_id != nextUserInQueue.user_id))
+                    foreach (var user in users.Where(user => user.user_id != nextUserInQueue.user_id && user.UserRole.role_type == "Flight Dispatcher"))
                     {
                         user.position_in_queue--;
-                        db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                        _db.Entry(user).State = System.Data.Entity.EntityState.Modified;
                     }
                     nextUserInQueue.position_in_queue = users.Count();
-                    db.Entry(nextUserInQueue).State = System.Data.Entity.EntityState.Modified;
-                    db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
-                    db.SaveChanges();
+                    _db.Entry(nextUserInQueue).State = System.Data.Entity.EntityState.Modified;
+                    _db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
                 }
                 else
                 {
@@ -134,27 +254,27 @@ namespace NEST_App.Controllers.Api
         }
 
         [HttpPost]
-        [Route("api/uavs/assignexistinguav")]
+        [Route("api/uavs/assignexistinguav/{uavid}")]
         public HttpResponseMessage AssignExistingUav(int uavid)
         {
             try
             {
-                var foundUav = db.UAVs.Find(uavid);
-                var nextUserInQueue = db.Users.FirstOrDefault(u => u.position_in_queue == 1);
-                var users = db.Users;
+                var foundUav = _db.UAVs.Find(uavid);
+                var nextUserInQueue = _db.Users.FirstOrDefault(u => u.position_in_queue == 1);
+                var users = _db.Users;
                 if (nextUserInQueue != null)
                 {
                     nextUserInQueue.UAVs.Add(foundUav);
                     foundUav.User = nextUserInQueue;
-                    foreach (var user in users.Where(user => user.user_id != nextUserInQueue.user_id))
+                    foreach (var user in users.Where(user => user.user_id != nextUserInQueue.user_id && user.UserRole.role_type == "Flight Dispatcher"))
                     {
                         user.position_in_queue--;
-                        db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                        _db.Entry(user).State = System.Data.Entity.EntityState.Modified;
                     }
                     nextUserInQueue.position_in_queue = users.Count();
-                    db.Entry(nextUserInQueue).State = System.Data.Entity.EntityState.Modified;
-                    db.Entry(foundUav).State = System.Data.Entity.EntityState.Modified;
-                    db.SaveChanges();
+                    _db.Entry(nextUserInQueue).State = System.Data.Entity.EntityState.Modified;
+                    _db.Entry(foundUav).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
                 }
                 else
                 {
@@ -176,8 +296,8 @@ namespace NEST_App.Controllers.Api
             double homeLon = -118.5288;                      //default home longitude
             double radius = 8050;                           //meters (5 miles)
             double radiusDegrees = radius / 111300f;        //convert meters to degrees, from the equator, 111300 meters in 1 degree
-            double lat2 = rand.NextDouble();                //random double latitude
-            double lon2 = rand.NextDouble();                //random double longitude
+            double lat2 = _rand.NextDouble();                //random double latitude
+            double lon2 = _rand.NextDouble();                //random double longitude
             double w = radiusDegrees * Math.Sqrt(lat2);
             double t = 2 * Math.PI * lon2;
             double x = w * Math.Cos(t);
@@ -198,8 +318,8 @@ namespace NEST_App.Controllers.Api
             //string filePath = Path.Combine(userPath, "Content\\Names.txt");
             //var lines = File.ReadAllLines(filePath);
             var rand = new Random();
-            var randomLineNumber = rand.Next(0, lines.Length - 1);
-            var line = lines[randomLineNumber];
+            var randomLineNumber = rand.Next(0, _lines.Length - 1);
+            var line = _lines[randomLineNumber];
             return line;
         }
 
@@ -209,8 +329,8 @@ namespace NEST_App.Controllers.Api
             //string filePath = Path.Combine(userPath, "Content\\Flowers.txt");
             //var lines = File.ReadAllLines(filePath);
             var rand = new Random();
-            var randomLineNumber = rand.Next(0, lines2.Length - 1);
-            var line = lines2[randomLineNumber];
+            var randomLineNumber = rand.Next(0, _lines2.Length - 1);
+            var line = _lines2[randomLineNumber];
             return line;
         }
 
@@ -219,7 +339,7 @@ namespace NEST_App.Controllers.Api
         [Route("api/uavs/getuavinfo")]
         public async Task<HttpResponseMessage> GetUAVInfo()
         {
-            var uavs = from u in db.UAVs.Include(u => u.FlightStates).Include(u => u.Schedules).Include(u => u.EventLogs)
+            var uavs = from u in _db.UAVs.Include(u => u.FlightStates).Include(u => u.Schedules).Include(u => u.EventLogs)
                        let s = u.Schedules.OrderBy(s => s.create_date).FirstOrDefault()
                        let m = s.Missions.OrderBy(m => m.create_date).FirstOrDefault()
                        select new
@@ -245,6 +365,7 @@ namespace NEST_App.Controllers.Api
                            Mission = m,
                            FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
                            EventLog = u.EventLogs,
+                           User = u.User
                        };
             return Request.CreateResponse(HttpStatusCode.OK, uavs);
         }
@@ -278,10 +399,10 @@ namespace NEST_App.Controllers.Api
                 };
                 missions.Add(miss);
             }
-            db.Missions.AddRange(missions);
+            _db.Missions.AddRange(missions);
             try
             {
-                await db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
             }
             catch (DbUpdateException e)
             {
@@ -301,62 +422,68 @@ namespace NEST_App.Controllers.Api
         {
             //Ensure that the UAVs have schedules before we do the round robin so we don't skip UAVs
             await createSchedulesForUavs();
-            Queue<Schedule> schedQ = new Queue<Schedule>(db.Schedules);
-            //Grab all the unassigned missions in the database.
-            var unassigned = from mis in db.Missions
-                             where mis.ScheduleId == null
-                             select mis;
-
-            //Uav Id and the mission assigned. Put into list in case the db update fails.
-            List<Tuple<int?, Mission>> uavMissionPairs = new List<Tuple<int?, Mission>>();
-
-            //Assign each of those unassigned missions to the a schedule
-            foreach (Mission mis in unassigned)
+            IEnumerable<Schedule> schedQOrdered = _db.Schedules.OrderByDescending(s => s.UAV.estimated_workload).AsEnumerable() ;
+            if (schedQOrdered != null)
             {
-                Schedule s = schedQ.Dequeue();
-                s.Missions.Add(mis);
-                if (s.CurrentMission == null)
-                {
-                    //This schedule had no current mission, so just assign it one
-                    s.CurrentMission = mis.id;
-                }
-                uavMissionPairs.Add(new Tuple<int?, Mission>(s.UAVId, mis));
-                //Add to the back of the queue for round robinness
-                schedQ.Enqueue(s);
-            }
+                Queue<Schedule> schedQ = new Queue<Schedule>(schedQOrdered);
+                //Grab all the unassigned missions in the database.
+                var unassigned = from mis in _db.Missions
+                                 where mis.ScheduleId == null
+                                 select mis;
 
-            try
-            {
-                await db.SaveChangesAsync();
-                //Now use signalr to assign the missions to the vehicles.
-                var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
-                foreach(var tup in uavMissionPairs)
+                //Uav Id and the mission assigned. Put into list in case the db update fails.
+                List<Tuple<int?, Mission>> uavMissionPairs = new List<Tuple<int?, Mission>>();
+
+                //Assign each of those unassigned missions to the a schedule
+                foreach (Mission mis in unassigned)
                 {
-                    int? uavId = tup.Item1;
-                    Mission mis = tup.Item2;
-                    hub.Clients.All.newMissionAssignment(uavId, new
+                    mis.TimeAssigned = DateTime.Now;
+                    Schedule s = schedQ.Dequeue();
+                    s.UAV.estimated_workload++;
+                    s.Missions.Add(mis);
+                    if (s.CurrentMission == null)
                     {
-                        id = mis.id,
-                        Latitude = mis.Latitude,
-                        Longitude = mis.Longitude,
-                        EstimatedCompletionTime = mis.EstimatedCompletionTime,
-                        TimeAssigned = mis.TimeAssigned,
-                        TimeCompleted = mis.TimeCompleted,
-                        ScheduledCompletionTime = mis.ScheduledCompletionTime,
-                        ScheduleId = mis.ScheduleId,
-                        create_date = mis.create_date,
-                        modified_date = mis.modified_date,
-                        Phase = mis.Phase,
-                        FlightPattern = mis.FlightPattern,
-                        Payload = mis.Payload,
-                        FinancialCost = mis.FinancialCost,
-
-                    });
+                        //This schedule had no current mission, so just assign it one
+                        s.CurrentMission = mis.id;
+                    }
+                    uavMissionPairs.Add(new Tuple<int?, Mission>(s.UAVId, mis));
+                    //Add to the back of the queue for round robinness
+                    schedQ.Enqueue(s);
                 }
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
+
+                try
+                {
+                    await _db.SaveChangesAsync();
+                    //Now use signalr to assign the missions to the vehicles.
+                    var hub = GlobalHost.ConnectionManager.GetHubContext<VehicleHub>();
+                    foreach (var tup in uavMissionPairs)
+                    {
+                        int? uavId = tup.Item1;
+                        Mission mis = tup.Item2;
+                        hub.Clients.All.newMissionAssignment(uavId, new
+                        {
+                            id = mis.id,
+                            Latitude = mis.Latitude,
+                            Longitude = mis.Longitude,
+                            EstimatedCompletionTime = mis.EstimatedCompletionTime,
+                            TimeAssigned = mis.TimeAssigned,
+                            TimeCompleted = mis.TimeCompleted,
+                            ScheduledCompletionTime = mis.ScheduledCompletionTime,
+                            ScheduleId = mis.ScheduleId,
+                            create_date = mis.create_date,
+                            modified_date = mis.modified_date,
+                            Phase = mis.Phase,
+                            FlightPattern = mis.FlightPattern,
+                            Payload = mis.Payload,
+                            FinancialCost = mis.FinancialCost,
+
+                        });
+                    }
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
             }
 
             return Request.CreateResponse(HttpStatusCode.OK);
@@ -377,7 +504,7 @@ namespace NEST_App.Controllers.Api
         public async Task<HttpResponseMessage> createMaintenance(int num)
         {
             var maintenance = new List<Maintenance>();
-            Queue<Schedule> maintQ = new Queue<Schedule>(db.Schedules);
+            Queue<Schedule> maintQ = new Queue<Schedule>(_db.Schedules);
 
             for (int i = 0; i < num; i++)
             {
@@ -393,13 +520,13 @@ namespace NEST_App.Controllers.Api
 
                 var sched = maintQ.Dequeue();
                 sched.Maintenances.Add(maint);
-                db.Entry(sched).State = System.Data.Entity.EntityState.Modified;
+                _db.Entry(sched).State = System.Data.Entity.EntityState.Modified;
                 maintQ.Enqueue(sched);
             }
-            db.Maintenances.AddRange(maintenance);
+            _db.Maintenances.AddRange(maintenance);
 
-            await db.SaveChangesAsync();
-             
+            await _db.SaveChangesAsync();
+
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
@@ -409,7 +536,7 @@ namespace NEST_App.Controllers.Api
         /// <returns>true always</returns>
         private async Task<bool> createSchedulesForUavs()
         {
-            var uavsWithNoScheds = from u in db.UAVs
+            var uavsWithNoScheds = from u in _db.UAVs
                                    where u.Schedules.Count == 0
                                    select u;
             foreach (UAV u in uavsWithNoScheds)
@@ -423,10 +550,10 @@ namespace NEST_App.Controllers.Api
                         modified_date = DateTime.Now,
                     }
                 };
-                db.Entry(u).State = System.Data.Entity.EntityState.Modified;
+                _db.Entry(u).State = System.Data.Entity.EntityState.Modified;
             }
 
-            await db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
 
             return true;
         }
@@ -505,23 +632,23 @@ namespace NEST_App.Controllers.Api
                 uav.FlightStates = flights;
                 //uav.Schedules = sched;
 
-                db.UAVs.Add(uav);
+                _db.UAVs.Add(uav);
                 //db.Missions.Add(mission.First());
                 //db.Maintenances.Add(maintenances.First());
-                db.Configurations.Add(config);
+                _db.Configurations.Add(config);
                 //db.Schedules.Add(sched.First());
-                db.FlightStates.Add(flights.First());
+                _db.FlightStates.Add(flights.First());
 
                 try
                 {
-                    db.SaveChanges();
+                    _db.SaveChanges();
                 }
                 catch (DbUpdateException e)
                 {
                     Console.Write(e.Entries);
                 }
             }
-            var drones = from u in db.UAVs.Include(u => u.FlightStates)
+            var drones = from u in _db.UAVs.Include(u => u.FlightStates)
                          select new
                          {
                              Id = u.Id,
@@ -547,11 +674,11 @@ namespace NEST_App.Controllers.Api
         {
             evnt.create_date = DateTime.Now;
             evnt.modified_date = DateTime.Now;
-            db.EventLogs.Add(evnt);
+            _db.EventLogs.Add(evnt);
 
             try
             {
-                await db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -564,7 +691,7 @@ namespace NEST_App.Controllers.Api
         // GET: api/UAVs
         public IQueryable<UAV> GetUAVs()
         {
-            return db.UAVs.Where(u => u.isActive == true);
+            return _db.UAVs.Where(u => u.isActive == true);
             //return db.UAVs;
         }
 
@@ -572,7 +699,7 @@ namespace NEST_App.Controllers.Api
         [ResponseType(typeof(UAV))]
         public async Task<IHttpActionResult> GetUAV(int id)
         {
-            UAV uAV = await db.UAVs.FindAsync(id);
+            UAV uAV = await _db.UAVs.FindAsync(id);
             if (uAV == null)
             {
                 return NotFound();
@@ -595,11 +722,11 @@ namespace NEST_App.Controllers.Api
                 return BadRequest();
             }
 
-            db.Entry(uAV).State = System.Data.Entity.EntityState.Modified;
+            _db.Entry(uAV).State = System.Data.Entity.EntityState.Modified;
 
             try
             {
-                await db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -619,28 +746,34 @@ namespace NEST_App.Controllers.Api
         [ResponseType(typeof(UAV))]
         [Route("api/uavs/addUavWithAutoConfig")]
         [HttpPost]
-        public async Task<IHttpActionResult> PostUAVWithConfig(UAV uAV)
+        public async Task<IHttpActionResult> PostUAVWithConfig(UAV uav)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Configurations.Add(
-                new Configuration
+            uav.Configurations = new Configuration
                 {
                     Classification = "quadrotor",
                     create_date = DateTime.Now,
                     modified_date = DateTime.Now,
                     Name = "autogen",
                     NumberOfMotors = 4,
-                    
-                });
 
-            db.UAVs.Add(uAV);
-            await db.SaveChangesAsync();
+                };
 
-            return CreatedAtRoute("DefaultApi", new { id = uAV.Id }, uAV);
+            uav.Schedules.Add(new Schedule
+            {
+                UAVId = uav.Id,
+                create_date = DateTime.Now,
+                modified_date = DateTime.Now,
+                CurrentMission = null
+            });
+            _db.UAVs.Add(uav);
+            await _db.SaveChangesAsync();
+
+            return Ok(uav);
         }
 
         // POST: api/UAVs
@@ -652,8 +785,8 @@ namespace NEST_App.Controllers.Api
                 return BadRequest(ModelState);
             }
 
-            db.UAVs.Add(uAV);
-            await db.SaveChangesAsync();
+            _db.UAVs.Add(uAV);
+            await _db.SaveChangesAsync();
 
             return CreatedAtRoute("DefaultApi", new { id = uAV.Id }, uAV);
         }
@@ -662,14 +795,14 @@ namespace NEST_App.Controllers.Api
         [ResponseType(typeof(UAV))]
         public async Task<IHttpActionResult> DeleteUAV(int id)
         {
-            UAV uAV = await db.UAVs.FindAsync(id);
+            UAV uAV = await _db.UAVs.FindAsync(id);
             if (uAV == null)
             {
                 return NotFound();
             }
 
-            db.UAVs.Remove(uAV);
-            await db.SaveChangesAsync();
+            _db.UAVs.Remove(uAV);
+            await _db.SaveChangesAsync();
 
             return Ok(uAV);
         }
@@ -678,7 +811,7 @@ namespace NEST_App.Controllers.Api
         [Route("api/uavs/getunassigned")]
         public IHttpActionResult getUnassigned()
         {
-            IEnumerable<UAV> uavs = db.UAVs.Where(u => u.User == null && u.isActive);
+            IEnumerable<UAV> uavs = _db.UAVs.Where(u => u.User == null && u.isActive);
             return Ok(uavs);
         }
 
@@ -687,19 +820,19 @@ namespace NEST_App.Controllers.Api
         [Route("api/uavs/assignuser/{uav_id}/{user_id}")]
         public async Task<IHttpActionResult> assignUser(int uav_id, int user_id)
         {
-            UAV uav = await db.UAVs.FindAsync(uav_id);
-            User user = await db.Users.FindAsync(user_id);
+            UAV uav = await _db.UAVs.FindAsync(uav_id);
+            User user = await _db.Users.FindAsync(user_id);
             if (uav == null || user == null)
             {
                 return NotFound();
             }
             uav.User = user;
             user.UAVs.Add(uav);
-            db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
-            db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+            _db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
+            _db.Entry(user).State = System.Data.Entity.EntityState.Modified;
             try
             {
-                await db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -713,7 +846,7 @@ namespace NEST_App.Controllers.Api
         [Route("api/uavs/disableuav/{id}")]
         public async Task<IHttpActionResult> disableUAV(int id)
         {
-            UAV uav = await db.UAVs.FindAsync(id);
+            UAV uav = await _db.UAVs.FindAsync(id);
             if (uav == null)
             {
                 return NotFound();
@@ -721,11 +854,11 @@ namespace NEST_App.Controllers.Api
             uav.isActive = false;
 
 
-            db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
+            _db.Entry(uav).State = System.Data.Entity.EntityState.Modified;
 
             try
             {
-                await db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -747,14 +880,14 @@ namespace NEST_App.Controllers.Api
         {
             if (disposing)
             {
-                db.Dispose();
+                _db.Dispose();
             }
             base.Dispose(disposing);
         }
 
         private bool UAVExists(int id)
         {
-            return db.UAVs.Count(e => e.Id == id) > 0;
+            return _db.UAVs.Count(e => e.Id == id) > 0;
         }
     }
 }

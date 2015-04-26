@@ -71,6 +71,9 @@
         //*******************SELECTED*********************//
         if (marker.selected == true) {
             selectedUAV = marker.uav;
+            var uavItem = mapFunctions.BuildUavListItem(marker.uav.Id);
+            document.getElementById("uavList").appendChild(uavItem);
+
             //console.log(selectedUAV);
             ////Refresh current flightpath and display it
             //flightLines[marker.uav.Id] = new google.maps.Polyline({
@@ -102,6 +105,15 @@
         }
             //******************DE-SELECTED*******************//
         else if (marker.selected == false) {
+            var uavItem = document.getElementById(marker.uav.Callsign);
+            $('#' + marker.uav.Callsign).remove();
+
+            //turn off battery indicator
+            if (batteryCalc.circle != null) {
+                batteryCalc.circle.setVisible(false);
+                batteryCalc.circle = null;
+            }
+
             //Turn off drone's flightpath
             //flightLines[marker.uav.Id].setMap(null);
 

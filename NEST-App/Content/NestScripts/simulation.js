@@ -120,21 +120,12 @@ function scheduleMissions(vehicleMap, missions, hub) {
 
 
 $(document).ready(function () {
-    localStorage.clear();
     //Stores the vehicles received from the AJAX call.
     var map = new VehicleContainer();
 
     var vehicleHub = $.connection.vehicleHub;
     
     avgCalcTimeDiv = $("#avg-time")
-
-    var adminHub = $.connection.adminHub;
-    adminHub.client.newDrop = function (drop) {
-        console.log(drop);
-        //LOL...signalR didn't work in flightStateCb...
-        localStorage.setItem("uavBatteryID", drop.uavID);
-        localStorage.setItem("uavBatteryAmount", drop.amount);
-    }
     
     //Throws 'undefined' is not a function error...commenting out..
     //$('.dropdown-toggle').dropdown();
@@ -176,17 +167,6 @@ function flightStateCb (map, hub, data, textStatus, jqXHR) {
         map.ids.push(data[i].Id);
         console.log(data[i].Id + " " + data[i].Callsign);
         $("#dropdown-UAVIds").append('<li role="presentation"><a class="UAVId" role="menuitem" tabindex="-1" href="#">' + data[i].Id + '</a></li>');
-    }
-
-    //Communication via local storage changes
-    if (window.addEventListener) {
-        window.addEventListener("storage", handler, false);
-    }
-    function handler(e) {
-        console.log('Received battery uav Id: ' + localStorage.getItem("uavBatteryID"));
-        console.log('Received battery ammount: ' + localStorage.getItem("uavBatteryAmount"));
-        if( map.vehicles[localStorage.getItem("uavBatteryID")] != null )
-            map.vehicles[localStorage.getItem("uavBatteryID")].FlightState.BatteryLevel -= localStorage.getItem("uavBatteryAmount") / 100;
     }
    
     //I think this is in the wrong spot. It probably needs to be in connection.hub.start()
@@ -286,9 +266,7 @@ function setCommandOnVehicle(cmd, map) {
 // This function sets all the callbacks that will be called with SignalR. Please put all callbacks here.
 function setSignalrCallbacks(map) {
     var vehicleHub = $.connection.vehicleHub
-    //vehicleHub.client.flightStateUpdate = function (vehicle) {
-    //    console.log(vehicle);
-    //}
+   
     //This is the listener for getting target commands from signalr
     vehicleHub.client.sendTargetCommand = function (target, connId) {
         receivedCommand(map, target, "CMD_NAV_Target", { connId: connId });
@@ -321,6 +299,21 @@ function setSignalrCallbacks(map) {
             if (uav) {
                 uav.addMissionToSchedule(mission);
             }
+        }
+    }
+
+    vehicleHub.client.uavBackAtBase = function(id)
+    {
+        console.log("UAV " + id + " has arrived back at base");
+    }
+
+    var adminHub = $.connection.adminHub;
+    adminHub.client.newDrop = function (drop) {
+        console.log("UAV ID for battery drop is: " + drop.uavID);
+        console.log("Amount for battery drop is: " + drop.amount);
+        console.log("UAV is: " + map.getVehicleById(drop.uavID));
+        if (map.hasVehicleById(drop.uavID)) {
+            map.getVehicleById(drop.uavID).FlightState.BatteryLevel -= drop.amount / 100;
         }
     }
 }

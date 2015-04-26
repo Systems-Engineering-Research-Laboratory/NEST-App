@@ -58,6 +58,7 @@ html, body, #map-canvas {
     font-weight: bold;
     text-align: center;
     width: 60px;
+    pointer-events: none;
 }
 
 #infobox {
@@ -298,6 +299,34 @@ html, body, #map-canvas {
     border-radius: 8px;
 }
 
+progress {
+	display: block;
+	/* Important Thing */
+	-webkit-appearance: none;
+	border: none;
+}
+
+progress::-webkit-progress-bar {
+	background: #1a096d;
+	border-radius: 50px;
+	padding: 2px;
+	box-shadow: 0 1px 0px 0 rgba(255, 255, 255, 0.2);
+}
+
+progress::-webkit-progress-value {
+	border-radius: 50px;
+	box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.4);
+	background:
+		-webkit-linear-gradient(45deg, transparent, transparent 33%, rgba(0, 0, 0, 0.1) 33%, rgba(0, 0, 0, 0.1) 66%, transparent 66%),
+		-webkit-linear-gradient(top, rgba(255, 255, 255, 0.25), rgba(0, 0, 0, 0.2)),
+        /*-webkit-linear-gradient(left, #f8c66c, #f7cab9);*/      
+        /*-webkit-linear-gradient(left, #c0f8c5, #aaf67c);*/    
+        -webkit-linear-gradient(left, #fcf2a3, #f1fb03);    
+	
+	/* Looks great, now animating it */
+	background-size: 25px 14px, 100% 100%, 100% 100%;
+	-webkit-animation: move 5s linear 0 infinite;
+}
 
 
 /*///////////////////////////////Event Log//////////////////////////////////*/
@@ -530,6 +559,15 @@ html, body, #map-canvas {
     height: 60px;
 }
 
+#uavList{
+    position: fixed;
+    top: 80.5%;
+    left: 13%;
+    float: left;
+    margin: auto;
+    width: 60%;
+}
+
 #enter_callsign{
     max-width: 114px;
     min-width: 70px;
@@ -547,6 +585,15 @@ html, body, #map-canvas {
 #lockuavbtn{
     margin-top: 2px;
 }
+
+.uavListItem{
+    max-width: 114px;
+    min-width: 70px;
+    max-height: 27px;
+    float: left;
+    border: 1px solid;
+}
+
 
 .commandWindow {
     position: fixed;

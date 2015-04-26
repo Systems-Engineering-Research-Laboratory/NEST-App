@@ -92,33 +92,54 @@
     uavFilter: function () {
         //Click event listener
         var filterbutton = document.getElementById("filteruav");
-        google.maps.event.addDomListener(filterbutton, 'click', function () {
-            if (mapStyles.uavFilterClick == false) {
-                var i = 1;
+        var currentUser = JSON.parse($("#current_user").html()).username;
+        google.maps.event.addDomListener(filterbutton, "click", function () {
+            var infobox;
+            var infoboxAlert;
+            var i;
+            if (mapStyles.uavFilterClick === false) {
+                i = 1;
                 while (uavs[i] != undefined || uavs[i] != null) {
-                    if (assignment.assignments[uavs[i].Id - 1] != null) {
-                        i++;
-                        continue;
-                    }
-                    else {
+                    //if (assignment.assignments[uavs[i].Id - 1] != null) {
+                    //    i++;
+                    //    continue;
+                    //}
+                     if (uavs[i].User == null || uavs[i].User.username != currentUser) {
+                        console.log("filtering out: " + uavs[i].Callsign);
                         uavs[i].marker.setMap(null);
                         uavs[i].markerCircle.setMap(null);
                         uavs[i].markerCircle.setVisible(false);
                         uavs[i].marker.setVisible(false);
-                        i++;
+                        if (uavs[i].infobox) {
+                            infobox = uavs[i].infobox;
+                            infobox.close();
+                        }
+                        if (uavs[i].infoboxAlert) {
+                            infoboxAlert = uavs[i].infoboxAlert;
+                            infoboxAlert.close();
+                        }
                     }
+                    i++;
                 }
                 mapStyles.uavFilterClick = true;
             }
             else {
                 mapStyles.uavFilterClick = false;
-                var i = 1;
+                i = 1;
                 while ((uavs[i] != undefined || uavs[i] != null)) {
                     if (uavs[i].marker.getMap() == null) {
                         uavs[i].marker.setMap(map);
                         uavs[i].markerCircle.setMap(map);
                         uavs[i].markerCircle.setVisible(true);
                         uavs[i].marker.setVisible(true);
+                        if (uavs[i].infobox) {
+                            infobox = uavs[i].infobox;
+                            infobox.open(map, uavs[i].marker);
+                        }
+                        if (uavs[i].infoboxAlert) {
+                            infoboxAlert = uavs[i].infoboxAlert;
+                            infoboxAlert.open(map, uavs[i].marker);
+                        }
                         i++;
                     }
                     else

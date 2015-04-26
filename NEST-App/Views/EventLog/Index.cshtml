@@ -4,6 +4,11 @@
 @{
     ViewBag.Title = "Index";
 }
+<style>
+   #search {
+        display: inline;
+    }
+</style>
 
 <h2>Event Logs</h2>
 
@@ -12,7 +17,7 @@
     <button class="btn btn-primary" ng-click="fakeEmitAsmt()">Emit asmt</button>
     <button class="btn btn-primary" ng-click="fakeEmitRjct()">Emit rjct</button>
 
-    <div class="row">
+    <div class="row"> 
         <div class="col-xs-6 col-md-4">
             <strong>Criticality</strong>
             <ul style="list-style-type: none;">
@@ -25,48 +30,63 @@
                 <li><input type="datetime-local" placeholder="From: mm/dd/yyyy" ng-model="search.create_date"/></li>
                 @*<li><input type="datetime-local" placeholder="To: mm/dd/yyyy" /></li>*@
             </ul>
+
+            <strong>UAV Callsign</strong>
+            <ul style="list-style-type: none;">
+                <li><input ng-model="search.uav_callsign"></li>
+            </ul>
+            <strong>Operator</strong>
+            <ul style="list-style-type: none;">
+                <li><input ng-model="search.operator_screen_name" /></li>
+            </ul>
+            <strong>Message</strong>
+            <ul style="list-style-type: none;">
+                <li><input ng-model="search.message"></li>
+            </ul>
         </div>
 
-        <div class="col-xs-12 col-md-8">
-            <table class="table table-hover">
-                <tr>
-                    <td>
-                        <strong>UAV ID</strong>
-                    </td>
-                    <td>
-                        <strong>UAV Callsign</strong>
-                    </td>
-                    <td>
-                        <strong>Message</strong>
-                    </td>
-                    <td>
-                        <strong>Operator</strong>
-                    </td>
-                    <td>
-                        <strong>Time</strong>
-                    </td>
-                </tr>
-                <tr ng-repeat="evt in events | filter:criticalityFilter | filter:dateFilter" ng-style="getRowStyle(evt.criticality)">
-                    <td>
-                        {{evt.uav_id}}
-                    </td>
-                    <td>
-                        {{evt.uav_callsign}}
-                    </td>
-                    <td>
-                        <span ng-show="evt.criticality == 'warning'" class="glyphicon glyphicon-warning-sign" style="color: black; background-color: yellow;"></span>
-                        {{evt.message}}
-                    </td>
-                    <td>
-                        {{evt.operator_screen_name}}
-                    </td>
-                    <td>
-                        {{evt.create_date}}
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </div>
+            <div class="col-xs-12 col-md-8">
+                <table class="table table-hover" id="eventlog_table_for_eventview">
+                    <tr>
+                        <td>
+                            <strong>UAV ID</strong>
+                        </td>
+                        <td>
+                            <strong>UAV Callsign</strong>
+                        </td>
+                        <td>
+                            <strong>Message</strong>
+                        </td>
+                        <td>
+                            <strong>Operator</strong>
+                        </td>
+                        <td>
+                            <strong>Time</strong>
+                        </td>
+                    </tr>
+                    <tr ng-repeat="evt in events | filter:search.uav_callsign | filter:criticalityFilter | filter:search.operator_screen_name | filter:search.message" ng-style="getRowStyle(evt.criticality)">
+                        <td>
+                            {{evt.uav_id}}
+                        </td>
+                        <td>
+                            {{evt.uav_callsign}}
+                        </td>
+                        <td>
+                            <span ng-show="evt.criticality == 'warning'" class="glyphicon glyphicon-warning-sign" style="color: black; background-color: yellow;"></span>
+                            {{evt.message}}
+                        </td>
+                        <td>
+                            {{evt.operator_screen_name}}
+                        </td>
+                        <td>
+                            {{evt.create_date}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
 </div>
-
-@*<script src="~/Views/EventLog/eventlog.js"></script>*@
+</div>
+<script src="~/Content/detailViewResources/filter.js" type="text/javascript"></script>
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jquery-signalR")
+<script src="~/Content/EventLog/eventlogJS.js" type="text/javascript"></script>

@@ -115,7 +115,7 @@ function WaypointManager() {
         if (!mission.Waypoints) {
             //Case 1, get the waypoints from the server
             $.ajax({
-                url: '/api/missions/waypoints/' + mission.Id,
+                url: '/api/missions/waypoints/' + (mission.id || mission.Id),
                 type: 'GET'
             }).success(function (data, textStatus, jqXHR) {
                 //Case 1 then 2: now display the waypoints for the mission waypoints.
@@ -218,8 +218,23 @@ function WaypointManager() {
 
     this.updateFlightPath = function (id) {
         var thisMission = this.getMissionByMissionId(id);
+        if (!thisMission)
+        {
+            var $this = this;
+            $.ajax({
+                url: '/api/missions/' + id,
+                type: 'GET'
+            }).success(function (data, textStatus, jqXHR) {
+                $this.missions.push(data);
+                $this.updateFlightPath(id);
+            });
+            return;
+        }
 
+        //Check to see if the path is currently being displayed
+        var fpVisible = false;
         if (thisMission.flightPath) {
+            fpVisible = thisMission.flightPath.getVisible();
             thisMission.flightPath.setMap(null);
             thisMission.flightPath = null;
         }
@@ -232,15 +247,16 @@ function WaypointManager() {
             }
             thisMission.Waypoints = null;
         }
-        if (selectedDrones.length != 0) {
+
+        //If the flight path isn't visible, don't bother displaying it.
+        //It will be loaded when the user wants it.
+        if (fpVisible) {
             this.displayWaypointsPerMission(thisMission);
         }
     }
 
     this.vehicleHasNewMission = function(uavid, schedid, missionid) {
         var sched = this.getScheduleByUavId(uavid);
-        //Do we really need this?
-        //var mission = this.getMissionByMissionId(missionid);
         if (sched) {
             sched.CurrentMission = missionid;
             this.updateFlightPath(missionid);
