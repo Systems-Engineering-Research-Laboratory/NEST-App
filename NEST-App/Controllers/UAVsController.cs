@@ -48,13 +48,12 @@ namespace NEST_App.Controllers.Api
             var currentMissionId = (int) firstOrDefault.CurrentMission;
             var currentMission = _db.Missions.Find(currentMissionId);
 
-            if (currentMission.TimeAssigned != null)
-            {
-                var timeToMissionEnd = 
+            if (currentMission.TimeAssigned == null) return new DateTime();
+            var timeToMissionEnd = 
                 currentMission.ScheduledCompletionTime = ((DateTime) currentMission.TimeAssigned).AddMinutes(25);
-                _db.Entry(currentMission).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-            }
+            _db.Entry(currentMission).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return (DateTime) currentMission.ScheduledCompletionTime;
         }
 
         [HttpGet]
