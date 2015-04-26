@@ -335,7 +335,7 @@ $(document).ready(function () {
         /* Event Log */
         var emitHub = $.connection.eventLogHub;
         //close notification when back at base
-        vehicleHub.client.reportBackAtBase = function (UAVId) {
+        vehicleHub.client.uavBackAtBase = function (UAVId) {
             console.log("uav id for back at base: " + UAVId);
             var infobox = uavs[UAVId].infobox;
             uavs[UAVId].infobox = null;
