@@ -10,6 +10,8 @@ var mapFunctions = {
     mouseIsDown: false,
     confirmWindow: null,
     tempMarker: null,
+    noteMarker: null,
+    noteInfoWindow: null,
     goLat: null,
     goLng: null,
     ids: [],
@@ -106,6 +108,14 @@ var mapFunctions = {
         if (c && (this.goLat != null) && (this.goLng != null)) {
             droneTrails.goWaypoint(this.goLat, this.goLng, this.ids);
         }
+    },
+
+    // dismiss the notification
+    dismissNote: function(d) {
+        this.noteInfoWindow.close();
+        this.noteInfoWindow = null;
+        this.noteMarker.setMap(null);
+        this.noteMarker = null;
     },
 
     //Creates the context menu for UAVs
@@ -221,7 +231,7 @@ var mapFunctions = {
 
     ConsNotifier: function (theMap, lat, lng, notifier, message) {
         var location = new google.maps.LatLng(lat, lng);
-        var noteMarker = new google.maps.Marker({
+        this.noteMarker = new google.maps.Marker({
             map: theMap,
             position: location,
             icon: mapStyles.mapClickIcon,
@@ -230,24 +240,23 @@ var mapFunctions = {
         });
         theMap.panTo(location);
 
-        if (message != "") {
-            var contentString = '<div id="content">' +
+        var contentString = '<div id="content">' +
             '<h4>' + notifier + '</h4>' +
             '<p>' + message + '</p>' +
+            "<button class='btn btn-default' onclick='mapFunctions.dismissNote(true)'>Dismiss</button>" +
             '</div>';
 
-            var infowindow = new google.maps.InfoWindow({
-                content: contentString
-            });
+        this.noteInfoWindow = new google.maps.InfoWindow({
+            content: contentString
+        });
 
-            infowindow.open(map, noteMarker);
-            document.getElementById("message").value = "";
-        }
+        that = this;
+        google.maps.event.addListener(this.noteInfoWindow, 'closeclick', function () {
+            that.dismissNote(true);
+        });
 
-        if (droneTrails.dropMarkerListener != null) {
-            google.maps.event.removeListener(droneTrails.dropMarkerListener);
-            droneTrails.dropMarkerListener = null;
-        }
+        this.noteInfoWindow.open(map, this.noteMarker);
+        document.getElementById("message").value = "";
     },
 
     DrawBoundingBox: function (theMap, e) {
