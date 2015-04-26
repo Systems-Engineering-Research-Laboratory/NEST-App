@@ -168,11 +168,11 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     }
 
     this.dropBatteryLevel = function (dt) {
-        this.addToBatteryLevel(-dt / 18000);
+        this.addToBatteryLevel(-dt / 1800);
     }
 
     this.chargeBattery = function (dt) {
-        this.addToBatteryLevel(5 * dt / 18000);
+        this.addToBatteryLevel(5 * dt / 1800);
     }
 
     this.addToBatteryLevel = function (amount) {
