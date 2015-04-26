@@ -171,7 +171,6 @@ var mapFunctions = {
                         console.log("IDS here " + that.ids[0]);
                         document.getElementById("clickToGoBtn").onclick = function () { droneTrails.clickToGo(that.ids); };
                         this.goTo_show();
-                        //uavCommands.GoTo(uid, marker.uav, latLng, alt);
                     }
                     break;
                 case 'force_land':
