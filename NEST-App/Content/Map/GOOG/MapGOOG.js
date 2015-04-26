@@ -31,7 +31,7 @@ var wpm;
 
 function uavMarkers(data, textStatus, jqXHR) {
     console.log("Pulling Flightstates...", textStatus);
-    
+
     for (var i = 0; i < data.length; i++) {
         //Set UAV properties
         uavs[data[i].Id] = mapFunctions.SetUAV(data[i]);
@@ -86,7 +86,7 @@ $(document).ready(function () {
     function init() {
         //Used for communication and map.setCenter()
         mapUavId = null;
-        
+
         wpm = new WaypointManager(map);
         map = new google.maps.Map(document.getElementById('map-canvas'), mapStyles.mapOptions);
         /*map = new GMaps({
@@ -117,7 +117,7 @@ $(document).ready(function () {
                     ids[i] = selectedDrones[i].Id;
                 }
                 droneTrails.goWaypoint(document.getElementById("go_lat").value, document.getElementById("go_long").value, ids);
-            }    
+            }
         });
 
 
@@ -132,10 +132,11 @@ $(document).ready(function () {
         $.ajax({
             url: '/api/uavs/getuavinfo',
             success: function (data, textStatus, jqXHR) {
+                console.log(data);
                 uavMarkers(data, textStatus, jqXHR);
             }
         });
-        
+
         //SignalR callbacks must be set before the call to connect!
         /* Vehicle Movement */
         vehicleHub = $.connection.vehicleHub;
@@ -152,19 +153,19 @@ $(document).ready(function () {
                 wpm.updateFlightPath(id);
             }
         }
-        
+
         //setup client callback function
         vehicleHub.client.UavRejected = function (uavId) {
             assignment.uavRejected(uavId);
         }
 
-        
+
         // got new mission
         vehicleHub.client.vehicleHasNewMission = function (uavid, schedid, missionid) {
             wpm.vehicleHasNewMission(uavid, schedid, missionid);
             for (var i = 0; i < progress_table.rows.length; i += 2) {
                 var uavid_table = progress_table.children[0].children[i].children[1].children[1].innerHTML;
-                
+
                 if (uavid == uavid_table) {
                     progress_table.children[0].children[i].children[1].children[4].innerHTML = missionid;
                     progress_table.children[0].children[i + 1].children[1].children[3].innerHTML = "enroute";
@@ -196,18 +197,21 @@ $(document).ready(function () {
                 var latlng = new google.maps.LatLng(vehicle.Latitude, vehicle.Longitude);
                 map.setCenter(latlng);
             }
-       
+
             if (vehicle.Id == camLockedUAV) {
                 mapFunctions.CenterOnUAV(vehicle.Id);
             }
 
-          
-            
+            //update uav location for batteryCalc if the uav is selected
+            if (batteryCalc.circle != null && selectedUAV != null && selectedUAV.Id == vehicle.Id) {
+                batteryCalc.updateBatteryCalc(vehicle);
+            }
+
             // MISSION PROGRESS WINDOW
             for (i = 0, j = 1, k = 0; i < missiontable.rows.length, k < progress_table.rows.length; i++, j += 2, k += 2) {
                 var missionid_1st = progress_table.children[0].children[k].children[1].children[4].innerHTML;
                 var uavid_2nd = missiontable.rows[i].cells[0].innerHTML;
-                
+
                 if (vehicle.Id == uavid_2nd) {
 
                     for (var q = 0; q < missiontable.rows.length; q++)
@@ -301,7 +305,7 @@ $(document).ready(function () {
             }
             // end of whole for loop
         }
-        
+
 
         mapDraw.InitDrawingManager();
         mapDraw.drawingManager.setMap(map);
@@ -367,7 +371,7 @@ $(document).ready(function () {
                         multipleText.innerHTML = "<span style='color: yellow;'>Warning: </span>" + "multiple warnings, check logs";
                     else if (evt.criticality === "normal")
                         multipleText.innerHTML = "<span style='color: white;'>Event: </span>" + "multiple events, check logs";
-   
+
                     var infobox = new InfoBox({
                         content: multipleText,
                         disableAutoPan: true,
@@ -390,7 +394,7 @@ $(document).ready(function () {
                     }
                     uavs[evt.UAVId].infobox = infobox;
                     infobox.open(map, uavs[evt.UAVId].marker);
-                    
+
                     google.maps.event.addDomListener(multipleText, 'click', function () {
                         if (infobox.open) {
                             uavs[evt.UAVId].infobox = null;
@@ -472,13 +476,13 @@ $(document).ready(function () {
                     });
                 }
                 if (evt.criticality != "normal") {
-                    //warning popup showing
-                    warningUavId = uavs[evt.UAVId].Id;
-                    document.getElementById('criticality').innerHTML = evt.criticality;
-                    document.getElementById('warningUavId').innerHTML = "UAV ID: " + uavs[evt.UAVId].Id + "<br />";
-                    document.getElementById('warningUavCallsign').innerHTML = "Callsign: " + uavs[evt.UAVId].Callsign + "<br />";
-                    document.getElementById('warningReason').innerHTML = "Reason: " + evt.message;
-                    mapFunctions.goTo_RR_show();
+                    ////warning popup showing
+                    //warningUavId = uavs[evt.UAVId].Id;
+                    //document.getElementById('criticality').innerHTML = evt.criticality;
+                    //document.getElementById('warningUavId').innerHTML = "UAV ID: " + uavs[evt.UAVId].Id + "<br />";
+                    //document.getElementById('warningUavCallsign').innerHTML = "Callsign: " + uavs[evt.UAVId].Callsign + "<br />";
+                    //document.getElementById('warningReason').innerHTML = "Reason: " + evt.message;
+                    //mapFunctions.goTo_RR_show();
 
                     if (evt.criticality === "warning") {
                         alertText.style.cssText = "border: 1px solid yellow;height: 40px;background: #333;color: #FFF;padding: 0px 0px 15px 4px;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 1px;"
@@ -505,20 +509,20 @@ $(document).ready(function () {
                     }
                 }
 
-                
+
 
                 var table = document.getElementById('eventlog_table');
                 var table_length = table.rows.length;
                 var event_time = evt.create_date;
                 var event_uav_user = document.getElementById('event_uav_user');
-                
+
                 // Right upper Event log UI
                 if (event_count == 0)
                 {
                     event_count++;
 
                     //@-webkit-keyframes glowing {0% { background-color: #004a7f; -webkit-box-shadow: 0 0 3px #004a7f; }50% { background-color: #0094ff; -webkit-box-shadow: 0 0 10px #0094ff; }100% { background-color: #004a7f; -webkit-box-shadow: 0 0 3px #004a7f; }}
-                    
+
                     document.getElementById('event_info_uavid').innerHTML = uavs[evt.UAVId].Id;
                     document.getElementById('event_info_callsign').innerHTML = uavs[evt.UAVId].Callsign;
                     document.getElementById('event_info_msg').innerHTML = evt.message;
@@ -538,7 +542,7 @@ $(document).ready(function () {
                     {
                         document.getElementById('criticality_color').style.backgroundColor = "orange";
                     }
-                    
+
                     for (var i = 1; i < event_uav_user.rows.length; i++) {
                         var uav_user_id = event_uav_user.rows[i].cells[0].innerHTML;
                         var uav_user_name = event_uav_user.rows[i].cells[1].innerHTML;
@@ -548,7 +552,7 @@ $(document).ready(function () {
                                 document.getElementById('event_button_accept').style.display = 'block';
                                 document.getElementById('event_button_decline').style.display = 'block';
                             }
-                            
+
                             else
                             {
                                 document.getElementById('event_button_accept').style.display = 'none';
@@ -568,7 +572,7 @@ $(document).ready(function () {
                     var cell1 = row.insertCell(1);
                     var cell2 = row.insertCell(2);
                     var cell3 = row.insertCell(3);
-                    
+
                     cell0.style.cssText = "width: 5%; border-bottom: 1px solid black;";
                     cell1.style.cssText = "font-size: 12px; border-bottom: 1px solid black; padding-left: 5px; width: 75%; height: 60px; line-height:100%";
                     cell2.style.cssText = "font-size: 10px; border-bottom: 1px solid black; width: 15%; padding-left: 3px; padding-right: 3px; padding-top: 0px; margin: 0px;";
@@ -580,7 +584,7 @@ $(document).ready(function () {
                         var uav_user_id = event_uav_user.rows[i].cells[0].innerHTML;
                         var uav_user_name = event_uav_user.rows[i].cells[1].innerHTML;
                         if (uavs[evt.UAVId].Id == uav_user_id) {
-                            if (uav_user_name === "") { 
+                            if (uav_user_name === "") {
                                 var accept_butt = '<input type="button" value="ACCEPT" name="ACCEPT" onclick=mapFunctions.RR_button_accept_window() style="background-color: #46d914; color: white; cursor: pointer;padding-right: 5px; padding-left: 5px; padding-top: 2px; padding-bottom: 2px; border-radius: 5px; border: none; width: 100%; border-top:2px solid transparent; margin-top: 2px;">';
                                 var decline_butt = '<input type="button" value="DECLINE" name="DECLINE" onclick=mapFunctions.RR_button_decline(); style="background-color: #ee3f3f;color: white;cursor: pointer;padding-right: 5px;padding-left: 5px;padding-top: 2px;padding-bottom: 2px;border-radius: 5px;border: none;width: 100%;border-top:2px solid transparent;margin-top: 2px;margin-bottom: 1px;">';
                                 cell2.innerHTML = accept_butt + decline_butt;
@@ -592,7 +596,7 @@ $(document).ready(function () {
                             }
                         }
                     }
-                    
+
                     if (evt.criticality === "critical") {
                         cell0.style.backgroundColor = "red";
                     }
@@ -608,7 +612,7 @@ $(document).ready(function () {
                 }
             }
         }
-        
+
         //Make sure to set all SignalR callbacks BEFORE the call to connect
         $.connection.hub.start().done(function () {
             console.log("connection started for evt log");
@@ -705,7 +709,7 @@ function calculateDistance(dest_lat, dest_long) {
     var total_a = total_a1 + (total_a2 * total_a3 * total_a4);
     var total_c = 2 * Math.atan2(Math.sqrt(total_a), Math.sqrt(1 - total_a));
     var total_distance = radius * total_c;
-    
+
     return total_distance;
 }
 
@@ -737,7 +741,7 @@ function addMissionToTheTable(mission)
 function findMissionRowById(missionid)
 {
     for (var i = 0; i < missiontable.rows.length; i++) {
-        if (missionid == missiontable.rows[i].cells[0].innerHTML) 
+        if (missionid == missiontable.rows[i].cells[0].innerHTML)
         {
             return missiontable.rows[i];
         }
