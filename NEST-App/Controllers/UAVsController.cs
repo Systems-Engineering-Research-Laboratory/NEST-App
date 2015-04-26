@@ -29,6 +29,20 @@ namespace NEST_App.Controllers.Api
         private Random rand = new Random();
 
         [HttpGet]
+        [Route("api/uavs/geteta/{id}")]
+        public DateTime GetEta(int id)
+        {
+            
+        }
+
+        [HttpGet]
+        [Route("api/uavs/getsta/{id}")]
+        public DateTime GetSta(int id)
+        {
+            
+        }
+
+        [HttpGet]
         [Route("api/uavs/searchbycallsign")]
         public async Task<UAV> SearchByCallsign(string callsign)
         {
