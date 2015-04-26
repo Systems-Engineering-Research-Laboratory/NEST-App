@@ -75,7 +75,7 @@ namespace NEST_App.Controllers.Api
 
     public class SimApiController : ApiController
     {
-        int numOfDrones = 5;    //num of drones per sim
+        int numOfDrones = 100;    //num of drones per sim
 
         static TransferObject[] xList;
         static bool generated = false;
