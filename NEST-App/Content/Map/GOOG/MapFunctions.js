@@ -61,10 +61,13 @@ var mapFunctions = {
             case 'send_note':
                 mapFunctions.note_show();
                 var clickEvt = document.getElementById("send").addEventListener("click", function () {
-                    emitHub.server.sendNote(latLng.lat(), latLng.lng(), document.getElementById("notifier").value, document.getElementById("message").value);
+                    if (latLng != null) {
+                        emitHub.server.sendNote(latLng.lat(), latLng.lng(), document.getElementById("notifier").value, document.getElementById("message").value);
+                        latLng = null;
+                    }
                     mapFunctions.note_hide();
+                    google.maps.event.removeListener(clickEvt);
                 });
-                google.maps.event.removeListener(clickEvt);
                 break;
             case 'go_here':
                 // ask user to confirm the commend
@@ -79,9 +82,11 @@ var mapFunctions = {
                 this.tempMarker = new google.maps.Circle({
                     map: map,
                     center: latLng,
-                    radius: 30,
-                    fillColor: '#FFFF40',
-                    strokeWeight: 2,
+                    radius: 50,
+                    fillColor: '#00CC00',
+                    fillOpacity: 0.6,
+                    strokeColor: 'white',
+                    strokeWeight: .5,
                     clickable: false,
                     zindex: -99999
                 });
