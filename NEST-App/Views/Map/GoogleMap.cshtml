@@ -28,33 +28,63 @@
 <div class="progress_div" id="progress_div">
     <div class="progress_table_div">
         <table class="progress_table" id="progress_table">
-            @foreach (Mission mission_info in Model.missions)
+            @*@foreach (Mission mission_info in Model.missions)
+            {
+                <tr id="progress_table_tr" style="margin: 0px;">
+                    <td id="progress_td" style="width: 150px; padding: 5px;">
+                        <progress class="progressbar_in_td" value="0" max="100" id="progressbar_in_td" style="height:150%; width:100%; margin-top:3px;"></progress>
+                    </td>
+                    <td style="padding-left: 5px; padding-top: 3px;">
+                        <b>Mission: </b><p class="progress_info" id="progress_info_uavid" style="display: inline-block; margin: 1px; ">@Html.DisplayFor(modelItem => mission_info.id)</p> : <b>@Html.DisplayFor(modelItem => mission_info.Schedule.UAV.Callsign)</b>　<b>Phase: </b><p class="progress_info" id="progress_info_phase" style="display: inline-block; margin: 1px;">@Html.DisplayFor(modelItem => mission_info.Phase)</p> <br />
+                    </td>
+                </tr>
+                <tr id="progress_table_tr2" style="border-bottom: 2px solid black;">
+                    <td align="center"><p id="percentage" style="display: inline-block; font-size: 10px; margin-bottom: 0px;">VALUE % completed</p></td>
+                    <td style="padding-left: 5px; padding-bottom: 3px;"><b>Distance: </b><p class="progress_info" id="progress_info_distance" style="display: inline-block; margin: 1px;">DISTANCE</p></td>
+                </tr>
+            }*@
+
+            @foreach (UAV uav in Model.UAVs)
             {
                 <tr id="progress_table_tr" style="margin: 0px;">
                     <td id="progress_td" style="width: 130px; padding: 5px;">
                         <progress class="progressbar_in_td" value="0" max="100" id="progressbar_in_td" style="height:150%; width:100%; margin-top:3px;"></progress>
                     </td>
                     <td style="padding-left: 5px; padding-top: 3px;">
-                        <b>ID: </b><p class="progress_info" id="progress_info_uavid" style="display: inline-block; margin: 1px; ">@Html.DisplayFor(modelItem => mission_info.id)</p> : @Html.DisplayFor(modelItem => mission_info.Schedule.UAV.Callsign)　<b>Phase: </b><p class="progress_info" id="progress_info_phase" style="display: inline-block; margin: 1px; ">@Html.DisplayFor(modelItem => mission_info.Phase)</p> <br />
-</td>
+                        <b>UAV ID: </b><p class="progress_info" id="progress_info_uavid" style="display: inline-block; margin: 1px; ">@Html.DisplayFor(modelItem => uav.Id)</p> : <b>@Html.DisplayFor(modelItem => uav.Callsign)</b>　<b>Mission ID: </b><p style="display: inline-block; margin: 1px;" id=" uav_mission_id">@Html.DisplayFor(modelItem => uav.Schedules.FirstOrDefault().Missions.FirstOrDefault().id)</p><br /></td>
                 </tr>
                 <tr id="progress_table_tr2" style="border-bottom: 2px solid black;">
                     <td align="center"><p id="percentage" style="display: inline-block; font-size: 10px; margin-bottom: 0px;">VALUE % completed</p></td>
-                    <td style="padding-left: 5px; padding-bottom: 3px;"><b>Distance: </b><p class="progress_info" id="progress_info_distance" style="display: inline-block; margin: 1px;">DISTANCE</p></td>
+                    <td style="padding-left: 5px; padding-bottom: 3px;"><b>Distance: </b><p class="progress_info" id="progress_info_distance" style="display: inline-block; margin: 1px;">DISTANCE</p>　<b>Phase: </b><p class="progress_info" id="progress_info_phase" style="display: inline-block; margin: 1px; ">@Html.DisplayFor(modelItem => uav.Schedules.FirstOrDefault().Missions.FirstOrDefault().Phase)</p></td>
                 </tr>
             }
         </table>
 
         <table class="progress_table_for_info" id="progress_table_for_info" style="display: none; font-size: 13px;">
+            @*@foreach (UAV prog in Model.UAVs)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => prog.Schedules.FirstOrDefault().Missions.FirstOrDefault().id)</td>
+                    <td>@Html.DisplayFor(modelItem => prog.Callsign)</td>
+                    <td style="display: block;">@Html.DisplayFor(modelItem => prog.Schedules.FirstOrDefault().Missions.FirstOrDefault().Latitude)</td>
+                    <td style="display: block;">@Html.DisplayFor(modelItem => prog.Schedules.FirstOrDefault().Missions.FirstOrDefault().Longitude)</td>
+                    <td>Distance</td>
+                    <td style="display: none;">@Html.DisplayFor(modelItem => prog.Schedules.FirstOrDefault().Missions.FirstOrDefault().Phase)</td>
+                    <td id="prog_boolean">False</td>
+                    <td>@Html.DisplayFor(modelItem => prog.Id)</td>
+                </tr>
+            }*@
             @foreach (Mission prog in Model.missions)
             {
                 <tr>
                     <td>@Html.DisplayFor(modelItem => prog.id)</td>
                     <td>@Html.DisplayFor(modelItem => prog.Schedule.UAV.Callsign)</td>
-                    <td style="display: none;">@Html.DisplayFor(modelItem => prog.Latitude)</td>
-                    <td style="display: none;">@Html.DisplayFor(modelItem => prog.Longitude)</td>
-                    <td>Distance</td>
-                    <td id="prog_phase">@Html.DisplayFor(modelItem => prog.Phase)</td>
+                    <td style="display: block;">@Html.DisplayFor(modelItem => prog.Latitude)</td>
+                    <td style="display: block;">@Html.DisplayFor(modelItem => prog.Longitude)</td>
+                    <td id="distance">Distance</td>
+                    <td style="display: none;"id="prog_phase">@Html.DisplayFor(modelItem => prog.Phase)</td>
+                    @*<td id="prog_boolean">False</td>*@
+                    <td>@Html.DisplayFor(modelItem => prog.Schedule.UAV.Id)</td>
                 </tr>
             }
         </table>
@@ -67,17 +97,17 @@
     <div class="event_table_div">
         <table class="eventlog_table" id="eventlog_table">
             <tr id="event_table_tr" style="border-bottom: 1px solid black; height: 60px;">
-                <td id ="criticality_color"></td>
+                <td id="criticality_color"></td>
                 <td id="event_info">
-                    <b>UAV #</b> <p class ="eventinfo" id="event_info_uavid" style="display: inline-block; margin: 1px; ">[ID]</p> : <p class="eventinfo" id="event_info_callsign" style="margin: 1px;display: inline-block;">[CALLSIGN]</p><br />
+                    <b>UAV #</b> <p class="eventinfo" id="event_info_uavid" style="display: inline-block; margin: 1px; ">[ID]</p> : <p class="eventinfo" id="event_info_callsign" style="margin: 1px;display: inline-block;">[CALLSIGN]</p><br />
                     <b>Reason:</b> <p class="eventinfo" id="event_info_msg" style="display: inline-block; margin:1px;">[MESSAGE]</p> <br />
-                    <p class ="eventinfo" id="event_time" style="display: inline-block; margin: 1px; color: gray; font-size: 9px;">Now</p>
+                    <p class="eventinfo" id="event_time" style="display: inline-block; margin: 1px; color: gray; font-size: 9px;">Now</p>
                 </td>
                 <td id="table_button">
-                    <button id="event_button_accept" onclick="mapFunctions.RR_button_accept()">ACCEPT</button>
+                    <button id="event_button_accept" onclick="mapFunctions.RR_button_accept_window()">ACCEPT</button>
                     <button id="event_button_decline" onclick="mapFunctions.RR_button_decline()">DECLINE</button>
                 </td>
-                <td style="width: 5%; height: 60px;" >
+                <td style="width: 5%; height: 60px;">
                     <span class="glyphicon glyphicon-remove" onclick="mapFunctions.delete_event_row()" style="cursor: pointer;"></span>
                 </td>
             </tr>
@@ -94,12 +124,12 @@
                         </thead>
                         <tbody>
                             @foreach (UAV uav_user in Model.UAVs)
-            {
-                <tr class="eventlog_tr">
-                    <td>@Html.DisplayFor(modelItem => uav_user.Id)</td>
-                    <td>@Html.DisplayFor(modelItem => uav_user.User.username)</td>
-                </tr>
-            }
+                            {
+                                <tr class="eventlog_tr">
+                                    <td>@Html.DisplayFor(modelItem => uav_user.Id)</td>
+                                    <td>@Html.DisplayFor(modelItem => uav_user.User.username)</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
 
@@ -218,7 +248,7 @@
             <input type="text" name="message" id="message" placeholder="Message" />
         </p>
         <button class="btn btn-default sendBtn" id="send">SEND</button>
-        <button class="btn btn-default clear">CLEAR</button>
+        <button class="btn btn-default clear" id="clearNote">CLEAR</button>
     </div>
 
     

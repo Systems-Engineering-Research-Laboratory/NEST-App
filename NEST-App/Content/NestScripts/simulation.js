@@ -302,6 +302,11 @@ function setSignalrCallbacks(map) {
         }
     }
 
+    vehicleHub.client.uavBackAtBase = function(id)
+    {
+        console.log("UAV " + id + " has arrived back at base");
+    }
+
     var adminHub = $.connection.adminHub;
     adminHub.client.newDrop = function (drop) {
         console.log("UAV ID for battery drop is: " + drop.uavID);

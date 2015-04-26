@@ -107,6 +107,13 @@
         else if (marker.selected == false) {
             var uavItem = document.getElementById(marker.uav.Callsign);
             $('#' + marker.uav.Callsign).remove();
+
+            //turn off battery indicator
+            if (batteryCalc.circle != null) {
+                batteryCalc.circle.setVisible(false);
+                batteryCalc.circle = null;
+            }
+
             //Turn off drone's flightpath
             //flightLines[marker.uav.Id].setMap(null);
 

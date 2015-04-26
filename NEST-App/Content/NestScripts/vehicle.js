@@ -85,8 +85,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     //Functions. Careful not to add global helper functions here.
     this.process = function (dt) {
         var keepGoing = this.preprocess();
-        if (!keepGoing)
-        {
+        if (!keepGoing) {
             return;
         }
         if (!this.hasCommsLink) {
@@ -101,7 +100,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                 this.brandNewTarget(this.Base, false);
             }
         }
-            //Process this waypoint if we have one
+        //Process this waypoint if we have one
         if (this.awaitingNavigation) {
             //Do nothing (aka hover)
         }
@@ -133,7 +132,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     };
 
     this.preprocess = function () {
-        
+
         if (this.FlightState.BatteryLevel <= 0) {
             this.targetAltitude(dt, 0, this.MaxVerticalVelocity);
             this.reporter.reportCrashEvent(this.Id, this.Callsign);
@@ -168,21 +167,19 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     }
 
     this.dropBatteryLevel = function (dt) {
-        this.addToBatteryLevel(-dt / 18000);
+        this.addToBatteryLevel(-dt / 1800);
     }
 
     this.chargeBattery = function (dt) {
-        this.addToBatteryLevel(5 * dt / 18000);
+        this.addToBatteryLevel(5 * dt / 1800);
     }
 
     this.addToBatteryLevel = function (amount) {
         this.FlightState.BatteryLevel += amount;
-        if (this.FlightState.BatteryLevel >= 1)
-        {
-            this.FlightState.BatteryLevel = 1; 
+        if (this.FlightState.BatteryLevel >= 1) {
+            this.FlightState.BatteryLevel = 1;
         }
-        if(this.FlightState.BatteryLevel <= 0)
-        {
+        if (this.FlightState.BatteryLevel <= 0) {
             this.FlightState.BatteryLevel = 0;
         }
     }
@@ -191,7 +188,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         this.hasCommsLink = isConnected;
     }
 
-    
+
     this.getNextMission = function () {
         var missions = this.Schedule.Missions;
         this.Mission = missions.shift();
@@ -199,10 +196,11 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             this.Mission = missions.shift();
         }
         if (this.Mission) {
-            if (this.Mission.Phase === "delivering") {
-                this.Mission.Phase = "enroute";
-                reporter.updateMission(this.Mission);
-            }
+
+
+            this.Mission.Phase = "enroute";
+            reporter.updateMission(this.Mission);
+
             LatLongToXY(this.Mission);
             //Ignore stuff in the database for now.
             this.generateWaypoints(this.Mission, "mission");
@@ -224,7 +222,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         return this.Schedule.Missions.length > 0;
     }
 
-    
+
 
     this.performWaypoint = function (dt) {
         var wp = this.currentWaypoint;
@@ -458,9 +456,9 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
         if (this.hasCommsLink && !this.handleNonNavigationalCommand(target)) {
             this.awaitingNavigation = false;
             if (this.currentWaypoint) {
-                
+
                 var newIdx = this.getNextNavigationalIndex();
-                
+
                 if (newIdx == this.currentWpIndex) {
                     //If we are inserting the command before the current navigation point
                     //then pass start into the intermediate target so that we can validate the path
@@ -475,7 +473,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                     this.hasCommsLink,
                     this.Mission.id
                     );
-                
+
                 //Record that this waypoint is supposed to be preserved, and navigational points added afterwards.
                 this.commandList.push(this.waypoints[wpLoc]);
                 this.waypoints[wpLoc].obj = target;
@@ -494,7 +492,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     this.commandList = [];
     this.getNextNavigationalIndex = function () {
-        
+
         if (this.commandList.length > 0) {
             //Only start from from the current waypoint index because we dont want to create navigational points before it
             var lastCommandedWp = this.commandList[this.commandList.length - 1];
@@ -554,7 +552,11 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     //Makes the vehicle go back to base
     this.backToBase = function (dt) {
-        return this.flyToAndLand(dt, this.Base.X, this.Base.Y);
+        var hasArrived = this.flyToAndLand(dt, this.Base.X, this.Base.Y);
+        if (hasArrived) {
+            reporter.reportBackAtBase(this);
+        }
+        return hasArrived;
     }
 
     this.flyToAndLand = function (dt, destX, destY) {
@@ -651,7 +653,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             missions.unshift(foundMis);
         }
     }
-    
+
     this.failNextReroute = function () {
         this.shouldFailNextReroute = true;
     }
@@ -1043,7 +1045,7 @@ function PathGenerator(areaContainer, reporter) {
         }
     }
 
-    
+
 
     this.buildSafeRoute = function (wps, curPos, startIndex) {
         if (!startIndex) {
@@ -1146,7 +1148,7 @@ function PathGenerator(areaContainer, reporter) {
         }
     }
 
-    this.removeDisposableEdges = function(edges) {
+    this.removeDisposableEdges = function (edges) {
         for (var i = 0; i < edges.length; i++) {
             var e = edges[i];
             if (e.disposable) {
@@ -1253,7 +1255,7 @@ function PathGenerator(areaContainer, reporter) {
         return edges;
     }
 
-    
+
 }
 
 
