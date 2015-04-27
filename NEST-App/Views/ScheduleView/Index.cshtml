@@ -1,4 +1,9 @@
-﻿@model IEnumerable<NEST_App.Models.Schedule>
+﻿@*@model IEnumerable<NEST_App.Models.Schedule>*@
+
+@*@model IEnumerable<NEST_App.Models.Schedule>*@
+@using NEST_App.Models
+
+@model dynamic
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -22,9 +27,30 @@
                 <th>Delivery Package:</th>
             </tr>
 
-            @foreach (var sched in Model)
+            @foreach (Mission miss in Model.missions)
             {
-                <tr id="uav">
+                <tr>
+                    @*@foreach (var mission in sched.Missions)
+                    {
+                        <td>  @(sched.UAV.Callsign.ToString() + ":")</td>
+                        <td>  @(mission.EstimatedCompletionTime) </td>
+                        <td>  @(mission.ScheduledCompletionTime) </td>
+                        <td>  @(mission.Latitude + "," + mission.Longitude) </td>
+                        <td>  @(mission.Phase)</td>
+                        <td>  @(mission.Payload)</td>
+                    }*@
+                    <td>@Html.DisplayFor(modelItem => miss.Schedule.UAV.Callsign)</td>
+                    <td>@Html.DisplayFor(modelItem => miss.EstimatedCompletionTime)</td>
+                    <td>@Html.DisplayFor(modelItem => miss.ScheduledCompletionTime)</td>
+                    <td>@Html.DisplayFor(modelItem => miss.Latitude), @Html.DisplayFor(modelItem => miss.Longitude)</td>
+                    <td>@Html.DisplayFor(modelItem => miss.Phase)</td>
+                    <td>@Html.DisplayFor(modelItem => miss.Payload)</td>
+                </tr>
+
+
+                    @*@foreach (var sched in Model)
+            {
+                    <tr id="uav">
                     <td>  @(sched.UAV.Callsign.ToString() + ":")</td>
                 </tr>
                 <tr>
@@ -33,11 +59,11 @@
                         <td></td>
                         @*<td>  @(mission.EstimatedCompletionTime) </td>
                         <td>  @(mission.ScheduledCompletionTime) </td>*@
-                        <td>  @(mission.Latitude + "," + mission.Longitude) </td>
+                        @*<td>  @(mission.Latitude + "," + mission.Longitude) </td>
                         <td>  @(mission.Phase)</td>
                         <td>  @(mission.Payload)</td>
                     }
-                </tr>
+                </tr>*@
             }
         </table>
     </div>
@@ -52,7 +78,17 @@
                 <th>Time Remaining:</th>
             </tr>
 
-            @foreach (var sched in Model)
+            @foreach (Maintenance maint in Model.maint)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => maint.Schedule.UAV.Callsign):</td>
+                    <td>@Html.DisplayFor(modelItem => maint.last_maintenance)</td>
+                    <td>@Html.DisplayFor(modelItem => maint.last_maintenance.AddMonths(1))</td>
+                    <td>@Html.DisplayFor(modelItem => maint.last_maintenance.AddMonths(1) - DateTime.Today)　days</td>
+                </tr>
+            }
+                
+            @*@foreach (var sched in Model)
             {
                 <tr>
                     @foreach (var maintenance in sched.Maintenances)
@@ -63,7 +99,7 @@
                         <td> @((maintenance.last_maintenance.AddMonths(1) - DateTime.Today).ToString() + " days")</td>
                     }
                 </tr>
-            }
+            }*@
         </table>
         <form id="m">
             UAV Callsign:
