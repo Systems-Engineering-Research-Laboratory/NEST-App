@@ -17,8 +17,22 @@ namespace NEST_App.Controllers
         // GET: ScheduleView
         public ActionResult Index()
         {
-           var scheds = from s in db.Schedules.Include(s => s.Missions).Include(s=> s.Maintenances) select s;
-           return View(scheds);
+           //var scheds = from s in db.Schedules.Include(s => s.Missions).Include(s=> s.Maintenances) select s;
+           //return View(scheds);
+
+           dynamic uavScheduleList = new System.Dynamic.ExpandoObject();
+           uavScheduleList.UAVs = db.UAVs.ToList();
+           uavScheduleList.missions = db.Missions.ToList();
+           uavScheduleList.sched = db.Schedules.ToList();
+           uavScheduleList.maint = db.Maintenances.ToList();
+
+
+
+           //var scheds = from s in db.Schedules.Include(s => s.Missions).Include(s=> s.Maintenances) select s;
+           //return View(scheds);
+           return View(uavScheduleList);
         }
+
+
     }
 }

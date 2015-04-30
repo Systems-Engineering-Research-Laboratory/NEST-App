@@ -9,6 +9,9 @@ var mapFunctions = {
     gridBoundingBox : null,
     mouseIsDown: false,
     confirmWindow: null,
+    tempMarker: null,
+    noteMarker: null,
+    noteInfoWindow: null,
     goLat: null,
     goLng: null,
     ids: [],
@@ -57,9 +60,13 @@ var mapFunctions = {
                 break;
             case 'send_note':
                 mapFunctions.note_show();
-                document.getElementById("send").addEventListener("click", function () {
-                    emitHub.server.sendNote(latLng.lat(), latLng.lng(), document.getElementById("notifier").value, document.getElementById("message").value);
+                var clickEvt = document.getElementById("send").addEventListener("click", function () {
+                    if (latLng != null) {
+                        emitHub.server.sendNote(latLng.lat(), latLng.lng(), document.getElementById("notifier").value, document.getElementById("message").value);
+                        latLng = null;
+                    }
                     mapFunctions.note_hide();
+                    google.maps.event.removeListener(clickEvt);
                 });
                 break;
             case 'go_here':
@@ -71,6 +78,19 @@ var mapFunctions = {
                 this.confirmWindow.setContent(content);
                 this.confirmWindow.setPosition(latLng);
                 this.confirmWindow.open(map);
+
+                this.tempMarker = new google.maps.Circle({
+                    map: map,
+                    center: latLng,
+                    radius: 50,
+                    fillColor: '#00CC00',
+                    fillOpacity: 0.6,
+                    strokeColor: 'white',
+                    strokeWeight: .5,
+                    clickable: false,
+                    zindex: -99999
+                });
+                this.tempMarker.setMap(map);
 
                 this.goLat = latLng.lat();
                 this.goLng = latLng.lng();
@@ -87,9 +107,20 @@ var mapFunctions = {
     //confirmation for the go_here commend
     confirmGoHere: function (c) {
         this.confirmWindow.setMap(null);
+        this.confirmWindow = null;
+        this.tempMarker.setMap(null);
+        this.tempMarker = null;
         if (c && (this.goLat != null) && (this.goLng != null)) {
             droneTrails.goWaypoint(this.goLat, this.goLng, this.ids);
         }
+    },
+
+    // dismiss the notification
+    dismissNote: function(d) {
+        this.noteInfoWindow.close();
+        this.noteInfoWindow = null;
+        this.noteMarker.setMap(null);
+        this.noteMarker = null;
     },
 
     //Creates the context menu for UAVs
@@ -98,7 +129,7 @@ var mapFunctions = {
         contextMenuOptions.classNames = { menu: 'context_menu', menuSeparator: 'context_menu_separator' };
         var menuItems = [];
         menuItems.push({ className: 'context_menu_item', eventName: 'get_details', label: 'UAV Details' });
-        menuItems.push({});
+        menuItems.push({ className: 'context_menu_item', eventName: 'battery_est', label: 'Battery EST' });
         menuItems.push({});
         menuItems.push({ className: 'context_menu_item', eventName: 'non_nav', label: 'Adjust Parameters' });
         menuItems.push({ className: 'context_menu_item', eventName: 'hold', label: 'Hold Position' });
@@ -115,6 +146,7 @@ var mapFunctions = {
     UAVContextSelection: function (map, marker, latLng, eventName) {
         if (typeof(assignment) == 'undefined') {
             console.log("*********  Log in first!  **********");
+            return ;
         }
         else {
             var uid = assignment.getUserId();
@@ -131,6 +163,9 @@ var mapFunctions = {
             switch (eventName) {
                 case 'get_details':
                     window.open("http://localhost:53130/detailview", "_blank");
+                    break;
+                case 'battery_est':
+                    batteryCalc.displayEstCircle(uav);
                     break;
                 case 'non_nav':
                     if (!assignment.isUavAssignedToUser(uav.Id)) {
@@ -171,7 +206,6 @@ var mapFunctions = {
                         console.log("IDS here " + that.ids[0]);
                         document.getElementById("clickToGoBtn").onclick = function () { droneTrails.clickToGo(that.ids); };
                         this.goTo_show();
-                        //uavCommands.GoTo(uid, marker.uav, latLng, alt);
                     }
                     break;
                 case 'force_land':
@@ -179,7 +213,7 @@ var mapFunctions = {
                         console.log("You're not the owner");
                     } else {
                         //create ui
-                        document.getElementById("land_click").onclick = function () { uavCommands.ForceLand(uid, uav, uavs[uid].marker.position, alt, throttle, that.ids); console.log("position is: " + uav.marker.position); mapFunctions.land_hide() };
+                        document.getElementById("land_click").onclick = function () { uavCommands.ForceLand(uid, uav, uavs[uav.Id].marker.position, alt, throttle, that.ids); mapFunctions.land_hide() };
                         mapFunctions.land_show(marker.uav.Callsign);
                     }
                     break;
@@ -201,7 +235,7 @@ var mapFunctions = {
 
     ConsNotifier: function (theMap, lat, lng, notifier, message) {
         var location = new google.maps.LatLng(lat, lng);
-        var noteMarker = new google.maps.Marker({
+        this.noteMarker = new google.maps.Marker({
             map: theMap,
             position: location,
             icon: mapStyles.mapClickIcon,
@@ -210,24 +244,23 @@ var mapFunctions = {
         });
         theMap.panTo(location);
 
-        if (message != "") {
-            var contentString = '<div id="content">' +
+        var contentString = '<div id="content">' +
             '<h4>' + notifier + '</h4>' +
             '<p>' + message + '</p>' +
+            "<button class='btn btn-default' onclick='mapFunctions.dismissNote(true)'>Dismiss</button>" +
             '</div>';
 
-            var infowindow = new google.maps.InfoWindow({
-                content: contentString
-            });
+        this.noteInfoWindow = new google.maps.InfoWindow({
+            content: contentString
+        });
 
-            infowindow.open(map, noteMarker);
-            document.getElementById("message").value = "";
-        }
+        that = this;
+        google.maps.event.addListener(this.noteInfoWindow, 'closeclick', function () {
+            that.dismissNote(true);
+        });
 
-        if (droneTrails.dropMarkerListener != null) {
-            google.maps.event.removeListener(droneTrails.dropMarkerListener);
-            droneTrails.dropMarkerListener = null;
-        }
+        this.noteInfoWindow.open(map, this.noteMarker);
+        document.getElementById("message").value = "";
     },
 
     DrawBoundingBox: function (theMap, e) {
@@ -295,6 +328,7 @@ var mapFunctions = {
         uav.infoboxAlert = null;
         uav.alertOnce = 0;
         uav.BatteryWarning = 0;
+        uav.User = uavData.User;
         return uav;
     },
 
@@ -485,19 +519,14 @@ var mapFunctions = {
         document.getElementById("notification").style.display = "none";
     },
 
-    clear: function () {
-        document.getElementById("go_lat").value = "";
-        document.getElementById("go_long").value = "";
-    },
+    //// USER INTERFACE PROMPT TO ACCEPT OR REJECT UAV ASSIGNMENT ON MAP
+    //goTo_RR_show: function () {
+    //    document.getElementById("RoundRobin_popup").style.display = "block";
+    //},
 
-    // USER INTERFACE PROMPT TO ACCEPT OR REJECT UAV ASSIGNMENT ON MAP
-    goTo_RR_show: function () {
-        document.getElementById("RoundRobin_popup").style.display = "block";
-    },
-
-    goTo_RR_hide: function () {
-        $("#RoundRobin_popup").fadeOut("slow", function () { });
-    },
+    //goTo_RR_hide: function () {
+    //    $("#RoundRobin_popup").fadeOut("slow", function () { });
+    //},
 
     RR_button_accept: function () {
         assignment.uavAccepted(warningUavId);
@@ -626,7 +655,7 @@ var mapFunctions = {
 
             missiontable.rows[i].cells[4].innerHTML = total_distance;
             
-            progress_table.rows[j].cells[1].innerHTML = "<b>Distance: </b>" + total_distance_in_km.toFixed(3) + " km";
+            //progress_table.rows[j].cells[1].innerHTML = "<b>Distance: </b>" + total_distance_in_km.toFixed(3) + " km";
         }
     },
 };

@@ -45,27 +45,10 @@ function Reporter() {
     }
 
     this.updateMission = function (mission, opts) {
-        var jqXHR = this.putToServer(
-            '/api/missions/' + mission.id,
-            {
-                Phase: mission.Phase,
-                FlightPattern: mission.FlightPattern,
-                Payload: mission.Payload,
-                Priority: mission.Priority,
-                FinancialCost: mission.FinancialCost,
-                TimeAssigned: mission.TimeAssigned,
-                TimeComplete: mission.TimeCompleted,
-                ScheduledCompletionTime: mission.ScheduledCompletionTime,
-                EstimatedCompletionTime: mission.EstimatedCompletionTime,
-                id: mission.id,
-                ScheduleId: mission.ScheduleId,
-                create_date: mission.create_date,
-                modified_date: mission.modified_date,
-                Latitude: mission.Latitude,
-                Longitude: mission.Longitude,
-            },
-            {});
-
+        return $.ajax({
+            url: '/api/missions/' + mission.id + '/updatephase?phase=' + mission.Phase,
+            type: 'PUT'
+        });
     }
 
     this.updateFlightState = function (fs, opts) {

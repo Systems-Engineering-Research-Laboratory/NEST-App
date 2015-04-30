@@ -1,6 +1,5 @@
 ﻿var droneTrails = {
     waypointMarker: null,
-    dropMarkerListener: null,
     //trailArray: [],
     //uavTrails : [{
     //    id: 0,
@@ -89,12 +88,13 @@
             mapFunctions.goTo_hide();
             var that = this;
             //setting dropMarkerListener
-            this.dropMarkerListener = google.maps.event.addListener(map, 'click', function (event) {
+            var dropMarkerListener = google.maps.event.addListener(map, 'click', function (event) {
                 that.goWaypoint(event.latLng.lat(), event.latLng.lng(), ids);
-                mapFunctions.ConsNotifier(this, event.latLng.lat(), event.latLng.lng(), "", "");
-                
+                google.maps.event.removeListener(dropMarkerListener);
+                dropMarkerListener = null;
             });
         }
+        
     },
 
     //still working on it -David
