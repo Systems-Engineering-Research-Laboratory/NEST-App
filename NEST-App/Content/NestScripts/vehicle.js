@@ -436,7 +436,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                     wpComplete = true;
                     //TODO: Assign the path back to the base.
                     update = true;
-                    this.pathGen.appendSafeRouteToMission(this.waypoints, this.FlightState, this.Base, mis.id, this.hasCommsLink);
+                    this.pathGen.appendSafeRouteToMission(this.waypoints, this.FlightState, this.Base, mis, this.hasCommsLink);
                 }
                 break;
             case "done":
@@ -870,14 +870,16 @@ function PathGenerator(areaContainer, reporter) {
 
     //Add a safe route to the end a waypoint list. Typical use case is for when the UAV makes a delivery,
     //then it uses this function to generate a list of waypoints for going back to base. 
-    this.appendSafeRouteToMission = function (wps, curPos, target, missionId, reportOut) {
+    this.appendSafeRouteToMission = function (wps, curPos, target, mission, reportOut) {
         //Generate a waypoint of just the ed point, then buildSafeRoute between current point
         //and the end point.
         var tempRoute = [new Waypoint(wps[wps.length - 1]), new Waypoint(target)];
+        tempRoute[1].obj = mission;
+        tempRoute[1].objType = "mission";
         this.buildSafeRoute(tempRoute, curPos);
-        if (missionId && reportOut) {
+        if (mission && reportOut) {
             //bug here, nothing being sent to server.
-            var jqxhr = reporter.appendRouteToMission(missionId, tempRoute);
+            var jqxhr = reporter.appendRouteToMission(mission.id, tempRoute);
             var $this = this;
             jqxhr.success(function (data, textStatus, jqXHR) {
                 for (var i = 0; i < tempRoute.length; i++) {
