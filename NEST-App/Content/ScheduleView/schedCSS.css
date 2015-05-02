@@ -1,4 +1,10 @@
-﻿.outer {
+﻿@import url(http://fonts.googleapis.com/css?family=Arvo);
+
+* {
+    font-family: 'Arvo', sans-serif;
+}
+
+.outer {
     display:inline-block;
     width:100%;
 }
@@ -24,4 +30,56 @@ table {
 tr {
     border: 1px solid grey;
     margin-bottom: 8px;
+}
+
+.schedule th {
+    background-color: #0a074a;
+    border-radius: 8px;
+    border: 1px solid white;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    color: white;
+    font-size: 15px;
+}
+.schedule td {
+    border: 1px solid white;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    border-radius: 5px;
+}
+
+.schedule td:hover {
+    cursor: pointer;
+}
+
+.maintenance th {
+    background-color: #0a074a;
+    border-radius: 8px;
+    border: 1px solid white;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    color: white;
+    font-size: 15px;
+}
+.maintenance td {
+    border: 1px solid white;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    border-radius: 5px;
+}
+
+.maintenance td:hover {
+    cursor: pointer;
 }
