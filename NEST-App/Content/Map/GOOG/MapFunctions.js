@@ -60,6 +60,9 @@ var mapFunctions = {
                 break;
             case 'send_note':
                 mapFunctions.note_show();
+                var currentUser = JSON.parse($("#current_user").html()).username;
+                console.log(currentUser);
+                document.getElementById("notifier").value = currentUser;
                 var clickEvt = document.getElementById("send").addEventListener("click", function () {
                     if (latLng != null) {
                         emitHub.server.sendNote(latLng.lat(), latLng.lng(), document.getElementById("notifier").value, document.getElementById("message").value);
