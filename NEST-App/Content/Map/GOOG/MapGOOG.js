@@ -220,7 +220,9 @@ $(document).ready(function () {
             // MISSION PROGRESS WINDOW
             for (i = 0, j = 1, k = 0; i < missiontable.rows.length, k < progress_table.rows.length; i++, j += 2, k += 2) {
                 var missionid_1st = progress_table.children[0].children[k].children[1].children[4].innerHTML;
-                var uavid_2nd = missiontable.rows[i].cells[5].innerHTML;
+                
+                if (missiontable.rows.length > 0)
+                    var uavid_2nd = missiontable.rows[i].cells[5].innerHTML;
 
                 if (vehicle.Id == uavid_2nd) 
                 {
@@ -332,6 +334,16 @@ $(document).ready(function () {
                                 if (percent_back.toFixed(0) == '100')
                                     progress_table.children[0].children[j].children[1].children[1].innerHTML = "0.000 km";
                             }
+
+                            // check if uav is done with mission
+                            if (progress_table.children[0].children[j].children[1].children[3].innerHTML === "done") {
+                                var percent_done = 100;
+                                var progress_row = progress_table.children[0].children[k].children[0].children[0];
+                                progress_row.setAttribute("value", percent_done);
+                                progress_table.rows[j].cells[0].innerHTML = "Done with mission";
+                                progress_table.rows[j].cells[0].style.color = "blue";
+                            }
+
                         }   // end of whole if statement
                     }
                 }
