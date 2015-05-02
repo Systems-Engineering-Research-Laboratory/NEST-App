@@ -162,7 +162,10 @@ var mapFunctions = {
             that = this;
             switch (eventName) {
                 case 'get_details':
-                    window.open("http://localhost:53130/detailview", "_blank");
+                    var url = window.location.href.split('/');
+                    console.log(url);
+                    var baseUrl = url[0] + '//' + url[2];
+                    window.open(baseUrl + '/detailview', "_blank");
                     break;
                 case 'battery_est':
                     batteryCalc.displayEstCircle(uav);
