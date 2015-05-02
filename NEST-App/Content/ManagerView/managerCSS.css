@@ -60,5 +60,127 @@ th {
 tr {
     border-bottom: 1px solid grey;
 }
+.assigned th {
+    background-color: #213157 ;
+    border-radius: 8px;
+    border: 1px solid white;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    color: white;
+    font-size: 15px;
+}
+.assigned td {
+    border: 1px solid white;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    border-radius: 5px;
+}
+.assigned tr {
+    background-color: #ffffff;
+    border: none;
+    border-radius: 3px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.unassigned th {
+    background-color: #213157 ;
+    border-radius: 8px;
+    border: 1px solid white;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    color: white;
+    font-size: 15px;
+}
+.unassigned td {
+    border: 1px solid white;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    border-radius: 5px;
+}
+.unassigned tr {
+    border: none;
+    border-radius: 3px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.op th {
+    background-color: #213157 ;
+    border-radius: 8px;
+    border: 1px solid white;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    color: white;
+    font-size: 15px;
+}
+.op td {
+    border: 1px solid white;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    border-radius: 5px;
+}
+.op tr {
+    background-color: #ffffff;
+    border: none;
+    border-radius: 3px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.curr_emergen th {
+    background-color: #213157 ;
+    border-radius: 8px;
+    border: 1px solid white;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    color: white;
+    font-size: 15px;
+}
+.curr_emergen td {
+    border: 1px solid white;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    border-radius: 5px;
+}
+.curr_emergen tr {
+    background-color: #ffffff;
+    border: none;
+    border-radius: 3px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
 
 

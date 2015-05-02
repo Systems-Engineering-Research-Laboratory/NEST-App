@@ -33,7 +33,7 @@ tr {
 }
 
 .schedule th {
-    background-color: #0a074a;
+    background-color: #213157 ;
     border-radius: 8px;
     border: 1px solid white;
     text-align: center;
@@ -53,13 +53,26 @@ tr {
     padding-right: 6px;
     border-radius: 5px;
 }
+.schedule tr {
+    background-color: #ffffff;
+    border: none;
+    border-radius: 3px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.schedule tr:hover {
+    background-color: #e9e9ea;
+}
 
 .schedule td:hover {
     cursor: pointer;
 }
 
 .maintenance th {
-    background-color: #0a074a;
+    background-color: #213157 ;
     border-radius: 8px;
     border: 1px solid white;
     text-align: center;
@@ -78,6 +91,20 @@ tr {
     padding-left: 6px;
     padding-right: 6px;
     border-radius: 5px;
+}
+
+.maintenance tr {
+    background-color: #ffffff;
+    border: none;
+    border-radius: 3px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.maintenance tr:hover {
+    background-color: #e9e9ea;
 }
 
 .maintenance td:hover {
