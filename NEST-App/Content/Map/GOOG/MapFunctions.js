@@ -241,14 +241,16 @@ var mapFunctions = {
 
     ConsNotifier: function (theMap, lat, lng, notifier, message) {
         var location = new google.maps.LatLng(lat, lng);
+        //var center = theMap.getCenter();
         this.noteMarker = new google.maps.Marker({
             map: theMap,
             position: location,
             icon: mapStyles.mapClickIcon,
             draggable: false,
             animation: google.maps.Animation.DROP
+            //,center: center
         });
-        theMap.panTo(location);
+        //theMap.panTo(location);
 
         var contentString = '<div id="content">' +
             '<h4>' + notifier + '</h4>' +
