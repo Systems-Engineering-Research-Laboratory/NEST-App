@@ -665,7 +665,7 @@ progress::-webkit-progress-value {
     overflow: hidden;
     font-size: 15px;
     margin-bottom: 10px;
-    display: none;
+    visibility: hidden;
 }
 
 #RR_button_accept {

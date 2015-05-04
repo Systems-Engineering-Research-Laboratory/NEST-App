@@ -527,15 +527,6 @@ var mapFunctions = {
         document.getElementById("notification").style.display = "none";
     },
 
-    //// USER INTERFACE PROMPT TO ACCEPT OR REJECT UAV ASSIGNMENT ON MAP
-    //goTo_RR_show: function () {
-    //    document.getElementById("RoundRobin_popup").style.display = "block";
-    //},
-
-    //goTo_RR_hide: function () {
-    //    $("#RoundRobin_popup").fadeOut("slow", function () { });
-    //},
-
     RR_show: function (level, id, callsign, message) {
         console.log('level: ' + level +'\n id: ' + id + '\n callsign: ' + callsign + '\n message: '+ message);
 
@@ -552,7 +543,6 @@ var mapFunctions = {
                                 '</div>';
                 $('#RoundRobin_popup_placeHolder').append(content);
                 $('.RoundRobin_popup').addClass('expandUp');
-                $('.RoundRobin_popup').css('display', 'block');
 
                 break;
 
@@ -568,7 +558,6 @@ var mapFunctions = {
                                 '</div>';
                 $('#RoundRobin_popup_placeHolder').append(content);
                 $('.RoundRobin_popup').addClass('expandUp');
-                $('.RoundRobin_popup').css('display', 'block');
 
                 break;
 
@@ -584,11 +573,12 @@ var mapFunctions = {
                                 '</div>';
                 $('#RoundRobin_popup_placeHolder').append(content);
                 $('.RoundRobin_popup').addClass('expandUp');
-                $('.RoundRobin_popup').css('display', 'block');
 
                 break;
 
             default:
+                console.log('RR_show did not catch the level type: ' + level);
+
                 break;
         }
     },
