@@ -41,6 +41,11 @@ namespace NEST_App.Hubs
             EventLog evt = eventLog.ToObject<EventLog>();
             evt.create_date = DateTime.Now;
             evt.modified_date = DateTime.Now;
+            if (evt.criticality == "ACK")
+            {
+                var clearWarningsById = evt.uav_id;
+                Clients.All.clearWarning(clearWarningsById);
+            }
             Clients.All.newEvent(evt);
         }
         public void Hello()
