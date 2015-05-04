@@ -657,6 +657,7 @@ progress::-webkit-progress-value {
     overflow: auto;
     padding: 0px;
     float: right;
+    display: none;
 }
 
 #RoundRobin_popup {
