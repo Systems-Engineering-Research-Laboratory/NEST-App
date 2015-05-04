@@ -379,7 +379,11 @@ $(document).ready(function () {
             uavs[UAVId].infoboxAlert = null;
             infoboxAlert.close();
         }
-
+        emitHub.client.clearWarning = function (uavId) {
+            var infobox = uavs[UAVId].infobox;
+            uavs[UAVId].infobox = null;
+            infobox.close();
+        }
 
         //show the notification for every one
         emitHub.client.showNote = function (lat, lng, notifier, message) {
