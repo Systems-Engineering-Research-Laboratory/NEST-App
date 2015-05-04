@@ -357,7 +357,7 @@ expandUp
 	animation-timing-function: ease;	
 	-webkit-animation-timing-function: ease;		
 
-	visibility: visible !important;	
+	/*visibility: visible !important;*/	
 }
 
 @keyframes expandUp {

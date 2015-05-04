@@ -541,58 +541,60 @@ var mapFunctions = {
 
         switch (level) {
             case 'normal':
-                var content = '<div id="RR_outer">' +
-                                    '<div id="RoundRobin_popup">' +
-                                        '<div id="RR_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.RR_remove()"></span></div>' +
-                                        '<p style="margin-bottom:3px;">' +
-                                            '<span>UAV ID: ' + id + '</span><br />' +
-                                            '<span>Callsign: ' + callsign + '</span><br />' +
-                                            '<span>' + message + '</span><br />' +
-                                        '</p>' +
-                                    '</div>' +
+                var content = '<div class="RoundRobin_popup">' +
+                                    '<div class="RR_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.RR_remove();"></span></div>' +
+                                    '<p style="text-align:center; margin:0px; font-size:23px; font-weight:bold;">New Event!</p>' +
+                                    '<p style="margin-bottom:3px;">' +
+                                        'UAV ID: ' + id + '<br />' +
+                                        'Callsign: ' + callsign + '<br />' +
+                                        '<strong>' + message + '</strong><br />' +
+                                    '</p>' +
                                 '</div>';
                 $('#RoundRobin_popup_placeHolder').append(content);
-                $('#RoundRobin_popup').addClass('expandUp');
+                $('.RoundRobin_popup').addClass('expandUp');
+                $('.RoundRobin_popup').css('display', 'block');
 
                 break;
 
             case 'warning':
-                var content = '<div id="RR_outer">' +
-                                    '<div id="RoundRobin_popup">' +
-                                        '<div id="RR_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.RR_remove()"></span></div>' +
-                                        '<p style="text-align:center; color:#FFD900; margin:0px; font-size:23px;font-weight:bold;">Warning</p>' +
-                                        '<p style="margin-bottom:3px;">' +
-                                            '<span>UAV ID: ' + id + '</span><br />' +
-                                            '<span>Callsign: ' + callsign + '</span><br />' +
-                                            '<span>' + message + '</span><br />' +
-                                        '</p>' +
-                                    '</div>' +
+                var content = '<div class="RoundRobin_popup" style="border: 2px solid #FFD900;">' +
+                                    '<div class="RR_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.RR_remove();"></span></div>' +
+                                    '<p style="text-align:center; color:#FFD900; margin:0px; font-size:23px; font-weight:bold;">Warning Event!</p>' +
+                                    '<p style="margin-bottom:3px;">' +
+                                        'UAV ID: ' + id + '<br />' +
+                                        'Callsign: ' + callsign + '<br />' +
+                                        '<strong>' + message + '</strong><br />' +
+                                    '</p>' +
                                 '</div>';
                 $('#RoundRobin_popup_placeHolder').append(content);
-                $('#RoundRobin_popup').addClass('expandUp');
+                $('.RoundRobin_popup').addClass('expandUp');
+                $('.RoundRobin_popup').css('display', 'block');
 
                 break;
 
             case 'critical':
-                var content = '<div id="RR_outer">' +
-                                    '<div id="RoundRobin_popup">' +
-                                        '<div id="RR_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.RR_remove()"></span></div>' +
-                                        '<p style="text-align:center; color:red; margin:0px; font-size:23px;font-weight:bold;">Critical</p>' +
-                                        '<p style="margin-bottom:3px;">' +
-                                            '<span>UAV ID: ' + id + '</span><br />' +
-                                            '<span>Callsign: ' + callsign + '</span><br />' +
-                                            '<span>' + message + '</span><br />' +
-                                        '</p>' +
-                                    '</div>' +
+                var content = '<div class="RoundRobin_popup" style="border: 2px solid red;">' +
+                                    '<div class="RR_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.RR_remove();"></span></div>' +
+                                    '<p style="text-align:center; color:red; margin:0px; font-size:23px; font-weight:bold;">Critical Event!</p>' +
+                                    '<p style="margin-bottom:3px;">' +
+                                        'UAV ID: ' + id + '<br />' +
+                                        'Callsign: ' + callsign + '<br />' +
+                                        '<strong>' + message + '</strong><br />' +
+                                    '</p>' +
                                 '</div>';
                 $('#RoundRobin_popup_placeHolder').append(content);
-                $('#RoundRobin_popup').addClass('expandUp');
+                $('.RoundRobin_popup').addClass('expandUp');
+                $('.RoundRobin_popup').css('display', 'block');
+
+                break;
+
+            default:
                 break;
         }
     },
 
     RR_remove: function () {
-        
+        $(event.target).closest('.RoundRobin_popup').remove();
     },
 
     RR_button_accept: function () {

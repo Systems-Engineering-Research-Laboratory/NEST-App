@@ -646,28 +646,26 @@ progress::-webkit-progress-value {
 
 /*/////////////////////////////////////////////////////////////////////*/
 /* USER INTERFACE PROMPT TO ACCEPT OR REJECT UAV ASSIGNMENT ON MAP*/
-#RR_outer {
-    border: none;
+#RoundRobin_popup_placeHolder {
     position: fixed;
-    margin: auto;
     width: 300px;
-    height: 170px;
     right: 5px;
     bottom: 5px;
-    overflow: auto;
-    padding: 0px;
+    overflow: visible;
+    display: flex;
+    flex-direction: column-reverse;
     float: right;
 }
 
-#RoundRobin_popup {
-    position: fixed;
+.RoundRobin_popup {
     width: 300px;
     padding: 10px;
-    border: 2px solid red;
     border-radius: 10px;
     background-color: white;
     overflow: hidden;
     font-size: 15px;
+    margin-bottom: 10px;
+    display: none;
 }
 
 #RR_button_accept {
@@ -714,11 +712,9 @@ progress::-webkit-progress-value {
     background-color: #FA8383;
 }
 
-#RR_close {
-    position: absolute;
+.RR_close {
+    float:right;
     font-size: 1.5em;
-    right: 11px;
-    top: 10px;
     cursor: pointer;
 }
 
