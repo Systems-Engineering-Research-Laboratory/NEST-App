@@ -657,7 +657,6 @@ progress::-webkit-progress-value {
     overflow: auto;
     padding: 0px;
     float: right;
-    display: none;
 }
 
 #RoundRobin_popup {
@@ -669,6 +668,7 @@ progress::-webkit-progress-value {
     background-color: white;
     overflow: hidden;
     font-size: 15px;
+    display: none;
 }
 
 #RR_button_accept {

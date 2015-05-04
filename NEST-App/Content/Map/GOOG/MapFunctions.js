@@ -586,7 +586,7 @@ var mapFunctions = {
                                     '</div>' +
                                 '</div>';
                 $('#RoundRobin_popup_placeHolder').append(content);
-                $('#RR_outer').addClass('expandUp');
+                $('#RoundRobin_popup').addClass('expandUp');
                 break;
 
             default:
@@ -595,8 +595,8 @@ var mapFunctions = {
     },
 
     RR_remove: function () {
-        $('#RR_outer').removeClass('expandUp');
-        document.getElementById("RR_outer").style.display = "hidden";
+        $('#RoundRobin_popup').removeClass('expandUp');
+        document.getElementById("RoundRobin_popup").style.display = "hidden";
     },
 
     RR_button_accept: function () {
