@@ -540,43 +540,43 @@ var mapFunctions = {
         console.log('level: ' + level +'\n id: ' + id + '\n callsign: ' + callsign + '\n message: '+ message);
 
         switch (level) {
-            case 'normal':
-                var content = '<div id="RR_outer">' +
-                                    '<div id="RoundRobin_popup">' +
-                                        '<div id="RR_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.RR_remove()"></span></div>' +
-                                        '<p style="margin-bottom:3px;">' +
-                                            '<span>UAV ID: ' + id + '</span><br />' +
-                                            '<span>Callsign: ' + callsign + '</span><br />' +
-                                            '<span>' + message + '</span><br />' +
-                                        '</p>' +
-                                    '</div>' +
-                                '</div>';
-                $('#RoundRobin_popup_placeHolder').append(content);
-                $('#RoundRobin_popup').addClass('expandUp');
+            //case 'normal':
+            //    var content = '<div id="RR_outer">' +
+            //                        '<div id="RoundRobin_popup">' +
+            //                            '<div id="RR_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.RR_remove()"></span></div>' +
+            //                            '<p style="margin-bottom:3px;">' +
+            //                                '<span>UAV ID: ' + id + '</span><br />' +
+            //                                '<span>Callsign: ' + callsign + '</span><br />' +
+            //                                '<span>' + message + '</span><br />' +
+            //                            '</p>' +
+            //                        '</div>' +
+            //                    '</div>';
+            //    $('#RoundRobin_popup_placeHolder').append(content);
+            //    $('#RoundRobin_popup').addClass('expandUp');
 
-                break;
+            //    break;
 
-            case 'warning':
-                var content = '<div id="RR_outer">' +
-                                    '<div id="RoundRobin_popup">' +
-                                        '<div id="RR_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.RR_remove()"></span></div>' +
-                                        '<p style="text-align:center; color:#FFD900; margin:0px; font-size:23px;font-weight:bold;">Warning</p>' +
-                                        '<p style="margin-bottom:3px;">' +
-                                            '<span>UAV ID: ' + id + '</span><br />' +
-                                            '<span>Callsign: ' + callsign + '</span><br />' +
-                                            '<span>' + message + '</span><br />' +
-                                        '</p>' +
-                                    '</div>' +
-                                '</div>';
-                $('#RoundRobin_popup_placeHolder').append(content);
-                $('#RoundRobin_popup').addClass('expandUp');
+            //case 'warning':
+            //    var content = '<div id="RR_outer">' +
+            //                        '<div id="RoundRobin_popup">' +
+            //                            '<div id="RR_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.RR_remove()"></span></div>' +
+            //                            '<p style="text-align:center; color:#FFD900; margin:0px; font-size:23px;font-weight:bold;">Warning</p>' +
+            //                            '<p style="margin-bottom:3px;">' +
+            //                                '<span>UAV ID: ' + id + '</span><br />' +
+            //                                '<span>Callsign: ' + callsign + '</span><br />' +
+            //                                '<span>' + message + '</span><br />' +
+            //                            '</p>' +
+            //                        '</div>' +
+            //                    '</div>';
+            //    $('#RoundRobin_popup_placeHolder').append(content);
+            //    $('#RoundRobin_popup').addClass('expandUp');
 
-                break;
+            //    break;
 
             case 'critical':
                 var content = '<div id="RR_outer">' +
                                     '<div id="RoundRobin_popup">' +
-                                        '<div id="RR_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.RR_remove()"></span></div>' +
+                                        '<div id="RR_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.RR_remove();"></span></div>' +
                                         '<p style="text-align:center; color:red; margin:0px; font-size:23px;font-weight:bold;">Critical</p>' +
                                         '<p style="margin-bottom:3px;">' +
                                             '<span>UAV ID: ' + id + '</span><br />' +
@@ -586,13 +586,17 @@ var mapFunctions = {
                                     '</div>' +
                                 '</div>';
                 $('#RoundRobin_popup_placeHolder').append(content);
-                $('#RoundRobin_popup').addClass('expandUp');
+                $('#RR_outer').addClass('expandUp');
+                break;
+
+            default:
                 break;
         }
     },
 
     RR_remove: function () {
-        
+        $('#RR_outer').removeClass('expandUp');
+        document.getElementById("RR_outer").style.display = "hidden";
     },
 
     RR_button_accept: function () {
