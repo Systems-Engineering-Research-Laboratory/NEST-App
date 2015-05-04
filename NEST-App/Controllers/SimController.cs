@@ -14,6 +14,23 @@ using System.Web;
 using NEST_App.DAL;
 using NEST_App.Models;
 
+
+//using System.Web.Mvc.HttpGetAttribute;
+//using System.Web.Http.HttpGetAttribute;
+
+
+
+using System.Data.Entity.Spatial;
+using System.Data.Entity.Infrastructure;
+using System.IO;
+using Newtonsoft.Json.Linq;
+using System.Data.Entity.Validation;
+using Microsoft.AspNet.SignalR;
+using NEST_App.Hubs;
+
+
+
+
 namespace NEST_App.Controllers
 {
     public class SimController : Controller
@@ -82,6 +99,16 @@ namespace NEST_App.Controllers.Api
         static int startIndex = 0;
 
         private NestContainer db = new NestContainer();
+
+
+
+        //[HttpGet]
+        //[Route("api/sim/resetsim")]
+        //public void ResetSim()
+        //{
+        //    startIndex = 0;
+        //}
+
         public HttpResponseMessage GetInitSim()
         {
             int ct = 0;
@@ -183,8 +210,6 @@ namespace NEST_App.Controllers.Api
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("Another sim opened, hit 'else'");
-
                     int capacity = 0;
                     //Check if creating a new numofdrones-sized array would exceed the number of remaining, unassigned drones
                     //If it would exceed, make the length only as long as the remaining number of drones
