@@ -422,7 +422,8 @@ namespace NEST_App.Controllers.Api
         {
             //Ensure that the UAVs have schedules before we do the round robin so we don't skip UAVs
             await createSchedulesForUavs();
-            IEnumerable<Schedule> schedQOrdered = _db.Schedules.OrderByDescending(s => s.UAV.estimated_workload).AsEnumerable() ;
+            IEnumerable<Schedule> schedQOrdered = _db.Schedules.OrderByDescending(s => s.UAV.estimated_workload).AsEnumerable();
+            int numOfSchedules = schedQOrdered.Count();
             if (schedQOrdered != null)
             {
                 Queue<Schedule> schedQ = new Queue<Schedule>(schedQOrdered);
@@ -439,6 +440,14 @@ namespace NEST_App.Controllers.Api
                 {
                     mis.TimeAssigned = DateTime.Now;
                     Schedule s = schedQ.Dequeue();
+                    int i = numOfSchedules;
+                    //Cycle through schedules until you find one that doesn't have a mission, or until you've checked them all
+                    while ((s.CurrentMission != null) && (i > 0))
+                    {
+                        schedQ.Enqueue(s);
+                        s = schedQ.Dequeue();
+                        i--;
+                    }
                     s.UAV.estimated_workload++;
                     s.Missions.Add(mis);
                     if (s.CurrentMission == null)
@@ -488,6 +497,7 @@ namespace NEST_App.Controllers.Api
 
             return Request.CreateResponse(HttpStatusCode.OK);
         }
+
 
         DateTime RandomDay()
         {
