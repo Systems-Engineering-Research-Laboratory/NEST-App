@@ -136,7 +136,7 @@ var mapFunctions = {
         menuItems.push({});
         menuItems.push({ className: 'context_menu_item', eventName: 'non_nav', label: 'Adjust Parameters' });
         menuItems.push({ className: 'context_menu_item', eventName: 'hold', label: 'Hold Position' });
-        menuItems.push({ className: 'context_menu_item', eventName: 'insert_waypoint', label: 'Insert Waypoint' });
+        menuItems.push({});
         menuItems.push({ className: 'context_menu_item', eventName: 'go_to', label: 'Go to...' });
         menuItems.push({ className: 'context_menu_item', eventName: 'force_land', label: 'Force Land' });
         menuItems.push({ className: 'context_menu_item', eventName: 'return', label: 'Return to Base' });
@@ -535,6 +535,65 @@ var mapFunctions = {
     //goTo_RR_hide: function () {
     //    $("#RoundRobin_popup").fadeOut("slow", function () { });
     //},
+
+    RR_show: function (level, id, callsign, message) {
+        console.log('level: ' + level +'\n id: ' + id + '\n callsign: ' + callsign + '\n message: '+ message);
+
+        switch (level) {
+            case 'normal':
+                var content = '<div id="RR_outer">' +
+                                    '<div id="RoundRobin_popup">' +
+                                        '<div id="RR_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.RR_remove()"></span></div>' +
+                                        '<p style="margin-bottom:3px;">' +
+                                            '<span>UAV ID: ' + id + '</span><br />' +
+                                            '<span>Callsign: ' + callsign + '</span><br />' +
+                                            '<span>' + message + '</span><br />' +
+                                        '</p>' +
+                                    '</div>' +
+                                '</div>';
+                $('#RoundRobin_popup_placeHolder').append(content);
+                $('#RoundRobin_popup').addClass('expandUp');
+
+                break;
+
+            case 'warning':
+                var content = '<div id="RR_outer">' +
+                                    '<div id="RoundRobin_popup">' +
+                                        '<div id="RR_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.RR_remove()"></span></div>' +
+                                        '<p style="text-align:center; color:#FFD900; margin:0px; font-size:23px;font-weight:bold;">Warning</p>' +
+                                        '<p style="margin-bottom:3px;">' +
+                                            '<span>UAV ID: ' + id + '</span><br />' +
+                                            '<span>Callsign: ' + callsign + '</span><br />' +
+                                            '<span>' + message + '</span><br />' +
+                                        '</p>' +
+                                    '</div>' +
+                                '</div>';
+                $('#RoundRobin_popup_placeHolder').append(content);
+                $('#RoundRobin_popup').addClass('expandUp');
+
+                break;
+
+            case 'critical':
+                var content = '<div id="RR_outer">' +
+                                    '<div id="RoundRobin_popup">' +
+                                        '<div id="RR_close"><span class="glyphicon glyphicon-remove" onclick="mapFunctions.RR_remove()"></span></div>' +
+                                        '<p style="text-align:center; color:red; margin:0px; font-size:23px;font-weight:bold;">Critical</p>' +
+                                        '<p style="margin-bottom:3px;">' +
+                                            '<span>UAV ID: ' + id + '</span><br />' +
+                                            '<span>Callsign: ' + callsign + '</span><br />' +
+                                            '<span>' + message + '</span><br />' +
+                                        '</p>' +
+                                    '</div>' +
+                                '</div>';
+                $('#RoundRobin_popup_placeHolder').append(content);
+                $('#RoundRobin_popup').addClass('expandUp');
+                break;
+        }
+    },
+
+    RR_remove: function () {
+        
+    },
 
     RR_button_accept: function () {
         assignment.uavAccepted(warningUavId);

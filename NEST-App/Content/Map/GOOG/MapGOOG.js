@@ -391,6 +391,9 @@ $(document).ready(function () {
             //var checkMessage = evt.message.split(" ");
             //if (checkMessage[0] != "Acknowledged:") {
             if (evt.criticality != "ACK") {
+                //warning popup showing
+                mapFunctions.RR_show(evt.criticality, uavs[evt.UAVId].Id, uavs[evt.UAVId].Callsign, evt.message);
+
                 mapFunctions.glowing();
                 var i = uavs[evt.UAVId].Events;
                 i++;

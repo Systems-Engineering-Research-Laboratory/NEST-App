@@ -667,29 +667,7 @@ progress::-webkit-progress-value {
     border-radius: 10px;
     background-color: white;
     overflow: hidden;
-    display: none;
     font-size: 15px;
-
-    -webkit-animation-name: RR;
-    -webkit-animation-duration: 1.0s;
-    -webkit-animation-timing-function: linear;
-    -webkit-animation-delay: 0s;
-    -webkit-animation-direction: alternate;
-    -webkit-animation-play-state: running;
-}
-
-/* bounce-in*/
-@-webkit-keyframes RR {
-    0% {opacity: 0; -webkit-transform: scale3d(.9, .9, .9);}
-   20% {opacity: 0.8; -webkit-transform: scale3d(1.1, 1.1, 1.1);}
-   40% {-webkit-transform: scale3d(.9, .9, .9);}
-   60% {opacity: 1; -webkit-transform: scale3d(1.03, 1.03, 1.03);}
-   80% {-webkit-transform: scale3d(.97, .97, .97);}
-  100% {opacity: 1; -webkit-transform: scale3d(1, 1, 1);}
-
-  /*fade in up*/
-    /*0% {opacity: 0; -webkit-transform: translate3d(0, 100%, 0);}
-    100% {opacity: 1; -webkit-transform: none;}*/
 }
 
 #RR_button_accept {
