@@ -15,7 +15,7 @@
 //The URL where we will perform the AJAX call to get the vehicle info from the DB.
 var uri = '/api/flightstate';
 var runSim = false;
-var dt = 2000; //Timestep in milliseconds
+var dt = 50; //Timestep in milliseconds
 var phases = ["preparing", "enroute", "delivering", "returning", "landing"];
 var availableMissions = [];
 
