@@ -132,7 +132,7 @@ $(document).ready(function () {
 
     //Pull the vehicles from the database. This also pulls the schedule, flight state, of the vehicle.
     $.ajax({
-        url: '/api/simapi/getinitsim',
+        url: '/api/simapi/freshsim',
         success: function (data, textStatus, jqXHR) { flightStateCb(map, vehicleHub, data, textStatus, jqXHR); }
     });
 

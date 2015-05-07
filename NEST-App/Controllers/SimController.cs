@@ -15,10 +15,9 @@ using NEST_App.DAL;
 using NEST_App.Models;
 
 
-//using System.Web.Mvc.HttpGetAttribute;
-//using System.Web.Http.HttpGetAttribute;
-
-
+using System.Web.Http;
+using System.Web.Http.Description;
+using System.Web;
 
 using System.Data.Entity.Spatial;
 using System.Data.Entity.Infrastructure;
@@ -235,6 +234,37 @@ namespace NEST_App.Controllers.Api
                     return Request.CreateResponse(HttpStatusCode.OK, transferList);
                 }
             }
+        }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/simapi/freshsim")]
+        public HttpResponseMessage freshSim()
+        {
+            var uavs = from u in db.UAVs.Include(u => u.FlightStates).Include(u => u.Schedules)
+                       let s = u.Schedules.OrderBy(s => s.create_date).FirstOrDefault()
+                       select new
+                       {
+                           Id = u.Id,
+                           Mileage = u.Mileage,
+                           NumDeliveries = u.NumDeliveries,
+                           Callsign = u.Callsign,
+                           create_date = u.create_date,
+                           modified_date = u.modified_date,
+                           MaxVelocity = u.MaxVelocity,
+                           MaxAcceleration = u.MaxAcceleration,
+                           MaxVerticalVelocity = u.MaxVerticalVelocity,
+                           UpdateRate = u.UpdateRate,
+                           Schedule = new
+                           {
+                               Id = s.Id,
+                               UAVId = s.UAVId,
+                               create_date = s.create_date,
+                               modified_date = s.modified_date,
+                               Missions = s.Missions,
+                           },
+                           FlightState = u.FlightStates.OrderBy(fs => fs.Timestamp).FirstOrDefault(),
+                       };
+            return Request.CreateResponse(HttpStatusCode.OK, uavs);
         }
     }
 }
