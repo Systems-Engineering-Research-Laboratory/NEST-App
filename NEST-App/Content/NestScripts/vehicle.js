@@ -384,11 +384,10 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                 break;
             case "CMD_NAV_Land":
                 this.flyToAndLand(dt, cmd.X, cmd.Y);
-                console.log("cmd_nav_land");
                 return false; //Never consume this one for now
                 break;
 
-            case "CMD_DO_Return_To_Base":
+            case "CMD_DO_Return":
                 if (cmd.UseCurrent) {
                     var X = cmd.X;
                     var Y = cmd.Y;
@@ -457,7 +456,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
             this.awaitingNavigation = false;
             if (this.currentWaypoint) {
 
-                var newIdx = this.getNextNavigationalIndex();
+                var newIdx = this.getNextNavigationalIndex(target);
 
                 if (newIdx == this.currentWpIndex) {
                     //If we are inserting the command before the current navigation point
@@ -491,8 +490,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
     }
 
     this.commandList = [];
-    this.getNextNavigationalIndex = function () {
-
+    this.getNextNavigationalIndex = function (cmd) {
         if (this.commandList.length > 0) {
             //Only start from from the current waypoint index because we dont want to create navigational points before it
             var lastCommandedWp = this.commandList[this.commandList.length - 1];
@@ -510,7 +508,7 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
 
     this.handleNonNavigationalCommand = function (target) {
         var handled = true;
-        switch (target.CommandType) {
+        switch (target.type) {
             case "CMD_DO_Change_Speed":
                 this.MaxVelocity = this.target.HorizontalVelocity || this.MaxVelocity;
                 this.MaxVerticalVelocity = this.target.VelocityZ || this.MaxVerticalVelocity;
@@ -520,6 +518,12 @@ function Vehicle(vehicleInfo, reporter, pathGen) {
                 this.Base.Latitude = target.Latitude;
                 this.Base.Longitude = target.Longitude;
                 LatLongToXY(this.Base);
+                break;
+            case "CMD_NAV_Return":
+            case "CMD_NAV_Land":
+                console.log("Generating new path");
+                this.generateWaypoints(target, "command");
+                handled = true;
                 break;
             default:
                 handled = false;
@@ -823,7 +827,7 @@ function PathGenerator(areaContainer, reporter) {
             });
         }
         else {
-            //The algorithm failed in this case. Eventually address this.
+            //TODO: The algorithm failed in this case. Eventually address this.
         }
         return pts;
     }
