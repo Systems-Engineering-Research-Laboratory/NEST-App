@@ -68,7 +68,7 @@ namespace NEST_App.Hubs
 
         public async Task PushFlightStateUpdate(FlightStateDTO dto){
             Clients.All.flightStateUpdate(dto);
-            await TrespassChecker.ReportTrespassIfNecesarry(dto.UAVId, dto.Latitude, dto.Longitude);
+            //await TrespassChecker.ReportTrespassIfNecesarry(dto.UAVId, dto.Latitude, dto.Longitude);
             var eventHub = GlobalHost.ConnectionManager.GetHubContext<EventLogHub>();
             UAV uav = db.UAVs.FirstOrDefault(x => x.Id == dto.Id);
             double lat = Math.Round(dto.Latitude * 10000) / 10000;
